@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserRechargeCouponMapper">
+  <resultMap id="userRechargeCouponMap" type="com.mall4j.cloud.user.model.UserRechargeCoupon">
+    <id column="recharge_id" property="rechargeId" />
+    <result column="coupon_id" property="couponId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="coupon_num" property="couponNum"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `recharge_id`,`coupon_id`,`create_time`,`coupon_num`
+  </sql>
+  <select id="list" resultMap="userRechargeCouponMap">
+    select <include refid="Vo_Column_List"/> from user_recharge_coupon order by recharge_id desc
+  </select>
+  <select id="getByRechargeId" resultMap="userRechargeCouponMap">
+    select <include refid="Vo_Column_List"/> from user_recharge_coupon where recharge_id = #{rechargeId}
+  </select>
+  <insert id="save">
+    insert into user_recharge_coupon (`recharge_id`,`coupon_id`,`coupon_num`)
+    values (#{userRechargeCoupon.rechargeId},#{userRechargeCoupon.couponId},#{userRechargeCoupon.couponNum});
+  </insert>
+  <insert id="saveBatch" parameterType="java.util.List">
+    insert into user_recharge_coupon (`recharge_id`,`coupon_id`,`coupon_num`)
+    values
+    <foreach collection="userRechargeCouponList" item="userRechargeCoupon" separator=",">
+      (#{userRechargeCoupon.rechargeId},#{userRechargeCoupon.couponId},#{userRechargeCoupon.couponNum})
+    </foreach>
+  </insert>
+  <update id="update">
+    update user_recharge_coupon
+    <set>
+      <if test="userRechargeCoupon.couponId != null">
+        `coupon_id` = #{userRechargeCoupon.couponId},
+      </if>
+      <if test="userRechargeCoupon.couponNum != null">
+        `coupon_num` = #{userRechargeCoupon.couponNum},
+      </if>
+    </set>
+    where recharge_id = #{userRechargeCoupon.rechargeId}
+  </update>
+  <update id="updateBatchByCoupons">
+    <foreach collection="couponList" item="coupon">
+      UPDATE user_recharge_coupon SET  coupon_num = #{coupon.couponNum}
+      WHERE recharge_id = #{rechargeId} AND coupon_id = #{coupon.couponId};
+    </foreach>
+  </update>
+  <delete id="deleteById">
+    delete from user_recharge_coupon where recharge_id = #{rechargeId}
+  </delete>
+  <delete id="removeByRechargeIdAndCouponId">
+    DELETE FROM user_recharge_coupon
+    WHERE recharge_id = #{rechargeId} AND coupon_id IN
+    <foreach collection="couponIdList" item="couponId" open="(" close=")" separator=",">
+      #{couponId}
+    </foreach>
+  </delete>
+
+  <select id="listRechargeIdByCouponIds" resultType="java.lang.Long">
+    SELECT DISTINCT recharge_id FROM user_recharge_coupon WHERE coupon_id IN
+    <foreach collection="couponIds" item="couponId" open="(" close=")" separator=",">
+      #{couponId}
+    </foreach>
+  </select>
+
+  <delete id="removeByCouponIds">
+    DELETE FROM user_recharge_coupon
+    WHERE coupon_id IN
+    <foreach collection="couponIds" item="couponId" open="(" close=")" separator=",">
+      #{couponId}
+    </foreach>
+  </delete>
+</mapper>

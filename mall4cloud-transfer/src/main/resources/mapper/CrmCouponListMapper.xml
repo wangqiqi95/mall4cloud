@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.CrmCouponListMapper">
+    <resultMap id="crmCouponListMap" type="com.mall4j.cloud.transfer.model.CrmCouponList">
+        <id column="Id" property="id"/>
+        <result column="CopId" property="copid"/>
+        <result column="BrandId" property="brandid"/>
+        <result column="CouponGrpId" property="coupongrpid"/>
+        <result column="GiftBagId" property="giftbagid"/>
+        <result column="CouponNo" property="couponno"/>
+        <result column="CouponName" property="couponname"/>
+        <result column="CouponType" property="coupontype"/>
+        <result column="CouponValue" property="couponvalue"/>
+        <result column="CouponPrice" property="couponprice"/>
+        <result column="ValidityType" property="validitytype"/>
+        <result column="BegDate" property="begdate"/>
+        <result column="EndDate" property="enddate"/>
+        <result column="EndDateInt" property="enddateint"/>
+        <result column="GenDate" property="gendate"/>
+        <result column="GenUserId" property="genuserid"/>
+        <result column="GenShopId" property="genshopid"/>
+        <result column="ActOrigin" property="actorigin"/>
+        <result column="ActId" property="actid"/>
+        <result column="VipId" property="vipid"/>
+        <result column="VipBindDate" property="vipbinddate"/>
+        <result column="ServiceChannel" property="servicechannel"/>
+        <result column="Status" property="status"/>
+        <result column="SellChannel" property="sellchannel"/>
+        <result column="SellDate" property="selldate"/>
+        <result column="SellId" property="sellid"/>
+        <result column="SellNo" property="sellno"/>
+        <result column="SellMoney" property="sellmoney"/>
+        <result column="OutSysId" property="outsysid"/>
+        <result column="UnionCouponSend" property="unioncouponsend"/>
+        <result column="LastModifiedDate" property="lastmodifieddate"/>
+        <result column="UnionCouponSendDate" property="unioncouponsenddate"/>
+        <result column="PurchaseBrandId" property="purchasebrandid"/>
+        <result column="PurchaseOrderId" property="purchaseorderid"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `Id`
+        ,
+        `CopId`,
+        `BrandId`,
+        `CouponGrpId`,
+        `GiftBagId`,
+        `CouponNo`,
+        `CouponName`,
+        `CouponType`,
+        `CouponValue`,
+        `CouponPrice`,
+        `ValidityType`,
+        `BegDate`,
+        `EndDate`,
+        `EndDateInt`,
+        `GenDate`,
+        `GenUserId`,
+        `GenShopId`,
+        `ActOrigin`,
+        `ActId`,
+        `VipId`,
+        `VipBindDate`,
+        `ServiceChannel`,
+        `Status`,
+        `SellChannel`,
+        `SellDate`,
+        `SellId`,
+        `SellNo`,
+        `SellMoney`,
+        `OutSysId`,
+        `UnionCouponSend`,
+        `LastModifiedDate`,
+        `UnionCouponSendDate`,
+        `PurchaseBrandId`,
+        `PurchaseOrderId`
+    </sql>
+    <select id="list" resultMap="crmCouponListMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from
+        crm_coupon_list
+        where
+        CouponGrpId in (select `code` from t_coupon )
+        order by Id desc
+    </select>
+    <select id="listByTableName" resultMap="crmCouponListMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from
+         ${table}
+        where
+        CouponGrpId in (select `code` from t_coupon )
+        order by Id desc
+    </select>
+    <select id="getById" resultMap="crmCouponListMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from crm_coupon_list where Id = #{id}
+    </select>
+    <insert id="save">
+        insert into crm_coupon_list (`CopId`, `BrandId`, `CouponGrpId`, `GiftBagId`, `CouponNo`, `CouponName`,
+                                     `CouponType`, `CouponValue`, `CouponPrice`, `ValidityType`, `BegDate`, `EndDate`,
+                                     `EndDateInt`, `GenDate`, `GenUserId`, `GenShopId`, `ActOrigin`, `ActId`, `VipId`,
+                                     `VipBindDate`, `ServiceChannel`, `Status`, `SellChannel`, `SellDate`, `SellId`,
+                                     `SellNo`, `SellMoney`, `OutSysId`, `UnionCouponSend`, `LastModifiedDate`,
+                                     `UnionCouponSendDate`, `PurchaseBrandId`, `PurchaseOrderId`)
+        values (#{crmCouponList.copid}, #{crmCouponList.brandid}, #{crmCouponList.coupongrpid},
+                #{crmCouponList.giftbagid}, #{crmCouponList.couponno}, #{crmCouponList.couponname},
+                #{crmCouponList.coupontype}, #{crmCouponList.couponvalue}, #{crmCouponList.couponprice},
+                #{crmCouponList.validitytype}, #{crmCouponList.begdate}, #{crmCouponList.enddate},
+                #{crmCouponList.enddateint}, #{crmCouponList.gendate}, #{crmCouponList.genuserid},
+                #{crmCouponList.genshopid}, #{crmCouponList.actorigin}, #{crmCouponList.actid}, #{crmCouponList.vipid},
+                #{crmCouponList.vipbinddate}, #{crmCouponList.servicechannel}, #{crmCouponList.status},
+                #{crmCouponList.sellchannel}, #{crmCouponList.selldate}, #{crmCouponList.sellid},
+                #{crmCouponList.sellno}, #{crmCouponList.sellmoney}, #{crmCouponList.outsysid},
+                #{crmCouponList.unioncouponsend}, #{crmCouponList.lastmodifieddate},
+                #{crmCouponList.unioncouponsenddate}, #{crmCouponList.purchasebrandid},
+                #{crmCouponList.purchaseorderid});
+    </insert>
+    <update id="update">
+        update crm_coupon_list
+        <set>
+            <if test="crmCouponList.copid != null">
+                `CopId` = #{crmCouponList.copid},
+            </if>
+            <if test="crmCouponList.brandid != null">
+                `BrandId` = #{crmCouponList.brandid},
+            </if>
+            <if test="crmCouponList.coupongrpid != null">
+                `CouponGrpId` = #{crmCouponList.coupongrpid},
+            </if>
+            <if test="crmCouponList.giftbagid != null">
+                `GiftBagId` = #{crmCouponList.giftbagid},
+            </if>
+            <if test="crmCouponList.couponno != null">
+                `CouponNo` = #{crmCouponList.couponno},
+            </if>
+            <if test="crmCouponList.couponname != null">
+                `CouponName` = #{crmCouponList.couponname},
+            </if>
+            <if test="crmCouponList.coupontype != null">
+                `CouponType` = #{crmCouponList.coupontype},
+            </if>
+            <if test="crmCouponList.couponvalue != null">
+                `CouponValue` = #{crmCouponList.couponvalue},
+            </if>
+            <if test="crmCouponList.couponprice != null">
+                `CouponPrice` = #{crmCouponList.couponprice},
+            </if>
+            <if test="crmCouponList.validitytype != null">
+                `ValidityType` = #{crmCouponList.validitytype},
+            </if>
+            <if test="crmCouponList.begdate != null">
+                `BegDate` = #{crmCouponList.begdate},
+            </if>
+            <if test="crmCouponList.enddate != null">
+                `EndDate` = #{crmCouponList.enddate},
+            </if>
+            <if test="crmCouponList.enddateint != null">
+                `EndDateInt` = #{crmCouponList.enddateint},
+            </if>
+            <if test="crmCouponList.gendate != null">
+                `GenDate` = #{crmCouponList.gendate},
+            </if>
+            <if test="crmCouponList.genuserid != null">
+                `GenUserId` = #{crmCouponList.genuserid},
+            </if>
+            <if test="crmCouponList.genshopid != null">
+                `GenShopId` = #{crmCouponList.genshopid},
+            </if>
+            <if test="crmCouponList.actorigin != null">
+                `ActOrigin` = #{crmCouponList.actorigin},
+            </if>
+            <if test="crmCouponList.actid != null">
+                `ActId` = #{crmCouponList.actid},
+            </if>
+            <if test="crmCouponList.vipid != null">
+                `VipId` = #{crmCouponList.vipid},
+            </if>
+            <if test="crmCouponList.vipbinddate != null">
+                `VipBindDate` = #{crmCouponList.vipbinddate},
+            </if>
+            <if test="crmCouponList.servicechannel != null">
+                `ServiceChannel` = #{crmCouponList.servicechannel},
+            </if>
+            <if test="crmCouponList.status != null">
+                `Status` = #{crmCouponList.status},
+            </if>
+            <if test="crmCouponList.sellchannel != null">
+                `SellChannel` = #{crmCouponList.sellchannel},
+            </if>
+            <if test="crmCouponList.selldate != null">
+                `SellDate` = #{crmCouponList.selldate},
+            </if>
+            <if test="crmCouponList.sellid != null">
+                `SellId` = #{crmCouponList.sellid},
+            </if>
+            <if test="crmCouponList.sellno != null">
+                `SellNo` = #{crmCouponList.sellno},
+            </if>
+            <if test="crmCouponList.sellmoney != null">
+                `SellMoney` = #{crmCouponList.sellmoney},
+            </if>
+            <if test="crmCouponList.outsysid != null">
+                `OutSysId` = #{crmCouponList.outsysid},
+            </if>
+            <if test="crmCouponList.unioncouponsend != null">
+                `UnionCouponSend` = #{crmCouponList.unioncouponsend},
+            </if>
+            <if test="crmCouponList.lastmodifieddate != null">
+                `LastModifiedDate` = #{crmCouponList.lastmodifieddate},
+            </if>
+            <if test="crmCouponList.unioncouponsenddate != null">
+                `UnionCouponSendDate` = #{crmCouponList.unioncouponsenddate},
+            </if>
+            <if test="crmCouponList.purchasebrandid != null">
+                `PurchaseBrandId` = #{crmCouponList.purchasebrandid},
+            </if>
+            <if test="crmCouponList.purchaseorderid != null">
+                `PurchaseOrderId` = #{crmCouponList.purchaseorderid},
+            </if>
+        </set>
+        where Id = #{crmCouponList.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from crm_coupon_list
+        where Id = #{id}
+    </delete>
+
+</mapper>

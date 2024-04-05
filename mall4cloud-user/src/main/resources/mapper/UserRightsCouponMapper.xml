@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserRightsCouponMapper">
+  <resultMap id="userRightsCouponMap" type="com.mall4j.cloud.user.model.UserRightsCoupon">
+    <id column="rights_coupon_id" property="rightsCouponId" />
+    <result column="create_time" property="createTime"/>
+    <result column="rights_id" property="rightsId"/>
+    <result column="coupon_id" property="couponId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `rights_coupon_id`,`create_time`,`rights_id`,`coupon_id`
+  </sql>
+  <select id="list" resultMap="userRightsCouponMap">
+    select <include refid="Vo_Column_List"/> from user_rights_coupon order by rights_coupon_id desc
+  </select>
+  <select id="getByRightsCouponId" resultMap="userRightsCouponMap">
+    select <include refid="Vo_Column_List"/> from user_rights_coupon where rights_coupon_id = #{rightsCouponId}
+  </select>
+  <insert id="save">
+    insert into user_rights_coupon (`rights_id`,`coupon_id`)
+    values (#{userRightsCoupon.rightsId},#{userRightsCoupon.couponId});
+  </insert>
+  <update id="update">
+    update user_rights_coupon
+    <set>
+      <if test="userRightsCoupon.rightsId != null">
+        `rights_id` = #{userRightsCoupon.rightsId},
+      </if>
+      <if test="userRightsCoupon.couponId != null">
+        `coupon_id` = #{userRightsCoupon.couponId},
+      </if>
+    </set>
+    where rights_coupon_id = #{userRightsCoupon.rightsCouponId}
+  </update>
+  <delete id="deleteById">
+    delete from user_rights_coupon where rights_coupon_id = #{rightsCouponId}
+  </delete>
+  <select id="getCouponListByRightsId" resultType="java.lang.Long">
+    select `coupon_id` from user_rights_coupon where rights_id = #{rightsId}
+  </select>
+  <delete id="deleteByRightsId">
+    delete from user_rights_coupon where rights_id = #{rightsId}
+  </delete>
+
+  <select id="listRightsIdByCouponIds" resultType="java.lang.Long">
+    SELECT DISTINCT rights_id FROM user_rights_coupon WHERE coupon_id IN
+    <foreach collection="couponIds" item="couponId" open="(" close=")" separator=",">
+      #{couponId}
+    </foreach>
+  </select>
+
+  <delete id="deleteByCouponIds">
+    DELETE FROM user_rights_coupon
+    WHERE  coupon_id IN
+    <foreach collection="couponIds" item="couponId" open="(" close=")" separator=",">
+      #{couponId}
+    </foreach>
+  </delete>
+</mapper>

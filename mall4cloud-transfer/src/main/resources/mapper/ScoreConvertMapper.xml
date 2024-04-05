@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.ScoreConvertMapper">
+  <resultMap id="scoreConvertMap" type="com.mall4j.cloud.transfer.model.ScoreConvert">
+    <id column="convert_id" property="convertId" />
+    <result column="convert_title" property="convertTitle"/>
+    <result column="convert_score" property="convertScore"/>
+    <result column="convert_url" property="convertUrl"/>
+    <result column="max_amount" property="maxAmount"/>
+    <result column="stocks" property="stocks"/>
+    <result column="person_max_amount" property="personMaxAmount"/>
+    <result column="convert_type" property="convertType"/>
+    <result column="type" property="type"/>
+    <result column="convert_status" property="convertStatus"/>
+    <result column="sort" property="sort"/>
+    <result column="coupon_id" property="couponId"/>
+    <result column="is_all_shop" property="isAllShop"/>
+    <result column="is_all_convert_shop" property="isAllConvertShop"/>
+    <result column="is_all_coupon_shop" property="isAllCouponShop"/>
+    <result column="description" property="description"/>
+    <result column="commodity_name" property="commodityName"/>
+    <result column="commodity_img_url" property="commodityImgUrl"/>
+    <result column="delivery_type" property="deliveryType"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="create_id" property="createId"/>
+    <result column="create_name" property="createName"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_id" property="updateId"/>
+    <result column="update_name" property="updateName"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del" property="del"/>
+    <result column="version" property="version"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `convert_id`,`convert_title`,`convert_score`,`convert_url`,`max_amount`,`stocks`,`person_max_amount`,`convert_type`,`type`,`convert_status`,`sort`,`coupon_id`,`is_all_shop`,`is_all_convert_shop`,`is_all_coupon_shop`,`description`,`commodity_name`,`commodity_img_url`,`delivery_type`,`start_time`,`end_time`,`create_id`,`create_name`,`create_time`,`update_id`,`update_name`,`update_time`,`del`,`version`
+  </sql>
+  <select id="list" resultMap="scoreConvertMap">
+    select <include refid="Vo_Column_List"/> from score_convert order by convert_id desc
+  </select>
+  <select id="getByConvertId" resultMap="scoreConvertMap">
+    select <include refid="Vo_Column_List"/> from score_convert where convert_id = #{convertId}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="convertId">
+    insert into score_convert (`convert_title`,`convert_score`,`convert_url`,`max_amount`,`stocks`,`person_max_amount`,`convert_type`,`type`,`convert_status`,`sort`,`coupon_id`,`is_all_shop`,`is_all_convert_shop`,`is_all_coupon_shop`,`description`,`commodity_name`,`commodity_img_url`,`delivery_type`,`start_time`,`end_time`,`create_id`,`create_name`,`update_id`,`update_name`,`del`,`version`)
+    values (#{scoreConvert.convertTitle},#{scoreConvert.convertScore},#{scoreConvert.convertUrl},#{scoreConvert.maxAmount},#{scoreConvert.stocks},#{scoreConvert.personMaxAmount},#{scoreConvert.convertType},#{scoreConvert.type},#{scoreConvert.convertStatus},#{scoreConvert.sort},#{scoreConvert.couponId},#{scoreConvert.isAllShop},#{scoreConvert.isAllConvertShop},#{scoreConvert.isAllCouponShop},#{scoreConvert.description},#{scoreConvert.commodityName},#{scoreConvert.commodityImgUrl},#{scoreConvert.deliveryType},#{scoreConvert.startTime},#{scoreConvert.endTime},#{scoreConvert.createId},#{scoreConvert.createName},#{scoreConvert.updateId},#{scoreConvert.updateName},#{scoreConvert.del},#{scoreConvert.version});
+  </insert>
+  <update id="update">
+    update score_convert
+    <set>
+      <if test="scoreConvert.convertTitle != null">
+        `convert_title` = #{scoreConvert.convertTitle},
+      </if>
+      <if test="scoreConvert.convertScore != null">
+        `convert_score` = #{scoreConvert.convertScore},
+      </if>
+      <if test="scoreConvert.convertUrl != null">
+        `convert_url` = #{scoreConvert.convertUrl},
+      </if>
+      <if test="scoreConvert.maxAmount != null">
+        `max_amount` = #{scoreConvert.maxAmount},
+      </if>
+      <if test="scoreConvert.stocks != null">
+        `stocks` = #{scoreConvert.stocks},
+      </if>
+      <if test="scoreConvert.personMaxAmount != null">
+        `person_max_amount` = #{scoreConvert.personMaxAmount},
+      </if>
+      <if test="scoreConvert.convertType != null">
+        `convert_type` = #{scoreConvert.convertType},
+      </if>
+      <if test="scoreConvert.type != null">
+        `type` = #{scoreConvert.type},
+      </if>
+      <if test="scoreConvert.convertStatus != null">
+        `convert_status` = #{scoreConvert.convertStatus},
+      </if>
+      <if test="scoreConvert.sort != null">
+        `sort` = #{scoreConvert.sort},
+      </if>
+      <if test="scoreConvert.couponId != null">
+        `coupon_id` = #{scoreConvert.couponId},
+      </if>
+      <if test="scoreConvert.isAllShop != null">
+        `is_all_shop` = #{scoreConvert.isAllShop},
+      </if>
+      <if test="scoreConvert.isAllConvertShop != null">
+        `is_all_convert_shop` = #{scoreConvert.isAllConvertShop},
+      </if>
+      <if test="scoreConvert.isAllCouponShop != null">
+        `is_all_coupon_shop` = #{scoreConvert.isAllCouponShop},
+      </if>
+      <if test="scoreConvert.description != null">
+        `description` = #{scoreConvert.description},
+      </if>
+      <if test="scoreConvert.commodityName != null">
+        `commodity_name` = #{scoreConvert.commodityName},
+      </if>
+      <if test="scoreConvert.commodityImgUrl != null">
+        `commodity_img_url` = #{scoreConvert.commodityImgUrl},
+      </if>
+      <if test="scoreConvert.deliveryType != null">
+        `delivery_type` = #{scoreConvert.deliveryType},
+      </if>
+      <if test="scoreConvert.startTime != null">
+        `start_time` = #{scoreConvert.startTime},
+      </if>
+      <if test="scoreConvert.endTime != null">
+        `end_time` = #{scoreConvert.endTime},
+      </if>
+      <if test="scoreConvert.createId != null">
+        `create_id` = #{scoreConvert.createId},
+      </if>
+      <if test="scoreConvert.createName != null">
+        `create_name` = #{scoreConvert.createName},
+      </if>
+      <if test="scoreConvert.updateId != null">
+        `update_id` = #{scoreConvert.updateId},
+      </if>
+      <if test="scoreConvert.updateName != null">
+        `update_name` = #{scoreConvert.updateName},
+      </if>
+      <if test="scoreConvert.del != null">
+        `del` = #{scoreConvert.del},
+      </if>
+      <if test="scoreConvert.version != null">
+        `version` = #{scoreConvert.version},
+      </if>
+    </set>
+    where convert_id = #{scoreConvert.convertId}
+  </update>
+  <delete id="deleteById">
+    delete from score_convert where convert_id = #{convertId}
+  </delete>
+
+</mapper>

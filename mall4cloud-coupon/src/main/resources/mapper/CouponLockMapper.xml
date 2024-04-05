@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.CouponLockMapper">
+    <resultMap id="couponLockMap" type="com.mall4j.cloud.coupon.model.CouponLock">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="coupon_id" property="couponId"/>
+        <result column="coupon_user_id" property="couponUserId"/>
+        <result column="user_id" property="userId"/>
+        <result column="order_ids" property="orderIds"/>
+        <result column="amount" property="amount"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`,
+        `create_time`,
+        `update_time`,
+        `coupon_id`,
+        `coupon_user_id`,
+        `user_id`,
+        `order_ids`,
+        `amount`,
+        `status`
+    </sql>
+    <select id="list" resultMap="couponLockMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from coupon_lock
+        order by id desc
+    </select>
+    <select id="getById" resultMap="couponLockMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from coupon_lock
+        where id = #{id}
+    </select>
+    <insert id="save">
+        insert into coupon_lock (`coupon_id`, `coupon_user_id`, `user_id`, `order_ids`, `amount`, `status`)
+        values (#{couponLock.couponId}, #{couponLock.couponUserId}, #{couponLock.userId}, #{couponLock.orderIds},
+                #{couponLock.amount}, #{couponLock.status});
+    </insert>
+    <update id="update">
+        update coupon_lock
+        <set>
+            <if test="couponLock.couponId != null">
+                `coupon_id` = #{couponLock.couponId},
+            </if>
+            <if test="couponLock.couponUserId != null">
+                `coupon_user_id` = #{couponLock.couponUserId},
+            </if>
+            <if test="couponLock.userId != null">
+                `user_id` = #{couponLock.userId},
+            </if>
+            <if test="couponLock.orderIds != null">
+                `order_ids` = #{couponLock.orderIds},
+            </if>
+            <if test="couponLock.amount != null">
+                `amount` = #{couponLock.amount},
+            </if>
+            <if test="couponLock.status != null">
+                `status` = #{couponLock.status},
+            </if>
+        </set>
+        where id = #{couponLock.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from coupon_lock
+        where id = #{id}
+    </delete>
+    <insert id="saveBatch">
+        insert into coupon_lock (`coupon_id`, `coupon_user_id`, `user_id`, `order_ids`, `amount`, `status`)
+        values
+        <foreach collection="couponLocks" item="couponLock" separator=",">
+            (#{couponLock.couponId}, #{couponLock.couponUserId}, #{couponLock.userId}, #{couponLock.orderIds},
+            #{couponLock.amount}, #{couponLock.status})
+        </foreach>
+    </insert>
+    <select id="listCouponUserIdsByOrderId" resultType="java.lang.Long">
+        SELECT coupon_user_id
+        FROM coupon_lock
+        WHERE FIND_IN_SET(#{orderId}, order_ids)
+          and status = 0
+    </select>
+    <update id="unLockByIds">
+        update coupon_lock
+        set status = -1 where coupon_user_id in
+        <foreach collection="couponUserIds" item="couponUserId" separator="," open="(" close=")">
+            #{couponUserId}
+        </foreach>
+        and status = 0
+    </update>
+
+    <update id="markerCouponUse">
+        update coupon_lock
+        set status = 1 where
+        <foreach collection="orderIds" item="orderId" separator=" OR ">
+            FIND_IN_SET(#{orderId}, order_ids)
+        </foreach>
+    </update>
+
+    <select id="getUserCouponIdByOrderId" resultType="java.lang.Long">
+        SELECT cl.coupon_user_id
+        FROM coupon_lock cl
+        JOIN `coupon_user` cu ON cu.coupon_user_id = cl.coupon_user_id
+        JOIN `coupon` c ON c.coupon_id = cu.coupon_id
+        WHERE c.shop_id != 0 AND order_ids = #{orderId}
+    </select>
+
+    <select id="getUnConfirmAndLockCoupon" resultMap="couponLockMap">
+        SELECT coupon_user_id
+        FROM coupon_lock
+        WHERE `status` != -1 and coupon_user_id IN
+        <foreach collection="couponUserIds" item="couponUserId" open="(" close=")" separator=",">
+            #{couponUserId}
+        </foreach>
+    </select>
+</mapper>

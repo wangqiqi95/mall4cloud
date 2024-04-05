@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>mall4cloud</artifactId>
+        <groupId>com.mall4j.cloud</groupId>
+        <version>0.0.1</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>mall4cloud-api</artifactId>
+    <packaging>pom</packaging>
+
+    <description>mall4cloud 内网接口</description>
+    <modules>
+        <module>mall4cloud-api-auth</module>
+        <module>mall4cloud-api-biz</module>
+        <module>mall4cloud-api-rbac</module>
+        <module>mall4cloud-api-leaf</module>
+        <module>mall4cloud-api-product</module>
+        <module>mall4cloud-api-multishop</module>
+        <module>mall4cloud-api-delivery</module>
+        <module>mall4cloud-api-user</module>
+        <module>mall4cloud-api-coupon</module>
+        <module>mall4cloud-api-discount</module>
+        <module>mall4cloud-api-order</module>
+        <module>mall4cloud-api-search</module>
+        <module>mall4cloud-api-platform</module>
+        <module>mall4cloud-api-group</module>
+        <module>mall4cloud-api-seckill</module>
+        <module>mall4cloud-api-flow</module>
+        <module>mall4cloud-api-distribution</module>
+        <module>mall4cloud-api-docking</module>
+        <module>mall4cloud-api-openapi</module>
+        <module>mall4cloud-api-payment</module>
+        <module>mall4cloud-api-crm</module>
+    </modules>
+
+</project>

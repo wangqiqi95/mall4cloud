@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionSubjectStoreMapper">
+  <resultMap id="distributionSubjectStoreMap" type="com.mall4j.cloud.distribution.model.DistributionSubjectStore">
+    <id column="id" property="id" />
+    <result column="subject_id" property="subjectId"/>
+    <result column="store_id" property="storeId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`subject_id`,`store_id`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionSubjectStoreMap">
+    select <include refid="Vo_Column_List"/> from distribution_subject_store order by id desc
+  </select>
+  <select id="getById" resultMap="distributionSubjectStoreMap">
+    select <include refid="Vo_Column_List"/> from distribution_subject_store where id = #{id}
+  </select>
+  <select id="listBySubjectId" resultMap="distributionSubjectStoreMap">
+    select <include refid="Vo_Column_List"/> from distribution_subject_store where subject_id = #{subjectId}
+  </select>
+  <select id="listByStoreId" resultMap="distributionSubjectStoreMap">
+    select <include refid="Vo_Column_List"/> from distribution_subject_store where store_id = #{storeId}
+  </select>
+    <select id="countBySpecialSubjectId" resultType="java.lang.Integer">
+      select count(id) from distribution_subject_store where subject_id = #{subjectId}
+    </select>
+    <select id="listInStoreIds" resultType="com.mall4j.cloud.distribution.model.DistributionSubjectStore">
+      select <include refid="Vo_Column_List"/> from distribution_subject_store where store_id in
+      <foreach collection="storeIds" item="storeId" open="(" close=")" separator=",">
+        #{storeId}
+      </foreach>
+    </select>
+    <insert id="save">
+    insert into distribution_subject_store (`subject_id`,`store_id`)
+    values (#{distributionSubjectStore.subjectId},#{distributionSubjectStore.storeId});
+  </insert>
+  <update id="update">
+    update distribution_subject_store
+    <set>
+      <if test="distributionSubjectStore.subjectId != null">
+        `subject_id` = #{distributionSubjectStore.subjectId},
+      </if>
+      <if test="distributionSubjectStore.storeId != null">
+        `store_id` = #{distributionSubjectStore.storeId},
+      </if>
+    </set>
+    where id = #{distributionSubjectStore.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_subject_store where id = #{id}
+  </delete>
+
+    <delete id="deleteBySubjectIdNotInStoreIds">
+      delete from distribution_subject_store where subject_id = #{subjectId}
+      and store_id not in
+      <foreach collection="storeIds" item="storeId" open="(" close=")" separator=",">
+        #{storeId}
+      </foreach>
+    </delete>
+  <delete id="deleteBySubjectId">
+    delete from distribution_subject_store where subject_id = #{subjectId}
+  </delete>
+
+</mapper>

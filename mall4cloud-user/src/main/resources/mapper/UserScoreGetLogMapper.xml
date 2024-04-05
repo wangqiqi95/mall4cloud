@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserScoreGetLogMapper">
+    <resultMap id="userScoreGetLogMap" type="com.mall4j.cloud.user.model.UserScoreGetLog">
+        <id column="user_score_get_log_id" property="userScoreGetLogId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="user_id" property="userId"/>
+        <result column="usable_score" property="usableScore"/>
+        <result column="biz_id" property="bizId"/>
+        <result column="expire_time" property="expireTime"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `user_score_get_log_id`,
+        `create_time`,
+        `update_time`,
+        `user_id`,
+        `usable_score`,
+        `biz_id`,
+        `expire_time`,
+        `status`
+    </sql>
+    <select id="list" resultMap="userScoreGetLogMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_score_get_log
+        order by user_score_get_log_id desc
+    </select>
+    <select id="getByUserScoreGetLogId" resultMap="userScoreGetLogMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_score_get_log
+        where user_score_get_log_id = #{userScoreGetLogId}
+    </select>
+    <insert id="save" useGeneratedKeys="true" keyProperty="userScoreGetLogId">
+        insert into user_score_get_log (`user_id`, `usable_score`, `biz_id`, `expire_time`, `status`)
+        values (#{userScoreGetLog.userId}, #{userScoreGetLog.usableScore}, #{userScoreGetLog.bizId},
+                #{userScoreGetLog.expireTime}, #{userScoreGetLog.status});
+    </insert>
+    <update id="update">
+        update user_score_get_log
+        <set>
+            <if test="userScoreGetLog.userId != null">
+                `user_id` = #{userScoreGetLog.userId},
+            </if>
+            <if test="userScoreGetLog.usableScore != null">
+                `usable_score` = #{userScoreGetLog.usableScore},
+            </if>
+            <if test="userScoreGetLog.bizId != null">
+                `biz_id` = #{userScoreGetLog.bizId},
+            </if>
+            <if test="userScoreGetLog.expireTime != null">
+                `expire_time` = #{userScoreGetLog.expireTime},
+            </if>
+            <if test="userScoreGetLog.status != null">
+                `status` = #{userScoreGetLog.status},
+            </if>
+        </set>
+        where user_score_get_log_id = #{userScoreGetLog.userScoreGetLogId}
+    </update>
+    <update id="updateBatchById">
+        <foreach collection="userScoreGetLogList" item="userScoreGetLog">
+            update user_score_get_log
+            <set>
+                <if test="userScoreGetLog.updateTime != null">
+                    `update_time` = #{userScoreGetLog.updateTime},
+                </if>
+                <if test="userScoreGetLog.userId != null">
+                    `user_id` = #{userScoreGetLog.userId},
+                </if>
+                <if test="userScoreGetLog.usableScore != null">
+                    `usable_score` = #{userScoreGetLog.usableScore},
+                </if>
+                <if test="userScoreGetLog.bizId != null">
+                    `biz_id` = #{userScoreGetLog.bizId},
+                </if>
+                <if test="userScoreGetLog.expireTime != null">
+                    `expire_time` = #{userScoreGetLog.expireTime},
+                </if>
+                <if test="userScoreGetLog.status != null">
+                    `status` = #{userScoreGetLog.status},
+                </if>
+            </set>
+            where user_score_get_log_id = #{userScoreGetLog.userScoreGetLogId};
+        </foreach>
+    </update>
+    <delete id="deleteById">
+        delete
+        from user_score_get_log
+        where user_score_get_log_id = #{userScoreGetLogId}
+    </delete>
+
+    <insert id="saveBatch">
+        insert into user_score_get_log (`user_id`,`usable_score`,`biz_id`,`expire_time`,`status`)
+        values
+        <foreach collection="userScoreGetLogs" item="userScoreGetLog" separator=",">
+            (#{userScoreGetLog.userId},#{userScoreGetLog.usableScore},#{userScoreGetLog.bizId},#{userScoreGetLog.expireTime},#{userScoreGetLog.status})
+        </foreach>
+    </insert>
+    <select id="getLogByUserId" resultType="com.mall4j.cloud.user.model.UserScoreGetLog">
+        select * from user_score_get_log where user_id = #{userId} and `status` = -1
+        order by expire_time desc LIMIT 1
+    </select>
+
+    <select id="listByUserIdAndExpireTimeAndStatus" resultType="com.mall4j.cloud.user.model.UserScoreGetLog">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_score_get_log
+        where user_id = #{userId}
+        and expire_time &lt; #{expireTime}
+        and status = #{status}
+    </select>
+
+    <select id="sumUsableScoreByPage" resultType="java.lang.Long">
+        select sum(usgl.usable_score)
+        from (select usable_score
+              from user_score_get_log
+              where user_id = #{userId}
+                and status = #{status}
+              order by create_time
+              limit #{current} , #{size}) AS usgl;
+    </select>
+
+    <select id="listByCreateTime" resultType="com.mall4j.cloud.user.model.UserScoreGetLog">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_score_get_log
+        where user_id = #{userId}
+        and status = #{status}
+        order by create_time
+    </select>
+
+    <select id="listByCreateTimeAndPage" resultType="com.mall4j.cloud.user.model.UserScoreGetLog">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_score_get_log
+        where user_id = #{userId}
+        and status = #{status}
+        order by create_time
+        limit #{current} , #{size}
+    </select>
+
+    <update id="batchUpdateUserScoreGetStatus">
+        UPDATE user_score_get_log
+        SET `status` = #{status}
+        WHERE user_score_get_log_id IN
+        <foreach collection="userScoreGetIds" item="userScoreGetId" open="(" close=")" separator=",">
+            #{userScoreGetId}
+        </foreach>
+    </update>
+
+    <update id="updateExpireScoreDetail">
+        update user_score_get_log set `status` = -1
+        WHERE create_time &lt; #{expireTime} AND `status` = 0
+    </update>
+
+    <select id="batchListByCreateTime" resultMap="userScoreGetLogMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_score_get_log
+        where status = #{status}
+        and user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+        order by create_time
+    </select>
+    <select id="listExpireScoreDetail" resultType="com.mall4j.cloud.user.model.UserScoreGetLog"
+            parameterType="cn.hutool.core.date.DateTime">
+        SELECT <include refid="Vo_Column_List"/> FROM user_score_get_log
+        WHERE create_time &lt; #{expireTime} AND `status` = 1  and usable_score > 0
+    </select>
+    <select id="getLogByBizId" resultType="com.mall4j.cloud.user.model.UserScoreGetLog">
+        select *
+        from user_score_get_log
+        where biz_id = #{bizId}
+    </select>
+</mapper>

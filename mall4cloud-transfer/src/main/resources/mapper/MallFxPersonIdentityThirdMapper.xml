@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.MallFxPersonIdentityThirdMapper">
+  <resultMap id="mallFxPersonIdentityThirdMap" type="com.mall4j.cloud.transfer.model.MallFxPersonIdentityThird">
+    <id column="Id" property="id" />
+    <result column="CopId" property="copid"/>
+    <result column="BrandId" property="brandid"/>
+    <result column="ShopId" property="shopid"/>
+    <result column="FxId" property="fxid"/>
+    <result column="FxType" property="fxtype"/>
+    <result column="YiShiRequestId" property="yishirequestid"/>
+    <result column="TaxAuditStatus" property="taxauditstatus"/>
+    <result column="IdentityAuditStatus" property="identityauditstatus"/>
+    <result column="IdentityAuditFailure" property="identityauditfailure"/>
+    <result column="LastTradeType" property="lasttradetype"/>
+    <result column="AuditFailureRemark" property="auditfailureremark"/>
+    <result column="RealName" property="realname"/>
+    <result column="CardId" property="cardid"/>
+    <result column="CardPositive" property="cardpositive"/>
+    <result column="CardReverse" property="cardreverse"/>
+    <result column="ProvinceNmae" property="provincenmae"/>
+    <result column="ProvinceCode" property="provincecode"/>
+    <result column="CityName" property="cityname"/>
+    <result column="CityCode" property="citycode"/>
+    <result column="CountyName" property="countyname"/>
+    <result column="CountyCode" property="countycode"/>
+    <result column="Address" property="address"/>
+    <result column="BankCardNo" property="bankcardno"/>
+    <result column="CardholderName" property="cardholdername"/>
+    <result column="LastModifiedDate" property="lastmodifieddate"/>
+    <result column="CreateUser" property="createuser"/>
+    <result column="CreateDate" property="createdate"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `Id`,`CopId`,`BrandId`,`ShopId`,`FxId`,`FxType`,`YiShiRequestId`,`TaxAuditStatus`,`IdentityAuditStatus`,`IdentityAuditFailure`,`LastTradeType`,`AuditFailureRemark`,`RealName`,`CardId`,`CardPositive`,`CardReverse`,`ProvinceNmae`,`ProvinceCode`,`CityName`,`CityCode`,`CountyName`,`CountyCode`,`Address`,`BankCardNo`,`CardholderName`,`LastModifiedDate`,`CreateUser`,`CreateDate`
+  </sql>
+  <select id="list" resultMap="mallFxPersonIdentityThirdMap">
+    select <include refid="Vo_Column_List"/> from mall_fx_person_identity_third order by Id desc
+  </select>
+  <select id="getById" resultMap="mallFxPersonIdentityThirdMap">
+    select <include refid="Vo_Column_List"/> from mall_fx_person_identity_third where Id = #{id}
+  </select>
+  <insert id="save">
+    insert into mall_fx_person_identity_third (`CopId`,`BrandId`,`ShopId`,`FxId`,`FxType`,`YiShiRequestId`,`TaxAuditStatus`,`IdentityAuditStatus`,`IdentityAuditFailure`,`LastTradeType`,`AuditFailureRemark`,`RealName`,`CardId`,`CardPositive`,`CardReverse`,`ProvinceNmae`,`ProvinceCode`,`CityName`,`CityCode`,`CountyName`,`CountyCode`,`Address`,`BankCardNo`,`CardholderName`,`LastModifiedDate`,`CreateUser`,`CreateDate`)
+    values (#{mallFxPersonIdentityThird.copid},#{mallFxPersonIdentityThird.brandid},#{mallFxPersonIdentityThird.shopid},#{mallFxPersonIdentityThird.fxid},#{mallFxPersonIdentityThird.fxtype},#{mallFxPersonIdentityThird.yishirequestid},#{mallFxPersonIdentityThird.taxauditstatus},#{mallFxPersonIdentityThird.identityauditstatus},#{mallFxPersonIdentityThird.identityauditfailure},#{mallFxPersonIdentityThird.lasttradetype},#{mallFxPersonIdentityThird.auditfailureremark},#{mallFxPersonIdentityThird.realname},#{mallFxPersonIdentityThird.cardid},#{mallFxPersonIdentityThird.cardpositive},#{mallFxPersonIdentityThird.cardreverse},#{mallFxPersonIdentityThird.provincenmae},#{mallFxPersonIdentityThird.provincecode},#{mallFxPersonIdentityThird.cityname},#{mallFxPersonIdentityThird.citycode},#{mallFxPersonIdentityThird.countyname},#{mallFxPersonIdentityThird.countycode},#{mallFxPersonIdentityThird.address},#{mallFxPersonIdentityThird.bankcardno},#{mallFxPersonIdentityThird.cardholdername},#{mallFxPersonIdentityThird.lastmodifieddate},#{mallFxPersonIdentityThird.createuser},#{mallFxPersonIdentityThird.createdate});
+  </insert>
+  <update id="update">
+    update mall_fx_person_identity_third
+    <set>
+      <if test="mallFxPersonIdentityThird.copid != null">
+        `CopId` = #{mallFxPersonIdentityThird.copid},
+      </if>
+      <if test="mallFxPersonIdentityThird.brandid != null">
+        `BrandId` = #{mallFxPersonIdentityThird.brandid},
+      </if>
+      <if test="mallFxPersonIdentityThird.shopid != null">
+        `ShopId` = #{mallFxPersonIdentityThird.shopid},
+      </if>
+      <if test="mallFxPersonIdentityThird.fxid != null">
+        `FxId` = #{mallFxPersonIdentityThird.fxid},
+      </if>
+      <if test="mallFxPersonIdentityThird.fxtype != null">
+        `FxType` = #{mallFxPersonIdentityThird.fxtype},
+      </if>
+      <if test="mallFxPersonIdentityThird.yishirequestid != null">
+        `YiShiRequestId` = #{mallFxPersonIdentityThird.yishirequestid},
+      </if>
+      <if test="mallFxPersonIdentityThird.taxauditstatus != null">
+        `TaxAuditStatus` = #{mallFxPersonIdentityThird.taxauditstatus},
+      </if>
+      <if test="mallFxPersonIdentityThird.identityauditstatus != null">
+        `IdentityAuditStatus` = #{mallFxPersonIdentityThird.identityauditstatus},
+      </if>
+      <if test="mallFxPersonIdentityThird.identityauditfailure != null">
+        `IdentityAuditFailure` = #{mallFxPersonIdentityThird.identityauditfailure},
+      </if>
+      <if test="mallFxPersonIdentityThird.lasttradetype != null">
+        `LastTradeType` = #{mallFxPersonIdentityThird.lasttradetype},
+      </if>
+      <if test="mallFxPersonIdentityThird.auditfailureremark != null">
+        `AuditFailureRemark` = #{mallFxPersonIdentityThird.auditfailureremark},
+      </if>
+      <if test="mallFxPersonIdentityThird.realname != null">
+        `RealName` = #{mallFxPersonIdentityThird.realname},
+      </if>
+      <if test="mallFxPersonIdentityThird.cardid != null">
+        `CardId` = #{mallFxPersonIdentityThird.cardid},
+      </if>
+      <if test="mallFxPersonIdentityThird.cardpositive != null">
+        `CardPositive` = #{mallFxPersonIdentityThird.cardpositive},
+      </if>
+      <if test="mallFxPersonIdentityThird.cardreverse != null">
+        `CardReverse` = #{mallFxPersonIdentityThird.cardreverse},
+      </if>
+      <if test="mallFxPersonIdentityThird.provincenmae != null">
+        `ProvinceNmae` = #{mallFxPersonIdentityThird.provincenmae},
+      </if>
+      <if test="mallFxPersonIdentityThird.provincecode != null">
+        `ProvinceCode` = #{mallFxPersonIdentityThird.provincecode},
+      </if>
+      <if test="mallFxPersonIdentityThird.cityname != null">
+        `CityName` = #{mallFxPersonIdentityThird.cityname},
+      </if>
+      <if test="mallFxPersonIdentityThird.citycode != null">
+        `CityCode` = #{mallFxPersonIdentityThird.citycode},
+      </if>
+      <if test="mallFxPersonIdentityThird.countyname != null">
+        `CountyName` = #{mallFxPersonIdentityThird.countyname},
+      </if>
+      <if test="mallFxPersonIdentityThird.countycode != null">
+        `CountyCode` = #{mallFxPersonIdentityThird.countycode},
+      </if>
+      <if test="mallFxPersonIdentityThird.address != null">
+        `Address` = #{mallFxPersonIdentityThird.address},
+      </if>
+      <if test="mallFxPersonIdentityThird.bankcardno != null">
+        `BankCardNo` = #{mallFxPersonIdentityThird.bankcardno},
+      </if>
+      <if test="mallFxPersonIdentityThird.cardholdername != null">
+        `CardholderName` = #{mallFxPersonIdentityThird.cardholdername},
+      </if>
+      <if test="mallFxPersonIdentityThird.lastmodifieddate != null">
+        `LastModifiedDate` = #{mallFxPersonIdentityThird.lastmodifieddate},
+      </if>
+      <if test="mallFxPersonIdentityThird.createuser != null">
+        `CreateUser` = #{mallFxPersonIdentityThird.createuser},
+      </if>
+      <if test="mallFxPersonIdentityThird.createdate != null">
+        `CreateDate` = #{mallFxPersonIdentityThird.createdate},
+      </if>
+    </set>
+    where Id = #{mallFxPersonIdentityThird.id}
+  </update>
+  <delete id="deleteById">
+    delete from mall_fx_person_identity_third where Id = #{id}
+  </delete>
+
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.QuestionnaireFormMapper">
+  <resultMap id="questionnaireFormMap" type="com.mall4j.cloud.group.model.QuestionnaireForm">
+    <id column="id" property="id" />
+    <result column="content" property="content"/>
+    <result column="form_names" property="formNames"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`content`,`form_names`
+  </sql>
+  <select id="list" resultMap="questionnaireFormMap">
+    select <include refid="Vo_Column_List"/> from questionnaire_form order by id desc
+  </select>
+  <select id="getById" resultMap="questionnaireFormMap">
+    select <include refid="Vo_Column_List"/> from questionnaire_form where id = #{id}
+  </select>
+  <insert id="save">
+    insert into questionnaire_form (`id`,`content`,`form_names`)
+    values (#{questionnaireForm.id},#{questionnaireForm.content},#{questionnaireForm.formNames});
+  </insert>
+  <update id="update">
+    update questionnaire_form
+    <set>
+      <if test="questionnaireForm.content != null">
+        `content` = #{questionnaireForm.content},
+      </if>
+      <if test="questionnaireForm.formNames != null">
+        `form_names` = #{questionnaireForm.formNames},
+      </if>
+    </set>
+    where id = #{questionnaireForm.id}
+  </update>
+  <delete id="deleteById">
+    delete from questionnaire_form where id = #{id}
+  </delete>
+
+</mapper>

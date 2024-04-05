@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.EtoGiftsMapper">
+  <resultMap id="etoGiftsMap" type="com.mall4j.cloud.transfer.model.EtoGifts">
+    <id column="id" property="id" />
+    <result column="title" property="title"/>
+    <result column="code" property="code"/>
+    <result column="cost" property="cost"/>
+    <result column="status" property="status"/>
+    <result column="sub_title" property="subTitle"/>
+    <result column="expiry_date" property="expiryDate"/>
+    <result column="receive_num" property="receiveNum"/>
+    <result column="revice" property="revice"/>
+    <result column="stock_type" property="stockType"/>
+    <result column="write_off_setting" property="writeOffSetting"/>
+    <result column="valid_date_type" property="validDateType"/>
+    <result column="type" property="type"/>
+    <result column="reserved_fields" property="reservedFields"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`title`,`code`,`cost`,`status`,`sub_title`,`expiry_date`,`receive_num`,`revice`,`stock_type`,`write_off_setting`,`valid_date_type`,`type`,`reserved_fields`
+  </sql>
+  <select id="list" resultMap="etoGiftsMap">
+    select <include refid="Vo_Column_List"/> from eto_gifts
+    where type in (1,2,3,4) order by id desc
+  </select>
+  <select id="getById" resultMap="etoGiftsMap">
+    select <include refid="Vo_Column_List"/> from eto_gifts where id = #{id}
+  </select>
+  <insert id="save">
+    insert into eto_gifts (`title`,`code`,`cost`,`status`,`sub_title`,`expiry_date`,`receive_num`,`revice`,`stock_type`,`write_off_setting`,`valid_date_type`,`type`,`reserved_fields`)
+    values (#{etoGifts.title},#{etoGifts.code},#{etoGifts.cost},#{etoGifts.status},#{etoGifts.subTitle},#{etoGifts.expiryDate},#{etoGifts.receiveNum},#{etoGifts.revice},#{etoGifts.stockType},#{etoGifts.writeOffSetting},#{etoGifts.validDateType},#{etoGifts.type},#{etoGifts.reservedFields});
+  </insert>
+  <update id="update">
+    update eto_gifts
+    <set>
+      <if test="etoGifts.title != null">
+        `title` = #{etoGifts.title},
+      </if>
+      <if test="etoGifts.code != null">
+        `code` = #{etoGifts.code},
+      </if>
+      <if test="etoGifts.cost != null">
+        `cost` = #{etoGifts.cost},
+      </if>
+      <if test="etoGifts.status != null">
+        `status` = #{etoGifts.status},
+      </if>
+      <if test="etoGifts.subTitle != null">
+        `sub_title` = #{etoGifts.subTitle},
+      </if>
+      <if test="etoGifts.expiryDate != null">
+        `expiry_date` = #{etoGifts.expiryDate},
+      </if>
+      <if test="etoGifts.receiveNum != null">
+        `receive_num` = #{etoGifts.receiveNum},
+      </if>
+      <if test="etoGifts.revice != null">
+        `revice` = #{etoGifts.revice},
+      </if>
+      <if test="etoGifts.stockType != null">
+        `stock_type` = #{etoGifts.stockType},
+      </if>
+      <if test="etoGifts.writeOffSetting != null">
+        `write_off_setting` = #{etoGifts.writeOffSetting},
+      </if>
+      <if test="etoGifts.validDateType != null">
+        `valid_date_type` = #{etoGifts.validDateType},
+      </if>
+      <if test="etoGifts.type != null">
+        `type` = #{etoGifts.type},
+      </if>
+      <if test="etoGifts.reservedFields != null">
+        `reserved_fields` = #{etoGifts.reservedFields},
+      </if>
+    </set>
+    where id = #{etoGifts.id}
+  </update>
+  <delete id="deleteById">
+    delete from eto_gifts where id = #{id}
+  </delete>
+
+</mapper>

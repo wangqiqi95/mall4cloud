@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.user.mapper.UserTagRelationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.user.model.UserTagRelation">
+        <id column="user_tag_relation_id" property="userTagRelationId" />
+        <result column="group_id" property="groupId" />
+        <result column="tag_id" property="tagId" />
+        <result column="vip_code" property="vipCode" />
+        <result column="group_tag_relation_id" property="groupTagRelationId" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        user_tag_relation_id, group_id, tag_id, vip_code, create_time
+    </sql>
+
+    <insert id="insertBatch">
+        insert into t_user_tag_relation (group_id,tag_id,vip_code,group_tag_relation_id,create_user) values
+        <foreach collection="relationList" item="relation" separator="," close=";">
+            (#{relation.groupId},#{relation.tagId},#{relation.vipCode},#{relation.groupTagRelationId},#{relation.createUser})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchForImport">
+        insert into t_user_tag_relation (group_id,tag_id,vip_code,group_tag_relation_id,create_user) values
+        <foreach collection="codeList" item="code" separator="," close=";">
+            (#{groupId},#{tagId},#{code},#{groupTagRelationId},#{createUser})
+        </foreach>
+    </insert>
+
+    <select id="getTheMarkingUser" resultType="com.mall4j.cloud.user.vo.MarkingUserPageVO">
+        SELECT
+        relation.user_tag_relation_id,
+        relation.group_id,
+        relation.tag_id,
+        relation.group_tag_relation_id,
+        `user`.user_id AS vipUserId,
+        `user`.service_store_id,
+        REPLACE(`user`.phone, SUBSTR(`user`.phone,4,4), '****')  AS vipPhone,
+        `user`.vipcode AS vipCode,
+        `user`.nick_name AS vipNickName,
+        `user`.staff_id,
+        cp.qi_wei_staff_id as staffCpUserId,
+        cp.qi_wei_user_id as vipCpUserId
+        FROM
+        t_user_tag_relation relation
+        inner JOIN `user` `user` ON relation.vip_code = `user`.vipcode
+        LEFT JOIN user_staff_cp_relation cp on cp.user_id = `user`.user_id and `user`.staff_id = cp.staff_id
+        WHERE relation.tag_id = #{param.tagId}  AND `user`.union_id is not null
+        <if test="param.vipPhone != null and param.vipPhone != ''">
+            and `user`.phone = #{param.vipPhone}
+        </if>
+        <if test="param.vipCode != null and param.vipCode != ''">
+            AND relation.vip_code = #{param.vipCode}
+        </if>
+        GROUP BY vipCode
+        ORDER BY
+        `user`.create_time DESC
+    </select>
+
+    <select id="staffGetVisibleUserTag" resultType="com.mall4j.cloud.user.vo.StaffGetVisibleUserTagVO">
+        SELECT
+            tag.tag_id,
+            tag.tag_name,
+            tgroup.tag_group_id AS groupId,
+            tgroup.group_name,
+            tgroup.single_state,
+            tgroup.auth_flag,
+            relation.group_tag_relation_id,
+            relation.user_tag_relation_id
+        FROM t_user_tag_relation relation
+        LEFT JOIN t_tag_group tgroup ON relation.group_id = tgroup.tag_group_id
+        LEFT JOIN t_tag tag ON tag.tag_id = relation.tag_id
+        WHERE tgroup.auth_flag LIKE '%2%'
+        AND tgroup.enable_state = 1
+        AND tag.enable_state = 1
+        AND relation.vip_code = #{param.vipCode}
+    </select>
+
+    <select id="selectVipCodeByTagId" resultType="java.lang.String">
+        select vip_code from t_user_tag_relation where tag_id = #{tagId}
+    </select>
+
+    <select id="staffGetUserIdByWeChatType" resultType="java.lang.Long">
+        SELECT u.user_id
+        FROM t_user_tag_relation AS r
+        LEFT JOIN `user` AS u ON r.vip_code = u.vipcode
+        WHERE u.`status` = 1
+        <if test="weChatType == 1">
+            AND EXISTS (
+                SELECT cp.user_id
+                FROM user_staff_cp_relation AS cp
+                WHERE cp.staff_id = #{staffId}
+                AND cp.`status` = 1
+                AND u.user_id = cp.user_id
+            )
+        </if>
+        <if test="weChatType == 0">
+            AND NOT EXISTS (
+                SELECT cp.user_id
+                FROM user_staff_cp_relation AS cp
+                WHERE cp.staff_id = #{staffId}
+                AND cp.`status` = 1
+                AND u.user_id = cp.user_id
+            )
+        </if>
+    </select>
+
+    <select id="selectTagByVipCode" resultType="com.mall4j.cloud.user.vo.UserTagListVO">
+        SELECT
+            relation.user_tag_relation_id,
+            tag.tag_id,
+            tag.tag_name,
+            grealation.group_tag_relation_id,
+            grealation.group_id
+        FROM
+            t_user_tag_relation relation
+                INNER JOIN t_tag tag ON relation.tag_id = tag.tag_id
+                INNER JOIN t_group_tag_relation grealation ON grealation.tag_id = relation.tag_id
+        WHERE
+            relation.vip_code = #{vipCode}
+    </select>
+
+    <select id="selectCountByTagId" resultType="java.lang.Integer">
+        select count(vip_code) from (
+            select vip_code
+            from t_user_tag_relation
+            where
+            tag_id in
+            <foreach collection="tagIds" item="tagId" open="(" close=")" separator=",">
+                #{tagId}
+            </foreach>
+            group by vip_code
+        )tab1
+    </select>
+    
+    <select id="selectListUserIdByTagIds" resultType="java.lang.Long">
+        select u.user_id
+        from t_user_tag_relation ur
+        left join `user` u on ur.vip_code = u.vipcode
+        where ur.tag_id IN
+            <foreach collection="tagIds" item="tagId" separator="," open="(" close=")">
+                #{tagId}
+            </foreach>
+        GROUP BY u.vipcode
+    </select>
+
+</mapper>

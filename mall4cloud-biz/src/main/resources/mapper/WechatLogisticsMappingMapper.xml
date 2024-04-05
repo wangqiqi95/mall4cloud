@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mall4j.cloud.biz.mapper.WechatLogisticsMappingMapper">
+
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.biz.model.WechatLogisticsMappingDO">
+        <id column="ID" property="id" jdbcType="BIGINT" javaType="Long"/>
+        <result column="DELIVERY_ID" property="deliveryId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="WX_DELIVERY_ID" property="wxDeliveryId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="WX_DELIVERY_NAME" property="wxDeliveryName" jdbcType="VARCHAR" javaType="String"/>
+        <result column="PHONE" property="phone" jdbcType="VARCHAR" javaType="String"/>
+        <result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" javaType="String"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="UPDATE_BY" property="updateBy" jdbcType="VARCHAR" javaType="String"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="IS_DELETED" property="isDeleted" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="WX_DELIVERY_COMPANY_ID" property="wxDeliveryCompanyId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="WX_DELIVERY_COMPANY_NAME" property="wxDeliveryCompanyName" jdbcType="VARCHAR" javaType="String"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        ID
+        ,DELIVERY_ID,WX_DELIVERY_ID,WX_DELIVERY_NAME,PHONE,CREATE_BY,CREATE_TIME,UPDATE_BY,UPDATE_TIME,WX_DELIVERY_COMPANY_ID,WX_DELIVERY_COMPANY_NAME,IS_DELETED
+    </sql>
+
+
+    <!--insert:wechat_logistics_mapping-->
+    <insert id="insert">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO wechat_logistics_mapping(
+        ID
+        ,DELIVERY_ID
+        ,WX_DELIVERY_ID
+        ,WX_DELIVERY_NAME
+        ,PHONE
+        ,CREATE_BY
+        ,UPDATE_BY
+        ,WX_DELIVERY_COMPANY_ID
+        ,WX_DELIVERY_COMPANY_NAME
+        )VALUES(
+        #{id,jdbcType=BIGINT}
+        , #{deliveryId,jdbcType=VARCHAR}
+        , #{wxDeliveryId,jdbcType=VARCHAR}
+        , #{wxDeliveryName,jdbcType=VARCHAR}
+        , #{phone,jdbcType=VARCHAR}
+        , #{createBy,jdbcType=VARCHAR}
+        , #{updateBy,jdbcType=VARCHAR}
+        , #{wxDeliveryCompanyId,jdbcType=VARCHAR}
+        , #{wxDeliveryCompanyName,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!--update table:wechat_logistics_mapping-->
+    <update id="update">
+        UPDATE /*MS-WECHAT-LOGISTICS-MAPPING-UPDATE*/ wechat_logistics_mapping
+        SET
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+        <if test="deliveryId != null">
+            ,DELIVERY_ID = #{deliveryId,jdbcType=VARCHAR}
+        </if>
+        <if test="wxDeliveryId != null">
+            ,WX_DELIVERY_ID = #{wxDeliveryId,jdbcType=VARCHAR}
+        </if>
+        <if test="wxDeliveryName != null">
+            ,WX_DELIVERY_NAME = #{wxDeliveryName,jdbcType=VARCHAR}
+        </if>
+        <if test="phone != null">
+            ,PHONE = #{phone,jdbcType=VARCHAR}
+        </if>
+        <if test="createBy != null">
+            ,CREATE_BY = #{createBy,jdbcType=VARCHAR}
+        </if>
+        <if test="createTime != null">
+            ,CREATE_TIME = #{createTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="updateBy != null">
+            ,UPDATE_BY = #{updateBy,jdbcType=VARCHAR}
+        </if>
+        <if test="wxDeliveryCompanyId != null">
+            ,WX_DELIVERY_COMPANY_ID = #{wxDeliveryCompanyId,jdbcType=VARCHAR}
+        </if>
+        <if test="wxDeliveryCompanyName != null">
+            ,WX_DELIVERY_COMPANY_NAME = #{wxDeliveryCompanyName,jdbcType=VARCHAR}
+        </if>
+        <if test="isDeleted != null">
+            ,IS_DELETED = #{isDeleted,jdbcType=INTEGER}
+        </if>
+        WHERE
+        ID = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!--delete:wechat_logistics_mapping-->
+    <delete id="deleteByPrimary">
+        DELETE /*MS-WECHAT-LOGISTICS-MAPPING-DELETEBYPRIMARY*/
+        FROM wechat_logistics_mapping
+        WHERE ID = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <!--get:wechat_logistics_mapping-->
+    <select id="getByPrimary" resultMap="BaseResultMap">
+        SELECT /*MS-WECHAT-LOGISTICS-MAPPING-GETBYPRIMARY*/
+        <include refid="Base_Column_List"/>
+        FROM wechat_logistics_mapping
+        WHERE
+        ID = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        SELECT /*MS-WECHAT-LOGISTICS-MAPPING-GETBYPRIMARY*/
+        <include refid="Base_Column_List"/>
+        FROM wechat_logistics_mapping
+        where IS_DELETED = 0
+    </select>
+    <select id="getByDeliveryId" resultType="com.mall4j.cloud.biz.vo.LiveLogisticsVO">
+        select phone, wx_delivery_id as logisticsCode, wx_delivery_name as logisticsName,
+               wx_delivery_company_id as deliveryCompanyId,wx_delivery_company_name as deliveryCompanyName
+        from wechat_logistics_mapping
+        where delivery_id = #{deliveryId}
+        and IS_DELETED = 0
+        limit 1
+    </select>
+    <select id="getByWechatDeliveryId" resultMap="BaseResultMap">
+        SELECT /*MS-WECHAT-LOGISTICS-MAPPING-GETBYPRIMARY*/
+        <include refid="Base_Column_List"/>
+        FROM wechat_logistics_mapping
+        where IS_DELETED = 0
+        and wx_delivery_id = #{wechatDeliveryId}
+    </select>
+
+    <select id="getDefualtWechatDelivery" resultMap="BaseResultMap">
+        SELECT /*MS-WECHAT-LOGISTICS-MAPPING-GETBYPRIMARY*/
+        <include refid="Base_Column_List"/>
+        FROM wechat_logistics_mapping
+        where IS_DELETED = 0
+        limit 1
+    </select>
+</mapper>

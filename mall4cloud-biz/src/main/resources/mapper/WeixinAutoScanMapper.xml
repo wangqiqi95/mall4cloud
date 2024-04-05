@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinAutoScanMapper">
+  <resultMap id="weixinAutoScanMap" type="com.mall4j.cloud.biz.model.WeixinAutoScan">
+    <id column="id" property="id" />
+    <result column="name" property="name"/>
+    <result column="qrcode_id" property="qrcodeId"/>
+    <result column="app_id" property="appId"/>
+    <result column="type" property="type"/>
+    <result column="msg_type" property="msgType"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+    <result column="tags" property="tags"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`name`,`qrcode_id`,`app_id`,`type`,`msg_type`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`,`tags`
+  </sql>
+  <select id="list" resultMap="weixinAutoScanMap">
+    select <include refid="Vo_Column_List"/> from weixin_auto_scan order by id desc
+  </select>
+  <select id="getList" resultType="com.mall4j.cloud.biz.vo.WeixinAutoScanVO">
+    select *
+    from weixin_auto_scan
+    where del_flag=0
+    <if test="appId!=null and appId!=''">
+      AND app_id=#{appId}
+    </if>
+    <if test="name!=null and name!=''">
+      AND name LIKE CONCAT('%',#{name},'%')
+    </if>
+    <if test="type!=null">
+      AND type=#{type}
+    </if>
+    <if test="startDate!=null and endDate!=null">
+      AND create_time between #{startDate} and #{endDate}
+    </if>
+    order by create_time desc
+  </select>
+  <select id="getById" resultMap="weixinAutoScanMap">
+    select *
+    from weixin_auto_scan
+    where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_auto_scan (`id`,`name`,`qrcode_id`,`app_id`,`type`,`msg_type`,`create_by`,`create_time`,`del_flag`,`tags`)
+    values (#{weixinAutoScan.id},#{weixinAutoScan.name},#{weixinAutoScan.qrcodeId},#{weixinAutoScan.appId},#{weixinAutoScan.type},#{weixinAutoScan.msgType},#{weixinAutoScan.createBy},#{weixinAutoScan.createTime},#{weixinAutoScan.delFlag},#{weixinAutoScan.tags});
+  </insert>
+  <update id="update">
+    update weixin_auto_scan
+    <set>
+      <if test="weixinAutoScan.name != null">
+        `name` = #{weixinAutoScan.name},
+      </if>
+      <if test="weixinAutoScan.qrcodeId != null">
+        `qrcode_id` = #{weixinAutoScan.qrcodeId},
+      </if>
+      <if test="weixinAutoScan.appId != null">
+        `app_id` = #{weixinAutoScan.appId},
+      </if>
+      <if test="weixinAutoScan.type != null">
+        `type` = #{weixinAutoScan.type},
+      </if>
+      <if test="weixinAutoScan.msgType != null">
+        `msg_type` = #{weixinAutoScan.msgType},
+      </if>
+      <if test="weixinAutoScan.updateBy != null">
+        `update_by` = #{weixinAutoScan.updateBy},
+      </if>
+      <if test="weixinAutoScan.updateTime != null">
+        `update_time` = #{weixinAutoScan.updateTime},
+      </if>
+      <if test="weixinAutoScan.delFlag != null">
+        `del_flag` = #{weixinAutoScan.delFlag},
+      </if>
+      <if test="weixinAutoScan.tags != null">
+        `tags` = #{weixinAutoScan.tags},
+      </if>
+    </set>
+    where id = #{weixinAutoScan.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_auto_scan where id = #{id}
+  </delete>
+
+  <select id="getReplyListByQrcode" resultType="com.mall4j.cloud.biz.vo.WeixinAutoScanVO">
+    select *
+    from weixin_auto_scan
+    where del_flag=0
+    and qrcode_id=#{qrcodeId}
+    and app_id=#{appId}
+    order by create_time desc
+  </select>
+
+</mapper>

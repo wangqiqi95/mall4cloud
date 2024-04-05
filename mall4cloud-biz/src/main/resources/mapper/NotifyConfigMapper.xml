@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.NotifyConfigMapper">
+  <resultMap id="notifyConfigMap" type="com.mall4j.cloud.biz.model.cp.NotifyConfig">
+    <id column="ID" property="id" />
+    <result column="MSG_NAME" property="msgName"/>
+    <result column="MSG_CONTENT" property="msgContent"/>
+    <result column="PUSH_TIME" property="pushTime"/>
+    <result column="TO_USER" property="toUser"/>
+    <result column="PARAM_NAME" property="paramName"/>
+    <result column="MSG_URL" property="msgUrl"/>
+    <result column="MSG_TYPE" property="msgType"/>
+    <result column="CREATE_BY" property="createBy"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="STATUS" property="status"/>
+    <result column="FLAG" property="flag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `ID`,`MSG_NAME`,`MSG_CONTENT`,`PUSH_TIME`,`TO_USER`,`PARAM_NAME`,`MSG_URL`,`CREATE_BY`,`CREATE_TIME`,`STATUS`,`FLAG`,MSG_TYPE
+  </sql>
+  <select id="list" resultMap="notifyConfigMap">
+    select <include refid="Vo_Column_List"/> from CP_NOTIFY_CONFIG
+    <where>
+      <if test="type != null">  and MSG_TYPE = #{type}  </if>
+      <if test="status != null"> and  STATUS = #{status}  </if>
+    </where>
+    order by ID desc
+  </select>
+  <select id="getById" resultMap="notifyConfigMap">
+    select <include refid="Vo_Column_List"/> from CP_NOTIFY_CONFIG where ID = #{id}
+  </select>
+  <insert id="save">
+    insert into CP_NOTIFY_CONFIG (`MSG_NAME`,`MSG_CONTENT`,`PUSH_TIME`,`TO_USER`,`PARAM_NAME`,`MSG_URL`,`CREATE_BY`,`CREATE_TIME`,`STATUS`,`FLAG`,MSG_TYPE)
+    values (#{et.msgName},#{et.msgContent},#{et.pushTime},#{et.toUser},#{et.paramName},#{et.msgUrl},#{et.createBy},#{et.createTime},#{et.status},#{et.flag},#{et.msgType});
+  </insert>
+  <update id="update">
+    update CP_NOTIFY_CONFIG
+    <set>
+      <if test="et.msgName != null">
+        `MSG_NAME` = #{et.msgName},
+      </if>
+      <if test="et.msgContent != null">
+        `MSG_CONTENT` = #{et.msgContent},
+      </if>
+      <if test="et.pushTime != null">
+        `PUSH_TIME` = #{et.pushTime},
+      </if>
+      <if test="et.toUser != null">
+        `TO_USER` = #{et.toUser},
+      </if>
+      <if test="et.paramName != null">
+        `PARAM_NAME` = #{et.paramName},
+      </if>
+      <if test="et.msgUrl != null">
+        `MSG_URL` = #{et.msgUrl},
+      </if>
+      <if test="et.createBy != null">
+        `CREATE_BY` = #{et.createBy},
+      </if>
+      <if test="et.createTime != null">
+        `CREATE_TIME` = #{et.createTime},
+      </if>
+      <if test="et.status != null">
+        `STATUS` = #{et.status},
+      </if>
+      <if test="et.flag != null">
+        `FLAG` = #{et.flag},
+      </if>
+      <if test="et.msgType != null">
+        `MSG_TYPE` = #{et.msgType},
+      </if>
+    </set>
+    where ID = #{et.id}
+  </update>
+  <delete id="deleteById">
+    delete from CP_NOTIFY_CONFIG where ID = #{id}
+  </delete>
+
+</mapper>

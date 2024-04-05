@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionCommissionAccountMapper">
+  <resultMap id="distributionCommissionAccountMap" type="com.mall4j.cloud.distribution.model.DistributionCommissionAccount">
+    <id column="id" property="id" />
+    <result column="identity_type" property="identityType"/>
+    <result column="user_id" property="userId"/>
+    <result column="username" property="username"/>
+    <result column="user_number" property="userNumber"/>
+    <result column="mobile" property="mobile"/>
+    <result column="store_id" property="storeId"/>
+    <result column="wait_commission" property="waitCommission"/>
+    <result column="can_withdraw" property="canWithdraw"/>
+    <result column="already_withdraw" property="alreadyWithdraw"/>
+    <result column="total_withdraw" property="totalWithdraw"/>
+    <result column="withdraw_need_refund" property="withdrawNeedRefund"/>
+    <result column="status" property="status"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`
+    ,`identity_type`,`user_id`,`username`,`user_number`,`mobile`,`store_id`,`wait_commission`,`can_withdraw`,`already_withdraw`,`total_withdraw`,`withdraw_need_refund`,`status`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.distribution.dto.DistributionCommissionAccountDTO">
+    select <include refid="Vo_Column_List"/> from distribution_commission_account
+    where identity_type = #{distributionCommissionAccountDTO.identityType}
+    <if test="distributionCommissionAccountDTO.username != null and distributionCommissionAccountDTO.username != ''">
+      and username = #{distributionCommissionAccountDTO.username}
+    </if>
+    <if test="distributionCommissionAccountDTO.userNumber != null and distributionCommissionAccountDTO.userNumber != ''">
+      and user_number = #{distributionCommissionAccountDTO.userNumber}
+    </if>
+    <if test="distributionCommissionAccountDTO.mobile != null and distributionCommissionAccountDTO.mobile != ''">
+      and mobile = #{distributionCommissionAccountDTO.mobile}
+    </if>
+    <if test="distributionCommissionAccountDTO.storeId != null">
+      and store_id = #{distributionCommissionAccountDTO.storeId}
+    </if>
+    <if test="distributionCommissionAccountDTO.status != null">
+      and status = #{distributionCommissionAccountDTO.status}
+    </if>
+    <if test="distributionCommissionAccountDTO.withdrawMin != null">
+      and can_withdraw >= #{distributionCommissionAccountDTO.withdrawMin}
+    </if>
+    <if test="distributionCommissionAccountDTO.withdrawMax != null">
+      and #{distributionCommissionAccountDTO.withdrawMax} >= can_withdraw
+    </if>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="distributionCommissionAccountMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_account where id = #{id}
+  </select>
+    <select id="getByUser" resultMap="distributionCommissionAccountMap">
+      select <include refid="Vo_Column_List"/> from distribution_commission_account
+      where identity_type = #{identityType}
+      and user_id = #{userId}
+    </select>
+  <select id="listStaffCommissionAccount" resultMap="distributionCommissionAccountMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_account
+    where identity_type = 1
+    and status = 1;
+  </select>
+  <insert id="save">
+    insert into distribution_commission_account (`identity_type`, `user_id`, `username`, `user_number`, `mobile`,
+                                                 `store_id`, `wait_commission`, `can_withdraw`, `already_withdraw`,
+                                                 `total_withdraw`, `withdraw_need_refund`, `status`)
+    values (#{distributionCommissionAccount.identityType}, #{distributionCommissionAccount.userId},
+            #{distributionCommissionAccount.username}, #{distributionCommissionAccount.userNumber},
+            #{distributionCommissionAccount.mobile}, #{distributionCommissionAccount.storeId},
+            #{distributionCommissionAccount.waitCommission}, #{distributionCommissionAccount.canWithdraw},
+            #{distributionCommissionAccount.alreadyWithdraw}, #{distributionCommissionAccount.totalWithdraw},
+            #{distributionCommissionAccount.withdrawNeedRefund}, #{distributionCommissionAccount.status});
+  </insert>
+  <update id="update">
+    update distribution_commission_account
+    <set>
+      <if test="distributionCommissionAccount.identityType != null">
+        `identity_type` = #{distributionCommissionAccount.identityType},
+      </if>
+      <if test="distributionCommissionAccount.userId != null">
+        `user_id` = #{distributionCommissionAccount.userId},
+      </if>
+      <if test="distributionCommissionAccount.username != null">
+        `username` = #{distributionCommissionAccount.username},
+      </if>
+      <if test="distributionCommissionAccount.userNumber != null">
+        `user_number` = #{distributionCommissionAccount.userNumber},
+      </if>
+      <if test="distributionCommissionAccount.mobile != null">
+        `mobile` = #{distributionCommissionAccount.mobile},
+      </if>
+      <if test="distributionCommissionAccount.storeId != null">
+        `store_id` = #{distributionCommissionAccount.storeId},
+      </if>
+      <if test="distributionCommissionAccount.waitCommission != null">
+        `wait_commission` = #{distributionCommissionAccount.waitCommission},
+      </if>
+      <if test="distributionCommissionAccount.canWithdraw != null">
+        `can_withdraw` = #{distributionCommissionAccount.canWithdraw},
+      </if>
+      <if test="distributionCommissionAccount.alreadyWithdraw != null">
+        `already_withdraw` = #{distributionCommissionAccount.alreadyWithdraw},
+      </if>
+      <if test="distributionCommissionAccount.totalWithdraw != null">
+        `total_withdraw` = #{distributionCommissionAccount.totalWithdraw},
+      </if>
+      <if test="distributionCommissionAccount.withdrawNeedRefund != null">
+        `withdraw_need_refund` = #{distributionCommissionAccount.withdrawNeedRefund},
+      </if>
+      <if test="distributionCommissionAccount.status != null">
+        `status` = #{distributionCommissionAccount.status},
+      </if>
+    </set>
+    where id = #{distributionCommissionAccount.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_commission_account where id = #{id}
+  </delete>
+
+</mapper>

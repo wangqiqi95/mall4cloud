@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionCommissionActivitySpuMapper">
+  <resultMap id="distributionCommissionActivitySpuMap" type="com.mall4j.cloud.distribution.model.DistributionCommissionActivitySpu">
+    <id column="id" property="id" />
+    <result column="activity_id" property="activityId"/>
+    <result column="org_id" property="orgId"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="guide_rate_status" property="guideRateStatus"/>
+    <result column="guide_rate" property="guideRate"/>
+    <result column="share_rate_status" property="shareRateStatus"/>
+    <result column="share_rate" property="shareRate"/>
+    <result column="develop_rate_status" property="developRateStatus"/>
+    <result column="develop_rate" property="developRate"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <resultMap id="countByActivityIdListMap" type="com.mall4j.cloud.distribution.vo.DistributionCommissionActivityCountVO">
+    <result column="activity_id" property="activityId"/>
+    <result column="count(1)" property="num"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`activity_id`,`org_id`,`spu_id`,`guide_rate_status`,`guide_rate`,`share_rate_status`,`share_rate`,`develop_rate_status`,`develop_rate`,`start_time`,`end_time`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionCommissionActivitySpuMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_activity_spu
+    <where>
+      activity_id = #{searchDTO.activityId}
+      <if test="searchDTO.guideRateStatus != null and searchDTO.guideRateStatus != -1 ">
+        and guide_rate_status = #{searchDTO.guideRateStatus}
+      </if>
+      <if test="searchDTO.shareRateStatus != null and searchDTO.shareRateStatus != -1 ">
+        and share_rate_status = #{searchDTO.shareRateStatus}
+      </if>
+      <if test="searchDTO.developRateStatus != null and searchDTO.developRateStatus != -1 ">
+        and develop_rate_status = #{searchDTO.developRateStatus}
+      </if>
+    </where>
+  </select>
+  <select id="countByActivityIdList" resultMap="countByActivityIdListMap">
+    select  activity_id, count(1) from distribution_commission_activity_spu where activity_id in
+    <foreach collection="activityIdList" item="activityId" open="(" close=")" separator=",">
+        #{activityId}
+    </foreach>
+   group by activity_id
+  </select>
+  <select id="listByActivityId" resultMap="distributionCommissionActivitySpuMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_activity_spu where activity_id = #{activityId}
+  </select>
+  <select id="listBySpuIdList" resultMap="distributionCommissionActivitySpuMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_activity_spu where spu_id in
+    <foreach collection="spuIdList" item="spuId" open="(" close=")" separator=",">
+      #{spuId}
+    </foreach>
+  </select>
+  <select id="getById" resultMap="distributionCommissionActivitySpuMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_activity_spu where id = #{id}
+  </select>
+  <insert id="save">
+    insert into distribution_commission_activity_spu (`activity_id`,`org_id`,`spu_id`,`guide_rate_status`,`guide_rate`,`share_rate_status`,`share_rate`,
+    `develop_rate_status`,`develop_rate`,`start_time`,`end_time`)
+    values (#{distributionCommissionActivitySpu.activityId},#{distributionCommissionActivitySpu.orgId},#{distributionCommissionActivitySpu.spuId},
+    #{distributionCommissionActivitySpu.guideRateStatus},#{distributionCommissionActivitySpu.guideRate},
+    #{distributionCommissionActivitySpu.shareRateStatus},#{distributionCommissionActivitySpu.shareRate},
+    #{distributionCommissionActivitySpu.developRateStatus},#{distributionCommissionActivitySpu.developRate},
+    #{distributionCommissionActivitySpu.startTime},#{distributionCommissionActivitySpu.endTime});
+  </insert>
+
+  <insert id="saveBatch" parameterType="java.util.List">
+    insert into distribution_commission_activity_spu (`activity_id`,`org_id`,`spu_id`,`guide_rate_status`,`guide_rate`,`share_rate_status`,`share_rate`,`develop_rate_status`,`develop_rate`,`start_time`,`end_time`)
+    values
+    <foreach collection="distributionCommissionActivitySpuList" item="distributionCommissionActivitySpu" separator=",">
+      (#{distributionCommissionActivitySpu.activityId},#{distributionCommissionActivitySpu.orgId},
+      #{distributionCommissionActivitySpu.spuId},#{distributionCommissionActivitySpu.guideRateStatus},
+      #{distributionCommissionActivitySpu.guideRate},#{distributionCommissionActivitySpu.shareRateStatus},
+      #{distributionCommissionActivitySpu.shareRate},#{distributionCommissionActivitySpu.developRateStatus},
+      #{distributionCommissionActivitySpu.developRate},#{distributionCommissionActivitySpu.startTime},
+      #{distributionCommissionActivitySpu.endTime})
+    </foreach>
+  </insert>
+
+  <update id="update">
+    update distribution_commission_activity_spu
+    <set>
+      <if test="distributionCommissionActivitySpu.activityId != null">
+        `activity_id` = #{distributionCommissionActivitySpu.activityId},
+      </if>
+      <if test="distributionCommissionActivitySpu.orgId != null">
+        `org_id` = #{distributionCommissionActivitySpu.orgId},
+      </if>
+      <if test="distributionCommissionActivitySpu.spuId != null">
+        `spu_id` = #{distributionCommissionActivitySpu.spuId},
+      </if>
+      <if test="distributionCommissionActivitySpu.guideRateStatus != null">
+        `guide_rate_status` = #{distributionCommissionActivitySpu.guideRateStatus},
+      </if>
+      <if test="distributionCommissionActivitySpu.guideRate != null">
+        `guide_rate` = #{distributionCommissionActivitySpu.guideRate},
+      </if>
+      <if test="distributionCommissionActivitySpu.shareRateStatus != null">
+        `share_rate_status` = #{distributionCommissionActivitySpu.shareRateStatus},
+      </if>
+      <if test="distributionCommissionActivitySpu.shareRate != null">
+        `share_rate` = #{distributionCommissionActivitySpu.shareRate},
+      </if>
+      <if test="distributionCommissionActivitySpu.developRateStatus != null">
+        `develop_rate_status` = #{distributionCommissionActivitySpu.developRateStatus},
+      </if>
+      <if test="distributionCommissionActivitySpu.developRate != null">
+        `develop_rate` = #{distributionCommissionActivitySpu.developRate},
+      </if>
+      <if test="distributionCommissionActivitySpu.startTime != null">
+        `start_time` = #{distributionCommissionActivitySpu.startTime},
+      </if>
+      <if test="distributionCommissionActivitySpu.endTime != null">
+        `end_time` = #{distributionCommissionActivitySpu.endTime},
+      </if>
+    </set>
+    where id = #{distributionCommissionActivitySpu.id}
+  </update>
+
+  <delete id="deleteById">
+    delete from distribution_commission_activity_spu where id = #{id}
+  </delete>
+
+  <delete id="deleteByIdList">
+    delete from distribution_commission_activity_spu where id in
+    <foreach collection="idList" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </delete>
+
+  <update id="updateBatch" parameterType="java.util.List">
+    <foreach collection="distributionCommissionActivitySpuList" item="distributionCommissionActivitySpu" separator=",">
+        update distribution_commission_activity_spu
+        <set>
+          <if test="distributionCommissionActivitySpu.guideRateStatus != null">
+            `guide_rate_status` = #{distributionCommissionActivitySpu.guideRateStatus},
+          </if>
+          <if test="distributionCommissionActivitySpu.guideRate != null">
+            `guide_rate` = #{distributionCommissionActivitySpu.guideRate},
+          </if>
+          <if test="distributionCommissionActivitySpu.shareRateStatus != null">
+            `share_rate_status` = #{distributionCommissionActivitySpu.shareRateStatus},
+          </if>
+          <if test="distributionCommissionActivitySpu.shareRate != null">
+            `share_rate` = #{distributionCommissionActivitySpu.shareRate},
+          </if>
+          <if test="distributionCommissionActivitySpu.developRateStatus != null">
+            `develop_rate_status` = #{distributionCommissionActivitySpu.developRateStatus},
+          </if>
+          <if test="distributionCommissionActivitySpu.developRate != null">
+            `develop_rate` = #{distributionCommissionActivitySpu.developRate},
+          </if>
+          <if test="distributionCommissionActivitySpu.startTime != null">
+            `start_time` = #{distributionCommissionActivitySpu.startTime},
+          </if>
+          <if test="distributionCommissionActivitySpu.endTime != null">
+            `end_time` = #{distributionCommissionActivitySpu.endTime},
+          </if>
+        </set>
+        where id = #{distributionCommissionActivitySpu.id}
+    </foreach>
+  </update>
+
+</mapper>

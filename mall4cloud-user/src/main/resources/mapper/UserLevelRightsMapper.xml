@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserLevelRightsMapper">
+  <resultMap id="userLevelRightsMap" type="com.mall4j.cloud.user.model.UserLevelRights">
+    <id column="level_rights_id" property="levelRightsId" />
+    <result column="create_time" property="createTime"/>
+    <result column="user_level_id" property="userLevelId"/>
+    <result column="rights_id" property="rightsId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `level_rights_id`,`create_time`,`user_level_id`,`rights_id`
+  </sql>
+  <insert id="saveBatch">
+    <foreach collection="rightIds" item="rightId">
+      insert into user_level_rights (`user_level_id`,`rights_id`)
+      values (#{userLevelId},#{rightId});
+    </foreach>
+  </insert>
+  <update id="update">
+    update user_level_rights
+    <set>
+      <if test="userLevelRights.userLevelId != null">
+        `user_level_id` = #{userLevelRights.userLevelId},
+      </if>
+      <if test="userLevelRights.rightsId != null">
+        `rights_id` = #{userLevelRights.rightsId},
+      </if>
+    </set>
+    where level_rights_id = #{userLevelRights.levelRightsId}
+  </update>
+  <delete id="deleteByUserLevelId">
+    delete from user_level_rights where user_level_id = #{userLevelId}
+  </delete>
+  <delete id="deleteBatch">
+    delete from user_level_rights where user_level_id = #{userLevelId} and rights_id in
+      <foreach collection="userRightsIds" item="userRightsId" open="(" close=")" separator=",">
+        #{userRightsId}
+      </foreach>
+  </delete>
+  <delete id="deleteByRightId">
+    delete from user_level_rights where rights_id = #{rightId}
+  </delete>
+
+  <select id="listByUserLevelId" resultType="com.mall4j.cloud.user.vo.UserLevelRightsVO">
+    SELECT level_rights_id,user_level_id,rights_id FROM user_level_rights WHERE user_level_id = #{userLevelId}
+  </select>
+
+  <select id="listUserLevelIdByRightId" resultType="com.mall4j.cloud.user.model.UserLevel">
+    select ul.* from user_level_rights ulr
+    left join user_level ul on ulr.user_level_id = ul.user_level_id
+    where ulr.rights_id = #{rightId}
+  </select>
+</mapper>

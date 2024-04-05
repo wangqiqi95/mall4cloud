@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.platform.mapper.TzStoreFilterMapper">
+    <resultMap id="tzStoreFilterMap" type="com.mall4j.cloud.platform.model.TzStoreFilter">
+        <id column="store_id" property="storeId"/>
+        <result column="store_code" property="storeCode"/>
+        <result column="is_filter_staff" property="isFilterStaff"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `store_id`,`store_code`,`is_filter_staff`
+    </sql>
+
+    <select id="getByStoreId" resultMap="tzStoreFilterMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from tz_store_filter where store_id = #{storeId}
+    </select>
+
+     <select id="getBystoreCode" resultMap="tzStoreFilterMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from tz_store_filter where store_code = #{storeCode}
+    </select>
+
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpGroupCreateTaskRefMapper">
+  <resultMap id="cpGroupCreateTaskRefMap" type="com.mall4j.cloud.biz.model.cp.CpGroupCreateTaskRef">
+    <id column="id" property="id" />
+    <result column="group_id" property="groupId"/>
+    <result column="tag_id" property="tagId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`group_id`,`tag_id`
+  </sql>
+  <select id="listByGroupId" resultMap="cpGroupCreateTaskRefMap">
+    select
+    <include refid="Vo_Column_List"/>
+    from cp_group_create_task_ref
+    where group_id=#{groupId}
+    order by id desc
+  </select>
+
+  <delete id="deleteByGroupId">
+    delete from cp_group_create_task_ref where group_id = #{groupId}
+  </delete>
+
+</mapper>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.platform.mapper.TentacleMarketingPlanMapper">
+  <resultMap id="tentacleMarketingPlanMap" type="com.mall4j.cloud.platform.model.TentacleMarketingPlan">
+    <id column="id" property="id" />
+    <result column="org_id" property="orgId"/>
+    <result column="title" property="title"/>
+    <result column="description" property="description"/>
+    <result column="content" property="content"/>
+    <result column="content_name" property="contentName"/>
+    <result column="content_id" property="contentId"/>
+    <result column="content_type" property="contentType"/>
+    <result column="tentacle_type" property="tentacleType"/>
+    <result column="tentacles" property="tentacles"/>
+    <result column="qrcode_size" property="qrcodeSize"/>
+    <result column="qrcode_mailbox" property="qrcodeMailbox"/>
+    <result column="qrcode_url" property="qrcodeUrl"/>
+    <result column="qrcode_type" property="qrcodeType"/>
+    <result column="qrcode_start_time" property="qrcodeStartTime"/>
+    <result column="qrcode_end_time" property="qrcodeEndTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`org_id`,`title`,`description`,`content`,`content_name`,`content_id`,`content_type`,`tentacle_type`,`tentacles`,`qrcode_size`,`qrcode_mailbox`,`qrcode_url`,`qrcode_type`,`qrcode_start_time`,`qrcode_end_time`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="tentacleMarketingPlanMap">
+    select <include refid="Vo_Column_List"/> from tentacle_marketing_plan order by id desc
+  </select>
+  <select id="getById" resultMap="tentacleMarketingPlanMap">
+    select <include refid="Vo_Column_List"/> from tentacle_marketing_plan where id = #{id}
+  </select>
+  <insert id="save">
+    insert into tentacle_marketing_plan (`org_id`,`title`,`description`,`content`,`content_name`,`content_id`,`content_type`,`tentacle_type`,`tentacles`,`qrcode_size`,`qrcode_mailbox`,`qrcode_url`,`qrcode_type`,`qrcode_start_time`,`qrcode_end_time`)
+    values (#{tentacleMarketingPlan.orgId},#{tentacleMarketingPlan.title},#{tentacleMarketingPlan.description},#{tentacleMarketingPlan.content},#{tentacleMarketingPlan.contentName},#{tentacleMarketingPlan.contentId},#{tentacleMarketingPlan.contentType},#{tentacleMarketingPlan.tentacleType},#{tentacleMarketingPlan.tentacles},#{tentacleMarketingPlan.qrcodeSize},#{tentacleMarketingPlan.qrcodeMailbox},#{tentacleMarketingPlan.qrcodeUrl},#{tentacleMarketingPlan.qrcodeType},#{tentacleMarketingPlan.qrcodeStartTime},#{tentacleMarketingPlan.qrcodeEndTime});
+  </insert>
+  <update id="update">
+    update tentacle_marketing_plan
+    <set>
+      <if test="tentacleMarketingPlan.orgId != null">
+        `org_id` = #{tentacleMarketingPlan.orgId},
+      </if>
+      <if test="tentacleMarketingPlan.title != null">
+        `title` = #{tentacleMarketingPlan.title},
+      </if>
+      <if test="tentacleMarketingPlan.description != null">
+        `description` = #{tentacleMarketingPlan.description},
+      </if>
+      <if test="tentacleMarketingPlan.content != null">
+        `content` = #{tentacleMarketingPlan.content},
+      </if>
+      <if test="tentacleMarketingPlan.contentName != null">
+        `content_name` = #{tentacleMarketingPlan.contentName},
+      </if>
+      <if test="tentacleMarketingPlan.contentId != null">
+        `content_id` = #{tentacleMarketingPlan.contentId},
+      </if>
+      <if test="tentacleMarketingPlan.contentType != null">
+        `content_type` = #{tentacleMarketingPlan.contentType},
+      </if>
+      <if test="tentacleMarketingPlan.tentacleType != null">
+        `tentacle_type` = #{tentacleMarketingPlan.tentacleType},
+      </if>
+      <if test="tentacleMarketingPlan.tentacles != null">
+        `tentacles` = #{tentacleMarketingPlan.tentacles},
+      </if>
+      <if test="tentacleMarketingPlan.qrcodeSize != null">
+        `qrcode_size` = #{tentacleMarketingPlan.qrcodeSize},
+      </if>
+      <if test="tentacleMarketingPlan.qrcodeMailbox != null">
+        `qrcode_mailbox` = #{tentacleMarketingPlan.qrcodeMailbox},
+      </if>
+      <if test="tentacleMarketingPlan.qrcodeUrl != null">
+        `qrcode_url` = #{tentacleMarketingPlan.qrcodeUrl},
+      </if>
+      <if test="tentacleMarketingPlan.qrcodeType != null">
+        `qrcode_type` = #{tentacleMarketingPlan.qrcodeType},
+      </if>
+      <if test="tentacleMarketingPlan.qrcodeStartTime != null">
+        `qrcode_start_time` = #{tentacleMarketingPlan.qrcodeStartTime},
+      </if>
+      <if test="tentacleMarketingPlan.qrcodeEndTime != null">
+        `qrcode_end_time` = #{tentacleMarketingPlan.qrcodeEndTime},
+      </if>
+    </set>
+    where id = #{tentacleMarketingPlan.id}
+  </update>
+  <delete id="deleteById">
+    delete from tentacle_marketing_plan where id = #{id}
+  </delete>
+
+</mapper>

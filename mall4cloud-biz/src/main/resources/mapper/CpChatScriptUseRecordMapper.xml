@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpChatScriptUseRecordMapper">
+  <resultMap id="cpChatScriptUseRecordMap" type="com.mall4j.cloud.biz.model.cp.CpChatScriptUseRecord">
+    <id column="id" property="id" />
+    <result column="script_id" property="scriptId"/>
+    <result column="staff_id" property="staffId"/>
+    <result column="staff_name" property="staffName"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`script_id`,`staff_id`,`staff_name`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="cpChatScriptUseRecordMap">
+    select
+    <include refid="Vo_Column_List"/>
+    from cp_chat_script_use_record
+    where 1=1 and script_id = #{request.matId}
+    <if test="request.createTimeStart != null and request.createTimeStart !='' "> AND CREATE_TIME >=STR_TO_DATE(#{request.createTimeStart},"%Y-%m-%d")  </if>
+    <if test="request.createTimeEnd != null and request.createTimeEnd !='' "> AND CREATE_TIME <![CDATA[< ]]>STR_TO_DATE(#{request.createTimeEnd},"%Y-%m-%d")+1  </if>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="cpChatScriptUseRecordMap">
+    select <include refid="Vo_Column_List"/> from cp_chat_script_use_record where id = #{id}
+  </select>
+  <insert id="save">
+    insert into cp_chat_script_use_record (`script_id`,`staff_id`,`staff_name`,`create_time`,`update_time`)
+    values (#{cpChatScriptUseRecord.scriptId},#{cpChatScriptUseRecord.staffId},#{cpChatScriptUseRecord.staffName},#{cpChatScriptUseRecord.createTime},#{cpChatScriptUseRecord.updateTime});
+  </insert>
+  <update id="update">
+    update cp_chat_script_use_record
+    <set>
+      <if test="cpChatScriptUseRecord.scriptId != null">
+        `script_id` = #{cpChatScriptUseRecord.scriptId},
+      </if>
+      <if test="cpChatScriptUseRecord.staffId != null">
+        `staff_id` = #{cpChatScriptUseRecord.staffId},
+      </if>
+      <if test="cpChatScriptUseRecord.staffName != null">
+        `staff_name` = #{cpChatScriptUseRecord.staffName},
+      </if>
+    </set>
+    where id = #{cpChatScriptUseRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from cp_chat_script_use_record where id = #{id}
+  </delete>
+
+  <select id="useStatistics" resultType="com.mall4j.cloud.biz.vo.cp.MaterialBrowseRecordByDayVO">
+    select
+      date(create_time) as day1,count(1) as num
+    from cp_chat_script_use_record
+    where script_id = #{request.matId}
+      and create_time between #{request.createTimeStart} and #{request.createTimeEnd}
+    group by date(create_time)
+  </select>
+
+</mapper>

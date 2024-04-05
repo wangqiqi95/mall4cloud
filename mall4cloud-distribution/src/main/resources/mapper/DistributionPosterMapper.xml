@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionPosterMapper">
+  <resultMap id="distributionPosterMap" type="com.mall4j.cloud.distribution.model.DistributionPoster">
+    <id column="id" property="id" />
+    <result column="poster_type" property="posterType"/>
+    <result column="material_id" property="materialId"/>
+    <result column="poster_name" property="posterName"/>
+    <result column="poster_index" property="posterIndex"/>
+    <result column="show_type" property="showType"/>
+    <result column="publicity_text" property="publicityText"/>
+    <result column="remark" property="remark"/>
+    <result column="publicity_img_url" property="publicityImgUrl"/>
+    <result column="store_type" property="storeType"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="status" property="status"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`poster_type`,`material_id`,`poster_name`,`poster_index`,`show_type`,`publicity_text`,`remark`,`publicity_img_url`,`store_type`,`start_time`,`end_time`,`status`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionPosterMap">
+    select <include refid="Vo_Column_List"/> from distribution_poster
+    where 1 = 1
+    <if test="distributionPosterDTO.posterType != null">
+      and poster_type = #{distributionPosterDTO.posterType}
+    </if>
+    <if test="distributionPosterDTO.posterName != null and distributionPosterDTO.posterName != ''">
+      and poster_name like CONCAT('%',#{distributionPosterDTO.posterName},'%')
+    </if>
+    <if test="distributionPosterDTO.status != null">
+      and status = #{distributionPosterDTO.status}
+    </if>
+    <if test="distributionPosterDTO.showType != null">
+      and show_type = #{distributionPosterDTO.showType}
+    </if>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="distributionPosterMap">
+    select <include refid="Vo_Column_List"/> from distribution_poster where id = #{id}
+  </select>
+    <select id="pageEffect" resultMap="distributionPosterMap">
+      select <include refid="Vo_Column_List"/> from distribution_poster
+      where status = 1
+      and now() >= start_time
+      and end_time >= now()
+      <if test="distributionPosterDTO.showType != null">
+        and show_type = #{distributionPosterDTO.showType}
+      </if>
+      and (
+      <if test="distributionPosterDTO.ids != null and distributionPosterDTO.ids.size() > 0">
+        id in
+        <foreach collection="distributionPosterDTO.ids" item="id" open="(" close=")" separator=",">
+          #{id}
+        </foreach>
+        or
+      </if>
+        store_type = 0)
+      order by id desc
+    </select>
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into distribution_poster (`poster_type`,`material_id`,`poster_name`,`poster_index`,`show_type`,`publicity_text`,`remark`,`publicity_img_url`,`store_type`,`start_time`,`end_time`,`status`)
+    values (#{distributionPoster.posterType},#{distributionPoster.materialId},#{distributionPoster.posterName},#{distributionPoster.posterIndex},#{distributionPoster.showType},#{distributionPoster.publicityText},#{distributionPoster.remark},#{distributionPoster.publicityImgUrl},#{distributionPoster.storeType},#{distributionPoster.startTime},#{distributionPoster.endTime},#{distributionPoster.status});
+  </insert>
+  <update id="update">
+    update distribution_poster
+    <set>
+      <if test="distributionPoster.posterType != null">
+        `poster_type` = #{distributionPoster.posterType},
+      </if>
+      <if test="distributionPoster.materialId != null">
+        `material_id` = #{distributionPoster.materialId},
+      </if>
+      <if test="distributionPoster.posterName != null">
+        `poster_name` = #{distributionPoster.posterName},
+      </if>
+      <if test="distributionPoster.posterIndex != null">
+        `poster_index` = #{distributionPoster.posterIndex},
+      </if>
+      <if test="distributionPoster.publicityText != null">
+        `publicity_text` = #{distributionPoster.publicityText},
+      </if>
+      <if test="distributionPoster.remark != null">
+        `remark` = #{distributionPoster.remark},
+      </if>
+      <if test="distributionPoster.publicityImgUrl != null">
+        `publicity_img_url` = #{distributionPoster.publicityImgUrl},
+      </if>
+      <if test="distributionPoster.storeType != null">
+        `store_type` = #{distributionPoster.storeType},
+      </if>
+      <if test="distributionPoster.startTime != null">
+        `start_time` = #{distributionPoster.startTime},
+      </if>
+      <if test="distributionPoster.endTime != null">
+        `end_time` = #{distributionPoster.endTime},
+      </if>
+      <if test="distributionPoster.status != null">
+        `status` = #{distributionPoster.status},
+      </if>
+    </set>
+    where id = #{distributionPoster.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_poster where id = #{id}
+  </delete>
+
+</mapper>

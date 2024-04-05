@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.payment.mapper.PayInfoMapper">
+    <resultMap id="payInfoMap" type="com.mall4j.cloud.payment.model.PayInfo">
+        <id column="pay_id" property="payId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="user_id" property="userId"/>
+        <result column="order_ids" property="orderIds"/>
+        <result column="order_number" property="orderNumber"/>
+        <result column="biz_pay_no" property="bizPayNo"/>
+        <result column="sys_type" property="sysType"/>
+        <result column="pay_type" property="payType"/>
+        <result column="pay_entry" property="payEntry"/>
+        <result column="pay_status" property="payStatus"/>
+        <result column="pay_score" property="payScore"/>
+        <result column="pay_amount" property="payAmount"/>
+        <result column="version" property="version"/>
+        <result column="callback_content" property="callbackContent"/>
+        <result column="callback_time" property="callbackTime"/>
+        <result column="confirm_time" property="confirmTime"/>
+        <result column="order_token" property="orderToken"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `pay_id`
+        ,`create_time`,`update_time`,`user_id`,`order_ids`,`order_number`,`biz_pay_no`,`sys_type`,`pay_type`,`pay_entry`,`pay_status`,`pay_score`,`pay_amount`,`version`,`callback_content`,`callback_time`,`confirm_time`,`order_token`
+    </sql>
+    <select id="list" resultMap="payInfoMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from pay_info order by pay_id desc
+    </select>
+
+    <select id="payedListByOrderIds" resultType="com.mall4j.cloud.api.payment.vo.PayInfoFeignVO">
+        select
+                pay_id    as payId,
+                order_ids as orderId,
+                biz_pay_no  as payBizNo,
+                pay_type  as payType
+        from pay_info
+        where pay_status = 1
+        and order_ids in
+        <foreach collection="orderIds" item="item"  index="index" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="getByPayId" resultMap="payInfoMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from pay_info where pay_id = #{payId}
+    </select>
+
+    <select id="getByOrderId" resultMap="payInfoMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from pay_info where order_ids = #{orderId}
+    </select>
+
+
+    <insert id="save">
+        insert into pay_info (`pay_id`, `user_id`, `order_ids`, `biz_pay_no`, `sys_type`, `pay_type`, `pay_entry`,
+                              `pay_status`, `pay_score`, `pay_amount`, `version`, `callback_content`, `callback_time`,
+                              `confirm_time`,`order_number`)
+        values (#{payInfo.payId}, #{payInfo.userId}, #{payInfo.orderIds}, #{payInfo.bizPayNo}, #{payInfo.sysType},
+                #{payInfo.payType}, #{payInfo.payEntry}, #{payInfo.payStatus}, #{payInfo.payScore},
+                #{payInfo.payAmount}, #{payInfo.version}, #{payInfo.callbackContent}, #{payInfo.callbackTime},
+                #{payInfo.confirmTime}, #{payInfo.orderNumber});
+    </insert>
+    <update id="update">
+        update pay_info
+        <set>
+            <if test="payInfo.userId != null">
+                `user_id` = #{payInfo.userId},
+            </if>
+            <if test="payInfo.bizPayNo != null">
+                `biz_pay_no` = #{payInfo.bizPayNo},
+            </if>
+            <if test="payInfo.sysType != null">
+                `sys_type` = #{payInfo.sysType},
+            </if>
+            <if test="payInfo.payType != null">
+                `pay_type` = #{payInfo.payType},
+            </if>
+            <if test="payInfo.payStatus != null">
+                `pay_status` = #{payInfo.payStatus},
+            </if>
+            <if test="payInfo.payScore != null">
+                `pay_score` = #{payInfo.payScore},
+            </if>
+            <if test="payInfo.payAmount != null">
+                `pay_amount` = #{payInfo.payAmount},
+            </if>
+            <if test="payInfo.version != null">
+                `version` = #{payInfo.version},
+            </if>
+            <if test="payInfo.callbackContent != null">
+                `callback_content` = #{payInfo.callbackContent},
+            </if>
+            <if test="payInfo.callbackTime != null">
+                `callback_time` = #{payInfo.callbackTime},
+            </if>
+            <if test="payInfo.confirmTime != null">
+                `confirm_time` = #{payInfo.confirmTime},
+            </if>
+            <if test="payInfo.orderNumber != null">
+                `order_number` = #{payInfo.orderNumber},
+            </if>
+            <if test="payInfo.orderToken != null">
+                `order_token` = #{payInfo.orderToken},
+            </if>
+        </set>
+        where pay_id = #{payInfo.payId}
+    </update>
+
+    <update id="updateByOrderIds">
+        update pay_info
+        <set>
+            <if test="payInfo.userId != null">
+                `user_id` = #{payInfo.userId},
+            </if>
+            <if test="payInfo.bizPayNo != null">
+                `biz_pay_no` = #{payInfo.bizPayNo},
+            </if>
+            <if test="payInfo.sysType != null">
+                `sys_type` = #{payInfo.sysType},
+            </if>
+            <if test="payInfo.payType != null">
+                `pay_type` = #{payInfo.payType},
+            </if>
+            <if test="payInfo.payStatus != null">
+                `pay_status` = #{payInfo.payStatus},
+            </if>
+            <if test="payInfo.payScore != null">
+                `pay_score` = #{payInfo.payScore},
+            </if>
+            <if test="payInfo.payAmount != null">
+                `pay_amount` = #{payInfo.payAmount},
+            </if>
+            <if test="payInfo.version != null">
+                `version` = #{payInfo.version},
+            </if>
+            <if test="payInfo.callbackContent != null">
+                `callback_content` = #{payInfo.callbackContent},
+            </if>
+            <if test="payInfo.callbackTime != null">
+                `callback_time` = #{payInfo.callbackTime},
+            </if>
+            <if test="payInfo.confirmTime != null">
+                `confirm_time` = #{payInfo.confirmTime},
+            </if>
+            <if test="payInfo.orderNumber != null">
+                `order_number` = #{payInfo.orderNumber},
+            </if>
+            <if test="payInfo.orderToken != null">
+                `order_token` = #{payInfo.orderToken},
+            </if>
+        </set>
+        where order_Ids = #{payInfo.orderIds}
+    </update>
+    <delete id="deleteById">
+        delete
+        from pay_info
+        where pay_id = #{payId}
+    </delete>
+
+    <select id="getPayStatusByOrderIds" resultType="java.lang.Integer">
+        select pay_status
+        from pay_info
+        where order_ids = #{orderIds}
+    </select>
+
+    <select id="getUnPaydPayInfoByOrderIds" resultMap="payInfoMap">
+        select *
+        from pay_info
+        where order_ids = #{orderIds} and pay_status = 0
+        order by pay_id desc
+        limit 1
+    </select>
+
+    <select id="getPayInfoByOrderIds" resultMap="payInfoMap">
+        select *
+        from pay_info
+        where order_ids = #{orderIds}
+        order by pay_id desc
+        limit 1
+    </select>
+
+    <select id="isPay" resultType="java.lang.Integer">
+        select count(*)
+        from pay_info
+        where order_ids = #{orderIds}
+          and pay_status = 1
+          and user_id = #{userId}
+          and pay_entry = #{payEntry}
+    </select>
+
+    <select id="listByOrderIds" resultMap="payInfoMap">
+        select * from pay_info where order_ids in
+        <foreach collection="orderIds" item="orderId" separator="," open="(" close=")">
+            #{orderId}
+        </foreach>
+        and pay_status = 1
+    </select>
+    <select id="getIncomeAccountDetail" resultType="com.mall4j.cloud.payment.vo.AccountDetailVO">
+        SELECT SUM(CASE WHEN pay_type IN (1, 3, 4, 5, 8) THEN pay_amount ELSE 0 END) AS wechat_amount,
+               SUM(CASE WHEN pay_type IN (2, 6, 7) THEN pay_amount ELSE 0 END)       AS alipay_amount,
+               SUM(CASE WHEN pay_type IN (9) THEN pay_amount ELSE 0 END)             AS balance_amount
+        FROM `pay_info`
+        WHERE pay_status = 1
+          AND callback_time &gt;= #{startTime}
+          AND callback_time &lt;= #{endTime}
+    </select>
+    <select id="getPayInfoVO" resultType="com.mall4j.cloud.payment.vo.PayInfoVO">
+        SELECT order_ids,
+               biz_pay_no,
+               pay_entry,
+               pay_type,
+               pay_status,
+               pay_score,
+               pay_amount,
+               if(pay_status = 1, callback_time, null) as callback_time
+        FROM `pay_info`
+        WHERE pay_status = 1
+          AND callback_time &gt;= #{startTime}
+          AND callback_time &lt;= #{endTime}
+        ORDER BY update_time DESC
+    </select>
+    <select id="getNotPayPayInfoByOrderids" resultType="com.mall4j.cloud.api.payment.vo.PayInfoFeignVO">
+        select
+            pay_id    as payId,
+            order_ids as orderId,
+            biz_pay_no  as payBizNo,
+            pay_type  as payType
+        from pay_info
+        where pay_status = 0
+        and order_ids in
+        <foreach collection="orderIds" item="item"  index="index" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    
+    <select id="getPayInfoByOrderNumber" resultMap="payInfoMap">
+        select *
+        from pay_info
+        where order_number = #{orderNumber}
+        order by pay_id desc
+            limit 1
+    </select>
+
+    <select id="getPayInfoByOrderIdsAndPayType" resultType="com.mall4j.cloud.api.payment.vo.GetPayInfoByOrderIdsAndPayTypeVO">
+        SELECT
+        pay_id,
+        biz_pay_no,
+        order_ids,
+        order_number,
+        pay_type,
+        pay_status,
+        pay_score,
+        pay_amount,
+        callback_time
+        FROM pay_info
+        WHERE pay_status = 0
+        <if test = "orderIds != null and orderIds.size() != 0">
+            AND order_ids IN
+            <foreach collection="orderIds" item="item"  index="index" open="("  separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test = "payType != null">
+            AND pay_type = #{payType}
+        </if>
+    </select>
+    
+	<select id="listByPayStatusAndPayType" resultType="com.mall4j.cloud.payment.model.PayInfo">
+        SELECT
+            *
+        FROM
+            `pay_info`
+        WHERE 1 = 1
+        <if test = "payStatus != null">
+          AND `pay_status` = #{payStatus}
+        </if>
+        <if test = "payType != null">
+          AND `pay_type` = #{payType}
+        </if>
+        ORDER BY create_time
+    </select>
+    
+</mapper>

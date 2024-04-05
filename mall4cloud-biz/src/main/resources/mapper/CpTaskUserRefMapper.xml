@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpTaskUserRefMapper">
+  <resultMap id="cpTaskUserRefMap" type="com.mall4j.cloud.biz.model.cp.CpTaskUserRef">
+    <id column="id" property="id" />
+    <result column="STAFF_ID" property="staffId"/>
+    <result column="group_name" property="groupName"/>
+    <result column="group_id" property="groupId"/>
+    <result column="chat_id" property="chatId"/>
+    <result column="join_group" property="joinGroup"/>
+    <result column="USER_ID" property="userId"/>
+    <result column="USER_NAME" property="userName"/>
+    <result column="STAFF_NAME" property="staffName"/>
+    <result column="TASK_ID" property="taskId"/>
+    <result column="is_delete" property="isDelete"/>
+    <result column="type" property="type"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="status" property="status"/>
+    <result column="reach_status" property="reachStatus"/>
+    <result column="cp_send_status" property="cpSendStatus"/>
+    <result column="qi_wei_user_id" property="qiWeiUserId"/>
+    <result column="send_time" property="sendTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+   `id`,`STAFF_ID`,`group_name`,`group_id`,`chat_id`,`join_group`,`USER_ID`,`USER_NAME`,`STAFF_NAME`,`TASK_ID`,`is_delete`,`type`,`create_by`,`create_time`,`update_by`,`update_time`,`status`,`reach_status`,`cp_send_status`,`qi_wei_user_id`,`send_time`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.biz.vo.cp.analyze.CpTagGroupCodeSendUserVO">
+    select
+    ref.id,
+    ref.STAFF_ID,
+    ref.USER_ID,
+    ref.USER_NAME,
+    ref.USER_NAME as nick_name,
+    ref.TASK_ID,
+    ref.type,
+    ref.status,
+    ref.cp_send_status as send_status,
+    ref.join_group,
+    ref.qi_wei_user_id,
+    cg.GROUP_NAME
+    from cp_task_user_ref ref
+    left join cp_cust_group cg on ref.chat_id=cg.ID
+    where ref.is_delete=0
+    and ref.task_id=#{dto.taskId}
+    <if test="dto.status!=null ">
+      and ref.status=#{dto.status}
+    </if>
+    <if test="dto.groupName!=null and dto.groupName!=''">
+      and cg.GROUP_NAME LIKE CONCAT('%',#{dto.groupName},'%')
+    </if>
+    <if test="dto.joinGroup!=null ">
+      and ref.join_group=#{dto.joinGroup}
+    </if>
+    <if test="dto.userName!=null and dto.userName!=''">
+      and ref.USER_NAME like CONCAT('%', #{dto.userName},'%')
+    </if>
+    <if test="dto.staffs!=null and dto.staffs.size>0">
+      and ref.STAFF_ID in
+      <foreach collection="dto.staffs" item="staffId" open="(" close=")" separator=",">
+        #{staffId}
+      </foreach>
+    </if>
+    <if test="dto.userQiWeiUserIds!=null and dto.userQiWeiUserIds.size>0">
+      and ref.qi_wei_user_id in
+      <foreach collection="dto.userQiWeiUserIds" item="qiWeiUserId" open="(" close=")" separator=",">
+        #{qiWeiUserId}
+      </foreach>
+    </if>
+    <if test="dto.sendStatus!=null and dto.sendStatus==1">
+      and ref.cp_send_status &gt;= #{dto.sendStatus}
+    </if>
+    <if test="dto.sendStatus!=null and dto.sendStatus==0">
+      and ref.cp_send_status &lt;= #{dto.sendStatus}
+    </if>
+    <if test="dto.cpSendStatus!=null and dto.cpSendStatus.size>0">
+      and ref.cp_send_status in
+      <foreach collection="dto.cpSendStatus" item="cpSendStatus" open="(" close=")" separator=",">
+        #{cpSendStatus}
+      </foreach>
+    </if>
+    order by ref.create_time desc
+  </select>
+  <select id="getById" resultMap="cpTaskUserRefMap">
+    select <include refid="Vo_Column_List"/> from cp_task_user_ref where id = #{id}
+  </select>
+  <delete id="deleteById">
+    delete from cp_task_user_ref where id = #{id}
+  </delete>
+
+  <select id="getByUserId" resultMap="cpTaskUserRefMap">
+    select <include refid="Vo_Column_List"/> from cp_task_user_ref where is_delete=0 and  qi_wei_user_id = #{qiWeiUserId} and task_id=#{taskId}
+  </select>
+
+
+  <select id="countByStaff" resultType="com.mall4j.cloud.biz.vo.cp.analyze.CpTagGroupCodeStaffVO">
+    select
+    count(IF(cp_send_status &gt; 0,0,null)) as execute_count,
+    count(IF(cp_send_status=0,0,null)) as no_execute_count,
+    STAFF_ID
+    from cp_task_user_ref ref
+    where is_delete=0
+    and task_id=#{dto.taskId}
+    <if test="dto.status!=null and dto.status==1">
+      and ref.cp_send_status &gt;= #{dto.status}
+    </if>
+    <if test="dto.status!=null and dto.status==0">
+      and ref.cp_send_status &lt;= #{dto.status}
+    </if>
+    <if test="dto.staffs!=null and dto.staffs.size>0">
+      and ref.STAFF_ID in
+      <foreach collection="dto.staffs" item="staffId" open="(" close=")" separator=",">
+        #{staffId}
+      </foreach>
+    </if>
+    group by STAFF_ID
+  </select>
+
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.live.LiveProdStoreMapper">
+
+  <resultMap id="liveProdStoreMap" type="com.mall4j.cloud.biz.model.live.LiveProdStore">
+    <id column="live_prod_store_id" property="liveProdStoreId" />
+    <result column="shop_id" property="shopId"/>
+    <result column="prod_id" property="prodId"/>
+    <result column="cover_pic" property="coverPic"/>
+    <result column="conver_img_url" property="converImgUrl"/>
+    <result column="name" property="name"/>
+    <result column="price_type" property="priceType"/>
+    <result column="price" property="price"/>
+    <result column="price2" property="price2"/>
+    <result column="url" property="url"/>
+    <result column="prod_type" property="prodType"/>
+    <result column="activity_id" property="activityId"/>
+    <result column="status" property="status"/>
+    <result column="create_time" property="createTime"/>
+    <result column="verify_time" property="verifyTime"/>
+    <result column="success_time" property="successTime"/>
+    <result column="fail_time" property="failTime"/>
+    <result column="shelf_time" property="shelfTime"/>
+    <result column="cancel_time" property="cancelTime"/>
+    <result column="delete_time" property="deleteTime"/>
+    <result column="version" property="version"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <select id="getPage" resultType="com.mall4j.cloud.biz.model.live.LiveProdStore">
+    SELECT lps.* FROM `live_prod_store` lps
+    <where>
+      lps.status > -1
+      <if test="liveProdStore.shopId != null">
+        AND lps.shop_id = #{liveProdStore.shopId}
+      </if>
+      <if test="liveProdStore.name != null and liveProdStore.name != ''">
+        AND lps.name LIKE CONCAT('%',#{liveProdStore.name},'%')
+      </if>
+      order by create_time desc
+      limit #{page.current}, #{page.size}
+    </where>
+  </select>
+
+  <select id="getPageCount" resultType="java.lang.Long">
+    SELECT count(1) FROM `live_prod_store` lps
+    <where>
+      lps.status > -1
+      <if test="liveProdStore.shopId != null">
+        AND lps.shop_id = #{liveProdStore.shopId}
+      </if>
+      <if test="liveProdStore.name != null and liveProdStore.name != ''">
+        AND lps.name LIKE CONCAT('%',#{liveProdStore.name},'%')
+      </if>
+    </where>
+  </select>
+
+  <select id="pageProdByRoomId" resultType="com.mall4j.cloud.biz.model.live.LiveProdStore">
+    SELECT * FROM `live_room_prod` rp
+    LEFT JOIN `live_prod_store` ps ON rp.`prod_store_id` = ps.`live_prod_store_id`
+    WHERE rp.`room_id` = #{roomId}
+  </select>
+
+  <update id="updateBatch">
+    <foreach collection="prodStoreList" item="prodStore" separator=";">
+      UPDATE
+      live_prod_store
+      SET
+      `success_time` = null,goods_id = null,status = 5,cancel_time = #{prodStore.cancelTime}
+      WHERE live_prod_store_id = #{prodStore.liveProdStoreId}
+    </foreach>
+  </update>
+</mapper>

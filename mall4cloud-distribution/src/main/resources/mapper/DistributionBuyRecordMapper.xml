@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionBuyRecordMapper">
+  <resultMap id="distributionBuyRecordMap" type="com.mall4j.cloud.distribution.model.DistributionBuyRecord">
+    <id column="id" property="id" />
+    <result column="buy_id" property="buyId"/>
+    <result column="buy_name" property="buyName"/>
+    <result column="buy_type" property="buyType"/>
+    <result column="tentacle_no" property="tentacleNo"/>
+    <result column="share_id" property="shareId"/>
+    <result column="share_type" property="shareType"/>
+    <result column="activity_id" property="activityId"/>
+    <result column="activity_type" property="activityType"/>
+    <result column="activity_name" property="activityName"/>
+    <result column="product_id" property="productId"/>
+    <result column="product_name" property="productName"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+
+  <resultMap id="distributionPromotionGroupMap" type="com.mall4j.cloud.distribution.vo.DistributionPromotionGroupVO">
+    <result column="activity_type" property="activityType"/>
+    <result column="count(1)" property="count"/>
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `id`,`buy_id`,`buy_name`,`buy_type`,`tentacle_no`,`share_id`,`share_type`,`activity_id`,`activity_type`,`activity_name`,`product_id`,`product_name`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.distribution.vo.DistributionBuyRecordVO">
+    select <include refid="Vo_Column_List"/> from distribution_buy_record
+    <where>
+      <if test="distributionBuyRecord.shareId != null">
+        and share_id = #{distributionBuyRecord.shareId}
+      </if>
+      <if test="distributionBuyRecord.shareType != null">
+        and share_type = #{distributionBuyRecord.shareType}
+      </if>
+      <if test="distributionBuyRecord.activityType != null">
+        and activity_type = #{distributionBuyRecord.activityType}
+      </if>
+      <if test="distributionBuyRecord.activityName != null and distributionBuyRecord.activityName != ''">
+        and activity_name = #{distributionBuyRecord.activityName}
+      </if>
+      <if test="distributionBuyRecord.keywords != null and distributionBuyRecord.keywords != ''">
+        and (activity_name = #{distributionBuyRecord.keywords} or buy_id = #{distributionBuyRecord.buyId} or product_name = #{distributionBuyRecord.keywords})
+      </if>
+    </where>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="distributionBuyRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_buy_record where id = #{id}
+  </select>
+    <select id="getByBuyAndActivity" resultMap="distributionBuyRecordMap">
+      select <include refid="Vo_Column_List"/> from distribution_buy_record
+      where buy_id = #{buyId}
+      and buy_type = #{buyType}
+      and activity_id = #{activityId}
+      and activity_type = #{activityType}
+      limit 1
+    </select>
+  <select id="countNumByActivityAndDate" resultType="java.lang.Integer">
+    select count(id) from distribution_buy_record
+    where activity_id = #{activityId}
+    and activity_type = #{activityType}
+    and create_time between #{startDate} and #{endDate}
+  </select>
+  <select id="countUserNumByActivityAndDate" resultType="java.lang.Integer">
+    select count(b.buy_id) from (
+    select buy_id from distribution_buy_record
+    where activity_id = #{activityId}
+    and activity_type = #{activityType}
+    and create_time between #{startDate} and #{endDate}
+    group by buy_id
+    ) as b
+  </select>
+
+  <select id="groupByActivityType" resultMap="distributionPromotionGroupMap">
+    select activity_type, count(1) from distribution_buy_record where share_type = #{shareType} and share_id = #{shareId} group by activity_type
+  </select>
+
+  <insert id="save">
+    insert into distribution_buy_record (`buy_id`,`buy_name`,`buy_type`,`tentacle_no`,`share_id`,`share_type`,`activity_id`,`activity_type`,`activity_name`,`product_id`,`product_name`)
+    values (#{distributionBuyRecord.buyId},#{distributionBuyRecord.buyName},#{distributionBuyRecord.buyType},#{distributionBuyRecord.tentacleNo},#{distributionBuyRecord.shareId},#{distributionBuyRecord.shareType},#{distributionBuyRecord.activityId},#{distributionBuyRecord.activityType},#{distributionBuyRecord.activityName},#{distributionBuyRecord.productId},#{distributionBuyRecord.productName});
+  </insert>
+  <update id="update">
+    update distribution_buy_record
+    <set>
+      <if test="distributionBuyRecord.buyId != null">
+        `buy_id` = #{distributionBuyRecord.buyId},
+      </if>
+      <if test="distributionBuyRecord.buyName != null">
+        `buy_name` = #{distributionBuyRecord.buyName},
+      </if>
+      <if test="distributionBuyRecord.buyType != null">
+        `buy_type` = #{distributionBuyRecord.buyType},
+      </if>
+      <if test="distributionBuyRecord.tentacleNo != null">
+        `tentacle_no` = #{distributionBuyRecord.tentacleNo},
+      </if>
+      <if test="distributionBuyRecord.shareId != null">
+        `share_id` = #{distributionBuyRecord.shareId},
+      </if>
+      <if test="distributionBuyRecord.shareType != null">
+        `share_type` = #{distributionBuyRecord.shareType},
+      </if>
+      <if test="distributionBuyRecord.activityId != null">
+        `activity_id` = #{distributionBuyRecord.activityId},
+      </if>
+      <if test="distributionBuyRecord.activityType != null">
+        `activity_type` = #{distributionBuyRecord.activityType},
+      </if>
+      <if test="distributionBuyRecord.activityName != null">
+        `activity_name` = #{distributionBuyRecord.activityName},
+      </if>
+      <if test="distributionBuyRecord.productId != null">
+        `product_id` = #{distributionBuyRecord.productId},
+      </if>
+      <if test="distributionBuyRecord.productName != null">
+        `product_name` = #{distributionBuyRecord.productName},
+      </if>
+    </set>
+    where id = #{distributionBuyRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_buy_record where id = #{id}
+  </delete>
+
+</mapper>

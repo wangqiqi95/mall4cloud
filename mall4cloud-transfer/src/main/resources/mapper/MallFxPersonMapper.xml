@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.MallFxPersonMapper">
+  <resultMap id="mallFxPersonMap" type="com.mall4j.cloud.transfer.model.MallFxPerson">
+    <id column="Id" property="id" />
+    <result column="CopId" property="copid"/>
+    <result column="BrandId" property="brandid"/>
+    <result column="FxType" property="fxtype"/>
+    <result column="ShopId" property="shopid"/>
+    <result column="FxLevel" property="fxlevel"/>
+    <result column="SgId" property="sgid"/>
+    <result column="SgLoginId" property="sgloginid"/>
+    <result column="Phone" property="phone"/>
+    <result column="WxUnionID" property="wxunionid"/>
+    <result column="ParentId" property="parentid"/>
+    <result column="Status" property="status"/>
+    <result column="TotalAmount" property="totalamount"/>
+    <result column="WaitAmount" property="waitamount"/>
+    <result column="RemainAmount" property="remainamount"/>
+    <result column="UseAmount" property="useamount"/>
+    <result column="AccountChangeDate" property="accountchangedate"/>
+    <result column="IsEnable" property="isenable"/>
+    <result column="CreateDate" property="createdate"/>
+    <result column="LastModifiedDate" property="lastmodifieddate"/>
+    <result column="InviteFxPersonType" property="invitefxpersontype"/>
+    <result column="DevelopActId" property="developactid"/>
+    <result column="IsAddGuideWeChat" property="isaddguidewechat"/>
+    <result column="IdentityInforStatus" property="identityinforstatus"/>
+    <result column="IsSysSetDisable" property="issyssetdisable"/>
+    <result column="IsRetailSaler" property="isretailsaler"/>
+    <result column="BlackListed" property="blacklisted"/>
+    <result column="SubCount" property="subcount"/>
+    <result column="AddSubWkCount" property="addsubwkcount"/>
+    <result column="IsFxCommunityOperation" property="isfxcommunityoperation"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `Id`,`CopId`,`BrandId`,`FxType`,`ShopId`,`FxLevel`,`SgId`,`SgLoginId`,`Phone`,`WxUnionID`,`ParentId`,`Status`,`TotalAmount`,`WaitAmount`,`RemainAmount`,`UseAmount`,`AccountChangeDate`,`IsEnable`,`CreateDate`,`LastModifiedDate`,`InviteFxPersonType`,`DevelopActId`,`IsAddGuideWeChat`,`IdentityInforStatus`,`IsSysSetDisable`,`IsRetailSaler`,`BlackListed`,`SubCount`,`AddSubWkCount`,`IsFxCommunityOperation`
+  </sql>
+  <select id="list" resultMap="mallFxPersonMap">
+    select <include refid="Vo_Column_List"/> from mall_fx_person order by Id desc
+  </select>
+  <select id="getById" resultMap="mallFxPersonMap">
+    select <include refid="Vo_Column_List"/> from mall_fx_person where Id = #{id}
+  </select>
+  <insert id="save">
+    insert into mall_fx_person (`CopId`,`BrandId`,`FxType`,`ShopId`,`FxLevel`,`SgId`,`SgLoginId`,`Phone`,`WxUnionID`,`ParentId`,`Status`,`TotalAmount`,`WaitAmount`,`RemainAmount`,`UseAmount`,`AccountChangeDate`,`IsEnable`,`CreateDate`,`LastModifiedDate`,`InviteFxPersonType`,`DevelopActId`,`IsAddGuideWeChat`,`IdentityInforStatus`,`IsSysSetDisable`,`IsRetailSaler`,`BlackListed`,`SubCount`,`AddSubWkCount`,`IsFxCommunityOperation`)
+    values (#{mallFxPerson.copid},#{mallFxPerson.brandid},#{mallFxPerson.fxtype},#{mallFxPerson.shopid},#{mallFxPerson.fxlevel},#{mallFxPerson.sgid},#{mallFxPerson.sgloginid},#{mallFxPerson.phone},#{mallFxPerson.wxunionid},#{mallFxPerson.parentid},#{mallFxPerson.status},#{mallFxPerson.totalamount},#{mallFxPerson.waitamount},#{mallFxPerson.remainamount},#{mallFxPerson.useamount},#{mallFxPerson.accountchangedate},#{mallFxPerson.isenable},#{mallFxPerson.createdate},#{mallFxPerson.lastmodifieddate},#{mallFxPerson.invitefxpersontype},#{mallFxPerson.developactid},#{mallFxPerson.isaddguidewechat},#{mallFxPerson.identityinforstatus},#{mallFxPerson.issyssetdisable},#{mallFxPerson.isretailsaler},#{mallFxPerson.blacklisted},#{mallFxPerson.subcount},#{mallFxPerson.addsubwkcount},#{mallFxPerson.isfxcommunityoperation});
+  </insert>
+  <update id="update">
+    update mall_fx_person
+    <set>
+      <if test="mallFxPerson.copid != null">
+        `CopId` = #{mallFxPerson.copid},
+      </if>
+      <if test="mallFxPerson.brandid != null">
+        `BrandId` = #{mallFxPerson.brandid},
+      </if>
+      <if test="mallFxPerson.fxtype != null">
+        `FxType` = #{mallFxPerson.fxtype},
+      </if>
+      <if test="mallFxPerson.shopid != null">
+        `ShopId` = #{mallFxPerson.shopid},
+      </if>
+      <if test="mallFxPerson.fxlevel != null">
+        `FxLevel` = #{mallFxPerson.fxlevel},
+      </if>
+      <if test="mallFxPerson.sgid != null">
+        `SgId` = #{mallFxPerson.sgid},
+      </if>
+      <if test="mallFxPerson.sgloginid != null">
+        `SgLoginId` = #{mallFxPerson.sgloginid},
+      </if>
+      <if test="mallFxPerson.phone != null">
+        `Phone` = #{mallFxPerson.phone},
+      </if>
+      <if test="mallFxPerson.wxunionid != null">
+        `WxUnionID` = #{mallFxPerson.wxunionid},
+      </if>
+      <if test="mallFxPerson.parentid != null">
+        `ParentId` = #{mallFxPerson.parentid},
+      </if>
+      <if test="mallFxPerson.status != null">
+        `Status` = #{mallFxPerson.status},
+      </if>
+      <if test="mallFxPerson.totalamount != null">
+        `TotalAmount` = #{mallFxPerson.totalamount},
+      </if>
+      <if test="mallFxPerson.waitamount != null">
+        `WaitAmount` = #{mallFxPerson.waitamount},
+      </if>
+      <if test="mallFxPerson.remainamount != null">
+        `RemainAmount` = #{mallFxPerson.remainamount},
+      </if>
+      <if test="mallFxPerson.useamount != null">
+        `UseAmount` = #{mallFxPerson.useamount},
+      </if>
+      <if test="mallFxPerson.accountchangedate != null">
+        `AccountChangeDate` = #{mallFxPerson.accountchangedate},
+      </if>
+      <if test="mallFxPerson.isenable != null">
+        `IsEnable` = #{mallFxPerson.isenable},
+      </if>
+      <if test="mallFxPerson.createdate != null">
+        `CreateDate` = #{mallFxPerson.createdate},
+      </if>
+      <if test="mallFxPerson.lastmodifieddate != null">
+        `LastModifiedDate` = #{mallFxPerson.lastmodifieddate},
+      </if>
+      <if test="mallFxPerson.invitefxpersontype != null">
+        `InviteFxPersonType` = #{mallFxPerson.invitefxpersontype},
+      </if>
+      <if test="mallFxPerson.developactid != null">
+        `DevelopActId` = #{mallFxPerson.developactid},
+      </if>
+      <if test="mallFxPerson.isaddguidewechat != null">
+        `IsAddGuideWeChat` = #{mallFxPerson.isaddguidewechat},
+      </if>
+      <if test="mallFxPerson.identityinforstatus != null">
+        `IdentityInforStatus` = #{mallFxPerson.identityinforstatus},
+      </if>
+      <if test="mallFxPerson.issyssetdisable != null">
+        `IsSysSetDisable` = #{mallFxPerson.issyssetdisable},
+      </if>
+      <if test="mallFxPerson.isretailsaler != null">
+        `IsRetailSaler` = #{mallFxPerson.isretailsaler},
+      </if>
+      <if test="mallFxPerson.blacklisted != null">
+        `BlackListed` = #{mallFxPerson.blacklisted},
+      </if>
+      <if test="mallFxPerson.subcount != null">
+        `SubCount` = #{mallFxPerson.subcount},
+      </if>
+      <if test="mallFxPerson.addsubwkcount != null">
+        `AddSubWkCount` = #{mallFxPerson.addsubwkcount},
+      </if>
+      <if test="mallFxPerson.isfxcommunityoperation != null">
+        `IsFxCommunityOperation` = #{mallFxPerson.isfxcommunityoperation},
+      </if>
+    </set>
+    where Id = #{mallFxPerson.id}
+  </update>
+  <delete id="deleteById">
+    delete from mall_fx_person where Id = #{id}
+  </delete>
+
+</mapper>

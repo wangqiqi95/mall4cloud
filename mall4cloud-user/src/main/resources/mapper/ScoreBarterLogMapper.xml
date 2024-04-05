@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.scoreConvert.ScoreBarterLogMapper">
+    <!-- 兑换记录列表的返回参数-->
+    <resultMap id="result_Score_Barter_Log_Map" type="com.mall4j.cloud.user.vo.scoreConvert.ScoreBarterLogVO">
+        <id column="log_id" property="id" />
+        <result column="user_card_number" property="userCardNumber" />
+        <result column="user_phone" property="userPhone" />
+        <result column="convert_score" property="convertScore" />
+        <result column="convert_address" property="convertAddress" />
+        <result column="courier_code" property="courierCode" />
+        <result column="shop_id" property="shopId" />
+        <result column="shop_name" property="shopName" />
+        <result column="delivery_type" property="deliveryType" />
+        <result column="note" property="note" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <select id="logList" parameterType="com.mall4j.cloud.user.dto.scoreConvert.ScoreBarterLogListDTO" resultMap="result_Score_Barter_Log_Map">
+        select log_id, user_card_number, user_phone, convert_score, shop_id, shop_name, delivery_type, convert_address, courier_code, note, create_time
+        from score_barter_log
+        <where>
+            convert_id = #{convertId}
+            <if test="userInfo != null">
+                and (user_card_number like concat('%',#{userInfo},'%') or user_phone like concat('%',#{userInfo},'%'))
+            </if>
+            <if test="starTime != null and endTime != null">
+                and (createTime between #{starTime} and #{endTime})
+            </if>
+        </where>
+    </select>
+</mapper>

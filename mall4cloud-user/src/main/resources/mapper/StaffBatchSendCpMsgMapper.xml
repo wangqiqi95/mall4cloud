@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.user.mapper.StaffBatchSendCpMsgMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.user.model.StaffBatchSendCpMsg">
+        <id column="staff_batch_send_cp_msg_id" property="staffBatchSendCpMsgId" />
+        <result column="push_task_id" property="pushTaskId" />
+        <result column="push_son_task_id" property="pushSonTaskId" />
+        <result column="staff_id" property="staffId" />
+        <result column="msg_id" property="msgId" />
+        <result column="send_status" property="sendStatus" />
+        <result column="create_time" property="createTime" />
+        <result column="staff_cp_user_id" property="staffCpUserId" />
+        <result column="head_count" property="headCount" />
+        <result column="reach_count" property="reachCount" />
+        <result column="finish_state" property="finishState" />
+        <result column="finish_time" property="finishTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        staff_batch_send_cp_msg_id, push_task_id, push_son_task_id, staff_id, msg_id, send_status, staff_cp_user_id, create_time,
+            head_count, reach_count, finish_state, finish_time
+    </sql>
+
+    <select id="getCpDataBySendStatus" resultType="com.mall4j.cloud.user.vo.StaffBatchSendCpMsgVO">
+        SELECT
+            msg.*
+        FROM t_staff_batch_send_cp_msg msg
+        LEFT JOIN t_group_push_task task ON msg.push_task_id = task.group_push_task_id
+        WHERE (msg.send_status IS NULL OR msg.send_status = 0 )
+        AND msg.msg_id IS NOT NULL
+        AND task.delete_flag = 0
+        AND task.operate_status = 1
+    </select>
+
+</mapper>

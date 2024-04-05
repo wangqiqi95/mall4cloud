@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.MaterialMapper">
+  <resultMap id="materialMap" type="com.mall4j.cloud.biz.model.cp.Material">
+    <id column="ID" property="id" />
+    <result column="MAT_NAME" property="matName"/>
+    <result column="MAT_TYPE" property="matType"/>
+    <result column="MAT_CONTENT" property="matContent"/>
+    <result column="STATUS" property="status"/>
+    <result column="CREATE_BY" property="createBy"/>
+    <result column="CREATE_NAME" property="createName"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="VALIDITY_CREATE_TIME" property="validityCreateTime"/>
+    <result column="VALIDITY_END_TIME" property="validityEndTime"/>
+    <result column="UPDATE_TIME" property="updateTime"/>
+    <result column="IS_ALL_SHOP" property="isAllShop"/>
+    <result column="FLAG" property="flag"/>
+    <result column="IS_TOP" property="isTop"/>
+    <result column="Interactive_radar" property="interactiveRadar"/>
+    <result column="mat_labal" property="matLabal"/>
+    <result column="use_num" property="useNum"/>
+    <result column="script_content" property="scriptContent"/>
+    <result column="browse_count" property="browseCount"/>
+    <result column="visitor_count" property="visitorCount"/>
+  </resultMap>
+  <resultMap id="materialVOMap" extends="materialMap" type="com.mall4j.cloud.biz.vo.cp.MaterialVO">
+    <result column="TYPE_NAME" property="typeName"/>
+    <result column="msgType" property="msgType"/>
+    <collection property="shops" ofType="com.mall4j.cloud.biz.model.cp.MaterialStore" column="ID" select="com.mall4j.cloud.biz.mapper.cp.MaterialStoreMapper.listByMatId" />
+  </resultMap>
+
+  <resultMap id="miniMaterialVOMap" type="com.mall4j.cloud.biz.vo.cp.MiniMaterialVO">
+    <id column="ID" property="id" />
+    <result column="MAT_NAME" property="matName"/>
+    <result column="MAT_TYPE" property="matType"/>
+    <result column="MAT_CONTENT" property="matContent"/>
+    <result column="TYPE_NAME" property="typeName"/>
+    <result column="VALIDITY_CREATE_TIME" property="validityCreateTime"/>
+    <result column="VALIDITY_END_TIME" property="validityEndTime"/>
+    <result column="IS_TOP" property="isTop"/>
+
+    <result column="TYPE" property="type"/>
+    <result column="media_id" property="mediaId"/>
+    <result column="CONTENT" property="content"/>
+    <result column="URL" property="url"/>
+    <result column="APP_ID" property="appId"/>
+    <result column="APP_TITLE" property="appTitle"/>
+    <result column="APP_PAGE" property="appPage"/>
+    <result column="APP_PIC" property="appPic"/>
+    <result column="mat_labal" property="matLabal"/>
+    <result column="use_num" property="useNum"/>
+    <result column="article_url" property="articleUrl"/>
+    <result column="article_desc" property="articleDesc"/>
+    <result column="pic_url" property="picUrl"/>
+    <result column="script_content" property="scriptContent"/>
+    <result column="mat_msg_id" property="matMsgId"/>
+    <result column="interactiveRadar" property="interactiveRadar"/>
+    <result column="browse_count" property="browseCount"/>
+    <result column="visitor_count" property="visitorCount"/>
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `ID`,`MAT_NAME`,`MAT_TYPE`,`MAT_CONTENT`,`STATUS`,`CREATE_BY`,`CREATE_TIME`,
+    `UPDATE_TIME`,`FLAG`,CREATE_NAME, VALIDITY_CREATE_TIME, VALIDITY_END_TIME, IS_TOP
+    ,interactive_radar,mat_labal,use_num,script_content,browse_count,visitor_count
+  </sql>
+
+  <select id="selectByIds" resultType="com.mall4j.cloud.biz.model.cp.Material">
+    select
+    <include refid="Vo_Column_List">
+    </include>
+    from CP_MATERIAL
+    where id in
+    <foreach collection="dto.ids" item="item" index="index" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
+
+  <select id="list" resultMap="materialVOMap">
+    select M.ID,M.MAT_NAME,M.MAT_TYPE,M.MAT_CONTENT,M.STATUS,M.CREATE_BY
+    ,M.CREATE_TIME,M.UPDATE_TIME,M.CREATE_NAME,M.VALIDITY_CREATE_TIME,M.VALIDITY_END_TIME,M.IS_TOP,M.browse_count,M.visitor_count
+         ,IS_ALL_SHOP,C.TYPE_NAME  TYPE_NAME,mat_labal,use_num,cml.TYPE as msgType
+      from CP_MATERIAL M
+      JOIN CP_MATERIAL_TYPE C ON C.ID = M.MAT_TYPE
+      left join CP_MATERIAL_MSG cml on M.id = cml.mat_id
+      WHERE M.FLAG =0
+      <if test="material.storeId != null "> AND (M.IS_ALL_SHOP = 1 OR M.ID IN (SELECT S.MAT_ID FROM CP_MATERIAL_STORE S WHERE S.STORE_ID = #{material.storeId}  ) )  </if>
+      <if test="material.matName != null and material.matName !='' "> AND M.MAT_NAME LIKE CONCAT('%', #{material.matName},'%')  </if>
+      <if test="material.matType != null"> AND M.MAT_TYPE IN (SELECT ID FROM CP_MATERIAL_TYPE WHERE ID =#{material.matType} OR PARENT_ID=#{material.matType} ) </if>
+      <if test="material.type != null"> AND cml.TYPE = #{material.type} </if>
+      <if test="material.status != null"> AND M.STATUS = #{material.status} </if>
+      <if test="material.createTimeStart != null and material.createTimeStart !='' "> AND M.CREATE_TIME >=STR_TO_DATE(#{material.createTimeStart},"%Y-%m-%d")  </if>
+      <if test="material.createTimeEnd != null and material.createTimeEnd !='' "> AND M.CREATE_TIME <![CDATA[< ]]>STR_TO_DATE(#{material.createTimeEnd},"%Y-%m-%d")+1  </if>
+    <if test="material.selectNormal != null and material.selectNormal ==1 ">
+      AND M.STATUS = 1
+      AND (M.VALIDITY_CREATE_TIME &lt; NOW() or M.VALIDITY_CREATE_TIME is null)
+      AND (M.VALIDITY_END_TIME &gt; NOW() or M.VALIDITY_END_TIME is null)
+    </if>
+    ORDER BY M.IS_TOP DESC, M.UPDATE_TIME DESC
+  </select>
+  <!-- 小程序端素材查询列表 -->
+  <select id="miniList" resultMap="miniMaterialVOMap">
+    select M.ID,M.MAT_NAME,M.MAT_TYPE,M.MAT_CONTENT,C.TYPE_NAME,M.VALIDITY_CREATE_TIME,M.VALIDITY_END_TIME,
+    M.IS_TOP ,S.APP_PAGE,S.APP_ID,S.APP_PIC,S.APP_TITLE,S.CONTENT,S.TYPE,S.URL,mat_labal,S.article_url,S.article_desc,S.media_id,S.ID as mat_msg_id,S.pic_url,
+    M.script_content,M.interactive_radar as interactiveRadar
+    from CP_MATERIAL M
+    LEFT JOIN CP_MATERIAL_TYPE C ON C.ID = M.MAT_TYPE
+    LEFT JOIN CP_MATERIAL_TYPE P ON C.PARENT_ID = P.ID
+    LEFT JOIN CP_MATERIAL_MSG S ON S.MAT_ID = M.ID AND S.origin = 0
+    WHERE M.FLAG =0
+    AND M.STATUS = 1
+    AND (M.VALIDITY_CREATE_TIME &lt; NOW() or M.VALIDITY_CREATE_TIME is null)
+    AND (M.VALIDITY_END_TIME &gt; NOW() or M.VALIDITY_END_TIME is null)
+    AND P.IS_SHOW = 1
+    AND C.IS_SHOW = 1
+    AND S.ID = (SELECT MIN(G.ID) FROM CP_MATERIAL_MSG G WHERE G.MAT_ID = M.ID AND G.origin = 0)
+    <if test="material.orgIds != null ">
+      AND (M.IS_ALL_SHOP = 1 OR M.ID IN (SELECT distinct S.MAT_ID FROM CP_MATERIAL_STORE S WHERE S.STORE_ID in
+        <foreach collection="material.orgIds" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+      ))
+    </if>
+    <if test="material.matName != null and material.matName !='' "> AND M.MAT_NAME LIKE CONCAT('%', #{material.matName},'%')  </if>
+    <if test="material.matType != null"> AND M.MAT_TYPE IN (SELECT ID FROM CP_MATERIAL_TYPE WHERE ID =#{material.matType} OR PARENT_ID=#{material.matType} ) </if>
+    <if test="material.type != null"> AND S.TYPE = #{material.type} </if>
+    ORDER BY M.IS_TOP DESC, M.UPDATE_TIME DESC
+  </select>
+
+  <select id="selectRecomList" resultMap="miniMaterialVOMap">
+    select M.ID,M.MAT_NAME,M.MAT_TYPE,M.MAT_CONTENT,C.TYPE_NAME,M.VALIDITY_CREATE_TIME,M.VALIDITY_END_TIME,
+    M.IS_TOP ,S.APP_PAGE,S.APP_ID,S.APP_PIC,S.APP_TITLE,S.CONTENT,S.TYPE,S.URL,mat_labal,S.article_url,S.article_desc,S.media_id,S.ID as mat_msg_id,
+    M.script_content,M.interactive_radar as interactiveRadar
+    from CP_MATERIAL M
+    LEFT JOIN CP_MATERIAL_TYPE C ON C.ID = M.MAT_TYPE
+    LEFT JOIN CP_MATERIAL_TYPE P ON C.PARENT_ID = P.ID
+    LEFT JOIN CP_MATERIAL_MSG S ON S.MAT_ID = M.ID AND S.origin = 0
+    WHERE M.FLAG =0
+    AND M.STATUS = 1
+    AND M.ID in
+    <foreach collection="material.ids" item="item" index="index" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    ORDER BY M.IS_TOP DESC, M.UPDATE_TIME DESC
+  </select>
+
+  <select id="getById" resultMap="materialMap">
+    select <include refid="Vo_Column_List"/> from CP_MATERIAL where ID = #{id}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="ID" >
+    insert into CP_MATERIAL
+        (`MAT_NAME`,`MAT_TYPE`,`MAT_CONTENT`,`STATUS`,`CREATE_BY`,`CREATE_TIME`
+        ,`UPDATE_TIME`,`FLAG`,IS_ALL_SHOP,CREATE_NAME, VALIDITY_CREATE_TIME, VALIDITY_END_TIME, IS_TOP,interactive_radar,mat_labal,script_content)
+    values (#{material.matName},#{material.matType},#{material.matContent},#{material.status}
+    ,#{material.createBy},#{material.createTime},#{material.updateTime},#{material.flag}
+    ,#{material.isAllShop},#{material.createName}, #{material.validityCreateTime}, #{material.validityEndTime}, #{material.isTop}
+    ,#{material.interactiveRadar},#{material.matLabal},#{material.scriptContent});
+  </insert>
+  <update id="update">
+    update CP_MATERIAL
+    <set>
+      `VALIDITY_CREATE_TIME` = #{material.validityCreateTime},
+      `VALIDITY_END_TIME` = #{material.validityEndTime},
+      <if test="material.matName != null">
+        `MAT_NAME` = #{material.matName},
+      </if>
+      <if test="material.matType != null">
+        `MAT_TYPE` = #{material.matType},
+      </if>
+      <if test="material.matContent != null">
+        `MAT_CONTENT` = #{material.matContent},
+      </if>
+      <if test="material.status != null">
+        `STATUS` = #{material.status},
+      </if>
+      <if test="material.createBy != null">
+        `CREATE_BY` = #{material.createBy},
+      </if>
+      <if test="material.createTime != null">
+        `CREATE_TIME` = #{material.createTime},
+      </if>
+      <if test="material.updateTime != null">
+        `UPDATE_TIME` = #{material.updateTime},
+      </if>
+      <if test="material.isAllShop!= null">
+        `IS_ALL_SHOP` = #{material.isAllShop},
+      </if>
+      <if test="material.flag != null">
+        `FLAG` = #{material.flag},
+      </if>
+      <if test="material.createName != null">
+        `CREATE_NAME` = #{material.createName},
+      </if>
+<!--      <if test="material.validityCreateTime != null">-->
+<!--        `VALIDITY_CREATE_TIME` = #{material.validityCreateTime},-->
+<!--      </if>-->
+<!--      <if test="material.validityEndTime != null">-->
+<!--        `VALIDITY_END_TIME` = #{material.validityEndTime},-->
+<!--      </if>-->
+      <if test="material.isTop != null">
+        `IS_TOP` = #{material.isTop},
+      </if>
+      <if test="material.interactiveRadar != null">
+        `Interactive_radar` = #{material.interactiveRadar},
+      </if>
+      <if test="material.matLabal != null">
+        `mat_labal` = #{material.matLabal},
+      </if>
+      <if test="material.scriptContent != null">
+        `script_content` = #{material.scriptContent},
+      </if>
+      <if test="material.browseCount != null">
+        `browse_count` = #{material.browseCount},
+      </if>
+      <if test="material.visitorCount != null">
+        `visitor_count` = #{material.visitorCount},
+      </if>
+    </set>
+    where ID = #{material.id}
+  </update>
+  <delete id="deleteById">
+    delete from CP_MATERIAL where ID = #{id}
+  </delete>
+
+  <delete id="deleteByIds">
+    update CP_MATERIAL set FLAG=1,UPDATE_TIME=now() where ID in
+    <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+
+    <select id="getMaterialCountByMatTypeId" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM CP_MATERIAL
+        WHERE FLAG = 0
+      <if test="status != null">
+        and STATUS=#{status}
+      </if>
+        <if test="matTypeIdList != null and matTypeIdList.size() > 0">
+          AND ( MAT_TYPE IN
+          <foreach collection="matTypeIdList" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+          </foreach>
+          )
+        </if>
+    </select>
+
+    <select id="getExpireMaterialIds" resultType="java.lang.Long">
+        SELECT ID FROM CP_MATERIAL
+        WHERE FLAG = 0
+        AND `STATUS` = 1
+        AND NOW() <![CDATA[ >= ]]> VALIDITY_END_TIME
+    </select>
+
+    <update id="updateMaterialStatusByIds">
+        UPDATE CP_MATERIAL
+        SET `STATUS` = 0
+        WHERE ID IN
+        <foreach collection="materialIds" item="materialId"  index="index" open="("  separator="," close=")">
+            #{materialId}
+        </foreach>
+    </update>
+
+  <update id="changeMenu">
+    UPDATE CP_MATERIAL
+    SET `MAT_TYPE` = #{matType}
+    WHERE ID IN
+    <foreach collection="materialIds" item="materialId"  index="index" open="("  separator="," close=")">
+      #{materialId}
+    </foreach>
+  </update>
+
+  <update id="use">
+    update CP_MATERIAL
+        set use_num = use_num + 1
+    where ID = #{id}
+  </update>
+
+</mapper>

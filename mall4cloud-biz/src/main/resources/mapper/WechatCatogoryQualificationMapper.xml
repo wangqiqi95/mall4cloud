@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mall4j.cloud.biz.mapper.WechatCatogoryQualificationMapper">
+
+    <resultMap id="BaseResultMap"  type="com.mall4j.cloud.biz.model.WechatCatogoryQualificationDO">
+        <id column="ID" property="id" jdbcType="BIGINT" javaType="Long"/>
+        <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="CATEGORY_ID" property="categoryId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="WX_CATEGORY_ID" property="wxCategoryId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="WX_CATEGORY_NAME" property="wxCategoryName" jdbcType="VARCHAR" javaType="String"/>
+        <result column="WX_QUALIFICATION" property="wxQualification" jdbcType="VARCHAR" javaType="String"/>
+        <result column="WX_QUALIFICATION_TYPE" property="wxQualificationType" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="WX_PRODUCT_QUALIFICATION" property="wxProductQualification" jdbcType="VARCHAR" javaType="String"/>
+        <result column="WX_PRODUCT_QUALIFICATION_TYPE" property="wxProductQualificationType" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="WX_SECOND_CAT_ID" property="wxSecondCatId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="WX_SECOND_CAT_NAME" property="wxSecondCatName" jdbcType="VARCHAR" javaType="String"/>
+        <result column="WX_FIRST_CAT_ID" property="wxFirstCatId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="WX_FIRST_CAT_NAME" property="wxFirstCatName" jdbcType="VARCHAR" javaType="String"/>
+        <result column="STATUS" property="status" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="AUDIT_ID" property="auditId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="AUDIT_CONTENT" property="auditContent" jdbcType="VARCHAR" javaType="String"/>
+        <result column="AUDIT_TIME" property="auditTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="QUALIFICATION_URLS" property="qualificationUrls" jdbcType="VARCHAR" javaType="String"/>
+        <result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" javaType="String"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="UPDATE_BY" property="updateBy" jdbcType="VARCHAR" javaType="String"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="IS_DELETED" property="isDeleted" jdbcType="INTEGER" javaType="Integer"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        ID,TENANT_ID,CATEGORY_ID,WX_CATEGORY_ID,WX_CATEGORY_NAME,WX_QUALIFICATION,WX_QUALIFICATION_TYPE,WX_PRODUCT_QUALIFICATION,WX_PRODUCT_QUALIFICATION_TYPE,WX_SECOND_CAT_ID,WX_SECOND_CAT_NAME,WX_FIRST_CAT_ID,WX_FIRST_CAT_NAME,STATUS,AUDIT_ID,audit_content,AUDIT_TIME,QUALIFICATION_URLS,CREATE_BY,CREATE_TIME,UPDATE_BY,UPDATE_TIME,IS_DELETED
+    </sql>
+
+
+    <!--insert:wechat_catogory_qualification-->
+    <insert id="insert" >
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO wechat_catogory_qualification(
+            ID
+            ,TENANT_ID
+            ,CATEGORY_ID
+            ,WX_CATEGORY_ID
+            ,WX_CATEGORY_NAME
+            ,WX_QUALIFICATION
+            ,WX_QUALIFICATION_TYPE
+            ,WX_PRODUCT_QUALIFICATION
+            ,WX_PRODUCT_QUALIFICATION_TYPE
+            ,WX_SECOND_CAT_ID
+            ,WX_SECOND_CAT_NAME
+            ,WX_FIRST_CAT_ID
+            ,WX_FIRST_CAT_NAME
+            ,STATUS
+            ,AUDIT_ID
+            ,AUDIT_CONTENT
+            ,AUDIT_TIME
+            ,QUALIFICATION_URLS
+            ,CREATE_BY
+            ,UPDATE_BY
+        )VALUES(
+             #{id,jdbcType=BIGINT}
+            , #{tenantId,jdbcType=VARCHAR}
+            , #{categoryId,jdbcType=VARCHAR}
+            , #{wxCategoryId,jdbcType=VARCHAR}
+            , #{wxCategoryName,jdbcType=VARCHAR}
+            , #{wxQualification,jdbcType=VARCHAR}
+            , #{wxQualificationType,jdbcType=TINYINT}
+            , #{wxProductQualification,jdbcType=VARCHAR}
+            , #{wxProductQualificationType,jdbcType=TINYINT}
+            , #{wxSecondCatId,jdbcType=VARCHAR}
+            , #{wxSecondCatName,jdbcType=VARCHAR}
+            , #{wxFirstCatId,jdbcType=VARCHAR}
+            , #{wxFirstCatName,jdbcType=VARCHAR}
+            , #{status,jdbcType=TINYINT}
+            , #{auditId,jdbcType=VARCHAR}
+            , #{auditContent,jdbcType=VARCHAR}
+            , #{auditTime,jdbcType=TIMESTAMP}
+            , #{qualificationUrls,jdbcType=VARCHAR}
+            , #{createBy,jdbcType=VARCHAR}
+            , #{updateBy,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!--update table:wechat_catogory_qualification-->
+    <update id="update" >
+        UPDATE /*MS-WECHAT-CATOGORY-QUALIFICATION-UPDATE*/ wechat_catogory_qualification
+        SET
+             UPDATE_TIME     = now()
+            <if test="tenantId != null">
+                ,TENANT_ID       = #{tenantId,jdbcType=VARCHAR}
+            </if>
+            <if test="categoryId != null">
+                ,CATEGORY_ID     = #{categoryId,jdbcType=VARCHAR}
+            </if>
+            <if test="wxCategoryId != null">
+                ,WX_CATEGORY_ID  = #{wxCategoryId,jdbcType=VARCHAR}
+            </if>
+            <if test="wxCategoryName != null">
+                ,WX_CATEGORY_NAME = #{wxCategoryName,jdbcType=VARCHAR}
+            </if>
+            <if test="wxQualification != null">
+                ,WX_QUALIFICATION = #{wxQualification,jdbcType=VARCHAR}
+            </if>
+            <if test="wxQualificationType != null">
+                ,WX_QUALIFICATION_TYPE = #{wxQualificationType,jdbcType=TINYINT}
+            </if>
+            <if test="wxProductQualification != null">
+                ,WX_PRODUCT_QUALIFICATION = #{wxProductQualification,jdbcType=VARCHAR}
+            </if>
+            <if test="wxProductQualificationType != null">
+                ,WX_PRODUCT_QUALIFICATION_TYPE = #{wxProductQualificationType,jdbcType=TINYINT}
+            </if>
+            <if test="wxSecondCatId != null">
+                ,WX_SECOND_CAT_ID = #{wxSecondCatId,jdbcType=VARCHAR}
+            </if>
+            <if test="wxSecondCatName != null">
+                ,WX_SECOND_CAT_NAME = #{wxSecondCatName,jdbcType=VARCHAR}
+            </if>
+            <if test="wxFirstCatId != null">
+                ,WX_FIRST_CAT_ID = #{wxFirstCatId,jdbcType=VARCHAR}
+            </if>
+            <if test="wxFirstCatName != null">
+                ,WX_FIRST_CAT_NAME = #{wxFirstCatName,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null">
+                ,STATUS          = #{status,jdbcType=TINYINT}
+            </if>
+            <if test="auditId != null">
+                ,AUDIT_ID        = #{auditId,jdbcType=VARCHAR}
+            </if>
+            <if test="auditContent != null">
+                ,AUDIT_CONTENT        = #{auditContent,jdbcType=VARCHAR}
+            </if>
+            <if test="auditTime != null">
+                ,AUDIT_TIME      = #{auditTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updateBy != null">
+                ,UPDATE_BY       = #{updateBy,jdbcType=VARCHAR}
+            </if>
+            <if test="isDeleted != null">
+                ,IS_DELETED      = #{isDeleted,jdbcType=INTEGER}
+            </if>
+        WHERE
+            ID              = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!--delete:wechat_catogory_qualification-->
+    <delete id="deleteByPrimary" >
+        DELETE /*MS-WECHAT-CATOGORY-QUALIFICATION-DELETEBYPRIMARY*/ FROM
+            wechat_catogory_qualification
+        WHERE
+            ID = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <!--get:wechat_catogory_qualification-->
+    <select id="getByPrimary" resultMap="BaseResultMap">
+        SELECT /*MS-WECHAT-CATOGORY-QUALIFICATION-GETBYPRIMARY*/  <include refid="Base_Column_List" />
+        FROM wechat_catogory_qualification
+        WHERE
+            ID = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="getByAuditId" resultMap="BaseResultMap">
+        SELECT /*MS-WECHAT-CATOGORY-QUALIFICATION-GETBYPRIMARY*/  <include refid="Base_Column_List" />
+        FROM wechat_catogory_qualification
+        WHERE
+        AUDIT_ID = #{auditId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        SELECT /*MS-WECHAT-CATOGORY-QUALIFICATION-GETBYPRIMARY*/  <include refid="Base_Column_List" />
+        FROM wechat_catogory_qualification
+        order by id desc
+    </select>
+
+    <select id="getByWxCategoryId" resultMap="BaseResultMap">
+        SELECT /*MS-WECHAT-CATOGORY-QUALIFICATION-GETBYPRIMARY*/  <include refid="Base_Column_List" />
+        FROM wechat_catogory_qualification
+        WHERE
+        WX_CATEGORY_ID = #{wxCategoryId,jdbcType=VARCHAR}
+    </select>
+
+    <update id="auditResult">
+        update wechat_catogory_qualification
+            set audit_content = #{auditContent},
+                audit_time = now(),
+                status = #{status}
+        where audit_id = #{auditId}
+    </update>
+
+
+</mapper>

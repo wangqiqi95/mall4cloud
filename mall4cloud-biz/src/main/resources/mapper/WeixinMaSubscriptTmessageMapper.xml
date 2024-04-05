@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinMaSubscriptTmessageMapper">
+    <resultMap id="weixinMaSubscriptTmessageMap" type="com.mall4j.cloud.biz.model.WeixinMaSubscriptTmessage">
+        <id column="id" property="id"/>
+        <result column="template_type_id" property="templateTypeId"/>
+        <result column="send_type" property="sendType"/>
+        <result column="template_title" property="templateTitle"/>
+        <result column="template_code" property="templateCode"/>
+        <result column="example" property="example"/>
+        <result column="app_id" property="appId"/>
+        <result column="page" property="page"/>
+        <result column="status" property="status"/>
+        <result column="remarks" property="remarks"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="title" property="title"/>
+        <result column="type" property="type"/>
+        <result column="content" property="content"/>
+        <result column="business_type" property="businessType"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`,
+        `template_type_id`,
+        `template_code`,
+        `send_type`,
+        `template_title`,
+        `example`,
+        `title`,
+        `type`,
+        `content`,
+        `business_type`,
+        `app_id`,
+        `page`,
+        `status`,
+        `remarks`,
+        `create_by`,
+        `create_time`,
+        `update_by`,
+        `update_time`,
+        `del_flag`
+    </sql>
+    <select id="list" resultMap="weixinMaSubscriptTmessageMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from weixin_ma_subscript_tmessage
+        where del_flag=0
+          <if test="businessType!=null">
+                and business_type=#{businessType}
+          </if>
+        <if test="appId!=null and appId!=''">
+            and app_id=#{appId}
+        </if>
+        <if test="sendType!=null">
+            and send_type=#{sendType}
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="getList" resultType="com.mall4j.cloud.biz.vo.WeixinMaSubscriptTmessageTypeVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from weixin_ma_subscript_tmessage
+        where del_flag=0
+        <if test="businessType!=null">
+            and business_type=#{businessType}
+        </if>
+        <if test="appId!=null and appId!=''">
+            and app_id=#{appId}
+        </if>
+        <if test="sendType!=null">
+            and send_type=#{sendType}
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="getById" resultMap="weixinMaSubscriptTmessageMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from weixin_ma_subscript_tmessage where id = #{id}
+    </select>
+    <insert id="save">
+        insert into weixin_ma_subscript_tmessage (`id`,`template_type_id`, `send_type`, `template_title`,
+                                                  `example`,
+                                                  `title`,
+                                                  `type`,
+                                                  `content`,
+                                                  `business_type`,`template_code`,`app_id`, `page`, `status`, `remarks`, `create_by`,
+                                                  `create_time`, `del_flag`)
+        values ( #{weixinMaSubscriptTmessage.id},#{weixinMaSubscriptTmessage.templateTypeId},
+                #{weixinMaSubscriptTmessage.sendType}, #{weixinMaSubscriptTmessage.templateTitle},
+                #{weixinMaSubscriptTmessage.example},
+                #{weixinMaSubscriptTmessage.title},
+                #{weixinMaSubscriptTmessage.type},
+                #{weixinMaSubscriptTmessage.content},
+                #{weixinMaSubscriptTmessage.businessType},
+                #{weixinMaSubscriptTmessage.templateCode},
+                #{weixinMaSubscriptTmessage.appId},
+                #{weixinMaSubscriptTmessage.page}, #{weixinMaSubscriptTmessage.status},
+                #{weixinMaSubscriptTmessage.remarks}, #{weixinMaSubscriptTmessage.createBy},
+                #{weixinMaSubscriptTmessage.createTime}, #{weixinMaSubscriptTmessage.delFlag});
+    </insert>
+    <update id="update">
+        update weixin_ma_subscript_tmessage
+        <set>
+            <if test="weixinMaSubscriptTmessage.templateTypeId != null">
+                `template_type_id` = #{weixinMaSubscriptTmessage.templateTypeId},
+            </if>
+            <if test="weixinMaSubscriptTmessage.sendType != null">
+                `send_type` = #{weixinMaSubscriptTmessage.sendType},
+            </if>
+            <if test="weixinMaSubscriptTmessage.templateTitle != null">
+                `template_title` = #{weixinMaSubscriptTmessage.templateTitle},
+            </if>
+            <if test="weixinMaSubscriptTmessage.example != null">
+                `example` = #{weixinMaSubscriptTmessage.example},
+            </if>
+            <if test="weixinMaSubscriptTmessage.appId != null">
+                `app_id` = #{weixinMaSubscriptTmessage.appId},
+            </if>
+            <if test="weixinMaSubscriptTmessage.page != null">
+                `page` = #{weixinMaSubscriptTmessage.page},
+            </if>
+            <if test="weixinMaSubscriptTmessage.status != null">
+                `status` = #{weixinMaSubscriptTmessage.status},
+            </if>
+            <if test="weixinMaSubscriptTmessage.remarks != null">
+                `remarks` = #{weixinMaSubscriptTmessage.remarks},
+            </if>
+            <if test="weixinMaSubscriptTmessage.updateTime != null">
+                `update_time` = #{weixinMaSubscriptTmessage.updateTime},
+            </if>
+            <if test="weixinMaSubscriptTmessage.updateBy != null">
+                `update_by` = #{weixinMaSubscriptTmessage.updateBy},
+            </if>
+            <if test="weixinMaSubscriptTmessage.delFlag != null">
+                `del_flag` = #{weixinMaSubscriptTmessage.delFlag},
+            </if>
+            <if test="weixinMaSubscriptTmessage.title != null">
+                `title` = #{weixinMaSubscriptTmessage.title},
+            </if>
+            <if test="weixinMaSubscriptTmessage.type != null">
+                `type` = #{weixinMaSubscriptTmessage.type},
+            </if>
+            <if test="weixinMaSubscriptTmessage.content != null">
+                `content` = #{weixinMaSubscriptTmessage.content},
+            </if>
+            <if test="weixinMaSubscriptTmessage.businessType != null">
+                `business_type` = #{weixinMaSubscriptTmessage.businessType},
+            </if>
+            <if test="weixinMaSubscriptTmessage.templateCode != null">
+                `template_code` = #{weixinMaSubscriptTmessage.templateCode},
+            </if>
+        </set>
+        where id = #{weixinMaSubscriptTmessage.id}
+    </update>
+    <delete id="deleteById">
+        update weixin_ma_subscript_tmessage set del_flag=1,update_time=now() where id = #{id}
+    </delete>
+    <select id="getBySendType" resultType="com.mall4j.cloud.api.biz.vo.WeixinMaSubscriptTmessageVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from weixin_ma_subscript_tmessage where send_type = #{sendType}
+    </select>
+
+    <select id="getByType" resultType="com.mall4j.cloud.api.biz.vo.WeixinMaSubscriptTmessageVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from weixin_ma_subscript_tmessage where business_type = #{type}
+    </select>
+</mapper>

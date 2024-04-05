@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinOpenAccountMapper">
+  <resultMap id="weixinOpenAccountMap" type="com.mall4j.cloud.biz.model.WeixinOpenAccount">
+    <id column="id" property="id" />
+    <result column="app_id" property="appId"/>
+    <result column="app_secret" property="appSecret"/>
+    <result column="ticket" property="ticket"/>
+    <result column="get_ticket_time" property="getTicketTime"/>
+    <result column="component_access_token" property="componentAccessToken"/>
+    <result column="get_access_token_time" property="getAccessTokenTime"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`app_id`,`app_secret`,`ticket`,`get_ticket_time`,`component_access_token`,`get_access_token_time`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinOpenAccountMap">
+    select <include refid="Vo_Column_List"/> from weixin_open_account order by id desc
+  </select>
+  <select id="getById" resultMap="weixinOpenAccountMap">
+    select <include refid="Vo_Column_List"/> from weixin_open_account where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_open_account (`id`,`app_id`,`app_secret`,`ticket`,`get_ticket_time`,`component_access_token`,`get_access_token_time`,`create_by`,`create_time`,`del_flag`)
+    values (#{weixinOpenAccount.id},#{weixinOpenAccount.appId},#{weixinOpenAccount.appSecret},#{weixinOpenAccount.ticket},#{weixinOpenAccount.getTicketTime},#{weixinOpenAccount.componentAccessToken},#{weixinOpenAccount.getAccessTokenTime},#{weixinOpenAccount.createBy},#{weixinOpenAccount.createTime},#{weixinOpenAccount.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_open_account
+    <set>
+      <if test="weixinOpenAccount.appId != null">
+        `app_id` = #{weixinOpenAccount.appId},
+      </if>
+      <if test="weixinOpenAccount.appSecret != null">
+        `app_secret` = #{weixinOpenAccount.appSecret},
+      </if>
+      <if test="weixinOpenAccount.ticket != null">
+        `ticket` = #{weixinOpenAccount.ticket},
+      </if>
+      <if test="weixinOpenAccount.getTicketTime != null">
+        `get_ticket_time` = #{weixinOpenAccount.getTicketTime},
+      </if>
+      <if test="weixinOpenAccount.componentAccessToken != null">
+        `component_access_token` = #{weixinOpenAccount.componentAccessToken},
+      </if>
+      <if test="weixinOpenAccount.getAccessTokenTime != null">
+        `get_access_token_time` = #{weixinOpenAccount.getAccessTokenTime},
+      </if>
+      <if test="weixinOpenAccount.preAuthCode != null">
+        `pre_auth_code` = #{weixinOpenAccount.preAuthCode},
+      </if>
+      <if test="weixinOpenAccount.authorizerAccessToken != null">
+        `authorizer_access_token` = #{weixinOpenAccount.authorizerAccessToken},
+      </if>
+      <if test="weixinOpenAccount.authorizerRefreshToken != null">
+        `authorizer_refresh_token` = #{weixinOpenAccount.authorizerRefreshToken},
+      </if>
+      <if test="weixinOpenAccount.updateBy != null">
+        `update_by` = #{weixinOpenAccount.updateBy},
+      </if>
+      <if test="weixinOpenAccount.updateTime != null">
+        `update_time` = #{weixinOpenAccount.updateTime},
+      </if>
+      <if test="weixinOpenAccount.delFlag != null">
+        `del_flag` = #{weixinOpenAccount.delFlag},
+      </if>
+    </set>
+    where id = #{weixinOpenAccount.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_open_account where id = #{id}
+  </delete>
+
+  <select id="queryOneByAppid" parameterType="Object"  resultType="com.mall4j.cloud.biz.model.WeixinOpenAccount">
+    SELECT
+      woa.*         /* 平台方获取access_token时间 */
+    FROM   weixin_open_account      AS woa
+    WHERE
+      woa.app_id=#{appid}
+      LIMIT 1
+  </select>
+
+</mapper>

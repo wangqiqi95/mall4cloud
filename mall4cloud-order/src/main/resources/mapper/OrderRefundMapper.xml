@@ -1,0 +1,1349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.order.mapper.OrderRefundMapper">
+    <resultMap id="orderRefundMap" type="com.mall4j.cloud.order.model.OrderRefund">
+        <id column="refund_id" property="refundId"/>
+        <result column="aftersale_id" property="aftersaleId"/>
+        <result column="refund_number" property="refundNumber"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="user_id" property="userId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_item_id" property="orderItemId"/>
+        <result column="refund_count" property="refundCount"/>
+        <result column="refund_score" property="refundScore"/>
+        <result column="refund_amount" property="refundAmount"/>
+        <result column="platform_refund_amount" property="platformRefundAmount"/>
+        <result column="platform_refund_commission" property="platformRefundCommission"/>
+        <result column="distribution_total_amount" property="distributionTotalAmount"/>
+        <result column="refund_type" property="refundType"/>
+        <result column="apply_type" property="applyType"/>
+        <result column="is_received" property="isReceived"/>
+        <result column="close_type" property="closeType"/>
+        <result column="return_money_sts" property="returnMoneySts"/>
+        <result column="buyer_reason" property="buyerReason"/>
+        <result column="buyer_desc" property="buyerDesc"/>
+        <result column="buyer_mobile" property="buyerMobile"/>
+        <result column="img_urls" property="imgUrls"/>
+        <result column="over_time" property="overTime"/>
+        <result column="reject_message" property="rejectMessage"/>
+        <result column="seller_msg" property="sellerMsg"/>
+        <result column="handel_time" property="handelTime"/>
+        <result column="delivery_time" property="deliveryTime"/>
+        <result column="receive_time" property="receiveTime"/>
+        <result column="close_time" property="closeTime"/>
+        <result column="decision_time" property="decisionTime"/>
+        <result column="refund_time" property="refundTime"/>
+        <result column="platform_remarks" property="platformRemarks"/>
+        <result column="refund_freight_amount" property="refundFreightAmount"/>
+        <result column="complaint_order_id" property="complaintOrderId"/>
+        <result column="complaint_user_is_read" property="complaintUserIsRead"/>
+        <result column="complaint_platform_is_read" property="complaintPlatformIsRead"/>
+        <result column="offline_refund" property="offlineRefund"/>
+        <result column="offline_refund_status" property="offlineRefundStatus"/>
+    </resultMap>
+
+    <resultMap type="com.mall4j.cloud.order.vo.OrderRefundVO" id="orderRefundWithItemMap" extends="orderRefundMap">
+        <result column="o_pay_time" property="payTime"/>
+        <result column="o_order_number" property="orderNumber"/>
+        <result column="o_actual_total" property="actualTotal"/>
+        <result column="o_status" property="orderStatus"/>
+        <result column="o_refund_status" property="refundStatus"/>
+        <result column="o_shop_name" property="shopName"/>
+        <result column="o_shop_id" property="shopId"/>
+        <result column="o_order_score" property="orderScore"/>
+        <result column="o_platform_remarks" property="orderPlatformRemarks"/>
+        <result column="o_freight_amount" property="freightAmount"/>
+        <result column="r_platform_remarks" property="platformRemarks"/>
+        <collection property="orderItems" columnPrefix="oi_"
+                    ofType="com.mall4j.cloud.common.order.vo.RefundOrderItemVO">
+            <id column="order_item_id" jdbcType="BIGINT" property="orderItemId"/>
+            <result column="count" property="count"/>
+            <result column="pic" property="pic"/>
+            <result column="price" property="price"/>
+            <result column="spu_total_amount" property="spuTotalAmount"/>
+            <result column="actual_total" property="actualTotal"/>
+            <result column="spu_name" property="spuName"/>
+            <result column="sku_name" property="skuName"/>
+            <result column="spu_id" property="spuId"/>
+            <result column="sku_id" property="skuId"/>
+            <!--<collection property="orderItemLangList" ofType="com.mall4j.cloud.common.order.vo.OrderItemLangVO">-->
+            <!--<id column="lang" property="lang"/>-->
+            <!--<result column="spu_name" property="spuName"/>-->
+            <!--<result column="sku_name" property="skuName"/>-->
+            <!--</collection>-->
+        </collection>
+    </resultMap>
+
+    <sql id="Vo_Column_List">
+        `refund_id`,
+        `refund_number`,
+        `aftersale_id`,
+        `create_time`,
+        `update_time`,
+        `shop_id`,
+        `user_id`,
+        `order_id`,
+        `order_item_id`,
+        `refund_count`,
+        `refund_amount`,
+        `platform_refund_amount`,
+        `distribution_total_amount`,
+        `refund_type`,
+        `apply_type`,
+        `is_received`,
+        `close_type`,
+        `return_money_sts`,
+        `buyer_reason`,
+        `buyer_desc`,
+        `buyer_mobile`,
+        `img_urls`,
+        `over_time`,
+        `reject_message`,
+        `seller_msg`,
+        `handel_time`,
+        `delivery_time`,
+        `receive_time`,
+        `close_time`,
+        `decision_time`,
+        `refund_time`,
+        `complaint_order_id`,
+        `complaint_user_is_read`,
+        `complaint_platform_is_read`
+    </sql>
+
+
+    <!-- refundCount 获取换算出来的  -->
+    <resultMap id="orderRefundMap2" type="com.mall4j.cloud.order.model.OrderRefund">
+        <id column="refund_id" property="refundId"/>
+        <id column="aftersale_id" property="aftersaleId"/>
+        <result column="refund_number" property="refundNumber"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="user_id" property="userId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_item_id" property="orderItemId"/>
+        <result column="refundCount" property="refundCount"/>
+        <result column="refund_score" property="refundScore"/>
+        <result column="refund_amount" property="refundAmount"/>
+        <result column="platform_refund_amount" property="platformRefundAmount"/>
+        <result column="platform_refund_commission" property="platformRefundCommission"/>
+        <result column="distribution_total_amount" property="distributionTotalAmount"/>
+        <result column="refund_type" property="refundType"/>
+        <result column="apply_type" property="applyType"/>
+        <result column="apply_source" property="applySource"/>
+        <result column="is_received" property="isReceived"/>
+        <result column="close_type" property="closeType"/>
+        <result column="return_money_sts" property="returnMoneySts"/>
+        <result column="buyer_reason" property="buyerReason"/>
+        <result column="buyer_desc" property="buyerDesc"/>
+        <result column="buyer_mobile" property="buyerMobile"/>
+        <result column="img_urls" property="imgUrls"/>
+        <result column="over_time" property="overTime"/>
+        <result column="reject_message" property="rejectMessage"/>
+        <result column="seller_msg" property="sellerMsg"/>
+        <result column="handel_time" property="handelTime"/>
+        <result column="delivery_time" property="deliveryTime"/>
+        <result column="receive_time" property="receiveTime"/>
+        <result column="close_time" property="closeTime"/>
+        <result column="decision_time" property="decisionTime"/>
+        <result column="refund_time" property="refundTime"/>
+        <result column="platform_remarks" property="platformRemarks"/>
+        <result column="refund_freight_amount" property="refundFreightAmount"/>
+        <result column="complaint_order_id" property="complaintOrderId"/>
+        <result column="complaint_user_is_read" property="complaintUserIsRead"/>
+        <result column="complaint_platform_is_read" property="complaintPlatformIsRead"/>
+        <result column="offline_refund" property="offlineRefund"/>
+        <result column="offline_refund_status" property="offlineRefundStatus"/>
+    </resultMap>
+    <resultMap type="com.mall4j.cloud.order.vo.OrderRefundVO" id="orderRefundWithItemMap2" extends="orderRefundMap2">
+        <result column="o_pay_time" property="payTime"/>
+        <result column="o_order_number" property="orderNumber"/>
+        <result column="o_wechat_order_id" property="wechatOrderId"/>
+        <result column="o_actual_total" property="actualTotal"/>
+        <result column="o_status" property="orderStatus"/>
+        <result column="o_refund_status" property="refundStatus"/>
+        <result column="o_shop_name" property="shopName"/>
+        <result column="o_shop_id" property="shopId"/>
+        <result column="o_order_score" property="orderScore"/>
+        <result column="o_order_source" property="orderSource"/>
+        <result column="o_buy_staff_id" property="buyStaffId"/>
+        <result column="o_platform_remarks" property="orderPlatformRemarks"/>
+        <result column="r_platform_remarks" property="platformRemarks"/>
+        <result column="deliveryNo" property="deliveryNo"/>
+        <result column="deliveryCreateTime" property="deliveryCreateTime"/>
+        <collection property="orderItems" columnPrefix="oi_"
+                    ofType="com.mall4j.cloud.common.order.vo.RefundOrderItemVO">
+            <id column="order_item_id" jdbcType="BIGINT" property="orderItemId"/>
+            <result column="count" property="count"/>
+            <result column="pic" property="pic"/>
+            <result column="price" property="price"/>
+            <result column="spu_total_amount" property="spuTotalAmount"/>
+            <result column="actual_total" property="actualTotal"/>
+            <result column="spu_name" property="spuName"/>
+            <result column="sku_name" property="skuName"/>
+            <result column="spu_id" property="spuId"/>
+            <result column="sku_id" property="skuId"/>
+            <result column="freight_amount" property="freightAmount"/>
+            <!--<collection property="orderItemLangList" ofType="com.mall4j.cloud.common.order.vo.OrderItemLangVO">-->
+            <!--<id column="lang" property="lang"/>-->
+            <!--<result column="spu_name" property="spuName"/>-->
+            <!--<result column="sku_name" property="skuName"/>-->
+            <!--</collection>-->
+        </collection>
+    </resultMap>
+    <select id="list" resultMap="orderRefundWithItemMap2">
+        select temp.*,
+        oi.order_item_id oi_order_item_id,
+        oi.count oi_count,
+        oi.pic oi_pic,
+        oi.price oi_price,
+        oi.spu_total_amount oi_spu_total_amount,
+        oi.actual_total oi_actual_total,
+        oi.spu_name oi_spu_name,
+        oi.sku_name oi_sku_name,
+        oi.spu_id oi_spu_id,
+        oi.sku_id oi_sku_id
+        from (
+        SELECT r.*,
+        IF(r.refund_count = 0, o.all_count, r.refund_count) AS refundCount,
+        o.order_number as o_order_number,
+        o.wechat_order_id as o_wechat_order_id,
+        o.pay_time as o_pay_time,
+        o.actual_total AS o_actual_total,
+        o.status AS o_status,
+        o.refund_status AS o_refund_status,
+        o.shop_name AS o_shop_name,
+        o.store_id AS o_shop_id,
+        o.order_score as o_order_score,
+        o.order_source as o_order_source,
+        o.platform_remarks AS o_platform_remarks,
+        r.platform_remarks AS r_platform_remarks,
+        o.freight_amount as oi_freight_amount,
+        o.buy_staff_id as o_buy_staff_id,
+        ora.delivery_no as deliveryNo,
+        ora.create_time as deliveryCreateTime
+        FROM order_refund r
+        JOIN `order` o on r.order_id = o.order_id
+        left join order_refund_addr ora on ora.refund_id = r.refund_id
+        <where>
+            <if test="orderRefundPageDTO.aftersaleId != null">
+                AND r.aftersale_id = #{orderRefundPageDTO.aftersaleId}
+            </if>
+            <if test="orderRefundPageDTO.orderSource != null">
+                AND o.order_source = #{orderRefundPageDTO.orderSource}
+            </if>
+            <if test="orderRefundPageDTO.isDistributionOrder == 1">
+                AND (o.distribution_user_id >0 or developing_user_id>0)
+            </if>
+            <if test="orderRefundPageDTO.deliveryNo != null">
+                AND ora.delivery_no = #{orderRefundPageDTO.deliveryNo}
+            </if>
+            <if test="orderRefundPageDTO.shopId != null">
+                AND r.shop_id = #{orderRefundPageDTO.shopId}
+            </if>
+            <if test="orderRefundPageDTO.userId != null">
+                AND r.user_id = #{orderRefundPageDTO.userId}
+            </if>
+            <if test="orderRefundPageDTO.refundId != null">
+                AND r.refund_id = #{orderRefundPageDTO.refundId}
+            </if>
+            <if test="orderRefundPageDTO.refundNumber != null and orderRefundPageDTO.refundNumber != ''">
+                AND r.refund_number = #{orderRefundPageDTO.refundNumber}
+            </if>
+            <if test="orderRefundPageDTO.orderId != null">
+                AND o.order_id = #{orderRefundPageDTO.orderId}
+            </if>
+            <if test="orderRefundPageDTO.orderNumber != null and orderRefundPageDTO.orderNumber != ''">
+                AND o.order_number = #{orderRefundPageDTO.orderNumber}
+            </if>
+            <if test="orderRefundPageDTO.applyType != null and orderRefundPageDTO.applyType != 0">
+                AND r.apply_type = #{orderRefundPageDTO.applyType}
+            </if>
+            <if test="orderRefundPageDTO.applySource != null">
+                AND r.apply_source = #{orderRefundPageDTO.applySource}
+            </if>
+            <if test="orderRefundPageDTO.beginTime != null">
+                AND r.create_time &gt;= #{orderRefundPageDTO.beginTime}
+            </if>
+            <if test="orderRefundPageDTO.endTime != null">
+                AND r.create_time &lt;= #{orderRefundPageDTO.endTime}
+            </if>
+            <if test="orderRefundPageDTO.refundEndTime != null">
+                AND r.refund_time &gt;= #{orderRefundPageDTO.refundBeginTime}
+            </if>
+            <if test="orderRefundPageDTO.refundBeginTime != null">
+                AND r.refund_time &lt;= #{orderRefundPageDTO.refundEndTime}
+            </if>
+            <if test="orderRefundPageDTO.returnMoneySts != null">
+                AND r.return_money_sts = #{orderRefundPageDTO.returnMoneySts}
+            </if>
+            <if test="orderRefundPageDTO.shopName != null and orderRefundPageDTO.shopName != ''">
+                AND o.shop_name LIKE concat('%', #{orderRefundPageDTO.shopName}, '%')
+            </if>
+            <if test="orderRefundPageDTO.orderType != null">
+                AND o.order_type = #{orderRefundPageDTO.orderType}
+            </if>
+            <if test="orderRefundPageDTO.refundType != null">
+                AND r.refund_type = #{orderRefundPageDTO.refundType}
+            </if>
+            <if test="orderRefundPageDTO.disputable != null and orderRefundPageDTO.disputable == 0">
+                AND (r.complaint_order_id = 0 OR r.complaint_order_id is null)
+            </if>
+            <if test="orderRefundPageDTO.disputable != null and orderRefundPageDTO.disputable == 1">
+                AND r.complaint_order_id != 0
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{pageAdapter.begin}, #{pageAdapter.size}
+        ) AS temp
+        join order_item oi on temp.order_id = oi.order_id
+    </select>
+
+    <select id="excelList" resultMap="orderRefundWithItemMap2">
+        SELECT r.*,
+        IF(r.refund_count = 0, o.all_count, r.refund_count) AS refundCount,
+        o.order_number as o_order_number,
+        o.pay_time as o_pay_time,
+        o.actual_total AS o_actual_total,
+        o.status AS o_status,
+        o.refund_status AS o_refund_status,
+        o.shop_name AS o_shop_name,
+        o.store_id AS o_shop_id,
+        o.order_score as o_order_score,
+        o.platform_remarks AS o_platform_remarks,
+        o.buy_staff_id as o_buy_staff_id,
+        r.platform_remarks AS r_platform_remarks,
+        ora.delivery_no as deliveryNo
+        FROM order_refund r
+        JOIN `order` o on r.order_id = o.order_id
+        left join order_refund_addr ora on ora.refund_id = r.refund_id
+        <where>
+            <if test="orderRefundPageDTO.deliveryNo != null">
+                AND ora.delivery_no = #{orderRefundPageDTO.deliveryNo}
+            </if>
+            <if test="orderRefundPageDTO.shopId != null">
+                AND r.shop_id = #{orderRefundPageDTO.shopId}
+            </if>
+            <if test="orderRefundPageDTO.userId != null">
+                AND r.user_id = #{orderRefundPageDTO.userId}
+            </if>
+            <if test="orderRefundPageDTO.refundId != null">
+                AND r.refund_id = #{orderRefundPageDTO.refundId}
+            </if>
+            <if test="orderRefundPageDTO.refundNumber != null and orderRefundPageDTO.refundNumber != ''">
+                AND r.refund_number = #{orderRefundPageDTO.refundNumber}
+            </if>
+            <if test="orderRefundPageDTO.orderId != null">
+                AND o.order_id = #{orderRefundPageDTO.orderId}
+            </if>
+            <if test="orderRefundPageDTO.orderNumber != null and orderRefundPageDTO.orderNumber != ''">
+                AND o.order_number = #{orderRefundPageDTO.orderNumber}
+            </if>
+            <if test="orderRefundPageDTO.applyType != null and orderRefundPageDTO.applyType != 0">
+                AND r.apply_type = #{orderRefundPageDTO.applyType}
+            </if>
+            <if test="orderRefundPageDTO.beginTime != null">
+                AND r.create_time &gt;= #{orderRefundPageDTO.beginTime}
+            </if>
+            <if test="orderRefundPageDTO.endTime != null">
+                AND r.create_time &lt;= #{orderRefundPageDTO.endTime}
+            </if>
+            <if test="orderRefundPageDTO.refundEndTime != null">
+                AND r.refund_time &gt;= #{orderRefundPageDTO.refundBeginTime}
+            </if>
+            <if test="orderRefundPageDTO.refundBeginTime != null">
+                AND r.refund_time &lt;= #{orderRefundPageDTO.refundEndTime}
+            </if>
+            <if test="orderRefundPageDTO.returnMoneySts != null">
+                AND r.return_money_sts = #{orderRefundPageDTO.returnMoneySts}
+            </if>
+            <if test="orderRefundPageDTO.shopName != null and orderRefundPageDTO.shopName != ''">
+                AND o.shop_name LIKE concat('%', #{orderRefundPageDTO.shopName}, '%')
+            </if>
+            <if test="orderRefundPageDTO.orderType != null">
+                AND o.order_type = #{orderRefundPageDTO.orderType}
+            </if>
+            <if test="orderRefundPageDTO.refundType != null">
+                AND r.refund_type = #{orderRefundPageDTO.refundType}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{pageAdapter.begin}, #{pageAdapter.size}
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT count(*)
+        FROM order_refund r
+        JOIN `order` o on r.order_id = o.order_id
+        left join order_refund_addr ora on ora.refund_id = r.refund_id
+        <where>
+            <if test="orderRefundPageDTO.aftersaleId != null">
+                AND r.aftersale_id = #{orderRefundPageDTO.aftersaleId}
+            </if>
+            <if test="orderRefundPageDTO.orderSource != null">
+                AND o.order_source = #{orderRefundPageDTO.orderSource}
+            </if>
+            <if test="orderRefundPageDTO.isDistributionOrder == 1">
+                AND (o.distribution_user_id >0 or developing_user_id>0)
+            </if>
+            <if test="orderRefundPageDTO.deliveryNo != null">
+                AND ora.delivery_no = #{orderRefundPageDTO.deliveryNo}
+            </if>
+            <if test="orderRefundPageDTO.shopId != null">
+                AND r.shop_id = #{orderRefundPageDTO.shopId}
+            </if>
+            <if test="orderRefundPageDTO.userId != null">
+                AND r.user_id = #{orderRefundPageDTO.userId}
+            </if>
+            <if test="orderRefundPageDTO.refundId != null">
+                AND r.refund_id = #{orderRefundPageDTO.refundId}
+            </if>
+            <if test="orderRefundPageDTO.refundNumber != null and orderRefundPageDTO.refundNumber != ''">
+                AND r.refund_number = #{orderRefundPageDTO.refundNumber}
+            </if>
+            <if test="orderRefundPageDTO.orderId != null">
+                AND o.order_id = #{orderRefundPageDTO.orderId}
+            </if>
+            <if test="orderRefundPageDTO.orderNumber != null and orderRefundPageDTO.orderNumber != ''">
+                AND o.order_number = #{orderRefundPageDTO.orderNumber}
+            </if>
+            <if test="orderRefundPageDTO.applyType != null">
+                AND r.apply_type = #{orderRefundPageDTO.applyType}
+            </if>
+            <if test="orderRefundPageDTO.applySource != null">
+                AND r.apply_source = #{orderRefundPageDTO.applySource}
+            </if>
+            <if test="orderRefundPageDTO.beginTime != null">
+                AND r.create_time &gt;= #{orderRefundPageDTO.beginTime}
+            </if>
+            <if test="orderRefundPageDTO.endTime != null">
+                AND r.create_time &lt;= #{orderRefundPageDTO.endTime}
+            </if>
+            <if test="orderRefundPageDTO.refundEndTime != null">
+                AND r.refund_time &gt;= #{orderRefundPageDTO.refundBeginTime}
+            </if>
+            <if test="orderRefundPageDTO.refundBeginTime != null">
+                AND r.refund_time &lt;= #{orderRefundPageDTO.refundEndTime}
+            </if>
+            <if test="orderRefundPageDTO.returnMoneySts != null">
+                AND r.return_money_sts = #{orderRefundPageDTO.returnMoneySts}
+            </if>
+            <if test="orderRefundPageDTO.shopName != null and orderRefundPageDTO.shopName != ''">
+                AND o.shop_name LIKE concat('%', #{orderRefundPageDTO.shopName}, '%')
+            </if>
+            <if test="orderRefundPageDTO.orderType != null">
+                AND o.order_type = #{orderRefundPageDTO.orderType}
+            </if>
+            <if test="orderRefundPageDTO.refundType != null">
+                AND r.refund_type = #{orderRefundPageDTO.refundType}
+            </if>
+            <if test="orderRefundPageDTO.disputable != null and orderRefundPageDTO.disputable == 0">
+                AND (r.complaint_order_id = 0 OR r.complaint_order_id is null)
+            </if>
+            <if test="orderRefundPageDTO.disputable != null and orderRefundPageDTO.disputable == 1">
+                AND r.complaint_order_id != 0
+            </if>
+        </where>
+    </select>
+
+    <select id="getByRefundId" resultMap="orderRefundWithItemMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_refund
+        where refund_id = #{refundId}
+    </select>
+
+    <select id="getByRefundNumber" resultMap="orderRefundWithItemMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_refund
+        where refund_number = #{refundNumber}
+    </select>
+
+    <select id="getByAftersaleId" resultMap="orderRefundWithItemMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_refund
+        where aftersale_id = #{AftersaleId}
+    </select>
+
+    <select id="getByAftersaleIds" resultMap="orderRefundWithItemMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_refund
+        where aftersale_id in
+        <foreach collection="aftersaleIds" item="aftersaleId" open="(" close=")" separator=",">
+            #{aftersaleId}
+        </foreach>
+    </select>
+
+    <select id="getCountByOrderItemId" resultType="java.lang.Integer">
+        select
+            ifnull(count(1),0)
+        from order_refund
+        where order_item_id = #{orderItemId}
+    </select>
+
+    <update id="syncAftersaleId">
+        update order_refund
+            set aftersale_id = #{AftersaleId}
+        where refund_id = #{refundId}
+    </update>
+
+    <select id="getDetailByRefundId" resultMap="orderRefundWithItemMap">
+        SELECT r.*,
+               IF(r.refund_count = 0, o.all_count, r.refund_count) AS refundCount,
+               o.pay_time                                          as o_pay_time,
+               o.actual_total                                      AS o_actual_total,
+               o.status                                            AS o_status,
+               o.refund_status                                     AS o_refund_status,
+               o.shop_name                                         AS o_shop_name,
+               o.order_score                                       AS o_order_score,
+               o.order_number                                       AS o_order_number,
+               oi.order_item_id                                    AS oi_order_item_id,
+               oi.count                                            AS oi_count,
+               oi.spu_name                                         AS oi_spu_name,
+               oi.sku_name                                         AS oi_sku_name,
+               oi.pic                                              AS oi_pic,
+               oi.price                                            AS oi_price,
+               oi.spu_total_amount                                 AS oi_spu_total_amount,
+               oi.actual_total                                     AS oi_actual_total,
+               r.platform_remarks                                  as r_platform_remarks,
+               o.platform_remarks                                  as o_platform_remarks,
+               o.freight_amount  as o_freight_amount
+        FROM order_refund r
+                 JOIN `order` o on r.order_id = o.order_id and r.refund_id = #{refundId} and o.is_payed = 1
+                 JOIN order_item oi on r.order_id = oi.order_id
+    </select>
+
+    <select id="getDetailByRefundNumber" resultMap="orderRefundWithItemMap">
+        SELECT r.*,
+               IF(r.refund_count = 0, o.all_count, r.refund_count) AS refundCount,
+               o.pay_time                                          as o_pay_time,
+               o.actual_total                                      AS o_actual_total,
+               o.status                                            AS o_status,
+               o.refund_status                                     AS o_refund_status,
+               o.shop_name                                         AS o_shop_name,
+               o.order_score                                       AS o_order_score,
+               o.order_number                                       AS o_order_number,
+               oi.order_item_id                                    AS oi_order_item_id,
+               oi.count                                            AS oi_count,
+               oi.spu_name                                         AS oi_spu_name,
+               oi.sku_name                                         AS oi_sku_name,
+               oi.pic                                              AS oi_pic,
+               oi.price                                            AS oi_price,
+               oi.spu_total_amount                                 AS oi_spu_total_amount,
+               oi.actual_total                                     AS oi_actual_total,
+               r.platform_remarks                                  as r_platform_remarks,
+               o.platform_remarks                                  as o_platform_remarks
+        FROM order_refund r
+                 JOIN `order` o on r.order_id = o.order_id and r.refund_number = #{refundNumber} and o.is_payed = 1
+                 JOIN order_item oi on r.order_id = oi.order_id
+    </select>
+
+    <insert id="save">
+        insert into order_refund (`refund_id`,`refund_number`, `shop_id`, `user_id`, `order_id`, `order_item_id`, `refund_count`,
+                                  `refund_amount`, `platform_refund_commission`,
+                                  `platform_refund_amount`, `distribution_total_amount`, `refund_type`, `apply_type`, `apply_source`,
+                                  `is_received`, `close_type`, `return_money_sts`, `buyer_reason`, `buyer_desc`,
+                                  `buyer_mobile`, `img_urls`, `over_time`, `reject_message`, `seller_msg`,
+                                  `handel_time`, `delivery_time`, `receive_time`, `close_time`, `decision_time`,`aftersale_id`,
+                                  `refund_time`,`refund_freight_amount`)
+        values (#{orderRefund.refundId}, #{orderRefund.refundNumber}, #{orderRefund.shopId}, #{orderRefund.userId}, #{orderRefund.orderId},
+                #{orderRefund.orderItemId}, #{orderRefund.refundCount}, #{orderRefund.refundAmount},
+                #{orderRefund.platformRefundCommission}, #{orderRefund.platformRefundAmount},
+                #{orderRefund.distributionTotalAmount}, #{orderRefund.refundType}, #{orderRefund.applyType}, #{orderRefund.applySource},
+                #{orderRefund.isReceived}, #{orderRefund.closeType}, #{orderRefund.returnMoneySts},
+                #{orderRefund.buyerReason}, #{orderRefund.buyerDesc}, #{orderRefund.buyerMobile},
+                #{orderRefund.imgUrls}, #{orderRefund.overTime}, #{orderRefund.rejectMessage}, #{orderRefund.sellerMsg},
+                #{orderRefund.handelTime}, #{orderRefund.deliveryTime}, #{orderRefund.receiveTime},
+                #{orderRefund.closeTime}, #{orderRefund.decisionTime}, #{orderRefund.aftersaleId}, #{orderRefund.refundTime},#{orderRefund.refundFreightAmount});
+    </insert>
+    <update id="update">
+        update order_refund
+        <set>
+            <if test="orderRefund.shopId != null">
+                `shop_id` = #{orderRefund.shopId},
+            </if>
+            <if test="orderRefund.userId != null">
+                `user_id` = #{orderRefund.userId},
+            </if>
+            <if test="orderRefund.orderId != null">
+                `order_id` = #{orderRefund.orderId},
+            </if>
+            <if test="orderRefund.orderItemId != null">
+                `order_item_id` = #{orderRefund.orderItemId},
+            </if>
+            <if test="orderRefund.refundCount != null">
+                `refund_count` = #{orderRefund.refundCount},
+            </if>
+            <if test="orderRefund.refundAmount != null">
+                `refund_amount` = #{orderRefund.refundAmount},
+            </if>
+            <if test="orderRefund.platformRefundAmount != null">
+                `platform_refund_amount` = #{orderRefund.platformRefundAmount},
+            </if>
+            <if test="orderRefund.distributionTotalAmount != null">
+                `distribution_total_amount` = #{orderRefund.distributionTotalAmount},
+            </if>
+            <if test="orderRefund.refundType != null">
+                `refund_type` = #{orderRefund.refundType},
+            </if>
+            <if test="orderRefund.applyType != null">
+                `apply_type` = #{orderRefund.applyType},
+            </if>
+            <if test="orderRefund.isReceived != null">
+                `is_received` = #{orderRefund.isReceived},
+            </if>
+            <if test="orderRefund.closeType != null">
+                `close_type` = #{orderRefund.closeType},
+            </if>
+            <if test="orderRefund.returnMoneySts != null">
+                `return_money_sts` = #{orderRefund.returnMoneySts},
+            </if>
+            <if test="orderRefund.buyerReason != null">
+                `buyer_reason` = #{orderRefund.buyerReason},
+            </if>
+            <if test="orderRefund.buyerDesc != null">
+                `buyer_desc` = #{orderRefund.buyerDesc},
+            </if>
+            <if test="orderRefund.buyerMobile != null">
+                `buyer_mobile` = #{orderRefund.buyerMobile},
+            </if>
+            <if test="orderRefund.imgUrls != null">
+                `img_urls` = #{orderRefund.imgUrls},
+            </if>
+            <if test="orderRefund.overTime != null">
+                `over_time` = #{orderRefund.overTime},
+            </if>
+            <if test="orderRefund.rejectMessage != null">
+                `reject_message` = #{orderRefund.rejectMessage},
+            </if>
+            <if test="orderRefund.sellerMsg != null">
+                `seller_msg` = #{orderRefund.sellerMsg},
+            </if>
+            <if test="orderRefund.handelTime != null">
+                `handel_time` = #{orderRefund.handelTime},
+            </if>
+            <if test="orderRefund.deliveryTime != null">
+                `delivery_time` = #{orderRefund.deliveryTime},
+            </if>
+            <if test="orderRefund.receiveTime != null">
+                `receive_time` = #{orderRefund.receiveTime},
+            </if>
+            <if test="orderRefund.closeTime != null">
+                `close_time` = #{orderRefund.closeTime},
+            </if>
+            <if test="orderRefund.decisionTime != null">
+                `decision_time` = #{orderRefund.decisionTime},
+            </if>
+            <if test="orderRefund.refundTime != null">
+                `refund_time` = #{orderRefund.refundTime},
+            </if>
+        </set>
+        where refund_id = #{orderRefund.refundId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from order_refund
+        where refund_id = #{refundId}
+    </delete>
+
+    <select id="sumRefundSuccessAmountByOrderId" resultType="com.mall4j.cloud.api.order.bo.RefundAmountWithOrderIdBO">
+        select ifnull(sum(refund_amount), 0) as refundAmount,ifnull(sum(platform_refund_amount), 0) as
+        platformRefundAmount, order_id
+        from order_refund where order_id in
+        <foreach collection="orderIds" item="orderId" open="(" close=")" separator=",">
+            #{orderId}
+        </foreach>
+        and return_money_sts = 5
+    </select>
+    <select id="getProcessOrderRefundByOrderId" resultMap="orderRefundMap">
+        SELECT *
+        FROM order_refund
+        WHERE order_id = #{orderId}
+          AND return_money_sts != -1
+    </select>
+
+    <select id="getOrderRefundByOrderIdAndRefundStatus" resultType="com.mall4j.cloud.api.order.vo.OrderRefundVO">
+        SELECT *
+        FROM order_refund
+        WHERE order_id = #{orderId}
+          AND return_money_sts = #{returnMoneySts}
+    </select>
+
+    <select id="getOrderRefundByAftersaleId" resultType="com.mall4j.cloud.api.order.vo.OrderRefundVO">
+        SELECT *
+        FROM order_refund
+        WHERE aftersale_id = #{aftersaleId}
+    </select>
+
+    <select id="countByReturnMoneyStsAndOrderId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM order_refund
+        WHERE return_money_sts &gt; #{returnMoneySts}
+          AND return_money_sts &lt; #{returnMoneySts2}
+          AND order_id = #{orderId}
+    </select>
+
+    <select id="countReturnProcessingItemByOrderId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM order_refund
+        WHERE order_id = #{orderId}
+          and return_money_sts not in (-1, 5)
+    </select>
+
+    <select id="countRefundSuccessRefundCountByOrderId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM order_refund
+        WHERE order_id = #{orderId}
+          and return_money_sts = 5
+    </select>
+
+    <select id="allCountRefundSuccessRefundCountByOrderId" resultType="java.lang.Integer">
+        SELECT ifnull(sum(refund_count),0)
+        FROM order_refund
+        WHERE order_id = #{orderId}
+          and return_money_sts = 5
+    </select>
+
+    <update id="agreeReturns">
+        update order_refund
+        set return_money_sts = 2,
+            seller_msg       = #{sellerMsg},
+            handel_time      = NOW()
+        where refund_id = #{refundId}
+          and return_money_sts = 1
+    </update>
+
+    <update id="ecAgreeReturns">
+        update order_refund
+        set return_money_sts = 2,
+            seller_msg       = #{sellerMsg},
+            handel_time      = NOW()
+        where refund_id = #{refundId}
+    </update>
+
+    <update id="disagreeRefund">
+        update order_refund
+        set return_money_sts = -1,
+        reject_message = #{rejectMessage},
+        seller_msg = #{sellerMsg},
+        close_type = 2,
+        close_time = NOW(),
+        <if test="receiver == 1">
+            receive_time = NOW(),
+        </if>
+        <if test="returnMoneySts == 1">
+            handel_time = NOW(),
+        </if>
+        is_received = #{receiver}
+        where refund_id = #{refundId}
+        and return_money_sts = #{returnMoneySts}
+    </update>
+
+    <update id="agreeRefund">
+        update order_refund
+        set return_money_sts = 2,
+        <if test="receiver == 1">
+            receive_time = NOW(),
+        </if>
+        <if test="applyType == 1">
+            handel_time = NOW(),
+        </if>
+        decision_time = NOW(),
+        seller_msg = #{sellerMsg},
+        is_received = #{receiver}
+
+        where refund_id = #{refundId}
+        and return_money_sts = #{returnMoneySts}
+    </update>
+
+    <select id="getRefundStatus" resultType="java.lang.Integer">
+        select return_money_sts
+        from order_refund
+        where refund_id = #{refundId}
+    </select>
+
+    <update id="initRefundStatus">
+        update order_refund
+            set return_money_sts = #{status},
+                buyer_desc = #{buyDesc},
+                img_urls = #{imgs}
+        where refund_id = #{refundId}
+    </update>
+
+    <update id="ecInitRefundStatus">
+        update order_refund
+        set return_money_sts = #{status},
+            apply_type = #{applyType},
+            refund_amount = #{refundAmount}
+        where refund_id = #{refundId}
+    </update>
+
+    <select id="listOrderRefundInfoByShopIdAndDateRange" resultType="com.mall4j.cloud.order.vo.OrderRefundStatisticsVO">
+        SELECT r.refund_date_to_string,IFNULL(SUM(r.pay_actual_total), 0) AS pay_actual_total,COUNT(r.refund_id) AS
+        refund_count
+        FROM
+        (
+        SELECT refund_id,SUBSTRING(refund_time,1,10) AS refund_date_to_string,(refund_amount + platform_refund_amount -
+        platform_refund_commission) AS pay_actual_total
+        FROM order_refund
+        WHERE return_money_sts = 5
+        <if test="shopId != null">
+            AND shop_id = #{shopId}
+        </if>
+        <if test="startTime != null">
+            AND refund_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND refund_time &lt;= #{endTime}
+        </if>
+        ) AS r
+        GROUP BY r.refund_date_to_string ORDER BY r.refund_date_to_string
+    </select>
+
+    <select id="listRefundRankingByProd" resultType="com.mall4j.cloud.order.vo.OrderRefundStatisticsVO">
+        <!--        算上平台佣金的计算方式-->
+        <!--        (r.refund_amount + r.platform_refund_amount - r.platform_refund_commission),-->
+        <!--        (oi.actual_total + oi.platform_share_reduce - oi.platform_commission)-->
+        SELECT item.spu_id,IFNULL(SUM(item.pay_actual_total),0) AS pay_actual_total FROM
+        (
+        SELECT oi.spu_id,
+        IF(r.refund_type = 2,
+        (r.refund_amount + r.platform_refund_amount - r.platform_refund_commission),
+        (oi.actual_total + oi.platform_share_reduce - oi.platform_commission)
+        ) AS pay_actual_total
+        FROM order_item oi
+        LEFT JOIN order_refund r
+        ON ((oi.order_item_id = r.order_item_id AND r.refund_type = 2) or (oi.order_id = r.order_id AND r.refund_type =
+        1 AND r.order_item_id = 0)) AND r.return_money_sts = 5
+        WHERE oi.refund_status BETWEEN 2 AND 3
+        <if test="shopId != null">
+            AND r.shop_id = #{shopId}
+        </if>
+        <if test="startTime != null">
+            AND r.refund_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND r.refund_time &lt;= #{endTime}
+        </if>
+        ) AS item
+        GROUP BY item.spu_id
+        ORDER BY pay_actual_total DESC
+        LIMIT 0,5
+    </select>
+
+    <select id="getOrderRefundInfoByShopId" resultType="com.mall4j.cloud.order.vo.OrderRefundStatisticsVO">
+        SELECT if(ISNULL(#{shopId}),
+        IFNULL(SUM(refund_amount), 0),
+        IFNULL(SUM(refund_amount + platform_refund_amount - platform_refund_commission), 0)
+        ) AS pay_actual_total,
+        COUNT(refund_id) AS refund_count
+        FROM order_refund
+        <where>
+            <if test="shopId != null">
+                AND shop_id = #{shopId}
+            </if>
+            <if test="startTime != null">
+                AND refund_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND refund_time &lt;= #{endTime}
+            </if>
+            AND return_money_sts =5
+        </where>
+    </select>
+
+    <select id="listRefundRankingByReason" resultType="com.mall4j.cloud.order.vo.OrderRefundStatisticsVO">
+        SELECT
+        buyer_reason AS buyerReason,
+        COUNT( buyer_reason ) AS refundCount
+        FROM
+        `order_refund` a
+        <where>
+            <if test="shopId != null">
+                AND a.shop_id = #{shopId}
+            </if>
+            <if test="startTime != null">
+                AND a.refund_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND a.refund_time &lt;= #{endTime}
+            </if>
+            AND a.return_money_sts = 5
+        </where>
+        GROUP BY
+        a.buyer_reason
+        ORDER BY
+        SUM( a.refund_amount ) DESC
+        LIMIT 0,5
+    </select>
+    <select id="listOrderRefundTimeOut" resultType="com.mall4j.cloud.order.vo.OrderRefundVO">
+        SELECT *
+        FROM order_refund
+        where create_time <![CDATA[ < ]]> #{date}
+          AND return_money_sts in (1, 2, 3, 4)
+        and aftersale_id is null
+    </select>
+
+    <select id="getProcessingOrderRefundByOrderId" resultType="com.mall4j.cloud.order.vo.OrderRefundVO">
+        SELECT r.*
+        FROM order_refund r
+        WHERE r.`order_id` = #{orderId}
+          --         买家撤回申请
+          AND r.`return_money_sts` != 6
+           --         商家拒绝
+           AND r.`return_money_sts` != 7
+           --         退款关闭
+           AND r.`return_money_sts` != - 1
+    </select>
+    <select id="getProdRefundEffectByDateAndProdIds"
+            resultType="com.mall4j.cloud.api.order.vo.OrderRefundProdEffectRespVO">
+        SELECT spu_id,SUM(refund_amount) refund_success_amount,COUNT(DISTINCT refund_id) AS refund_num,
+        COUNT(DISTINCT IF(return_money_sts = 5, refund_id, NULL)) AS refund_success_num,
+        COUNT(DISTINCT user_id) refund_person,COUNT(DISTINCT IF(return_money_sts = 5, user_id, NULL))
+        refund_success_person
+        FROM (
+        SELECT r.refund_id,r.order_id,r.order_item_id,oi.spu_id,r.refund_type,r.return_money_sts,r.user_id,
+        IF(r.return_money_sts = 5, IF(r.refund_type = 1,oi.actual_total,r.refund_amount), 0) refund_amount
+        FROM order_refund r
+        JOIN order_item oi ON ((oi.order_id = r.order_id AND r.refund_type = 1) OR (oi.order_item_id = r.order_item_id
+        AND r.refund_type = 2))
+        WHERE r.create_time &gt;= #{startTime} AND r.create_time &lt;= #{endTime} AND r.return_money_sts BETWEEN 1 AND 5
+        AND oi.spu_id IN
+        <foreach collection="spuIds" item="spuId" separator="," open="(" close=")">
+            #{spuId}
+        </foreach>
+        ) ra
+        GROUP BY spu_id
+    </select>
+    <select id="listShopRankingByRefundCount" resultType="com.mall4j.cloud.order.vo.OrderRefundStatisticsVO">
+        SELECT
+        o.store_id as shopId,
+        ifnull(count(*), 0) AS refundCount
+        FROM order_refund ord left join `order` o on ord.order_id = o.order_id
+        <where>
+            <if test="startTime != null">
+                AND ord.create_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND ord.create_time &lt;= #{endTime}
+            </if>
+            AND ord.return_money_sts = 5
+        </where>
+        GROUP BY
+        o.store_id
+        ORDER BY
+        refundCount DESC
+        LIMIT #{limit}
+    </select>
+    <select id="listOrderIdsByRefundIds" resultType="com.mall4j.cloud.api.order.vo.OrderRefundSimpleVO">
+        select order_id, refund_id
+        from `order_refund`
+        where refund_id in
+        <foreach collection="refundIds" item="refundId" separator="," open="(" close=")">
+            #{refundId}
+        </foreach>
+    </select>
+
+    <select id="listProximityRefundTimeOut" resultType="com.mall4j.cloud.order.vo.OrderRefundVO">
+        SELECT *
+        FROM order_refund
+        where create_time <![CDATA[ > ]]> #{overDate}
+          and create_time <![CDATA[ < ]]> #{date}
+          AND return_money_sts in (1, 2, 3, 4)
+    </select>
+    <select id="listOrderIdsByRefundId" resultType="com.mall4j.cloud.api.order.vo.OrderRefundSimpleVO">
+        select order_id, refund_id
+        from `order_refund`
+        where refund_id = #{refundId}
+    </select>
+    <select id="countDistributionRefundAmount" resultType="java.lang.Long">
+        select IFNULL(sum(refund_amount),0) from order_refund
+        where return_money_sts = 5
+        and order_id in (
+        select order_id from `order` where `status` in (2,3,5,6)
+        <if test="distributionSalesStatDTO.distributionUserType == 1">
+            <if test="distributionSalesStatDTO.type == null">
+                and (
+                (distribution_user_type = 1 and distribution_user_id = #{distributionSalesStatDTO.distributionUserId})
+                or developing_user_id = #{distributionSalesStatDTO.distributionUserId}
+                )
+            </if>
+            <if test="distributionSalesStatDTO.type != null">
+                <if test="distributionSalesStatDTO.type == 1">
+                    and (distribution_user_type = 1 and distribution_user_id =
+                    #{distributionSalesStatDTO.distributionUserId})
+                </if>
+                <if test="distributionSalesStatDTO.type == 2">
+                    and developing_user_id = #{distributionSalesStatDTO.distributionUserId}
+                </if>
+            </if>
+        </if>
+        <if test="distributionSalesStatDTO.distributionUserType == 2">
+            and distribution_user_type = 2 and distribution_user_id = #{distributionSalesStatDTO.distributionUserId}
+        </if>
+        <if test="distributionSalesStatDTO.startTime != null">
+            and create_time <![CDATA[>=]]> #{distributionSalesStatDTO.startTime}
+        </if>
+        <if test="distributionSalesStatDTO.endTime != null">
+            and create_time <![CDATA[<=]]> #{distributionSalesStatDTO.endTime}
+        </if>
+        <if test="distributionSalesStatDTO.accountStartTime != null">
+            and distribution_settle_time <![CDATA[>=]]> #{distributionSalesStatDTO.accountStartTime}
+        </if>
+        <if test="distributionSalesStatDTO.accountEndTime != null">
+            and distribution_settle_time <![CDATA[<=]]> #{distributionSalesStatDTO.accountEndTime}
+        </if>
+        )
+    </select>
+    <select id="countDistributionRefundNum" resultType="java.lang.Integer">
+        select count(refund_id) from order_refund
+        where return_money_sts = 5
+        and order_id in (
+        select order_id from `order` where `status` in (2,3,5,6)
+        <if test="distributionSalesStatDTO.distributionUserType == 1">
+            <if test="distributionSalesStatDTO.type == null">
+                and (
+                (distribution_user_type = 1 and distribution_user_id = #{distributionSalesStatDTO.distributionUserId})
+                or developing_user_id = #{distributionSalesStatDTO.distributionUserId}
+                )
+            </if>
+            <if test="distributionSalesStatDTO.type != null">
+                <if test="distributionSalesStatDTO.type == 1">
+                    and (distribution_user_type = 1 and distribution_user_id =
+                    #{distributionSalesStatDTO.distributionUserId})
+                </if>
+                <if test="distributionSalesStatDTO.type == 2">
+                    and developing_user_id = #{distributionSalesStatDTO.distributionUserId}
+                </if>
+            </if>
+        </if>
+        <if test="distributionSalesStatDTO.distributionUserType == 2">
+            and distribution_user_type = 2 and distribution_user_id = #{distributionSalesStatDTO.distributionUserId}
+        </if>
+        <if test="distributionSalesStatDTO.startTime != null">
+            and create_time <![CDATA[>=]]> #{distributionSalesStatDTO.startTime}
+        </if>
+        <if test="distributionSalesStatDTO.endTime != null">
+            and create_time <![CDATA[<=]]> #{distributionSalesStatDTO.endTime}
+        </if>
+        <if test="distributionSalesStatDTO.userIds != null and distributionSalesStatDTO.userIds.size() != 0">
+            and user_id in
+            <foreach collection="distributionSalesStatDTO.userIds" item="userId" separator="," open="(" close=")">
+                #{userId}
+            </foreach>
+        </if>
+        <if test="distributionSalesStatDTO.accountStartTime != null">
+            and distribution_settle_time <![CDATA[>=]]> #{distributionSalesStatDTO.accountStartTime}
+        </if>
+        <if test="distributionSalesStatDTO.accountEndTime != null">
+            and distribution_settle_time <![CDATA[<=]]> #{distributionSalesStatDTO.accountEndTime}
+        </if>
+        )
+    </select>
+
+    <select id="countStoreDistributionRefundAmount" resultType="java.lang.Long">
+        select IFNULL(sum(refund_amount),0) from order_refund
+        where (return_money_sts = 5
+        <if test="distributionSalesStatDTO.refund != null">
+            or return_money_sts != -1
+        </if>
+        )
+        and order_id in (
+        select order_id from `order` where `status` in (2,3,5,6)
+        <if test="distributionSalesStatDTO.distributionUserType == 1">
+            <if test="distributionSalesStatDTO.type == null">
+                and (distribution_user_type = 1 or developing_store_id > 0)
+            </if>
+            <if test="distributionSalesStatDTO.type != null">
+                <if test="distributionSalesStatDTO.type == 1">
+                    and distribution_user_type = 1
+                </if>
+                <if test="distributionSalesStatDTO.type == 2">
+                    and developing_store_id > 0
+                </if>
+            </if>
+            <if test="distributionSalesStatDTO.distributionStoreId != null">
+                and (distribution_store_id = #{distributionSalesStatDTO.distributionStoreId} or developing_store_id =
+                #{distributionSalesStatDTO.distributionStoreId})
+            </if>
+            <if test="distributionSalesStatDTO.storeIds != null and distributionSalesStatDTO.storeIds.size() != 0">
+                and (distribution_store_id in
+                <foreach collection="distributionSalesStatDTO.storeIds" item="storeId" separator="," open="(" close=")">
+                    #{storeId}
+                </foreach>
+                or developing_store_id in
+                <foreach collection="distributionSalesStatDTO.storeIds" item="storeId" separator="," open="(" close=")">
+                    #{storeId}
+                </foreach>
+                )
+            </if>
+        </if>
+        <if test="distributionSalesStatDTO.distributionUserType == 2">
+            and distribution_user_type = 2
+            <if test="distributionSalesStatDTO.distributionStoreId != null">
+                and distribution_store_id = #{distributionSalesStatDTO.distributionStoreId}
+            </if>
+            <if test="distributionSalesStatDTO.storeIds != null and distributionSalesStatDTO.storeIds.size() != 0">
+                and distribution_store_id in
+                <foreach collection="distributionSalesStatDTO.storeIds" item="storeId" separator="," open="(" close=")">
+                    #{storeId}
+                </foreach>
+            </if>
+        </if>
+        <if test="distributionSalesStatDTO.startTime != null">
+            and create_time <![CDATA[>=]]> #{distributionSalesStatDTO.startTime}
+        </if>
+        <if test="distributionSalesStatDTO.endTime != null">
+            and create_time <![CDATA[<=]]> #{distributionSalesStatDTO.endTime}
+        </if>
+        <if test="distributionSalesStatDTO.accountStartTime != null">
+            and distribution_settle_time <![CDATA[>=]]> #{distributionSalesStatDTO.accountStartTime}
+        </if>
+        <if test="distributionSalesStatDTO.accountEndTime != null">
+            and distribution_settle_time <![CDATA[<=]]> #{distributionSalesStatDTO.accountEndTime}
+        </if>
+        )
+    </select>
+
+    <select id="countStoreDistributionRefundNum" resultType="java.lang.Integer">
+        select count(refund_id) from order_refund
+        where (return_money_sts = 5
+        <if test="distributionSalesStatDTO.refund != null">
+            or return_money_sts != -1
+        </if>
+        )
+        and order_id in (
+        select order_id from `order` where `status` in (2,3,5,6)
+        <if test="distributionSalesStatDTO.distributionUserType == 1">
+            <if test="distributionSalesStatDTO.type == null">
+                and (distribution_user_type = 1 or developing_store_id > 0)
+            </if>
+            <if test="distributionSalesStatDTO.type != null">
+                <if test="distributionSalesStatDTO.type == 1">
+                    and distribution_user_type = 1
+                </if>
+                <if test="distributionSalesStatDTO.type == 2">
+                    and developing_store_id > 0
+                </if>
+            </if>
+            <if test="distributionSalesStatDTO.distributionStoreId != null">
+                and (distribution_store_id = #{distributionSalesStatDTO.distributionStoreId} or developing_store_id =
+                #{distributionSalesStatDTO.distributionStoreId})
+            </if>
+            <if test="distributionSalesStatDTO.storeIds != null and distributionSalesStatDTO.storeIds.size() != 0">
+                and (distribution_store_id in
+                <foreach collection="distributionSalesStatDTO.storeIds" item="storeId" separator="," open="(" close=")">
+                    #{storeId}
+                </foreach>
+                or developing_store_id in
+                <foreach collection="distributionSalesStatDTO.storeIds" item="storeId" separator="," open="(" close=")">
+                    #{storeId}
+                </foreach>
+                )
+            </if>
+        </if>
+        <if test="distributionSalesStatDTO.distributionUserType == 2">
+            and distribution_user_type = 2
+            <if test="distributionSalesStatDTO.distributionStoreId != null">
+                and distribution_store_id = #{distributionSalesStatDTO.distributionStoreId}
+            </if>
+            <if test="distributionSalesStatDTO.storeIds != null and distributionSalesStatDTO.storeIds.size() != 0">
+                and distribution_store_id in
+                <foreach collection="distributionSalesStatDTO.storeIds" item="storeId" separator="," open="(" close=")">
+                    #{storeId}
+                </foreach>
+            </if>
+        </if>
+        <if test="distributionSalesStatDTO.startTime != null">
+            and create_time <![CDATA[>=]]> #{distributionSalesStatDTO.startTime}
+        </if>
+        <if test="distributionSalesStatDTO.endTime != null">
+            and create_time <![CDATA[<=]]> #{distributionSalesStatDTO.endTime}
+        </if>
+        <if test="distributionSalesStatDTO.accountStartTime != null">
+            and distribution_settle_time <![CDATA[>=]]> #{distributionSalesStatDTO.accountStartTime}
+        </if>
+        <if test="distributionSalesStatDTO.accountEndTime != null">
+            and distribution_settle_time <![CDATA[<=]]> #{distributionSalesStatDTO.accountEndTime}
+        </if>
+        )
+    </select>
+
+    <update id="updateBatchById">
+        <foreach collection="orderRefundList" item="orderRefund" separator=";">
+            update order_refund
+            <set>
+                <if test="orderRefund.shopId != null">
+                    `shop_id` = #{orderRefund.shopId},
+                </if>
+                <if test="orderRefund.userId != null">
+                    `user_id` = #{orderRefund.userId},
+                </if>
+                <if test="orderRefund.orderId != null">
+                    `order_id` = #{orderRefund.orderId},
+                </if>
+                <if test="orderRefund.orderItemId != null">
+                    `order_item_id` = #{orderRefund.orderItemId},
+                </if>
+                <if test="orderRefund.refundCount != null">
+                    `refund_count` = #{orderRefund.refundCount},
+                </if>
+                <if test="orderRefund.refundAmount != null">
+                    `refund_amount` = #{orderRefund.refundAmount},
+                </if>
+                <if test="orderRefund.platformRefundAmount != null">
+                    `platform_refund_amount` = #{orderRefund.platformRefundAmount},
+                </if>
+                <if test="orderRefund.distributionTotalAmount != null">
+                    `distribution_total_amount` = #{orderRefund.distributionTotalAmount},
+                </if>
+                <if test="orderRefund.refundType != null">
+                    `refund_type` = #{orderRefund.refundType},
+                </if>
+                <if test="orderRefund.applyType != null">
+                    `apply_type` = #{orderRefund.applyType},
+                </if>
+                <if test="orderRefund.isReceived != null">
+                    `is_received` = #{orderRefund.isReceived},
+                </if>
+                <if test="orderRefund.closeType != null">
+                    `close_type` = #{orderRefund.closeType},
+                </if>
+                <if test="orderRefund.returnMoneySts != null">
+                    `return_money_sts` = #{orderRefund.returnMoneySts},
+                </if>
+                <if test="orderRefund.buyerReason != null">
+                    `buyer_reason` = #{orderRefund.buyerReason},
+                </if>
+                <if test="orderRefund.buyerDesc != null">
+                    `buyer_desc` = #{orderRefund.buyerDesc},
+                </if>
+                <if test="orderRefund.buyerMobile != null">
+                    `buyer_mobile` = #{orderRefund.buyerMobile},
+                </if>
+                <if test="orderRefund.imgUrls != null">
+                    `img_urls` = #{orderRefund.imgUrls},
+                </if>
+                <if test="orderRefund.overTime != null">
+                    `over_time` = #{orderRefund.overTime},
+                </if>
+                <if test="orderRefund.rejectMessage != null">
+                    `reject_message` = #{orderRefund.rejectMessage},
+                </if>
+                <if test="orderRefund.sellerMsg != null">
+                    `seller_msg` = #{orderRefund.sellerMsg},
+                </if>
+                <if test="orderRefund.handelTime != null">
+                    `handel_time` = #{orderRefund.handelTime},
+                </if>
+                <if test="orderRefund.deliveryTime != null">
+                    `delivery_time` = #{orderRefund.deliveryTime},
+                </if>
+                <if test="orderRefund.receiveTime != null">
+                    `receive_time` = #{orderRefund.receiveTime},
+                </if>
+                <if test="orderRefund.closeTime != null">
+                    `close_time` = #{orderRefund.closeTime},
+                </if>
+                <if test="orderRefund.decisionTime != null">
+                    `decision_time` = #{orderRefund.decisionTime},
+                </if>
+                <if test="orderRefund.refundTime != null">
+                    `refund_time` = #{orderRefund.refundTime},
+                </if>
+            </set>
+            where refund_id = #{orderRefund.refundId}
+        </foreach>
+    </update>
+    <update id="editPlatformRemark">
+        update `order_refund`
+        set platform_remarks = #{remark}
+        where refund_id = #{refundId}
+    </update>
+
+    <update id="syncComplaintOrderId">
+        update `order_refund`
+        set complaint_order_id = #{complaintOrderId},
+            complaint_user_is_read = 0,
+            complaint_platform_is_read = 0,
+            return_money_sts = 1
+        where aftersale_id = #{aftersaleId}
+    </update>
+
+    <update id="syncComplaintOrderStatus">
+        update `order_refund`
+        set
+            complaint_user_is_read = 0,
+            complaint_platform_is_read = 0
+        where complaint_order_id = #{complaintOrderId}
+    </update>
+
+    <update id="complaintOrderPlatformRead">
+        update `order_refund`
+        set
+            complaint_platform_is_read = 1
+        where complaint_order_id = #{complaintOrderId}
+    </update>
+
+    <update id="complaintOrderUserRead">
+        update `order_refund`
+        set
+            complaint_user_is_read = 1
+        where complaint_order_id = #{complaintOrderId}
+    </update>
+
+    <update id="offlineRefund">
+        update `order_refund`
+        set
+            offline_refund = 1,
+            offline_refund_status = 0
+        where aftersale_id = #{aftersaleId}
+    </update>
+
+    <update id="offlineUploadCertificates">
+        update `order_refund`
+        set
+            offline_refund_status = 1
+        where aftersale_id = #{aftersaleId}
+    </update>
+
+    <update id="offlineRefundSuccess">
+        update `order_refund`
+        set
+            offline_refund_status = 2
+        where aftersale_id = #{aftersaleId}
+    </update>
+
+
+    <update id="returnFreightAmount">
+        update `order_refund`
+        set refund_freight_amount = refund_freight_amount + #{refundFreightAmount},
+            refund_amount = refund_amount + #{refundFreightAmount}
+        where refund_id = #{refundId}
+    </update>
+
+    <update id="unReturnFreightAmount">
+        update `order_refund`
+        set
+            refund_amount = refund_amount - refund_freight_amount,
+            refund_freight_amount = 0
+        where refund_id = #{refundId} and refund_amount <![CDATA[>]]> refund_freight_amount
+    </update>
+
+    <update id="updateJointVentureRefundOrder">
+        update `order_refund`
+        set joint_venture_refund_status=#{jointVentureRefundStatus}
+        where
+            refund_id in
+            <foreach collection="refundIds" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+    </update>
+</mapper>

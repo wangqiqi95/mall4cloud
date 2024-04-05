@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.scoreConvert.ScoreBannerMapper">
+
+    <select id="list" resultType="com.mall4j.cloud.user.vo.scoreConvert.ScoreBannerListVO">
+        select sb.id as id,
+               sb.name as name,
+               sb.status as status,
+               sb.weight as weight,
+               sb.is_all_shop as isAllShop,
+               sb.start_time as startTime,
+               sb.end_time as endTime,
+               sb.create_name as createName,
+               sb.create_time as createTime
+        from score_banner sb
+        <if test="shops != null and shops.size() > 0">
+            left join score_banner_shop sbs on sb.id = sbs.banner_id
+        </if>
+        <where>
+            <if test="convertTitle != null">
+                and sb.name like concat('%',#{convertTitle},'%')
+            </if>
+            <if test="bannerType != null">
+                and sb.type = #{bannerType}
+            </if>
+            <if test="convertStatus == 0 or convertStatus == 1">
+                and sb.status = #{convertStatus}
+            </if>
+            <if test="convertStatus == 2">
+                and (sb.start_time &gt; now()) and status = 0
+            </if>
+            <if test="convertStatus == 3">
+                and (sb.start_time &lt;= now() and sb.end_time &gt;= now()) and status = 0
+            </if>
+            <if test="convertStatus == 4">
+                and (sb.end_time &lt; now()) and status = 0
+            </if>
+            <if test="shops != null and shops.size() > 0">
+                and (sbs.shop_id in
+                <foreach collection="shops" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+                OR sb.is_all_shop = 1)
+            </if>
+        </where>
+        group by sb.id
+        order by sb.create_time desc
+    </select>
+
+    <select id="appActivity" resultType="java.lang.Long">
+        select id
+        from score_banner
+        where NOW() between start_time and end_time and status = 0 and `type` = 1
+        order by weight asc, create_time desc limit 1
+    </select>
+
+    <select id="bannerData" resultType="java.lang.Long">
+        select sb.id
+        from score_banner sb
+        left join score_banner_shop sbs on sb.id = sbs.banner_id
+        where NOW() between sb.start_time and sb.end_time and sb.status = 0 and sb.`type` = #{type} and (sb.is_all_shop = 1 or sbs.shop_id = #{shopId})
+        order by sb.weight asc, sb.create_time desc limit 1
+    </select>
+</mapper>

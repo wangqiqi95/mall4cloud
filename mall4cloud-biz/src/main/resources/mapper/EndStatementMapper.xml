@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.chat.EndStatementMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.mall4j.cloud.biz.model.chat.EndStatement" id="EndStatementMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="mate" column="mate"/>
+        <result property="sessionId" column="session_id"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id,name,mate
+    </sql>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="param.id">
+        insert into end_statement (`name`,`end_time`
+        values (#{param.name},#{param.mate})
+    </insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="param.id" parameterType="com.mall4j.cloud.biz.model.chat.EndStatement">
+        insert into end_statement
+        (`name`,
+        `mate`,
+        `session_id`)
+        values
+        <foreach collection="param" item="item" separator=",">
+            (#{item.name},
+            #{item.mate},
+            #{item.sessionId})
+        </foreach>
+    </insert>
+
+    <select id="getBySessionId" resultType="com.mall4j.cloud.biz.model.chat.EndStatement">
+        select id,
+        name,
+        mate,
+        session_id
+        from end_statement where session_id in
+        <foreach collection="sessionId" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+    <delete id="deleteById">
+        delete from end_statement where session_id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.MaterialMsgMapper">
+  <resultMap id="materialMsgMap" type="com.mall4j.cloud.biz.model.cp.MaterialMsg">
+    <id column="ID" property="id" />
+    <result column="MAT_ID" property="matId"/>
+    <result column="TYPE" property="type"/>
+    <result column="CONTENT" property="content"/>
+    <result column="URL" property="url"/>
+    <result column="APP_ID" property="appId"/>
+    <result column="APP_TITLE" property="appTitle"/>
+    <result column="APP_PAGE" property="appPage"/>
+    <result column="APP_PIC" property="appPic"/>
+    <result column="CREATE_BY" property="createBy"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="UPDATE_TIME" property="updateTime"/>
+    <result column="origin" property="origin"/>
+    <result column="media_id" property="mediaId"/>
+    <result column="article_url" property="articleUrl"/>
+    <result column="article_desc" property="articleDesc"/>
+    <result column="pic_url" property="picUrl"/>
+    <result column="file_name" property="fileName"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `ID`,`MAT_ID`,`TYPE`,`CONTENT`,`URL`,`APP_ID`,`APP_TITLE`,`APP_PAGE`,`APP_PIC`,`CREATE_BY`,
+    `CREATE_TIME`,`UPDATE_TIME`,origin,media_id,article_url,article_desc,pic_url,file_name
+  </sql>
+
+  <select id="listByMatId" resultMap="materialMsgMap">
+    select <include refid="Vo_Column_List"/> from CP_MATERIAL_MSG  where   MAT_ID = #{matId} and origin = #{origin}
+  </select>
+
+  <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+    insert into CP_MATERIAL_MSG (`MAT_ID`,`TYPE`,`CONTENT`,`URL`,`APP_ID`,`APP_TITLE`,`APP_PAGE`,`APP_PIC`,`CREATE_BY`,
+                                 `CREATE_TIME`,`UPDATE_TIME`,origin,media_id,article_url,article_desc,pic_url,file_name)
+    values (#{materialMsg.matId},#{materialMsg.type},#{materialMsg.content},#{materialMsg.url},#{materialMsg.appId},#{materialMsg.appTitle},#{materialMsg.appPage},
+            #{materialMsg.appPic},#{materialMsg.createBy},#{materialMsg.createTime},#{materialMsg.updateTime},#{materialMsg.origin},
+            #{materialMsg.mediaId},#{materialMsg.articleUrl},#{materialMsg.articleDesc},#{materialMsg.picUrl},#{materialMsg.fileName});
+  </insert>
+
+  <delete id="deleteByMatId">
+    delete from CP_MATERIAL_MSG where MAT_ID = #{matId} and origin = #{origin}
+  </delete>
+
+
+  <select id="waitRefreshMediaIdList" resultMap="materialMsgMap">
+    select <include refid="Vo_Column_List"/> from CP_MATERIAL_MSG
+    where
+    update_time <![CDATA[ <= ]]> date_add(now(), interval -70 hour)
+    and ( media_id is not null and media_id !='' )
+
+<!--    and TYPE in ('video','image')-->
+  </select>
+
+  <update id="refreshMediaId">
+    update CP_MATERIAL_MSG
+      set media_id = #{mediaId},
+        update_time = now()
+    where id = #{id}
+  </update>
+
+</mapper>

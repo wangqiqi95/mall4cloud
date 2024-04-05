@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.WelcomeAttachmentMapper">
+  <resultMap id="welcomeAttachmentMap" type="com.mall4j.cloud.biz.model.cp.CpWelcomeAttachment">
+    <id column="ID" property="id" />
+    <result column="wel_id" property="welId"/>
+    <result column="type" property="type"/>
+    <result column="data" property="data"/>
+    <result column="status" property="status"/>
+    <result column="flag" property="flag"/>
+    <result column="origin" property="origin"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="create_by" property="createBy"/>
+    <result column="material_id" property="materialId"/>
+    <result column="time_state_id" property="timeStateId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `ID`,`wel_id`,`type`,`data`,`status`,`flag`,origin,update_time,time_state_id,material_id
+  </sql>
+  <select id="listByWelId" resultMap="welcomeAttachmentMap">
+    select <include refid="Vo_Column_List"/> from cp_welcome_attachment WHERE wel_id = #{welId} and origin = #{origin}
+  </select>
+
+  <select id="selectAttachmentByWelId" resultMap="welcomeAttachmentMap">
+    select <include refid="Vo_Column_List"/> from cp_welcome_attachment WHERE wel_id = #{welId} and origin = #{origin}
+  </select>
+
+  <!--根据欢迎语id删除 -->
+  <delete id="deleteByWelId">
+    delete from cp_welcome_attachment where wel_id = #{welId} and origin = #{origin}
+  </delete>
+
+  <delete id="deleteBySourceId">
+    delete from cp_welcome_attachment where source_id = #{sourceId} and origin = #{origin}
+  </delete>
+
+  <select id="listAfterThreeDayPicMediaIds" resultMap="welcomeAttachmentMap">
+    select <include refid="Vo_Column_List"/> from cp_welcome_attachment
+    WHERE origin in(0,1)  and update_time <![CDATA[ <= ]]> date_add(now(), interval -70 hour)
+    <!--WHERE origin in(0,1) and type = 'miniprogram' and update_time <![CDATA[ <= ]]> date_add(now(), interval -70 hour)-->
+  </select>
+
+</mapper>

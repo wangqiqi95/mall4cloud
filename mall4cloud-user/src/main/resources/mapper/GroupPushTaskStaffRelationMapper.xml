@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.user.mapper.GroupPushTaskStaffRelationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.user.model.GroupPushTaskStaffRelation">
+        <id column="task_staff_relation_id" property="taskStaffRelationId" />
+        <result column="group_push_task_id" property="groupPushTaskId" />
+        <result column="staff_id" property="staffId" />
+        <result column="create_time" property="createTime" />
+        <result column="staff_cp_user_id" property="staffCpUserId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        task_staff_relation_id, group_push_task_id, staff_id, staff_store_id, create_time
+    </sql>
+
+    <insert id="insertBatch">
+        insert into t_group_push_task_staff_relation (group_push_task_id, staff_id, staff_name, staff_cp_user_id) values
+        <foreach collection="relationList" item="relation" separator="," close=";">
+            (#{relation.groupPushTaskId},#{relation.staffId},#{relation.staffName},#{relation.staffCpUserId})
+        </foreach>
+    </insert>
+
+    <select id="selectSonTaskStaffList" resultType="com.mall4j.cloud.user.vo.SonTaskStaffPageVO">
+        SELECT
+        staff.staff_id as staffId,
+        staff.staff_name as staffNickName,
+        msg.reach_count AS pushIssueFinishCount,
+        msg.head_count AS pushIssueCount,
+        IFNULL(msg.finish_state,0) AS finalSend,
+        msg.finish_time as finishTime
+        FROM
+        t_group_push_task_staff_relation staff
+        LEFT JOIN t_group_push_son_task son ON son.group_push_task_id = staff.group_push_task_id
+        LEFT JOIN t_staff_batch_send_cp_msg msg ON msg.push_son_task_id = son.group_push_son_task_id
+        AND msg.staff_id = staff.staff_id
+        WHERE
+        son.group_push_son_task_id = #{param.sonTaskId} and staff.group_push_task_id = #{param.pushTaskId}
+        <if test="param.staffIdList != null and param.staffIdList.size() > 0">
+            AND staff.staff_id in
+            <foreach collection="param.staffIdList" item="item"  index="index" open="("  separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+        <if test="param.sendStatus != null and param.sendStatus != 1">
+            AND (msg.finish_state != 1 or msg.finish_state is null)
+        </if>
+        <if test="param.sendStatus != null and param.sendStatus == 1">
+            AND msg.finish_state = 1
+        </if>
+        <if test="param.startTime != null and param.endTime != null">
+            and date_format(msg.finish_time, 'yyyy-MM-dd HH:mm:ss') between date_format(param.startTime, 'yyyy-MM-dd HH:mm:ss') and date_format(param.endTime, 'yyyy-MM-dd HH:mm:ss')
+        </if>
+        order by staff.create_time desc
+    </select>
+    
+    
+<!--    <select id=""></select>-->
+
+</mapper>

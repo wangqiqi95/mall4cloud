@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.ProtectActivitySpuMapper">
+  <resultMap id="protectActivitySpuMap" type="com.mall4j.cloud.product.model.ProtectActivitySpu">
+    <id column="id" property="id" />
+    <result column="spu_id" property="spuId"/>
+    <result column="protect_price" property="protectPrice"/>
+    <result column="status" property="status"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+
+  <select id="pageList" resultType="com.mall4j.cloud.product.vo.ProtectActivitySpuVO">
+    SELECT
+      p.id,
+      p.spu_id,
+      p.protect_price,
+      p.`status`,
+      p.`ex_status`,
+      p.start_time,
+      p.end_time,
+      spu.spu_code,
+      spu.`name` AS spu_name,
+      spu.main_img_url,
+      spu.img_urls
+    FROM
+      protect_activity_spu p
+        LEFT JOIN spu ON spu.spu_id = p.spu_id
+    WHERE
+      p.del_flag =0
+        <if test="spuPageDTO.spuCode!=null and spuPageDTO.spuCode!=''">
+          and spu.spu_code=#{spuPageDTO.spuCode}
+        </if>
+      <if test="spuPageDTO.status!=null">
+        and p.status=#{spuPageDTO.status}
+      </if>
+        <if test="spuPageDTO.exStatus!=null">
+            <if test="spuPageDTO.exStatus==0">
+                and p.ex_status=#{spuPageDTO.exStatus}
+            </if>
+            <if test="spuPageDTO.exStatus==1">
+                AND start_time &gt; NOW() and p.ex_status != 0
+            </if>
+            <if test="spuPageDTO.exStatus==2">
+                AND start_time &lt; NOW() and end_time &gt; NOW() and p.ex_status != 0
+            </if>
+            <if test="spuPageDTO.exStatus==3">
+                and end_time &lt; NOW() and p.ex_status != 0
+            </if>
+            <if test="spuPageDTO.exStatus==4">
+                and p.ex_status=#{spuPageDTO.exStatus}
+            </if>
+        </if>
+        order by p.create_time desc
+  </select>
+
+  <select id="getListBySpus" resultType="com.mall4j.cloud.product.model.ProtectActivitySpu">
+      select * from(
+          SELECT
+          *
+          FROM
+          `protect_activity_spu`
+          WHERE
+          del_flag = 0
+          AND status = 0
+          AND ex_status NOT IN ( '0', '4' )
+          AND start_time &lt; NOW() and end_time &gt; NOW()
+          AND spu_id in
+          <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+            #{spuId}
+          </foreach>
+          order by create_time desc
+      )temp
+      GROUP BY temp.spu_id
+  </select>
+
+  <select id="getById" resultMap="protectActivitySpuMap">
+    select * from protect_activity_spu where id = #{id}
+  </select>
+
+    <update id="deleteBatch">
+        <foreach collection="ids" item="id" separator=";">
+            update protect_activity_spu set del_flag=1 where id = #{id}
+        </foreach>
+<!--        <foreach collection="ids" item="id" separator=";">
+            delete from protect_activity_spu where id = #{id}
+        </foreach>-->
+    </update>
+
+</mapper>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpPhoneTaskUserMapper">
+  <resultMap id="cpPhoneTaskUserMap" type="com.mall4j.cloud.biz.model.cp.CpPhoneTaskUser">
+    <id column="id" property="id" />
+    <result column="phone_user_id" property="phoneUserId"/>
+    <result column="task_id" property="taskId"/>
+    <result column="staff_id" property="staffId"/>
+    <result column="status" property="status"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="is_delete" property="isDelete"/>
+    <result column="distribute_time" property="distributeTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`phone_user_id`,`task_id`,`staff_id`,`status`,`create_by`,`create_time`,`update_by`,`update_time`,`is_delete`,`distribute_time`
+  </sql>
+
+  <select id="list" resultType="com.mall4j.cloud.biz.vo.cp.CpPhoneTaskUserVO">
+    select
+    tu.id,
+    tu.phone_user_id,
+    tu.task_id,
+    tu.staff_id,
+    tu.status,
+    tu.create_by,
+    tu.create_time,
+    tu.distribute_time,
+    pl.nick_name,
+    pl.phone,
+    pl.remarks,
+    pl.import_from,
+    pl.status as user_status
+    from cp_phone_task_user tu
+    left join cp_phone_library pl on tu.phone_user_id=pl.id
+    where tu.is_delete=0
+    <if test="dto.taskId!=null">
+      AND tu.task_id=#{dto.taskId}
+    </if>
+    <if test="dto.phone!=null and dto.phone!=''">
+      AND pl.phone like CONCAT('%', #{dto.phone},'%')
+    </if>
+    <if test="dto.nickName!=null and dto.nickName!=''">
+      AND pl.nick_name like CONCAT('%', #{dto.nickName},'%')
+    </if>
+    <if test="dto.searchKey!=null and dto.searchKey!=''">
+      AND ( pl.nick_name like CONCAT('%', #{dto.searchKey},'%') or pl.phone like CONCAT('%', #{dto.searchKey},'%') )
+    </if>
+    <if test="dto.importFrom!=null">
+      AND pl.import_from=#{dto.importFrom}
+    </if>
+    <if test="dto.startTime!=null and dto.endTime!=null">
+      AND tu.distribute_time between #{dto.startTime} and #{dto.endTime}
+    </if>
+    <if test="dto.staffs!=null and dto.staffs.size>0">
+      and tu.staff_id in
+      <foreach collection="dto.staffs" item="staffId" open="(" close=")" separator=",">
+        #{staffId}
+      </foreach>
+    </if>
+    order by tu.create_time desc
+  </select>
+
+  <select id="getById" resultMap="cpPhoneTaskUserMap">
+    select <include refid="Vo_Column_List"/> from cp_phone_task_user where id = #{id}
+  </select>
+
+  <delete id="deleteById">
+    delete from cp_phone_task_user where id = #{id}
+  </delete>
+
+  <select id="selectRecycleList" resultType="com.mall4j.cloud.biz.model.cp.CpPhoneTaskUser">
+    select
+    user.*,
+    lib.status as lib_status
+    from cp_phone_task_user user
+             left join cp_phone_library lib on user.phone_user_id = lib.id
+    where user.is_delete = 0
+      and lib.is_delete = 0
+      and lib.status != 3
+      and user.task_id = #{taskId}
+      group by user.phone_user_id
+  </select>
+
+  <select id="selectSuccessByPhoneUserId" resultType="com.mall4j.cloud.biz.model.cp.CpPhoneTaskUser">
+    select user.*
+    from cp_phone_task_user user
+    left join cp_phone_task task on user.task_id = task.id
+    where user.is_delete = 0
+    and user.status = 0
+    and task.start_time &lt; now() and now() &lt; task.end_time
+    and user.phone_user_id = #{phoneUserId}
+    and user.staff_id = #{staffId}
+  </select>
+
+  <select id="selectCountByTaskId" resultType="com.mall4j.cloud.biz.vo.cp.CpPhoneTaskUserCountVO">
+    select
+        count(1) as actualTotal,
+        task_id
+    from cp_phone_task_user
+    where is_delete=0
+    and task_id in
+    <foreach collection="taskIds" item="taskId" open="(" close=")" separator=",">
+      #{taskId}
+    </foreach>
+    group by task_id
+  </select>
+
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserGrowthLogMapper">
+  <resultMap id="userGrowthLogMap" type="com.mall4j.cloud.user.model.UserGrowthLog">
+    <id column="log_id" property="logId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="user_id" property="userId"/>
+    <result column="source" property="source"/>
+    <result column="biz_id" property="bizId"/>
+    <result column="change_growth" property="changeGrowth"/>
+    <result column="remarks" property="remarks"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `log_id`,`create_time`,`update_time`,`user_id`,`source`,`biz_id`,`change_growth`,`remarks`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.user.vo.UserGrowthLogVO">
+    select <include refid="Vo_Column_List"/> from user_growth_log order by log_id desc
+  </select>
+  <select id="getByLogId" resultType="com.mall4j.cloud.user.model.UserGrowthLog">
+    select <include refid="Vo_Column_List"/> from user_growth_log where log_id = #{logId}
+  </select>
+
+    <select id="getPageByUserId" resultType="com.mall4j.cloud.user.vo.UserGrowthLogVO"
+            parameterType="java.lang.Long">
+      SELECT gl.biz_id, gl.change_growth, gl.remarks, gl.create_time
+      FROM `user_growth_log` gl
+      WHERE gl.user_id = #{userId}
+      ORDER BY gl.create_time DESC
+    </select>
+    <insert id="save">
+    insert into user_growth_log (`user_id`,`source`,`biz_id`,`change_growth`,`remarks`)
+    values (#{userGrowthLog.userId},#{userGrowthLog.source},#{userGrowthLog.bizId},#{userGrowthLog.changeGrowth},#{userGrowthLog.remarks});
+  </insert>
+    <insert id="saveBatch" parameterType="java.util.List">
+      insert into user_growth_log (`user_id`,`source`,`biz_id`,`change_growth`,`remarks`)
+      values
+      <foreach collection="userGrowthLogs" item="userGrowthLog" separator=",">
+        (#{userGrowthLog.userId},#{userGrowthLog.source},#{userGrowthLog.bizId},#{userGrowthLog.changeGrowth},#{userGrowthLog.remarks})
+      </foreach>
+    </insert>
+    <update id="update">
+    update user_growth_log
+    <set>
+      <if test="userGrowthLog.userId != null">
+        `user_id` = #{userGrowthLog.userId},
+      </if>
+      <if test="userGrowthLog.source != null">
+        `source` = #{userGrowthLog.source},
+      </if>
+      <if test="userGrowthLog.bizId != null">
+        `biz_id` = #{userGrowthLog.bizId},
+      </if>
+      <if test="userGrowthLog.changeGrowth != null">
+        `change_growth` = #{userGrowthLog.changeGrowth},
+      </if>
+      <if test="userGrowthLog.remarks != null">
+        `remarks` = #{userGrowthLog.remarks},
+      </if>
+    </set>
+    where log_id = #{userGrowthLog.logId}
+  </update>
+  <delete id="deleteById">
+    delete from user_growth_log where log_id = #{logId}
+  </delete>
+
+  <select id="getByBizId" resultMap="userGrowthLogMap">
+    select <include refid="Vo_Column_List"/> from user_growth_log
+    where biz_id = #{bizId} and source = 1
+    <choose>
+      <when test="ioType != null and ioType > 0">
+        and change_growth &gt;= 0
+      </when>
+      <otherwise>
+        and change_growth &lt; 0
+      </otherwise>
+    </choose>
+    limit 1
+  </select>
+</mapper>

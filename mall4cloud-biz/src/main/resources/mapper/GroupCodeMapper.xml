@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.GroupCodeMapper">
+  <resultMap id="groupCodeMap" type="com.mall4j.cloud.biz.model.cp.CpGroupCode">
+    <id column="id" property="id" />
+    <result column="NAME" property="name"/>
+    <result column="SLOGAN" property="slogan"/>
+    <result column="CREATE_BY" property="createBy"/>
+    <result column="CREATE_NAME" property="createName"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="STORE_ID" property="storeId"/>
+    <result column="STORE_NAME" property="storeName"/>
+    <result column="STATUS" property="status"/>
+    <result column="FLAG" property="flag"/>
+    <result column="QR_CODE" property="qrCode"/>
+    <result column="state" property="state"/>
+    <result column="config_id" property="configId"/>
+    <result column="group_id" property="groupId"/>
+    <result column="group_type" property="groupType"/>
+    <result column="standby_staff_id" property="standbyStaffId"/>
+    <result column="style" property="style"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="code_from" property="codeFrom"/>
+    <result column="drainage_url" property="drainageUrl"/>
+    <result column="drainage_path" property="drainagePath"/>
+  </resultMap>
+
+  <resultMap id="groupCodeVOMap" extends="groupCodeMap" type="com.mall4j.cloud.biz.vo.cp.GroupCodeVO">
+    <result column="group_name" property="groupName"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`NAME`,`SLOGAN`,`CREATE_BY`,`CREATE_NAME`,`CREATE_TIME`,`update_time`,`STORE_ID`,`STORE_NAME`,`STATUS`,`FLAG`,`QR_CODE`,`state`,`config_id`,`group_id`,`group_type`,`standby_staff_id`,`style`,`update_by`,`code_from`,`drainage_url`,`drainage_path`
+  </sql>
+
+  <select id="list" resultMap="groupCodeVOMap">
+    select
+    gc.*,
+    cgroup.name as group_name
+    from cp_group_code gc
+    left join cp_code_group cgroup on gc.group_id=cgroup.id
+    where gc.FLAG =0
+    <if test="et.name != null and et.name !='' "> AND gc.NAME like CONCAT('%', #{et.name},'%')  </if>
+    <if test="et.createName != null and et.createName !='' "> AND gc.CREATE_NAME like CONCAT('%', #{et.createName},'%')  </if>
+    <if test="et.createTimeStart != null and et.createTimeEnd !=null">
+      AND gc.CREATE_TIME between #{et.createTimeStart} and #{et.createTimeEnd}
+    </if>
+    <if test="et.groupIds!=null and et.groupIds.size()>0">
+      and gc.group_id in
+      <foreach collection="et.groupIds" item="groupId" open="(" close=")" separator=",">
+        #{groupId}
+      </foreach>
+    </if>
+    <if test="et.storeIds != null">
+      and gc.STORE_ID in
+      <foreach collection="et.storeIds" item="item"  index="index" open="("  separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    order by gc.id desc
+  </select>
+
+  <select id="getById" resultMap="groupCodeMap">
+    select <include refid="Vo_Column_List"/> from cp_group_code where id = #{id}
+  </select>
+
+  <delete id="deleteById">
+    update cp_group_code set FLAG=1 where id = #{id}
+  </delete>
+
+</mapper>

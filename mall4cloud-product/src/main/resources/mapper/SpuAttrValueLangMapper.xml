@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SpuAttrValueLangMapper">
+  <resultMap id="spuAttrValueLangMap" type="com.mall4j.cloud.product.model.SpuAttrValueLang">
+    <id column="spu_attr_value_id" property="spuAttrValueId" />
+    <result column="lang" property="lang"/>
+    <result column="attr_name" property="attrName"/>
+    <result column="attr_value_name" property="attrValueName"/>
+    <result column="attr_desc" property="attrDesc"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `spu_attr_value_id`,`lang`,`attr_name`,`attr_value_name`,`attr_desc`
+  </sql>
+  <select id="list" resultMap="spuAttrValueLangMap">
+    select <include refid="Vo_Column_List"/> from spu_attr_value_lang order by spu_attr_value_id desc
+  </select>
+  <select id="getBySpuAttrValueId" resultMap="spuAttrValueLangMap">
+    select <include refid="Vo_Column_List"/> from spu_attr_value_lang where spu_attr_value_id = #{spuAttrValueId}
+  </select>
+  <insert id="save">
+    insert into spu_attr_value_lang (`lang`,`attr_name`,`attr_value_name`,`attr_desc`)
+    values (#{spuAttrValueLang.lang},#{spuAttrValueLang.attrName},#{spuAttrValueLang.attrValueName},#{spuAttrValueLang.attrDesc});
+  </insert>
+  <update id="update">
+    update spu_attr_value_lang
+    <set>
+      <if test="spuAttrValueLang.lang != null">
+        `lang` = #{spuAttrValueLang.lang},
+      </if>
+      <if test="spuAttrValueLang.attrName != null">
+        `attr_name` = #{spuAttrValueLang.attrName},
+      </if>
+      <if test="spuAttrValueLang.attrValueName != null">
+        `attr_value_name` = #{spuAttrValueLang.attrValueName},
+      </if>
+      <if test="spuAttrValueLang.attrDesc != null">
+        `attr_desc` = #{spuAttrValueLang.attrDesc},
+      </if>
+    </set>
+    where spu_attr_value_id = #{spuAttrValueLang.spuAttrValueId}
+  </update>
+  <delete id="deleteById">
+    delete from spu_attr_value_lang where spu_attr_value_id = #{spuAttrValueId}
+  </delete>
+
+</mapper>

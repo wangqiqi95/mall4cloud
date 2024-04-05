@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.EtoMemberMapper">
+  <resultMap id="etoMemberMap" type="com.mall4j.cloud.transfer.model.EtoMember">
+    <id column="id" property="id" />
+    <result column="unionid" property="unionid"/>
+    <result column="memberId" property="memberid"/>
+    <result column="memberCard" property="membercard"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`unionid`,`memberId`,`memberCard`
+  </sql>
+  <select id="list" resultMap="etoMemberMap">
+    select <include refid="Vo_Column_List"/> from eto_member_add order by id desc
+  </select>
+  <select id="getById" resultMap="etoMemberMap">
+    select <include refid="Vo_Column_List"/> from eto_member where id = #{id}
+  </select>
+  <insert id="save">
+    insert into eto_member (`unionid`,`memberId`,`memberCard`)
+    values (#{etoMember.unionid},#{etoMember.memberid},#{etoMember.membercard});
+  </insert>
+  <update id="update">
+    update eto_member
+    <set>
+      <if test="etoMember.unionid != null">
+        `unionid` = #{etoMember.unionid},
+      </if>
+      <if test="etoMember.memberid != null">
+        `memberId` = #{etoMember.memberid},
+      </if>
+      <if test="etoMember.membercard != null">
+        `memberCard` = #{etoMember.membercard},
+      </if>
+    </set>
+    where id = #{etoMember.id}
+  </update>
+  <delete id="deleteById">
+    delete from eto_member where id = #{id}
+  </delete>
+
+</mapper>

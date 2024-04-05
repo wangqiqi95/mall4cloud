@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mall4j.cloud.biz.mapper.WechatBrandQualificationMapper">
+
+    <resultMap id="BaseResultMap"  type="com.mall4j.cloud.biz.model.WechatBrandQualificationDO">
+        <id column="ID" property="id" jdbcType="BIGINT" javaType="Long"/>
+        <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="BRAND_ID" property="brandId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="WX_BRAND_ID" property="wxBrandId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="LICENSE" property="license" jdbcType="VARCHAR" javaType="String"/>
+        <result column="BRAND_AUDIT_TYPE" property="brandAuditType" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="TRADEMARK_TYPE" property="trademarkType" jdbcType="VARCHAR" javaType="String"/>
+        <result column="BRAND_MANAGEMENT_TYPE" property="brandManagementType" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="COMMODITY_ORIGIN_TYPE" property="commodityOriginType" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="BRAND_WORDING" property="brandWording" jdbcType="VARCHAR" javaType="String"/>
+        <result column="SALE_AUTHORIZATION" property="saleAuthorization" jdbcType="VARCHAR" javaType="String"/>
+        <result column="TRADEMARK_REGISTRATION_CERTIFICATE" property="trademarkRegistrationCertificate" jdbcType="VARCHAR" javaType="String"/>
+        <result column="TRADEMARK_REGISTRANT" property="trademarkRegistrant" jdbcType="VARCHAR" javaType="String"/>
+        <result column="TRADEMARK_REGISTRANT_NU" property="trademarkRegistrantNu" jdbcType="VARCHAR" javaType="String"/>
+        <result column="TRADEMARK_AUTHORIZATION_PERIOD" property="trademarkAuthorizationPeriod" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="TRADEMARK_REGISTRATION_APPLICATION" property="trademarkRegistrationApplication" jdbcType="VARCHAR" javaType="String"/>
+        <result column="TRADEMARK_APPLICANT" property="trademarkApplicant" jdbcType="VARCHAR" javaType="String"/>
+        <result column="TRADEMARK_APPLICATION_TIME" property="trademarkApplicationTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="AUDIT_ID" property="auditId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="AUDIT_CONTENT" property="auditContent" jdbcType="VARCHAR" javaType="String"/>
+        <result column="AUDIT_TIME" property="auditTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="STATUS" property="status" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" javaType="String"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="UPDATE_BY" property="updateBy" jdbcType="VARCHAR" javaType="String"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="IS_DELETED" property="isDeleted" jdbcType="INTEGER" javaType="Integer"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        ID,TENANT_ID,BRAND_ID,WX_BRAND_ID,LICENSE,BRAND_AUDIT_TYPE,TRADEMARK_TYPE,BRAND_MANAGEMENT_TYPE,COMMODITY_ORIGIN_TYPE,
+        BRAND_WORDING,SALE_AUTHORIZATION,TRADEMARK_REGISTRATION_CERTIFICATE,AUDIT_CONTENT,
+        TRADEMARK_REGISTRANT,TRADEMARK_REGISTRANT_NU,TRADEMARK_AUTHORIZATION_PERIOD,TRADEMARK_REGISTRATION_APPLICATION,TRADEMARK_APPLICANT,
+        TRADEMARK_APPLICATION_TIME,AUDIT_ID,AUDIT_TIME,STATUS,CREATE_BY,CREATE_TIME,UPDATE_BY,UPDATE_TIME,IS_DELETED
+    </sql>
+
+
+    <!--insert:wechat_brand_qualification-->
+    <insert id="insert" >
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO wechat_brand_qualification(
+            ID
+            ,TENANT_ID
+            ,BRAND_ID
+            ,WX_BRAND_ID
+            ,LICENSE
+            ,BRAND_AUDIT_TYPE
+            ,TRADEMARK_TYPE
+            ,BRAND_MANAGEMENT_TYPE
+            ,COMMODITY_ORIGIN_TYPE
+            ,BRAND_WORDING
+            ,SALE_AUTHORIZATION
+            ,TRADEMARK_REGISTRATION_CERTIFICATE
+            ,TRADEMARK_REGISTRANT
+            ,TRADEMARK_REGISTRANT_NU
+            ,TRADEMARK_AUTHORIZATION_PERIOD
+            ,TRADEMARK_REGISTRATION_APPLICATION
+            ,TRADEMARK_APPLICANT
+            ,TRADEMARK_APPLICATION_TIME
+            ,AUDIT_ID
+            ,AUDIT_CONTENT
+            ,AUDIT_TIME
+            ,STATUS
+            ,CREATE_BY
+            ,UPDATE_BY
+        )VALUES(
+             #{id,jdbcType=BIGINT}
+            , #{tenantId,jdbcType=VARCHAR}
+            , #{brandId,jdbcType=VARCHAR}
+            , #{wxBrandId,jdbcType=VARCHAR}
+            , #{license,jdbcType=VARCHAR}
+            , #{brandAuditType,jdbcType=TINYINT}
+            , #{trademarkType,jdbcType=VARCHAR}
+            , #{brandManagementType,jdbcType=TINYINT}
+            , #{commodityOriginType,jdbcType=TINYINT}
+            , #{brandWording,jdbcType=VARCHAR}
+            , #{saleAuthorization,jdbcType=VARCHAR}
+            , #{trademarkRegistrationCertificate,jdbcType=VARCHAR}
+            , #{trademarkRegistrant,jdbcType=VARCHAR}
+            , #{trademarkRegistrantNu,jdbcType=VARCHAR}
+            , #{trademarkAuthorizationPeriod,jdbcType=TIMESTAMP}
+            , #{trademarkRegistrationApplication,jdbcType=VARCHAR}
+            , #{trademarkApplicant,jdbcType=VARCHAR}
+            , #{trademarkApplicationTime,jdbcType=TIMESTAMP}
+            , #{auditId,jdbcType=VARCHAR}
+            , #{auditContent,jdbcType=VARCHAR}
+            , #{auditTime,jdbcType=TIMESTAMP}
+            , #{status,jdbcType=TINYINT}
+            , #{createBy,jdbcType=VARCHAR}
+            , #{updateBy,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!--update table:wechat_brand_qualification-->
+    <update id="update" >
+        UPDATE /*MS-WECHAT-BRAND-QUALIFICATION-UPDATE*/ wechat_brand_qualification
+        SET
+            UPDATE_TIME     = now()
+            <if test="tenantId != null">
+                ,TENANT_ID       = #{tenantId,jdbcType=VARCHAR}
+            </if>
+            <if test="brandId != null">
+                ,BRAND_ID        = #{brandId,jdbcType=VARCHAR}
+            </if>
+            <if test="wxBrandId != null">
+                ,WX_BRAND_ID     = #{wxBrandId,jdbcType=VARCHAR}
+            </if>
+            <if test="license != null">
+                ,LICENSE         = #{license,jdbcType=VARCHAR}
+            </if>
+            <if test="brandAuditType != null">
+                ,BRAND_AUDIT_TYPE = #{brandAuditType,jdbcType=TINYINT}
+            </if>
+            <if test="trademarkType != null">
+                ,TRADEMARK_TYPE  = #{trademarkType,jdbcType=VARCHAR}
+            </if>
+            <if test="brandManagementType != null">
+                ,BRAND_MANAGEMENT_TYPE = #{brandManagementType,jdbcType=TINYINT}
+            </if>
+            <if test="commodityOriginType != null">
+                ,COMMODITY_ORIGIN_TYPE = #{commodityOriginType,jdbcType=TINYINT}
+            </if>
+            <if test="brandWording != null">
+                ,BRAND_WORDING   = #{brandWording,jdbcType=VARCHAR}
+            </if>
+            <if test="saleAuthorization != null">
+                ,SALE_AUTHORIZATION = #{saleAuthorization,jdbcType=VARCHAR}
+            </if>
+            <if test="trademarkRegistrationCertificate != null">
+                ,TRADEMARK_REGISTRATION_CERTIFICATE = #{trademarkRegistrationCertificate,jdbcType=VARCHAR}
+            </if>
+            <if test="trademarkRegistrant != null">
+                ,TRADEMARK_REGISTRANT = #{trademarkRegistrant,jdbcType=VARCHAR}
+            </if>
+            <if test="trademarkRegistrantNu != null">
+                ,TRADEMARK_REGISTRANT_NU = #{trademarkRegistrantNu,jdbcType=VARCHAR}
+            </if>
+            <if test="trademarkAuthorizationPeriod != null">
+                ,TRADEMARK_AUTHORIZATION_PERIOD = #{trademarkAuthorizationPeriod,jdbcType=TIMESTAMP}
+            </if>
+            <if test="trademarkRegistrationApplication != null">
+                ,TRADEMARK_REGISTRATION_APPLICATION = #{trademarkRegistrationApplication,jdbcType=VARCHAR}
+            </if>
+            <if test="trademarkApplicant != null">
+                ,TRADEMARK_APPLICANT = #{trademarkApplicant,jdbcType=VARCHAR}
+            </if>
+            <if test="trademarkApplicationTime != null">
+                ,TRADEMARK_APPLICATION_TIME = #{trademarkApplicationTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="auditId != null">
+                ,AUDIT_ID        = #{auditId,jdbcType=VARCHAR}
+            </if>
+            <if test="auditContent != null">
+                ,AUDIT_CONTENT        = #{auditContent,jdbcType=VARCHAR}
+            </if>
+            <if test="auditTime != null">
+                ,AUDIT_TIME      = #{auditTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="status != null">
+                ,STATUS          = #{status,jdbcType=TINYINT}
+            </if>
+            <if test="createBy != null">
+                ,CREATE_BY       = #{createBy,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null">
+                ,CREATE_TIME     = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updateBy != null">
+                ,UPDATE_BY       = #{updateBy,jdbcType=VARCHAR}
+            </if>
+            <if test="isDeleted != null">
+                ,IS_DELETED      = #{isDeleted,jdbcType=INTEGER}
+            </if>
+        WHERE
+            ID              = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!--delete:wechat_brand_qualification-->
+    <delete id="deleteByPrimary" >
+        DELETE /*MS-WECHAT-BRAND-QUALIFICATION-DELETEBYPRIMARY*/ FROM
+            wechat_brand_qualification
+        WHERE
+            ID = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <!--get:wechat_brand_qualification-->
+    <select id="getByPrimary" resultMap="BaseResultMap">
+        SELECT /*MS-WECHAT-BRAND-QUALIFICATION-GETBYPRIMARY*/  <include refid="Base_Column_List" />
+        FROM wechat_brand_qualification
+        WHERE
+            ID = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        SELECT /*MS-WECHAT-BRAND-QUALIFICATION-GETBYPRIMARY*/  <include refid="Base_Column_List" />
+        FROM wechat_brand_qualification
+        order by id desc
+    </select>
+
+    <select id="getByAuditId" resultMap="BaseResultMap">
+        SELECT /*MS-WECHAT-BRAND-QUALIFICATION-GETBYPRIMARY*/  <include refid="Base_Column_List" />
+        FROM wechat_brand_qualification
+        WHERE
+        AUDIT_ID = #{auditId,jdbcType=BIGINT}
+    </select>
+
+    <update id="syncAuditResult">
+        update wechat_brand_qualification
+            set status = #{status},
+                audit_content = #{auditContent},
+                wx_brand_id = #{wxBrandId}
+        where audit_id = #{auditId}
+    </update>
+</mapper>

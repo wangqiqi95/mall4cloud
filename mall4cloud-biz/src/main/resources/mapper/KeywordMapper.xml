@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.chat.KeywordMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.mall4j.cloud.biz.model.chat.Keyword" id="KeywordMap">
+        <result property="id" column="id"/>
+        <result property="sensitives" column="sensitives"/>
+        <result property="mate" column="mate"/>
+        <result property="suitRange" column="suit_range"/>
+        <result property="nature" column="nature"/>
+        <result property="isLabel" column="is_label"/>
+        <result property="label" column="label"/>
+        <result property="isRecommend" column="is_recommend"/>
+        <result property="recommend" column="recommend"/>
+        <result property="isRemind" column="is_remind"/>
+        <result property="remindPeople" column="remind_people"/>
+        <result property="staff" column="staff"/>
+        <result property="speechcraft" column="speechcraft"/>
+        <result property="material" column="material"/>
+        <result property="speechcraftId" column="speechcraft_id"/>
+        <result property="materialId" column="material_id"/>
+        <result property="custom" column="custom"/>
+        <result property="tags" column="tags"/>
+        <result property="staffName" column="staff_name"/>
+        <result property="createName" column="create_name"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id,sensitives,mate,suit_range,nature,is_label,label,is_recommend,recommend,is_remind,staff_name,
+        remind_people,staff,speechcraft,material,speechcraft_id,material_id,custom,tags,create_name,create_time,update_time
+    </sql>
+    
+    <select id="list" resultType="com.mall4j.cloud.biz.vo.chat.KeywordVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+            `key_word`
+        <where>
+            is_delete=0
+            <if test="param.sensitives != null and param.sensitives != ''">
+                and sensitives LIKE CONCAT("%",#{param.sensitives},"%")
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="keyword.id">
+        insert into key_word (`sensitives`,`mate`,`suit_range`,`nature`,`is_label`,`label`,`is_recommend`,`recommend`,`is_remind`,`remind_people`,
+        `staff`,`speechcraft`,`material`,`custom`,`tags`,`speechcraft_id`,`material_id`,`staff_name`,`create_name`)
+        values (#{keyword.sensitives},#{keyword.mate},#{keyword.suitRange},#{keyword.nature},#{keyword.isLabel},#{keyword.label},#{keyword.isRecommend},#{keyword.recommend},#{keyword.isRemind},
+        #{keyword.remindPeople},#{keyword.staff},#{keyword.speechcraft},#{keyword.material},#{keyword.custom},#{keyword.tags},#{keyword.speechcraftId},#{keyword.materialId},#{keyword.staffName},#{keyword.createName})
+    </insert>
+
+    <update id="update">
+        update key_word
+        <set>
+            `material_id` = #{keyword.materialId},
+            `speechcraft_id` = #{keyword.speechcraftId},
+            <if test="keyword.sensitives != null">
+                `sensitives` = #{keyword.sensitives},
+            </if>
+            <if test="keyword.mate != null">
+                `mate` = #{keyword.mate},
+            </if>
+            <if test="keyword.suitRange != null">
+                `suit_range` = #{keyword.suitRange},
+            </if>
+            <if test="keyword.nature != null">
+                `nature` = #{keyword.nature},
+            </if>
+            <if test="keyword.isLabel != null">
+                `is_label` = #{keyword.isLabel},
+            </if>
+            <if test="keyword.label != null">
+                `label` = #{keyword.label},
+            </if>
+            <if test="keyword.isRecommend != null">
+                `is_recommend` = #{keyword.isRecommend},
+            </if>
+            <if test="keyword.recommend != null">
+                `recommend` = #{keyword.recommend},
+            </if>
+            <if test="keyword.isRemind != null">
+                `is_remind` = #{keyword.isRemind},
+            </if>
+            <if test="keyword.remindPeople != null">
+                `remind_people` = #{keyword.remindPeople},
+            </if>
+            <if test="keyword.staff != null">
+                `staff` = #{keyword.staff},
+            </if>
+            <if test="keyword.custom != null">
+                `custom` = #{keyword.custom},
+            </if>
+            <if test="keyword.speechcraft != null">
+                `speechcraft` = #{keyword.speechcraft},
+            </if>
+            <if test="keyword.material != null">
+                `material` = #{keyword.material},
+            </if>
+            <if test="keyword.tags != null">
+                `tags` = #{keyword.tags},
+            </if>
+            <if test="keyword.staffName != null">
+                `staff_name` = #{keyword.staffName},
+            </if>
+            <if test="keyword.createName != null">
+                `create_name` = #{keyword.createName},
+            </if>
+            update_time = NOW(),
+        </set>
+        where id = #{keyword.id}
+    </update>
+
+    <delete id="deleteById">
+        update key_word set is_delete=1,update_time=now() where id = #{id}
+    </delete>
+
+    <select id="getById" resultType="com.mall4j.cloud.biz.vo.chat.KeywordVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        `key_word` where id = #{id}
+    </select>
+    
+    <select id="getAll" resultType="com.mall4j.cloud.biz.vo.chat.KeywordVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        `key_word` where is_delete = 0
+    </select>
+
+</mapper>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.chat.KeywordHitMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.mall4j.cloud.biz.model.chat.KeyWordHit" id="KeywordHitMap">
+        <result property="id" column="id"/>
+        <result property="sensitives" column="sensitives"/>
+        <result property="mate" column="mate"/>
+        <result property="trigger" column="trigger"/>
+        <result property="type" column="type"/>
+        <result property="label" column="label"/>
+        <result property="staff" column="staff"/>
+        <result property="staffId" column="staff_id"/>
+        <result property="triggerId" column="trigger_id"/>
+        <result property="keyId" column="key_id"/>
+        <result property="hitName" column="hit_name"/>
+        <result property="hitTime" column="hit_time"/>
+        <result property="triggerTime" column="trigger_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id,sensitives,mate,`trigger`,`type`,label,staff,staff_id,trigger_id,key_id,hit_name,hit_time,
+        trigger_time,create_time,update_time
+    </sql>
+    
+    <select id="list" resultType="com.mall4j.cloud.biz.vo.chat.KeywordHitVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+            `cp_key_word_hit`
+        <where>
+             1=1
+            <if test="param.trigger != null and param.trigger != ''">
+                and `trigger` LIKE CONCAT("%",#{param.trigger},"%")
+            </if>
+            <if test="param.sensitives != null and param.sensitives != ''">
+                and `sensitives` LIKE CONCAT("%",#{param.sensitives},"%")
+            </if>
+            <if test="param.mate != null and param.mate != ''">
+                and `mate` LIKE CONCAT("%",#{param.mate},"%")
+            </if>
+            <if test="param.triggers != null and param.triggers.size>0">
+                and `trigger_id` in
+                <foreach collection="param.triggers" item="trigger" open="(" close=")" separator=",">
+                    #{trigger}
+                </foreach>
+            </if>
+            <if test="param.keyId != null and param.keyId != ''">
+                and key_id = #{param.keyId}
+            </if>
+            <if test="param.startTime != null and param.endTime != null">
+                and DATE_FORMAT(trigger_time,'%Y-%m-%d %H:%i:%s') >= #{param.startTime}
+                and DATE_FORMAT(trigger_time,'%Y-%m-%d %H:%i:%s') &lt;= #{param.endTime}
+            </if>
+            <if test="param.label != null">
+                and label LIKE CONCAT("%",#{param.label},"%")
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="wordHit.id">
+        insert into cp_key_word_hit (`sensitives`,`mate`,`trigger`,`type`,`label`,`staff`,`staff_id`,`trigger_id`,`trigger_time`,`key_id`,
+        `hit_name`,`hit_time`
+        values (#{wordHit.sensitives},#{wordHit.mate},#{wordHit.trigger},#{wordHit.type},#{wordHit.label},#{wordHit.staff},
+        #{wordHit.staffId},#{wordHit.triggerId},#{wordHit.triggerTime},#{wordHit.keyId},#{wordHit.hitName},#{wordHit.hitTime})
+    </insert>
+
+    <insert id="batchInsert" parameterType="com.mall4j.cloud.biz.model.chat.KeyWordHit">
+        insert into cp_key_word_hit
+        (`sensitives`,
+        `mate`,
+        `trigger`,
+        `type`,
+        `label`,
+        `staff`,
+        `staff_id`,
+        `trigger_id`,
+        `key_id`,
+        `hit_name`,
+        `hit_time`,
+        `trigger_time`,
+        `create_time`,
+        `update_time`
+        )
+        values
+        <foreach collection="wordHit" item="item" separator=",">
+            (#{item.sensitives},
+            #{item.mate},
+            #{item.trigger},
+            #{item.type},
+            #{item.label},
+            #{item.staff},
+            #{item.staffId},
+            #{item.triggerId},
+            #{item.keyId},
+            #{item.hitName},
+            #{item.hitTime},
+            #{item.triggerTime},
+            now(),
+            now()
+            )
+
+        </foreach>
+    </insert>
+
+    <select id="getTop" resultType="com.mall4j.cloud.biz.vo.chat.KeywordHitVO">
+        select count(1) countSen,sensitives  from cp_key_word_hit
+        <where>
+            1=1
+            <if test="param.startTime != null and param.endTime != null">
+                and DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') >= #{param.startTime}
+                and DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') &lt;= #{param.endTime}
+            </if>
+            <if test="param.staff != null">
+                and staff LIKE CONCAT("%",#{param.staff},"%")
+            </if>
+        </where>
+        group by sensitives order by count(1) desc
+        <if test="param.top != null">
+            limit #{param.top}
+        </if>
+    </select>
+
+    <select id="selectAppRecomds" resultType="com.mall4j.cloud.biz.vo.chat.KeywordHitRecomdVO">
+        select
+            word.id,
+            word.sensitives,
+            word.mate,
+            word.material_id,
+            word.speechcraft_id
+        from cp_key_word_hit hit
+        left join key_word word on hit.key_id=word.id
+        where word.is_delete=0
+        and word.is_recommend=1
+        and key_id is not null
+        <if test="param.staffUserId!=null and param.staffUserId!=''">
+            and hit.staff_id=#{param.staffUserId}
+        </if>
+        <if test="param.userId!=null and param.userId!=''">
+            and hit.trigger_id=#{param.userId}
+        </if>
+        group by word.id
+        order by hit.create_time desc
+    </select>
+
+</mapper>

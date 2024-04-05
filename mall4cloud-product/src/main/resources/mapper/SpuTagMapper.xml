@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SpuTagMapper">
+  <resultMap id="spuTagMap" type="com.mall4j.cloud.product.model.SpuTag">
+    <id column="id" property="id" />
+    <result column="title" property="title"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="status" property="status"/>
+    <result column="is_default" property="isDefault"/>
+    <result column="prod_count" property="prodCount"/>
+    <result column="style" property="style"/>
+    <result column="seq" property="seq"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="delete_time" property="deleteTime"/>
+  </resultMap>
+  <resultMap id="tagAndSpuMap" type="com.mall4j.cloud.product.vo.SpuTagVO">
+    <id column="id" property="id" />
+    <result column="title" property="title"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="status" property="status"/>
+    <result column="is_default" property="isDefault"/>
+    <result column="prod_count" property="prodCount"/>
+    <result column="style" property="style"/>
+    <result column="seq" property="seq"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="delete_time" property="deleteTime"/>
+    <collection property="spuList" ofType="com.mall4j.cloud.common.product.vo.search.SpuSearchVO">
+      <result column="spu_id" property="spuId"/>
+      <result column="seq" property="seq"/>
+    </collection>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`title`,`shop_id`,`status`,`is_default`,`prod_count`,`style`,`seq`,`create_time`,`update_time`,`delete_time`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.product.vo.SpuTagVO">
+    select <include refid="Vo_Column_List"/> from spu_tag
+    <where>
+      `shop_id` = #{spuTag.shopId} and status = 1
+      <if test="spuTag.title != null and spuTag.title != ''">
+        and `title` LIKE CONCAT('%',#{spuTag.title},'%')
+      </if>
+      <if test="spuTag.id != null">
+        and `id` <![CDATA[<>]]> #{spuTag.id}
+      </if>
+    </where>
+    order by seq desc
+  </select>
+  <select id="getById" resultType="com.mall4j.cloud.product.vo.SpuTagVO">
+    select <include refid="Vo_Column_List"/> from spu_tag where id = #{id}
+  </select>
+  <insert id="save">
+    insert into spu_tag (`title`,`shop_id`,`status`,`is_default`,`prod_count`,`style`,`seq`)
+    values (#{spuTag.title},#{spuTag.shopId},#{spuTag.status},#{spuTag.isDefault},#{spuTag.prodCount},#{spuTag.style},#{spuTag.seq});
+  </insert>
+  <update id="update">
+    update spu_tag
+    <set>
+      <if test="spuTag.title != null">
+        `title` = #{spuTag.title},
+      </if>
+      <if test="spuTag.shopId != null">
+        `shop_id` = #{spuTag.shopId},
+      </if>
+      <if test="spuTag.status != null">
+        `status` = #{spuTag.status},
+      </if>
+      <if test="spuTag.isDefault != null">
+        `is_default` = #{spuTag.isDefault},
+      </if>
+      <if test="spuTag.prodCount != null">
+        `prod_count` = #{spuTag.prodCount},
+      </if>
+      <if test="spuTag.style != null">
+        `style` = #{spuTag.style},
+      </if>
+      <if test="spuTag.seq != null">
+        `seq` = #{spuTag.seq},
+      </if>
+      <if test="spuTag.createTime != null">
+        `create_time` = #{spuTag.createTime},
+      </if>
+      <if test="spuTag.updateTime != null">
+        `update_time` = #{spuTag.updateTime},
+      </if>
+      <if test="spuTag.deleteTime != null">
+        `delete_time` = #{spuTag.deleteTime},
+      </if>
+    </set>
+    where id = #{spuTag.id}
+  </update>
+  <delete id="deleteById">
+    delete from spu_tag where id = #{id}
+  </delete>
+
+  <update id="updateProdCountById">
+     UPDATE spu_tag SET prod_count = (SELECT COUNT(reference_id) FROM `spu_tag_reference` WHERE tag_id = #{id}) WHERE id = #{id}
+  </update>
+
+  <update id="batchUpdateProdCountById">
+     <foreach collection="ids" item="id" >
+       UPDATE spu_tag SET prod_count = (SELECT COUNT(reference_id) FROM `spu_tag_reference` WHERE tag_id = #{id}) WHERE id = #{id};
+     </foreach>
+  </update>
+
+<!--  <update id="reduceProdCountById">-->
+<!--     UPDATE spu_tag SET prod_count = prod_count - #{count} WHERE id = #{prodTagId}-->
+<!--  </update>-->
+
+  <select id="listByShopId" resultMap="tagAndSpuMap">
+    SET @i=0;
+    SET @tag_id=0;
+    SELECT st.id,st.title,st.style,str.spu_id,str.seq
+    FROM spu_tag st
+    JOIN (
+            SELECT tag_id,spu_id,seq,(@i:=CASE WHEN @tag_id=tag_id THEN @i + 1 ELSE 1 END) rownum,(@tag_id:=tag_id)
+            FROM spu_tag_reference
+            ORDER BY tag_id, seq DESC
+    ) str ON st.id = str.tag_id
+    WHERE st.status = 1 AND st.shop_id = #{shopId} AND str.rownum &lt; 4
+    ORDER BY st.seq desc
+  </select>
+
+</mapper>

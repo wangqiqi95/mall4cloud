@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.group.mapper.PopUpAdStoreRelationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.group.model.PopUpAdStoreRelation">
+        <id column="id" property="id" />
+        <result column="shop_id" property="shopId" />
+        <result column="pop_up_ad_id" property="popUpAdId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, shop_id, pop_up_ad_id
+    </sql>
+
+    <insert id="insertBatch">
+        insert into t_pop_up_ad_store_relation(`shop_id`,`pop_up_ad_id`)
+        values
+        <foreach collection="storeIdList" item="item" separator=",">
+            (#{item},#{popUpAdId})
+        </foreach>
+    </insert>
+
+</mapper>

@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.CrmCouponGrpMapper">
+  <resultMap id="crmCouponGrpMap" type="com.mall4j.cloud.transfer.model.CrmCouponGrp">
+    <id column="Id" property="id" />
+    <result column="CopId" property="copid"/>
+    <result column="BrandId" property="brandid"/>
+    <result column="TplId" property="tplid"/>
+    <result column="TplName" property="tplname"/>
+    <result column="SharePic" property="sharepic"/>
+    <result column="SysCode" property="syscode"/>
+    <result column="OutSysId" property="outsysid"/>
+    <result column="ApplyBrands" property="applybrands"/>
+    <result column="CouponType" property="coupontype"/>
+    <result column="CouponProType" property="couponprotype"/>
+    <result column="WxCouponCardId" property="wxcouponcardid"/>
+    <result column="CouponName" property="couponname"/>
+    <result column="Subtitle" property="subtitle"/>
+    <result column="CouponRemark" property="couponremark"/>
+    <result column="CouponValue" property="couponvalue"/>
+    <result column="ValidityType" property="validitytype"/>
+    <result column="ValidityDays" property="validitydays"/>
+    <result column="StyleId" property="styleid"/>
+    <result column="Guide" property="guide"/>
+    <result column="CouponStatus" property="couponstatus"/>
+    <result column="ApprovalUser" property="approvaluser"/>
+    <result column="ApprovalDate" property="approvaldate"/>
+    <result column="CouponTotal" property="coupontotal"/>
+    <result column="GetTotal" property="gettotal"/>
+    <result column="SellTotal" property="selltotal"/>
+    <result column="UserId" property="userid"/>
+    <result column="OrgType" property="orgtype"/>
+    <result column="IsCanGiveFriend" property="iscangivefriend"/>
+    <result column="IsAllowMultipleCoupons" property="isallowmultiplecoupons"/>
+    <result column="ApplyIsExclude" property="applyisexclude"/>
+    <result column="Code" property="code"/>
+    <result column="CouponProIsExclude" property="couponproisexclude"/>
+    <result column="LimitType" property="limittype"/>
+    <result column="PromotionType" property="promotiontype"/>
+    <result column="IsWxCoupon" property="iswxcoupon"/>
+    <result column="WxCouponTotal" property="wxcoupontotal"/>
+    <result column="WxCouponNoType" property="wxcouponnotype"/>
+    <result column="WxCouponCheckStatus" property="wxcouponcheckstatus"/>
+    <result column="WxCouponRefuseReason" property="wxcouponrefusereason"/>
+    <result column="OrgId" property="orgid"/>
+    <result column="IsPro" property="ispro"/>
+    <result column="PromotionCode" property="promotioncode"/>
+    <result column="PromotionValidType" property="promotionvalidtype"/>
+    <result column="BegDate" property="begdate"/>
+    <result column="EndDate" property="enddate"/>
+    <result column="ApplyType" property="applytype"/>
+    <result column="CouponPriceLimit" property="couponpricelimit"/>
+    <result column="CreateUser" property="createuser"/>
+    <result column="CreateDate" property="createdate"/>
+    <result column="LastModifiedUser" property="lastmodifieduser"/>
+    <result column="LastModifiedDate" property="lastmodifieddate"/>
+    <result column="SendTotal" property="sendtotal"/>
+    <result column="IsAllowBuyMore" property="isallowbuymore"/>
+    <result column="AllowMaxBuyNum" property="allowmaxbuynum"/>
+    <result column="IsAllowPositive" property="isallowpositive"/>
+    <result column="DiscountLimit" property="discountlimit"/>
+    <result column="ShareRemark" property="shareremark"/>
+    <result column="ConsumeApplyType" property="consumeapplytype"/>
+    <result column="IsHasConsumeShops" property="ishasconsumeshops"/>
+    <result column="ConsumeApplyValue" property="consumeapplyvalue"/>
+    <result column="CouponOrigin" property="couponorigin"/>
+    <result column="UnionCouponGrpId" property="unioncoupongrpid"/>
+    <result column="PurchaseOrderId" property="purchaseorderid"/>
+    <result column="Remark" property="remark"/>
+    <result column="CouponValidType" property="couponvalidtype"/>
+    <result column="AllowMultipleCoupons" property="allowmultiplecoupons"/>
+    <result column="IsCouponDiscountAmount" property="iscoupondiscountamount"/>
+    <result column="CouponDiscountAmount" property="coupondiscountamount"/>
+    <result column="IsDiscountLimit" property="isdiscountlimit"/>
+    <result column="SupplyBrandId" property="supplybrandid"/>
+    <result column="WxQrCode" property="wxqrcode"/>
+    <result column="UnionCouponType" property="unioncoupontype"/>
+    <result column="UnionCouponOrigin" property="unioncouponorigin"/>
+    <result column="UnionCouponRechargeUrl" property="unioncouponrechargeurl"/>
+    <result column="UniqueKey" property="uniquekey"/>
+    <result column="ProductPic" property="productpic"/>
+    <result column="IsFreePostInMall" property="isfreepostinmall"/>
+    <result column="PlatformIds" property="platformids"/>
+    <result column="ProductDesc" property="productdesc"/>
+    <result column="IsSingleCoupon" property="issinglecoupon"/>
+    <result column="IsRemainValid" property="isremainvalid"/>
+    <result column="NewAddCouponValidDays" property="newaddcouponvaliddays"/>
+    <result column="RemarkTag" property="remarktag"/>
+    <result column="IsComposited" property="iscomposited"/>
+    <result column="OfflineIsSingleCoupon" property="offlineissinglecoupon"/>
+    <result column="OfflineIsRemainValid" property="offlineisremainvalid"/>
+    <result column="OfflineNewAddCouponValidDays" property="offlinenewaddcouponvaliddays"/>
+    <result column="GrpProConType" property="grpprocontype"/>
+    <result column="ProBDType" property="probdtype"/>
+    <result column="IsContainBD" property="iscontainbd"/>
+    <result column="ProCateType" property="procatetype"/>
+    <result column="IsContainCate" property="iscontaincate"/>
+    <result column="RemoveProType" property="removeprotype"/>
+    <result column="IsProDiscountLimit" property="isprodiscountlimit"/>
+    <result column="ProDiscountLimit" property="prodiscountlimit"/>
+    <result column="AllowMinBuyNum" property="allowminbuynum"/>
+    <result column="IsAllowBuyLess" property="isallowbuyless"/>
+    <result column="IsSendSms" property="issendsms"/>
+    <result column="H5Address" property="h5address"/>
+    <result column="MiniAppId" property="miniappid"/>
+    <result column="MiniAppAddress" property="miniappaddress"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `Id`,`CopId`,`BrandId`,`TplId`,`TplName`,`SharePic`,`SysCode`,`OutSysId`,`ApplyBrands`,`CouponType`,`CouponProType`,`WxCouponCardId`,`CouponName`,`Subtitle`,`CouponRemark`,`CouponValue`,`ValidityType`,`ValidityDays`,`StyleId`,`Guide`,`CouponStatus`,`ApprovalUser`,`ApprovalDate`,`CouponTotal`,`GetTotal`,`SellTotal`,`UserId`,`OrgType`,`IsCanGiveFriend`,`IsAllowMultipleCoupons`,`ApplyIsExclude`,`Code`,`CouponProIsExclude`,`LimitType`,`PromotionType`,`IsWxCoupon`,`WxCouponTotal`,`WxCouponNoType`,`WxCouponCheckStatus`,`WxCouponRefuseReason`,`OrgId`,`IsPro`,`PromotionCode`,`PromotionValidType`,`BegDate`,`EndDate`,`ApplyType`,`CouponPriceLimit`,`CreateUser`,`CreateDate`,`LastModifiedUser`,`LastModifiedDate`,`SendTotal`,`IsAllowBuyMore`,`AllowMaxBuyNum`,`IsAllowPositive`,`DiscountLimit`,`ShareRemark`,`ConsumeApplyType`,`IsHasConsumeShops`,`ConsumeApplyValue`,`CouponOrigin`,`UnionCouponGrpId`,`PurchaseOrderId`,`Remark`,`CouponValidType`,`AllowMultipleCoupons`,`IsCouponDiscountAmount`,`CouponDiscountAmount`,`IsDiscountLimit`,`SupplyBrandId`,`WxQrCode`,`UnionCouponType`,`UnionCouponOrigin`,`UnionCouponRechargeUrl`,`UniqueKey`,`ProductPic`,`IsFreePostInMall`,`PlatformIds`,`ProductDesc`,`IsSingleCoupon`,`IsRemainValid`,`NewAddCouponValidDays`,`RemarkTag`,`IsComposited`,`OfflineIsSingleCoupon`,`OfflineIsRemainValid`,`OfflineNewAddCouponValidDays`,`GrpProConType`,`ProBDType`,`IsContainBD`,`ProCateType`,`IsContainCate`,`RemoveProType`,`IsProDiscountLimit`,`ProDiscountLimit`,`AllowMinBuyNum`,`IsAllowBuyLess`,`IsSendSms`,`H5Address`,`MiniAppId`,`MiniAppAddress`
+  </sql>
+  <select id="list" resultMap="crmCouponGrpMap">
+    select <include refid="Vo_Column_List"/> from crm_coupon_grp_add
+    where Code is null
+      and CouponStatus = 3
+    order by Id desc
+  </select>
+  <select id="getById" resultMap="crmCouponGrpMap">
+    select <include refid="Vo_Column_List"/> from crm_coupon_grp where Id = #{id}
+  </select>
+  <insert id="save">
+    insert into crm_coupon_grp (`CopId`,`BrandId`,`TplId`,`TplName`,`SharePic`,`SysCode`,`OutSysId`,`ApplyBrands`,`CouponType`,`CouponProType`,`WxCouponCardId`,`CouponName`,`Subtitle`,`CouponRemark`,`CouponValue`,`ValidityType`,`ValidityDays`,`StyleId`,`Guide`,`CouponStatus`,`ApprovalUser`,`ApprovalDate`,`CouponTotal`,`GetTotal`,`SellTotal`,`UserId`,`OrgType`,`IsCanGiveFriend`,`IsAllowMultipleCoupons`,`ApplyIsExclude`,`Code`,`CouponProIsExclude`,`LimitType`,`PromotionType`,`IsWxCoupon`,`WxCouponTotal`,`WxCouponNoType`,`WxCouponCheckStatus`,`WxCouponRefuseReason`,`OrgId`,`IsPro`,`PromotionCode`,`PromotionValidType`,`BegDate`,`EndDate`,`ApplyType`,`CouponPriceLimit`,`CreateUser`,`CreateDate`,`LastModifiedUser`,`LastModifiedDate`,`SendTotal`,`IsAllowBuyMore`,`AllowMaxBuyNum`,`IsAllowPositive`,`DiscountLimit`,`ShareRemark`,`ConsumeApplyType`,`IsHasConsumeShops`,`ConsumeApplyValue`,`CouponOrigin`,`UnionCouponGrpId`,`PurchaseOrderId`,`Remark`,`CouponValidType`,`AllowMultipleCoupons`,`IsCouponDiscountAmount`,`CouponDiscountAmount`,`IsDiscountLimit`,`SupplyBrandId`,`WxQrCode`,`UnionCouponType`,`UnionCouponOrigin`,`UnionCouponRechargeUrl`,`UniqueKey`,`ProductPic`,`IsFreePostInMall`,`PlatformIds`,`ProductDesc`,`IsSingleCoupon`,`IsRemainValid`,`NewAddCouponValidDays`,`RemarkTag`,`IsComposited`,`OfflineIsSingleCoupon`,`OfflineIsRemainValid`,`OfflineNewAddCouponValidDays`,`GrpProConType`,`ProBDType`,`IsContainBD`,`ProCateType`,`IsContainCate`,`RemoveProType`,`IsProDiscountLimit`,`ProDiscountLimit`,`AllowMinBuyNum`,`IsAllowBuyLess`,`IsSendSms`,`H5Address`,`MiniAppId`,`MiniAppAddress`)
+    values (#{crmCouponGrp.copid},#{crmCouponGrp.brandid},#{crmCouponGrp.tplid},#{crmCouponGrp.tplname},#{crmCouponGrp.sharepic},#{crmCouponGrp.syscode},#{crmCouponGrp.outsysid},#{crmCouponGrp.applybrands},#{crmCouponGrp.coupontype},#{crmCouponGrp.couponprotype},#{crmCouponGrp.wxcouponcardid},#{crmCouponGrp.couponname},#{crmCouponGrp.subtitle},#{crmCouponGrp.couponremark},#{crmCouponGrp.couponvalue},#{crmCouponGrp.validitytype},#{crmCouponGrp.validitydays},#{crmCouponGrp.styleid},#{crmCouponGrp.guide},#{crmCouponGrp.couponstatus},#{crmCouponGrp.approvaluser},#{crmCouponGrp.approvaldate},#{crmCouponGrp.coupontotal},#{crmCouponGrp.gettotal},#{crmCouponGrp.selltotal},#{crmCouponGrp.userid},#{crmCouponGrp.orgtype},#{crmCouponGrp.iscangivefriend},#{crmCouponGrp.isallowmultiplecoupons},#{crmCouponGrp.applyisexclude},#{crmCouponGrp.code},#{crmCouponGrp.couponproisexclude},#{crmCouponGrp.limittype},#{crmCouponGrp.promotiontype},#{crmCouponGrp.iswxcoupon},#{crmCouponGrp.wxcoupontotal},#{crmCouponGrp.wxcouponnotype},#{crmCouponGrp.wxcouponcheckstatus},#{crmCouponGrp.wxcouponrefusereason},#{crmCouponGrp.orgid},#{crmCouponGrp.ispro},#{crmCouponGrp.promotioncode},#{crmCouponGrp.promotionvalidtype},#{crmCouponGrp.begdate},#{crmCouponGrp.enddate},#{crmCouponGrp.applytype},#{crmCouponGrp.couponpricelimit},#{crmCouponGrp.createuser},#{crmCouponGrp.createdate},#{crmCouponGrp.lastmodifieduser},#{crmCouponGrp.lastmodifieddate},#{crmCouponGrp.sendtotal},#{crmCouponGrp.isallowbuymore},#{crmCouponGrp.allowmaxbuynum},#{crmCouponGrp.isallowpositive},#{crmCouponGrp.discountlimit},#{crmCouponGrp.shareremark},#{crmCouponGrp.consumeapplytype},#{crmCouponGrp.ishasconsumeshops},#{crmCouponGrp.consumeapplyvalue},#{crmCouponGrp.couponorigin},#{crmCouponGrp.unioncoupongrpid},#{crmCouponGrp.purchaseorderid},#{crmCouponGrp.remark},#{crmCouponGrp.couponvalidtype},#{crmCouponGrp.allowmultiplecoupons},#{crmCouponGrp.iscoupondiscountamount},#{crmCouponGrp.coupondiscountamount},#{crmCouponGrp.isdiscountlimit},#{crmCouponGrp.supplybrandid},#{crmCouponGrp.wxqrcode},#{crmCouponGrp.unioncoupontype},#{crmCouponGrp.unioncouponorigin},#{crmCouponGrp.unioncouponrechargeurl},#{crmCouponGrp.uniquekey},#{crmCouponGrp.productpic},#{crmCouponGrp.isfreepostinmall},#{crmCouponGrp.platformids},#{crmCouponGrp.productdesc},#{crmCouponGrp.issinglecoupon},#{crmCouponGrp.isremainvalid},#{crmCouponGrp.newaddcouponvaliddays},#{crmCouponGrp.remarktag},#{crmCouponGrp.iscomposited},#{crmCouponGrp.offlineissinglecoupon},#{crmCouponGrp.offlineisremainvalid},#{crmCouponGrp.offlinenewaddcouponvaliddays},#{crmCouponGrp.grpprocontype},#{crmCouponGrp.probdtype},#{crmCouponGrp.iscontainbd},#{crmCouponGrp.procatetype},#{crmCouponGrp.iscontaincate},#{crmCouponGrp.removeprotype},#{crmCouponGrp.isprodiscountlimit},#{crmCouponGrp.prodiscountlimit},#{crmCouponGrp.allowminbuynum},#{crmCouponGrp.isallowbuyless},#{crmCouponGrp.issendsms},#{crmCouponGrp.h5address},#{crmCouponGrp.miniappid},#{crmCouponGrp.miniappaddress});
+  </insert>
+  <update id="update">
+    update crm_coupon_grp
+    <set>
+      <if test="crmCouponGrp.copid != null">
+        `CopId` = #{crmCouponGrp.copid},
+      </if>
+      <if test="crmCouponGrp.brandid != null">
+        `BrandId` = #{crmCouponGrp.brandid},
+      </if>
+      <if test="crmCouponGrp.tplid != null">
+        `TplId` = #{crmCouponGrp.tplid},
+      </if>
+      <if test="crmCouponGrp.tplname != null">
+        `TplName` = #{crmCouponGrp.tplname},
+      </if>
+      <if test="crmCouponGrp.sharepic != null">
+        `SharePic` = #{crmCouponGrp.sharepic},
+      </if>
+      <if test="crmCouponGrp.syscode != null">
+        `SysCode` = #{crmCouponGrp.syscode},
+      </if>
+      <if test="crmCouponGrp.outsysid != null">
+        `OutSysId` = #{crmCouponGrp.outsysid},
+      </if>
+      <if test="crmCouponGrp.applybrands != null">
+        `ApplyBrands` = #{crmCouponGrp.applybrands},
+      </if>
+      <if test="crmCouponGrp.coupontype != null">
+        `CouponType` = #{crmCouponGrp.coupontype},
+      </if>
+      <if test="crmCouponGrp.couponprotype != null">
+        `CouponProType` = #{crmCouponGrp.couponprotype},
+      </if>
+      <if test="crmCouponGrp.wxcouponcardid != null">
+        `WxCouponCardId` = #{crmCouponGrp.wxcouponcardid},
+      </if>
+      <if test="crmCouponGrp.couponname != null">
+        `CouponName` = #{crmCouponGrp.couponname},
+      </if>
+      <if test="crmCouponGrp.subtitle != null">
+        `Subtitle` = #{crmCouponGrp.subtitle},
+      </if>
+      <if test="crmCouponGrp.couponremark != null">
+        `CouponRemark` = #{crmCouponGrp.couponremark},
+      </if>
+      <if test="crmCouponGrp.couponvalue != null">
+        `CouponValue` = #{crmCouponGrp.couponvalue},
+      </if>
+      <if test="crmCouponGrp.validitytype != null">
+        `ValidityType` = #{crmCouponGrp.validitytype},
+      </if>
+      <if test="crmCouponGrp.validitydays != null">
+        `ValidityDays` = #{crmCouponGrp.validitydays},
+      </if>
+      <if test="crmCouponGrp.styleid != null">
+        `StyleId` = #{crmCouponGrp.styleid},
+      </if>
+      <if test="crmCouponGrp.guide != null">
+        `Guide` = #{crmCouponGrp.guide},
+      </if>
+      <if test="crmCouponGrp.couponstatus != null">
+        `CouponStatus` = #{crmCouponGrp.couponstatus},
+      </if>
+      <if test="crmCouponGrp.approvaluser != null">
+        `ApprovalUser` = #{crmCouponGrp.approvaluser},
+      </if>
+      <if test="crmCouponGrp.approvaldate != null">
+        `ApprovalDate` = #{crmCouponGrp.approvaldate},
+      </if>
+      <if test="crmCouponGrp.coupontotal != null">
+        `CouponTotal` = #{crmCouponGrp.coupontotal},
+      </if>
+      <if test="crmCouponGrp.gettotal != null">
+        `GetTotal` = #{crmCouponGrp.gettotal},
+      </if>
+      <if test="crmCouponGrp.selltotal != null">
+        `SellTotal` = #{crmCouponGrp.selltotal},
+      </if>
+      <if test="crmCouponGrp.userid != null">
+        `UserId` = #{crmCouponGrp.userid},
+      </if>
+      <if test="crmCouponGrp.orgtype != null">
+        `OrgType` = #{crmCouponGrp.orgtype},
+      </if>
+      <if test="crmCouponGrp.iscangivefriend != null">
+        `IsCanGiveFriend` = #{crmCouponGrp.iscangivefriend},
+      </if>
+      <if test="crmCouponGrp.isallowmultiplecoupons != null">
+        `IsAllowMultipleCoupons` = #{crmCouponGrp.isallowmultiplecoupons},
+      </if>
+      <if test="crmCouponGrp.applyisexclude != null">
+        `ApplyIsExclude` = #{crmCouponGrp.applyisexclude},
+      </if>
+      <if test="crmCouponGrp.code != null">
+        `Code` = #{crmCouponGrp.code},
+      </if>
+      <if test="crmCouponGrp.couponproisexclude != null">
+        `CouponProIsExclude` = #{crmCouponGrp.couponproisexclude},
+      </if>
+      <if test="crmCouponGrp.limittype != null">
+        `LimitType` = #{crmCouponGrp.limittype},
+      </if>
+      <if test="crmCouponGrp.promotiontype != null">
+        `PromotionType` = #{crmCouponGrp.promotiontype},
+      </if>
+      <if test="crmCouponGrp.iswxcoupon != null">
+        `IsWxCoupon` = #{crmCouponGrp.iswxcoupon},
+      </if>
+      <if test="crmCouponGrp.wxcoupontotal != null">
+        `WxCouponTotal` = #{crmCouponGrp.wxcoupontotal},
+      </if>
+      <if test="crmCouponGrp.wxcouponnotype != null">
+        `WxCouponNoType` = #{crmCouponGrp.wxcouponnotype},
+      </if>
+      <if test="crmCouponGrp.wxcouponcheckstatus != null">
+        `WxCouponCheckStatus` = #{crmCouponGrp.wxcouponcheckstatus},
+      </if>
+      <if test="crmCouponGrp.wxcouponrefusereason != null">
+        `WxCouponRefuseReason` = #{crmCouponGrp.wxcouponrefusereason},
+      </if>
+      <if test="crmCouponGrp.orgid != null">
+        `OrgId` = #{crmCouponGrp.orgid},
+      </if>
+      <if test="crmCouponGrp.ispro != null">
+        `IsPro` = #{crmCouponGrp.ispro},
+      </if>
+      <if test="crmCouponGrp.promotioncode != null">
+        `PromotionCode` = #{crmCouponGrp.promotioncode},
+      </if>
+      <if test="crmCouponGrp.promotionvalidtype != null">
+        `PromotionValidType` = #{crmCouponGrp.promotionvalidtype},
+      </if>
+      <if test="crmCouponGrp.begdate != null">
+        `BegDate` = #{crmCouponGrp.begdate},
+      </if>
+      <if test="crmCouponGrp.enddate != null">
+        `EndDate` = #{crmCouponGrp.enddate},
+      </if>
+      <if test="crmCouponGrp.applytype != null">
+        `ApplyType` = #{crmCouponGrp.applytype},
+      </if>
+      <if test="crmCouponGrp.couponpricelimit != null">
+        `CouponPriceLimit` = #{crmCouponGrp.couponpricelimit},
+      </if>
+      <if test="crmCouponGrp.createuser != null">
+        `CreateUser` = #{crmCouponGrp.createuser},
+      </if>
+      <if test="crmCouponGrp.createdate != null">
+        `CreateDate` = #{crmCouponGrp.createdate},
+      </if>
+      <if test="crmCouponGrp.lastmodifieduser != null">
+        `LastModifiedUser` = #{crmCouponGrp.lastmodifieduser},
+      </if>
+      <if test="crmCouponGrp.lastmodifieddate != null">
+        `LastModifiedDate` = #{crmCouponGrp.lastmodifieddate},
+      </if>
+      <if test="crmCouponGrp.sendtotal != null">
+        `SendTotal` = #{crmCouponGrp.sendtotal},
+      </if>
+      <if test="crmCouponGrp.isallowbuymore != null">
+        `IsAllowBuyMore` = #{crmCouponGrp.isallowbuymore},
+      </if>
+      <if test="crmCouponGrp.allowmaxbuynum != null">
+        `AllowMaxBuyNum` = #{crmCouponGrp.allowmaxbuynum},
+      </if>
+      <if test="crmCouponGrp.isallowpositive != null">
+        `IsAllowPositive` = #{crmCouponGrp.isallowpositive},
+      </if>
+      <if test="crmCouponGrp.discountlimit != null">
+        `DiscountLimit` = #{crmCouponGrp.discountlimit},
+      </if>
+      <if test="crmCouponGrp.shareremark != null">
+        `ShareRemark` = #{crmCouponGrp.shareremark},
+      </if>
+      <if test="crmCouponGrp.consumeapplytype != null">
+        `ConsumeApplyType` = #{crmCouponGrp.consumeapplytype},
+      </if>
+      <if test="crmCouponGrp.ishasconsumeshops != null">
+        `IsHasConsumeShops` = #{crmCouponGrp.ishasconsumeshops},
+      </if>
+      <if test="crmCouponGrp.consumeapplyvalue != null">
+        `ConsumeApplyValue` = #{crmCouponGrp.consumeapplyvalue},
+      </if>
+      <if test="crmCouponGrp.couponorigin != null">
+        `CouponOrigin` = #{crmCouponGrp.couponorigin},
+      </if>
+      <if test="crmCouponGrp.unioncoupongrpid != null">
+        `UnionCouponGrpId` = #{crmCouponGrp.unioncoupongrpid},
+      </if>
+      <if test="crmCouponGrp.purchaseorderid != null">
+        `PurchaseOrderId` = #{crmCouponGrp.purchaseorderid},
+      </if>
+      <if test="crmCouponGrp.remark != null">
+        `Remark` = #{crmCouponGrp.remark},
+      </if>
+      <if test="crmCouponGrp.couponvalidtype != null">
+        `CouponValidType` = #{crmCouponGrp.couponvalidtype},
+      </if>
+      <if test="crmCouponGrp.allowmultiplecoupons != null">
+        `AllowMultipleCoupons` = #{crmCouponGrp.allowmultiplecoupons},
+      </if>
+      <if test="crmCouponGrp.iscoupondiscountamount != null">
+        `IsCouponDiscountAmount` = #{crmCouponGrp.iscoupondiscountamount},
+      </if>
+      <if test="crmCouponGrp.coupondiscountamount != null">
+        `CouponDiscountAmount` = #{crmCouponGrp.coupondiscountamount},
+      </if>
+      <if test="crmCouponGrp.isdiscountlimit != null">
+        `IsDiscountLimit` = #{crmCouponGrp.isdiscountlimit},
+      </if>
+      <if test="crmCouponGrp.supplybrandid != null">
+        `SupplyBrandId` = #{crmCouponGrp.supplybrandid},
+      </if>
+      <if test="crmCouponGrp.wxqrcode != null">
+        `WxQrCode` = #{crmCouponGrp.wxqrcode},
+      </if>
+      <if test="crmCouponGrp.unioncoupontype != null">
+        `UnionCouponType` = #{crmCouponGrp.unioncoupontype},
+      </if>
+      <if test="crmCouponGrp.unioncouponorigin != null">
+        `UnionCouponOrigin` = #{crmCouponGrp.unioncouponorigin},
+      </if>
+      <if test="crmCouponGrp.unioncouponrechargeurl != null">
+        `UnionCouponRechargeUrl` = #{crmCouponGrp.unioncouponrechargeurl},
+      </if>
+      <if test="crmCouponGrp.uniquekey != null">
+        `UniqueKey` = #{crmCouponGrp.uniquekey},
+      </if>
+      <if test="crmCouponGrp.productpic != null">
+        `ProductPic` = #{crmCouponGrp.productpic},
+      </if>
+      <if test="crmCouponGrp.isfreepostinmall != null">
+        `IsFreePostInMall` = #{crmCouponGrp.isfreepostinmall},
+      </if>
+      <if test="crmCouponGrp.platformids != null">
+        `PlatformIds` = #{crmCouponGrp.platformids},
+      </if>
+      <if test="crmCouponGrp.productdesc != null">
+        `ProductDesc` = #{crmCouponGrp.productdesc},
+      </if>
+      <if test="crmCouponGrp.issinglecoupon != null">
+        `IsSingleCoupon` = #{crmCouponGrp.issinglecoupon},
+      </if>
+      <if test="crmCouponGrp.isremainvalid != null">
+        `IsRemainValid` = #{crmCouponGrp.isremainvalid},
+      </if>
+      <if test="crmCouponGrp.newaddcouponvaliddays != null">
+        `NewAddCouponValidDays` = #{crmCouponGrp.newaddcouponvaliddays},
+      </if>
+      <if test="crmCouponGrp.remarktag != null">
+        `RemarkTag` = #{crmCouponGrp.remarktag},
+      </if>
+      <if test="crmCouponGrp.iscomposited != null">
+        `IsComposited` = #{crmCouponGrp.iscomposited},
+      </if>
+      <if test="crmCouponGrp.offlineissinglecoupon != null">
+        `OfflineIsSingleCoupon` = #{crmCouponGrp.offlineissinglecoupon},
+      </if>
+      <if test="crmCouponGrp.offlineisremainvalid != null">
+        `OfflineIsRemainValid` = #{crmCouponGrp.offlineisremainvalid},
+      </if>
+      <if test="crmCouponGrp.offlinenewaddcouponvaliddays != null">
+        `OfflineNewAddCouponValidDays` = #{crmCouponGrp.offlinenewaddcouponvaliddays},
+      </if>
+      <if test="crmCouponGrp.grpprocontype != null">
+        `GrpProConType` = #{crmCouponGrp.grpprocontype},
+      </if>
+      <if test="crmCouponGrp.probdtype != null">
+        `ProBDType` = #{crmCouponGrp.probdtype},
+      </if>
+      <if test="crmCouponGrp.iscontainbd != null">
+        `IsContainBD` = #{crmCouponGrp.iscontainbd},
+      </if>
+      <if test="crmCouponGrp.procatetype != null">
+        `ProCateType` = #{crmCouponGrp.procatetype},
+      </if>
+      <if test="crmCouponGrp.iscontaincate != null">
+        `IsContainCate` = #{crmCouponGrp.iscontaincate},
+      </if>
+      <if test="crmCouponGrp.removeprotype != null">
+        `RemoveProType` = #{crmCouponGrp.removeprotype},
+      </if>
+      <if test="crmCouponGrp.isprodiscountlimit != null">
+        `IsProDiscountLimit` = #{crmCouponGrp.isprodiscountlimit},
+      </if>
+      <if test="crmCouponGrp.prodiscountlimit != null">
+        `ProDiscountLimit` = #{crmCouponGrp.prodiscountlimit},
+      </if>
+      <if test="crmCouponGrp.allowminbuynum != null">
+        `AllowMinBuyNum` = #{crmCouponGrp.allowminbuynum},
+      </if>
+      <if test="crmCouponGrp.isallowbuyless != null">
+        `IsAllowBuyLess` = #{crmCouponGrp.isallowbuyless},
+      </if>
+      <if test="crmCouponGrp.issendsms != null">
+        `IsSendSms` = #{crmCouponGrp.issendsms},
+      </if>
+      <if test="crmCouponGrp.h5address != null">
+        `H5Address` = #{crmCouponGrp.h5address},
+      </if>
+      <if test="crmCouponGrp.miniappid != null">
+        `MiniAppId` = #{crmCouponGrp.miniappid},
+      </if>
+      <if test="crmCouponGrp.miniappaddress != null">
+        `MiniAppAddress` = #{crmCouponGrp.miniappaddress},
+      </if>
+    </set>
+    where Id = #{crmCouponGrp.id}
+  </update>
+  <delete id="deleteById">
+    delete from crm_coupon_grp where Id = #{id}
+  </delete>
+
+</mapper>

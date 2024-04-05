@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CustGroupAssginMapper">
+  <resultMap id="custGroupAssginMap" type="com.mall4j.cloud.biz.model.cp.CustGroupAssgin">
+    <id column="ID" property="id" />
+    <result column="GROUP_ID" property="groupId"/>
+    <result column="CUST_GROUP_NUMS" property="custGroupNums"/>
+    <result column="RESIGN_ID" property="resignId"/>
+    <result column="STATUS" property="status"/>
+    <result column="FLAG" property="flag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `ID`,`GROUP_ID`,`CUST_GROUP_NUMS`,`RESIGN_ID`,`STATUS`,`FLAG`
+  </sql>
+  <select id="list" resultMap="custGroupAssginMap">
+    select <include refid="Vo_Column_List"/> from cp_cust_group_ASSGIN order by ID desc
+  </select>
+  <select id="getById" resultMap="custGroupAssginMap">
+    select <include refid="Vo_Column_List"/> from cp_cust_group_ASSGIN where ID = #{id}
+  </select>
+  <insert id="save">
+    insert into cp_cust_group_ASSGIN (`GROUP_ID`,`CUST_GROUP_NUMS`,`RESIGN_ID`,`STATUS`,`FLAG`)
+    values (#{custGroupAssgin.groupId},#{custGroupAssgin.custGroupNums},#{custGroupAssgin.resignId},#{custGroupAssgin.status},#{custGroupAssgin.flag});
+  </insert>
+  <update id="update">
+    update cp_cust_group_ASSGIN
+    <set>
+      <if test="custGroupAssgin.groupId != null">
+        `GROUP_ID` = #{custGroupAssgin.groupId},
+      </if>
+      <if test="custGroupAssgin.custGroupNums != null">
+        `CUST_GROUP_NUMS` = #{custGroupAssgin.custGroupNums},
+      </if>
+      <if test="custGroupAssgin.resignId != null">
+        `RESIGN_ID` = #{custGroupAssgin.resignId},
+      </if>
+      <if test="custGroupAssgin.status != null">
+        `STATUS` = #{custGroupAssgin.status},
+      </if>
+      <if test="custGroupAssgin.flag != null">
+        `FLAG` = #{custGroupAssgin.flag},
+      </if>
+    </set>
+    where ID = #{custGroupAssgin.id}
+  </update>
+  <delete id="deleteById">
+    delete from cp_cust_group_ASSGIN where ID = #{id}
+  </delete>
+
+</mapper>

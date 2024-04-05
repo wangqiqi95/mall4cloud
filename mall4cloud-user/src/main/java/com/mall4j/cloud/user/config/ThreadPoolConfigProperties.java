@@ -1,0 +1,52 @@
+package com.mall4j.cloud.user.config;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+
+/**
+ * 用户线程配置
+ * @author cl
+ * @date 2021-05-11 15:46:52
+ */
+@ConfigurationProperties(prefix = "mall4cloud.user.thread")
+public class ThreadPoolConfigProperties {
+
+    private Integer coreSize;
+
+    private Integer maxSize;
+
+    private Integer keepAliveTime;
+
+    public Integer getCoreSize() {
+        return coreSize;
+    }
+
+    public void setCoreSize(Integer coreSize) {
+        this.coreSize = coreSize;
+    }
+
+    public Integer getMaxSize() {
+        return maxSize;
+    }
+
+    public void setMaxSize(Integer maxSize) {
+        this.maxSize = maxSize;
+    }
+
+    public Integer getKeepAliveTime() {
+        return keepAliveTime;
+    }
+
+    public void setKeepAliveTime(Integer keepAliveTime) {
+        this.keepAliveTime = keepAliveTime;
+    }
+
+    @Override
+    public String toString() {
+        return "ThreadPoolConfigProperties{" +
+                "coreSize=" + coreSize +
+                ", maxSize=" + maxSize +
+                ", keepAliveTime=" + keepAliveTime +
+                '}';
+    }
+}

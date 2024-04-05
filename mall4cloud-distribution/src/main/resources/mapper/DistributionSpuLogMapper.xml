@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionSpuLogMapper">
+  <resultMap id="distributionSpuLogMap" type="com.mall4j.cloud.distribution.model.DistributionSpuLog">
+    <id column="distribution_spu_log_id" property="distributionSpuLogId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="user_id" property="userId"/>
+    <result column="mobile" property="mobile"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `distribution_spu_log_id`,`create_time`,`update_time`,`shop_id`,`spu_id`,`user_id`,`mobile`
+  </sql>
+  <select id="list" resultMap="distributionSpuLogMap">
+    select <include refid="Vo_Column_List"/> from distribution_spu_log order by distribution_spu_log_id desc
+  </select>
+  <select id="getByDistributionSpuLogId" resultMap="distributionSpuLogMap">
+    select <include refid="Vo_Column_List"/> from distribution_spu_log where distribution_spu_log_id = #{distributionSpuLogId}
+  </select>
+  <insert id="save">
+    insert into distribution_spu_log (`shop_id`,`spu_id`,`user_id`,`mobile`)
+    values
+    (#{distributionSpuLog.shopId},#{distributionSpuLog.spuId},#{distributionSpuLog.userId},#{distributionSpuLog.mobile});
+  </insert>
+  <update id="update">
+    update distribution_spu_log
+    <set>
+      <if test="distributionSpuLog.shopId != null">
+        `shop_id` = #{distributionSpuLog.shopId},
+      </if>
+      <if test="distributionSpuLog.spuId != null">
+        `spu_id` = #{distributionSpuLog.spuId},
+      </if>
+      <if test="distributionSpuLog.userId != null">
+        `user_id` = #{distributionSpuLog.userId},
+      </if>
+      <if test="distributionSpuLog.mobile != null">
+        `mobile` = #{distributionSpuLog.mobile},
+      </if>
+    </set>
+    where distribution_spu_log_id = #{distributionSpuLog.distributionSpuLogId}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_spu_log where distribution_spu_log_id = #{distributionSpuLogId}
+  </delete>
+
+</mapper>

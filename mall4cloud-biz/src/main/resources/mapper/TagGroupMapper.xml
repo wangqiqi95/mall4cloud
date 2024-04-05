@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.TagGroupMapper">
+  <resultMap id="tagGroupMap" type="com.mall4j.cloud.biz.model.cp.TagGroup">
+    <id column="ID" property="id" />
+    <result column="GROUP_NAME" property="groupName"/>
+    <result column="TYPE" property="type"/>
+    <result column="SORT" property="sort"/>
+    <result column="STATUS" property="status"/>
+    <result column="FLAG" property="flag"/>
+  </resultMap>
+  <resultMap id="tagGroupvoMap" extends="tagGroupMap" type="com.mall4j.cloud.biz.vo.cp.TagGroupVO">
+    <collection property="tags" ofType="com.mall4j.cloud.biz.model.cp.Tag" column="ID" select="com.mall4j.cloud.biz.mapper.cp.TagMapper.listByGroupId" />
+  </resultMap>
+
+
+  <sql id="Vo_Column_List">
+    `ID`,`GROUP_NAME`,`STATUS`,`FLAG`,TYPE,SORT
+  </sql>
+  <select id="list" resultMap="tagGroupvoMap">
+    select <include refid="Vo_Column_List"/> from CP_TAG_GROUP
+    WHERE 1=1
+    <if test="id != null  "> AND ID = #{id}  </if>
+    order by SORT asc
+  </select>
+  <select id="getById" resultMap="tagGroupMap">
+    select <include refid="Vo_Column_List"/> from CP_TAG_GROUP where ID = #{id}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+    insert into CP_TAG_GROUP (`GROUP_NAME`,`STATUS`,`FLAG`,TYPE,SORT)
+    values (#{tagGroup.groupName},#{tagGroup.status},#{tagGroup.flag},#{tagGroup.type},#{tagGroup.sort});
+  </insert>
+  <update id="update">
+    update CP_TAG_GROUP
+    <set>
+      <if test="tagGroup.groupName != null">
+        `GROUP_NAME` = #{tagGroup.groupName},
+      </if>
+      <if test="tagGroup.status != null">
+        `STATUS` = #{tagGroup.status},
+      </if>
+      <if test="tagGroup.type != null">
+        `TYPE` = #{tagGroup.type},
+      </if>
+      <if test="tagGroup.flag != null">
+        `FLAG` = #{tagGroup.flag},
+      </if>
+      <if test="tagGroup.sort != null">
+        `SORT` = #{tagGroup.sort},
+      </if>
+    </set>
+    where ID = #{tagGroup.id}
+  </update>
+
+  <update id="sort">
+    update CP_TAG_GROUP
+    <set>
+      <if test=" front==0 ">
+        SORT = SORT+1
+      </if>
+
+      <if test=" front==1 ">
+        SORT = SORT-1
+      </if>
+    </set>
+      where  ID <![CDATA[ <> ]]> #{id}
+      <if test=" front==0 ">
+        AND  SORT >= #{newSort}
+        AND  SORT <![CDATA[<]]> #{oldSort}
+      </if>
+    <if test=" front==1 ">
+      AND  SORT> #{oldSort}
+      AND  SORT  <![CDATA[ <= ]]> #{newSort}
+    </if>
+  </update>
+
+  <delete id="deleteById">
+    delete from CP_TAG_GROUP where ID = #{id}
+  </delete>
+
+</mapper>

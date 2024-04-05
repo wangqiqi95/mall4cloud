@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.discount.mapper.DiscountMapper">
+    <resultMap id="discountMap" type="com.mall4j.cloud.discount.model.Discount">
+        <id column="discount_id" property="discountId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="discount_name" property="discountName"/>
+        <result column="discount_rule" property="discountRule"/>
+        <result column="discount_type" property="discountType"/>
+        <result column="suitable_spu_type" property="suitableSpuType"/>
+        <result column="max_reduce_amount" property="maxReduceAmount"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="status" property="status"/>
+        <result column="mobile_pic" property="mobilePic"/>
+        <result column="pc_pic" property="pcPic"/>
+        <result column="pc_background_pic" property="pcBackgroundPic"/>
+    </resultMap>
+
+    <resultMap id="DiscountAndItemAndSpuMap" type="com.mall4j.cloud.common.order.vo.DiscountOrderVO">
+        <id column="discount_id" jdbcType="BIGINT" property="discountId"/>
+        <result column="shop_id" jdbcType="BIGINT" property="shopId"/>
+        <result column="discount_name" jdbcType="VARCHAR" property="discountName"/>
+        <result column="mobile_pic" jdbcType="VARCHAR" property="mobilePic"/>
+        <result column="pc_pic" jdbcType="VARCHAR" property="pcPic"/>
+        <result column="pc_background_pic" jdbcType="VARCHAR" property="pcBackgroundPic"/>
+        <result column="discount_rule" jdbcType="TINYINT" property="discountRule"/>
+        <result column="discount_type" jdbcType="TINYINT" property="discountType"/>
+        <result column="suitable_spu_type" jdbcType="TINYINT" property="suitableSpuType"/>
+        <result column="max_reduce_amount" jdbcType="DECIMAL" property="maxReduceAmount"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <collection property="discountItems" ofType="com.mall4j.cloud.common.order.vo.DiscountItemOrderVO">
+            <result column="discount_item_id" jdbcType="BIGINT" property="discountItemId"/>
+            <result column="discount_id" jdbcType="BIGINT" property="discountId"/>
+            <result column="need_amount" jdbcType="DECIMAL" property="needAmount"/>
+            <result column="discount" jdbcType="DECIMAL" property="discount"/>
+        </collection>
+        <collection property="spuIds" ofType="java.lang.Long">
+            <id column="spu_id"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="DiscountAndItemMap" type="com.mall4j.cloud.discount.vo.DiscountVO">
+        <id column="discount_id" jdbcType="BIGINT" property="discountId"/>
+        <result column="shop_id" jdbcType="BIGINT" property="shopId"/>
+        <result column="discount_name" jdbcType="VARCHAR" property="discountName"/>
+        <result column="mobile_pic" jdbcType="VARCHAR" property="mobilePic"/>
+        <result column="pc_pic" jdbcType="VARCHAR" property="pcPic"/>
+        <result column="pc_background_pic" jdbcType="VARCHAR" property="pcBackgroundPic"/>
+        <result column="discount_rule" jdbcType="TINYINT" property="discountRule"/>
+        <result column="discount_type" jdbcType="TINYINT" property="discountType"/>
+        <result column="suitable_spu_type" jdbcType="TINYINT" property="suitableSpuType"/>
+        <result column="max_reduce_amount" jdbcType="DECIMAL" property="maxReduceAmount"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_all_shop" property="isAllShop"/>
+        <collection property="discountItemList" ofType="com.mall4j.cloud.discount.vo.DiscountItemVO">
+            <result column="discount_item_id" jdbcType="BIGINT" property="discountItemId"/>
+            <result column="need_amount" jdbcType="DECIMAL" property="needAmount"/>
+            <result column="discount" jdbcType="DECIMAL" property="discount"/>
+        </collection>
+    </resultMap>
+    <resultMap id="discountAndItemAndSpuVOMap" extends="DiscountAndItemMap" type="com.mall4j.cloud.discount.vo.DiscountVO">
+        <collection property="spuIds" ofType="java.lang.Long">
+            <id column="spu_id"/>
+        </collection>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `discount_id`,
+        `create_time`,
+        `update_time`,
+        `shop_id`,
+        `discount_name`,
+        `discount_rule`,
+        `discount_type`,
+        `suitable_spu_type`,
+        `max_reduce_amount`,
+        `start_time`,
+        `end_time`,
+        `status`,
+        `mobile_pic`,
+        `pc_pic`,
+        `pc_background_pic`
+    </sql>
+    <select id="list" resultType="com.mall4j.cloud.discount.vo.DiscountVO">
+        select
+        `discount_id`,
+        `create_time`,
+        `update_time`,
+        `shop_id`,
+        `discount_name`,
+        `discount_rule`,
+        `discount_type`,
+        `suitable_spu_type`,
+        `max_reduce_amount`,
+        `start_time`,
+        `end_time`,
+        `status`,
+        `mobile_pic`,
+        `pc_pic`,
+        d.pc_background_pic,
+        (select count(1) from discount_shop ds where ds.activity_id = d.discount_id) as applyShopNum,
+        d.is_all_shop as isAllShop
+        from discount d
+        <where>
+            <if test="transportDTO.discountName != null and transportDTO.discountName != ''">
+                and d.discount_name like concat('%', #{transportDTO.discountName}, '%')
+            </if>
+            <if test="transportDTO.shopId != null and transportDTO.shopId != ''">
+                and d.shop_id = #{transportDTO.shopId}
+            </if>
+            <if test="transportDTO.status != null">
+                and d.status = #{transportDTO.status}
+            </if>
+            <if test="transportDTO.discountRule != null">
+                and d.discount_rule = #{transportDTO.discountRule}
+            </if>
+        </where>
+        order by discount_id desc
+    </select>
+    <select id="getDiscountAndSpu" resultMap="discountAndItemAndSpuVOMap">
+        select d.discount_id,d.shop_id,d.discount_name,d.discount_rule,d.discount_type,d.suitable_spu_type,d.max_reduce_amount,d.start_time,
+        d.end_time,d.mobile_pic,d.pc_pic,d.pc_background_pic,d.status,di.discount_item_id,di.need_amount,di.discount, dp.spu_id,d.is_all_shop
+        from discount d
+        left join discount_item di on d.discount_id = di.discount_id
+        left join discount_spu dp on d.discount_id = dp.discount_id
+        where d.discount_id = #{discountId}
+        <if test="status != null ">
+            and status = #{status}
+        </if>
+        ORDER BY di.need_amount ASC
+    </select>
+    <insert id="save" useGeneratedKeys="true" keyProperty="discountId">
+        insert into discount (`shop_id`, `discount_name`, `discount_rule`, `discount_type`, `suitable_spu_type`,
+                              `max_reduce_amount`, `start_time`, `end_time`, `status`, `mobile_pic`, `pc_pic`,
+                              `pc_background_pic`,is_all_shop)
+        values (#{discount.shopId}, #{discount.discountName}, #{discount.discountRule}, #{discount.discountType},
+                #{discount.suitableSpuType}, #{discount.maxReduceAmount}, #{discount.startTime}, #{discount.endTime},
+                #{discount.status}, #{discount.mobilePic}, #{discount.pcPic}, #{discount.pcBackgroundPic}, #{discount.isAllShop});
+    </insert>
+    <update id="update">
+        update discount
+        <set>
+            <if test="discount.shopId != null">
+                `shop_id` = #{discount.shopId},
+            </if>
+            <if test="discount.discountName != null">
+                `discount_name` = #{discount.discountName},
+            </if>
+            <if test="discount.discountRule != null">
+                `discount_rule` = #{discount.discountRule},
+            </if>
+            <if test="discount.discountType != null">
+                `discount_type` = #{discount.discountType},
+            </if>
+            <if test="discount.suitableSpuType != null">
+                `suitable_spu_type` = #{discount.suitableSpuType},
+            </if>
+            <if test="discount.maxReduceAmount != null">
+                `max_reduce_amount` = #{discount.maxReduceAmount},
+            </if>
+            <if test="discount.startTime != null">
+                `start_time` = #{discount.startTime},
+            </if>
+            <if test="discount.endTime != null">
+                `end_time` = #{discount.endTime},
+            </if>
+            <if test="discount.status != null">
+                `status` = #{discount.status},
+            </if>
+            <if test="discount.mobilePic != null">
+                `mobile_pic` = #{discount.mobilePic},
+            </if>
+            <if test="discount.pcPic != null">
+                `pc_pic` = #{discount.pcPic},
+            </if>
+            <if test="discount.pcBackgroundPic != null">
+                `pc_background_pic` = #{discount.pcBackgroundPic},
+            </if>
+        </set>
+        where discount_id = #{discount.discountId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from discount
+        where discount_id = #{discountId}
+    </delete>
+
+    <delete id="deleteDiscounts">
+        delete
+        from discount
+        where discount_id = #{id}
+          and shop_id = #{shopId}
+    </delete>
+
+    <select id="getDiscountsAndItemsByShopId" resultMap="DiscountAndItemAndSpuMap">
+        SELECT d.*, dp.*, di.*
+        FROM discount d
+                     LEFT JOIN discount_item di ON d.discount_id = di.discount_id
+                     LEFT JOIN discount_spu dp ON d.discount_id = dp.discount_id
+        WHERE
+            d.status = 1
+          and d.start_time &lt; NOW()
+          and d.end_time &gt; NOW()
+          and  (d.is_all_shop =1 or d.discount_id in (select ds.activity_id from discount_shop ds where ds.shop_id = #{shopId}))
+        ORDER BY d.start_time, di.need_amount DESC
+    </select>
+
+    <select id="spuDiscountList" resultMap="DiscountAndItemMap">
+        SELECT d.*,di.discount_item_id,di.need_amount,di.discount
+        FROM
+        (
+            SELECT discount_id,shop_id,discount_name,discount_rule,discount_type,suitable_spu_type,max_reduce_amount
+            FROM discount WHERE `status` = 1 AND shop_id = #{shopId} AND start_time &lt;= NOW() AND end_time &gt; NOW()
+            ORDER BY max_reduce_amount DESC,start_time DESC LIMIT 3
+        ) d
+        LEFT JOIN discount_item di ON d.discount_id = di.discount_id
+        LEFT JOIN discount_spu dp ON d.discount_id = dp.discount_id AND d.suitable_spu_type
+        WHERE d.suitable_spu_type = 0 OR (dp.spu_id = #{spuId} AND d.suitable_spu_type = 1)
+    </select>
+
+    <select id="getPlatformDiscountPage" resultType="com.mall4j.cloud.discount.model.Discount">
+        SELECT d.*
+        FROM discount d
+        <where>
+            <if test="discount.status != null">
+                AND d.status = #{discount.status}
+            </if>
+            <if test="discount.discountName != null">
+                AND d.discount_name LiKE concat('%', #{discount.discountName}, '%')
+            </if>
+        </where>
+        ORDER BY d.`start_time` DESC
+    </select>
+    <update id="updateStatusByDiscountId">
+        UPDATE discount d
+        SET d.`status` = #{status}
+        WHERE d.`discount_id` = #{discountId}
+    </update>
+    <select id="getDiscountList" resultType="com.mall4j.cloud.discount.vo.DiscountVO">
+        SELECT d.discount_id,
+               d.discount_name,
+               d.shop_id,
+               d.end_time,
+               d.start_time,
+               d.mobile_pic,
+               d.pc_pic,
+               d.pc_background_pic
+        FROM discount d
+        WHERE d.`status` = 1
+          AND d.start_time &lt; NOW()
+          AND d.end_time &gt; NOW()
+        ORDER BY d.end_time
+    </select>
+    <select id="getDiscountListByStoreId" resultType="com.mall4j.cloud.discount.vo.DiscountVO">
+        SELECT d.discount_id,
+               d.discount_name,
+               d.end_time,
+               d.start_time,
+               d.mobile_pic,
+               d.pc_pic,
+               d.pc_background_pic
+        FROM discount d
+        WHERE d.`status` = 1
+            and (d.is_all_shop = 1 or d.discount_id in (select activity_id from discount_shop where shop_id = #{shopId}))
+          AND d.start_time &lt; NOW()
+          AND d.end_time &gt; NOW()
+        ORDER BY d.end_time
+    </select>
+    <select id="getDiscountByDiscountId" resultType="com.mall4j.cloud.discount.model.Discount">
+        SELECT d.discount_id,
+                d.shop_id,
+               d.discount_name,
+               d.end_time,
+               d.start_time,
+               d.mobile_pic,
+               d.discount_type,
+               d.discount_rule,
+               d.pc_pic,
+               d.pc_background_pic
+        FROM discount d
+        WHERE d.discount_id = #{discountId}
+          AND d.start_time &lt; NOW()
+          AND d.end_time &gt; NOW()
+    </select>
+
+    <update id="closeDiscountBySetStatus">
+        UPDATE discount SET `status` = 0
+        WHERE `status` &lt;&gt; 0 AND end_time &lt; NOW()
+    </update>
+
+    <select id="discountIdsBySpuIds" resultMap="discountAndItemAndSpuVOMap">
+        SELECT d.discount_id,d.shop_id,d.suitable_spu_type,d.status,ds.spu_id FROM discount d
+        LEFT JOIN discount_spu ds ON d.discount_id = ds.discount_id
+        WHERE
+        (suitable_spu_type = 0 OR
+            d.discount_id in
+            (
+            SELECT discount_id FROM discount_spu where spu_id IN
+            <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+                #{spuId}
+            </foreach>
+            )
+        )
+        <if test="shopIds != null and shopIds.size() != 0">
+            AND d.shop_id IN
+            <foreach collection="shopIds" item="shopId" open="(" close=")" separator=",">
+                #{shopId}
+            </foreach>
+        </if>
+    </select>
+
+    <update id="batchOfflineByDiscountIdsAndStatus">
+        UPDATE discount SET `status` = 0
+        WHERE discount_id IN
+        <foreach collection="discountIds" item="discountId" open="(" close=")" separator=",">
+            #{discountId}
+        </foreach>
+    </update>
+</mapper>

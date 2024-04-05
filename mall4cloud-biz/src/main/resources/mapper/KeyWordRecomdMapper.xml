@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.chat.KeyWordRecomdMapper">
+  <resultMap id="keyWordRecomdMap" type="com.mall4j.cloud.biz.model.chat.KeyWordRecomd">
+    <id column="id" property="id" />
+    <result column="recomd_id" property="recomdId"/>
+    <result column="key_word_id" property="keyWordId"/>
+    <result column="recomd_type" property="recomdType"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="is_delete" property="isDelete"/>
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `id`,`recomd_id`,`key_word_id`,`recomd_type`,`create_by`,`create_time`,`update_by`,`update_time`,`is_delete`
+  </sql>
+  <select id="list" resultMap="keyWordRecomdMap">
+    select <include refid="Vo_Column_List"/> from key_word_recomd order by id desc
+  </select>
+
+  <delete id="deleteByKeyWordId">
+    delete from key_word_recomd where key_word_id = #{KeyWordId}
+  </delete>
+
+</mapper>

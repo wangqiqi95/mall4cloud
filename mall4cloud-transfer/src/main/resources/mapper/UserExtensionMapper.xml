@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.UserExtensionMapper">
+    <resultMap id="userExtensionMap" type="com.mall4j.cloud.transfer.model.UserExtension">
+        <id column="user_extension_id" property="userExtensionId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="user_id" property="userId"/>
+        <result column="level" property="level"/>
+        <result column="level_type" property="levelType"/>
+        <result column="growth" property="growth"/>
+        <result column="score" property="score"/>
+        <result column="balance" property="balance"/>
+        <result column="actual_balance" property="actualBalance"/>
+        <result column="version" property="version"/>
+        <result column="sign_day" property="signDay"/>
+        <result column="vip_level" property="vipLevel"/>
+        <result column="recent_consumer_time" property="recentConsumerTime"/>
+        <result column="recent_visit_time" property="recentVisitTime"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `user_extension_id`
+        ,
+        `create_time`,
+        `update_time`,
+        `user_id`,
+        `level`,
+        `level_type`,
+        `growth`,
+        `score`,
+        `balance`,
+        `actual_balance`,
+        `version`,
+        `sign_day`,
+        `vip_level`,
+        `recent_consumer_time`,
+        `recent_visit_time`
+    </sql>
+    <select id="list" resultMap="userExtensionMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_extension order by user_extension_id desc
+    </select>
+    <select id="getByUserExtensionId" resultMap="userExtensionMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_extension where user_extension_id = #{userExtensionId}
+    </select>
+    <insert id="save">
+        insert into user_extension (`user_id`, `level`, `level_type`, `growth`, `score`, `balance`, `actual_balance`,
+                                    `version`, `sign_day`, `vip_level`, `recent_consumer_time`, `recent_visit_time`)
+        values (#{userExtension.userId}, #{userExtension.level}, #{userExtension.levelType}, #{userExtension.growth},
+                #{userExtension.score}, #{userExtension.balance}, #{userExtension.actualBalance},
+                #{userExtension.version}, #{userExtension.signDay}, #{userExtension.vipLevel},
+                #{userExtension.recentConsumerTime}, #{userExtension.recentVisitTime});
+    </insert>
+
+    <insert id="batchSave">
+        insert into user_extension (`user_id`, `level`, `level_type`, `growth`, `score`, `balance`, `actual_balance`,
+                                    `version`, `sign_day`, `vip_level`, `recent_consumer_time`, `recent_visit_time`)
+        values
+        <foreach collection="userExtensions" item="userExtension" separator=",">
+            (#{userExtension.userId}, #{userExtension.level}, #{userExtension.levelType}, #{userExtension.growth},
+            #{userExtension.score}, #{userExtension.balance}, #{userExtension.actualBalance},
+            #{userExtension.version}, #{userExtension.signDay}, #{userExtension.vipLevel},
+            #{userExtension.recentConsumerTime}, #{userExtension.recentVisitTime})
+        </foreach>
+
+    </insert>
+
+    <insert id="batchSave2">
+        insert into user_extension_add (`user_id`, `level`, `level_type`, `growth`, `score`, `balance`, `actual_balance`,
+        `version`, `sign_day`, `vip_level`, `recent_consumer_time`, `recent_visit_time`)
+        values
+        <foreach collection="userExtensions" item="userExtension" separator=",">
+            (#{userExtension.userId}, #{userExtension.level}, #{userExtension.levelType}, #{userExtension.growth},
+            #{userExtension.score}, #{userExtension.balance}, #{userExtension.actualBalance},
+            #{userExtension.version}, #{userExtension.signDay}, #{userExtension.vipLevel},
+            #{userExtension.recentConsumerTime}, #{userExtension.recentVisitTime})
+        </foreach>
+
+    </insert>
+
+
+    <insert id="batchSave3">
+        insert into eto_user_extension_add (`user_id`, `level`, `level_type`, `growth`, `score`, `balance`, `actual_balance`,
+        `version`, `sign_day`, `vip_level`, `recent_consumer_time`, `recent_visit_time`)
+        values
+        <foreach collection="userExtensions" item="userExtension" separator=",">
+            (#{userExtension.userId}, #{userExtension.level}, #{userExtension.levelType}, #{userExtension.growth},
+            #{userExtension.score}, #{userExtension.balance}, #{userExtension.actualBalance},
+            #{userExtension.version}, #{userExtension.signDay}, #{userExtension.vipLevel},
+            #{userExtension.recentConsumerTime}, #{userExtension.recentVisitTime})
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        update user_extension
+        <set>
+            <if test="userExtension.userId != null">
+                `user_id` = #{userExtension.userId},
+            </if>
+            <if test="userExtension.level != null">
+                `level` = #{userExtension.level},
+            </if>
+            <if test="userExtension.levelType != null">
+                `level_type` = #{userExtension.levelType},
+            </if>
+            <if test="userExtension.growth != null">
+                `growth` = #{userExtension.growth},
+            </if>
+            <if test="userExtension.score != null">
+                `score` = #{userExtension.score},
+            </if>
+            <if test="userExtension.balance != null">
+                `balance` = #{userExtension.balance},
+            </if>
+            <if test="userExtension.actualBalance != null">
+                `actual_balance` = #{userExtension.actualBalance},
+            </if>
+            <if test="userExtension.version != null">
+                `version` = #{userExtension.version},
+            </if>
+            <if test="userExtension.signDay != null">
+                `sign_day` = #{userExtension.signDay},
+            </if>
+            <if test="userExtension.vipLevel != null">
+                `vip_level` = #{userExtension.vipLevel},
+            </if>
+            <if test="userExtension.recentConsumerTime != null">
+                `recent_consumer_time` = #{userExtension.recentConsumerTime},
+            </if>
+            <if test="userExtension.recentVisitTime != null">
+                `recent_visit_time` = #{userExtension.recentVisitTime},
+            </if>
+        </set>
+        where user_extension_id = #{userExtension.userExtensionId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from user_extension
+        where user_extension_id = #{userExtensionId}
+    </delete>
+
+</mapper>

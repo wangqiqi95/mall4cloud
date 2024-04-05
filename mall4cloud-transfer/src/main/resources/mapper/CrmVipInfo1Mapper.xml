@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.CrmVipInfo1Mapper">
+    <resultMap id="crmVipInfo1Map" type="com.mall4j.cloud.transfer.model.CrmVipInfo1">
+        <id column="Id" property="id"/>
+        <result column="CopId" property="copid"/>
+        <result column="BrandId" property="brandid"/>
+        <result column="GradeId" property="gradeid"/>
+        <result column="Code" property="code"/>
+        <result column="WxCode" property="wxcode"/>
+        <result column="WxCodeGetTime" property="wxcodegettime"/>
+        <result column="OldCode" property="oldcode"/>
+        <result column="OldBindNewId" property="oldbindnewid"/>
+        <result column="OldBindDate" property="oldbinddate"/>
+        <result column="NickName" property="nickname"/>
+        <result column="Name" property="name"/>
+        <result column="MobileNo" property="mobileno"/>
+        <result column="MobileBindTime" property="mobilebindtime"/>
+        <result column="PassWord" property="password"/>
+        <result column="Sex" property="sex"/>
+        <result column="Birthday" property="birthday"/>
+        <result column="WxNo" property="wxno"/>
+        <result column="WxUnionID" property="wxunionid"/>
+        <result column="WxHeadImg" property="wxheadimg"/>
+        <result column="WeibNo" property="weibno"/>
+        <result column="QqNo" property="qqno"/>
+        <result column="TbNo" property="tbno"/>
+        <result column="Email" property="email"/>
+        <result column="IdCardNo" property="idcardno"/>
+        <result column="Country" property="country"/>
+        <result column="Province" property="province"/>
+        <result column="City" property="city"/>
+        <result column="County" property="county"/>
+        <result column="WxRegTime" property="wxregtime"/>
+        <result column="WxProvince" property="wxprovince"/>
+        <result column="ServiceChannel" property="servicechannel"/>
+        <result column="ServiceSaler" property="servicesaler"/>
+        <result column="ServiceBindTime" property="servicebindtime"/>
+        <result column="RegTime" property="regtime"/>
+        <result column="RegChannel" property="regchannel"/>
+        <result column="RegYearInt" property="regyearint"/>
+        <result column="RegMonthInt" property="regmonthint"/>
+        <result column="RegWeekInt" property="regweekint"/>
+        <result column="RegSource" property="regsource"/>
+        <result column="Referee" property="referee"/>
+        <result column="InviteDate" property="invitedate"/>
+        <result column="InviteShopId" property="inviteshopid"/>
+        <result column="InviteUserId" property="inviteuserid"/>
+        <result column="Bonus" property="bonus"/>
+        <result column="BonusTotal" property="bonustotal"/>
+        <result column="IsForbid" property="isforbid"/>
+        <result column="CreateDate" property="createdate"/>
+        <result column="LastModifiedDate" property="lastmodifieddate"/>
+        <result column="InviteVipId" property="invitevipid"/>
+        <result column="InviteScene" property="invitescene"/>
+        <result column="RegSaler" property="regsaler"/>
+        <result column="FansUpTime" property="fansuptime"/>
+        <result column="RegIsVeeker" property="regisveeker"/>
+        <result column="BindSaler" property="bindsaler"/>
+        <result column="BindChannel" property="bindchannel"/>
+        <result column="BindScene" property="bindscene"/>
+        <result column="NOFSource" property="nofsource"/>
+        <result column="NOFArriveTime" property="nofarrivetime"/>
+        <result column="NOFAssignShopId" property="nofassignshopid"/>
+        <result column="NOFAssignSaler" property="nofassignsaler"/>
+        <result column="NOFAssignTime" property="nofassigntime"/>
+        <result column="NOFAssignVipGradeId" property="nofassignvipgradeid"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `Id`
+        ,
+        `CopId`,
+        `BrandId`,
+        `GradeId`,
+        `Code`,
+        `WxCode`,
+        `WxCodeGetTime`,
+        `OldCode`,
+        `OldBindNewId`,
+        `OldBindDate`,
+        `NickName`,
+        `Name`,
+        `MobileNo`,
+        `MobileBindTime`,
+        `PassWord`,
+        `Sex`,
+        `Birthday`,
+        `WxNo`,
+        `WxUnionID`,
+        `WxHeadImg`,
+        `WeibNo`,
+        `QqNo`,
+        `TbNo`,
+        `Email`,
+        `IdCardNo`,
+        `Country`,
+        `Province`,
+        `City`,
+        `County`,
+        `WxRegTime`,
+        `WxProvince`,
+        `ServiceChannel`,
+        `ServiceSaler`,
+        `ServiceBindTime`,
+        `RegTime`,
+        `RegChannel`,
+        `RegYearInt`,
+        `RegMonthInt`,
+        `RegWeekInt`,
+        `RegSource`,
+        `Referee`,
+        `InviteDate`,
+        `InviteShopId`,
+        `InviteUserId`,
+        `Bonus`,
+        `BonusTotal`,
+        `IsForbid`,
+        `CreateDate`,
+        `LastModifiedDate`,
+        `InviteVipId`,
+        `InviteScene`,
+        `RegSaler`,
+        `FansUpTime`,
+        `RegIsVeeker`,
+        `BindSaler`,
+        `BindChannel`,
+        `BindScene`,
+        `NOFSource`,
+        `NOFArriveTime`,
+        `NOFAssignShopId`,
+        `NOFAssignSaler`,
+        `NOFAssignTime`,
+        `NOFAssignVipGradeId`
+    </sql>
+    <select id="list" resultMap="crmVipInfo1Map">
+        select
+        <include refid="Vo_Column_List"/>
+        from crm_vip_info1 order by Id desc
+    </select>
+
+    <select id="listByTable" resultMap="crmVipInfo1Map">
+        select
+        <include refid="Vo_Column_List"/>
+        from ${tableName}
+        where
+        MobileNo != '' and WxUnionID != ''
+    </select>
+
+    <select id="getById" resultMap="crmVipInfo1Map">
+        select
+        <include refid="Vo_Column_List"/>
+        from crm_vip_info1 where Id = #{id}
+    </select>
+    <select id="getByOldCode" resultMap="crmVipInfo1Map">
+        select
+        <include refid="Vo_Column_List"/>
+        from crm_vip_info1 where BrandId = 665 and OldCode = #{oldCode}
+    </select>
+
+    <select id="getByOldCode2" resultMap="crmVipInfo1Map">
+        select
+        <include refid="Vo_Column_List"/>
+        from crm_vip_info2 where BrandId = 665 and OldCode = #{oldCode}
+    </select>
+
+    <select id="getByOldCode3" resultMap="crmVipInfo1Map">
+        select
+        <include refid="Vo_Column_List"/>
+        from crm_vip_info3 where BrandId = 665 and OldCode = #{oldCode}
+    </select>
+
+
+
+    <select id="getByOldCode4" resultMap="crmVipInfo1Map">
+        select
+        <include refid="Vo_Column_List"/>
+        from crm_vip_info4 where BrandId = 665 and OldCode = #{oldCode}
+    </select>
+
+    <insert id="save">
+        insert into crm_vip_info1 (`CopId`, `BrandId`, `GradeId`, `Code`, `WxCode`, `WxCodeGetTime`, `OldCode`,
+                                   `OldBindNewId`, `OldBindDate`, `NickName`, `Name`, `MobileNo`, `MobileBindTime`,
+                                   `PassWord`, `Sex`, `Birthday`, `WxNo`, `WxUnionID`, `WxHeadImg`, `WeibNo`, `QqNo`,
+                                   `TbNo`, `Email`, `IdCardNo`, `Country`, `Province`, `City`, `County`, `WxRegTime`,
+                                   `WxProvince`, `ServiceChannel`, `ServiceSaler`, `ServiceBindTime`, `RegTime`,
+                                   `RegChannel`, `RegYearInt`, `RegMonthInt`, `RegWeekInt`, `RegSource`, `Referee`,
+                                   `InviteDate`, `InviteShopId`, `InviteUserId`, `Bonus`, `BonusTotal`, `IsForbid`,
+                                   `CreateDate`, `LastModifiedDate`, `InviteVipId`, `InviteScene`, `RegSaler`,
+                                   `FansUpTime`, `RegIsVeeker`, `BindSaler`, `BindChannel`, `BindScene`, `NOFSource`,
+                                   `NOFArriveTime`, `NOFAssignShopId`, `NOFAssignSaler`, `NOFAssignTime`,
+                                   `NOFAssignVipGradeId`
+        )
+        values (#{crmVipInfo1.copid}, #{crmVipInfo1.brandid}, #{crmVipInfo1.gradeid}, #{crmVipInfo1.code},
+                #{crmVipInfo1.wxcode}, #{crmVipInfo1.wxcodegettime}, #{crmVipInfo1.oldcode},
+                #{crmVipInfo1.oldbindnewid}, #{crmVipInfo1.oldbinddate}, #{crmVipInfo1.nickname}, #{crmVipInfo1.name},
+                #{crmVipInfo1.mobileno}, #{crmVipInfo1.mobilebindtime}, #{crmVipInfo1.password}, #{crmVipInfo1.sex},
+                #{crmVipInfo1.birthday}, #{crmVipInfo1.wxno}, #{crmVipInfo1.wxunionid}, #{crmVipInfo1.wxheadimg},
+                #{crmVipInfo1.weibno}, #{crmVipInfo1.qqno}, #{crmVipInfo1.tbno}, #{crmVipInfo1.email},
+                #{crmVipInfo1.idcardno}, #{crmVipInfo1.country}, #{crmVipInfo1.province}, #{crmVipInfo1.city},
+                #{crmVipInfo1.county}, #{crmVipInfo1.wxregtime}, #{crmVipInfo1.wxprovince},
+                #{crmVipInfo1.servicechannel}, #{crmVipInfo1.servicesaler}, #{crmVipInfo1.servicebindtime},
+                #{crmVipInfo1.regtime}, #{crmVipInfo1.regchannel}, #{crmVipInfo1.regyearint},
+                #{crmVipInfo1.regmonthint}, #{crmVipInfo1.regweekint}, #{crmVipInfo1.regsource}, #{crmVipInfo1.referee},
+                #{crmVipInfo1.invitedate}, #{crmVipInfo1.inviteshopid}, #{crmVipInfo1.inviteuserid},
+                #{crmVipInfo1.bonus}, #{crmVipInfo1.bonustotal}, #{crmVipInfo1.isforbid}, #{crmVipInfo1.createdate},
+                #{crmVipInfo1.lastmodifieddate}, #{crmVipInfo1.invitevipid}, #{crmVipInfo1.invitescene},
+                #{crmVipInfo1.regsaler}, #{crmVipInfo1.fansuptime}, #{crmVipInfo1.regisveeker},
+                #{crmVipInfo1.bindsaler}, #{crmVipInfo1.bindchannel}, #{crmVipInfo1.bindscene},
+                #{crmVipInfo1.nofsource}, #{crmVipInfo1.nofarrivetime}, #{crmVipInfo1.nofassignshopid},
+                #{crmVipInfo1.nofassignsaler}, #{crmVipInfo1.nofassigntime}, #{crmVipInfo1.nofassignvipgradeid});
+    </insert>
+    <update id="update">
+        update crm_vip_info1
+        <set>
+            <if test="crmVipInfo1.copid != null">
+                `CopId` = #{crmVipInfo1.copid},
+            </if>
+            <if test="crmVipInfo1.brandid != null">
+                `BrandId` = #{crmVipInfo1.brandid},
+            </if>
+            <if test="crmVipInfo1.gradeid != null">
+                `GradeId` = #{crmVipInfo1.gradeid},
+            </if>
+            <if test="crmVipInfo1.code != null">
+                `Code` = #{crmVipInfo1.code},
+            </if>
+            <if test="crmVipInfo1.wxcode != null">
+                `WxCode` = #{crmVipInfo1.wxcode},
+            </if>
+            <if test="crmVipInfo1.wxcodegettime != null">
+                `WxCodeGetTime` = #{crmVipInfo1.wxcodegettime},
+            </if>
+            <if test="crmVipInfo1.oldcode != null">
+                `OldCode` = #{crmVipInfo1.oldcode},
+            </if>
+            <if test="crmVipInfo1.oldbindnewid != null">
+                `OldBindNewId` = #{crmVipInfo1.oldbindnewid},
+            </if>
+            <if test="crmVipInfo1.oldbinddate != null">
+                `OldBindDate` = #{crmVipInfo1.oldbinddate},
+            </if>
+            <if test="crmVipInfo1.nickname != null">
+                `NickName` = #{crmVipInfo1.nickname},
+            </if>
+            <if test="crmVipInfo1.name != null">
+                `Name` = #{crmVipInfo1.name},
+            </if>
+            <if test="crmVipInfo1.mobileno != null">
+                `MobileNo` = #{crmVipInfo1.mobileno},
+            </if>
+            <if test="crmVipInfo1.mobilebindtime != null">
+                `MobileBindTime` = #{crmVipInfo1.mobilebindtime},
+            </if>
+            <if test="crmVipInfo1.password != null">
+                `PassWord` = #{crmVipInfo1.password},
+            </if>
+            <if test="crmVipInfo1.sex != null">
+                `Sex` = #{crmVipInfo1.sex},
+            </if>
+            <if test="crmVipInfo1.birthday != null">
+                `Birthday` = #{crmVipInfo1.birthday},
+            </if>
+            <if test="crmVipInfo1.wxno != null">
+                `WxNo` = #{crmVipInfo1.wxno},
+            </if>
+            <if test="crmVipInfo1.wxunionid != null">
+                `WxUnionID` = #{crmVipInfo1.wxunionid},
+            </if>
+            <if test="crmVipInfo1.wxheadimg != null">
+                `WxHeadImg` = #{crmVipInfo1.wxheadimg},
+            </if>
+            <if test="crmVipInfo1.weibno != null">
+                `WeibNo` = #{crmVipInfo1.weibno},
+            </if>
+            <if test="crmVipInfo1.qqno != null">
+                `QqNo` = #{crmVipInfo1.qqno},
+            </if>
+            <if test="crmVipInfo1.tbno != null">
+                `TbNo` = #{crmVipInfo1.tbno},
+            </if>
+            <if test="crmVipInfo1.email != null">
+                `Email` = #{crmVipInfo1.email},
+            </if>
+            <if test="crmVipInfo1.idcardno != null">
+                `IdCardNo` = #{crmVipInfo1.idcardno},
+            </if>
+            <if test="crmVipInfo1.country != null">
+                `Country` = #{crmVipInfo1.country},
+            </if>
+            <if test="crmVipInfo1.province != null">
+                `Province` = #{crmVipInfo1.province},
+            </if>
+            <if test="crmVipInfo1.city != null">
+                `City` = #{crmVipInfo1.city},
+            </if>
+            <if test="crmVipInfo1.county != null">
+                `County` = #{crmVipInfo1.county},
+            </if>
+            <if test="crmVipInfo1.wxregtime != null">
+                `WxRegTime` = #{crmVipInfo1.wxregtime},
+            </if>
+            <if test="crmVipInfo1.wxprovince != null">
+                `WxProvince` = #{crmVipInfo1.wxprovince},
+            </if>
+            <if test="crmVipInfo1.servicechannel != null">
+                `ServiceChannel` = #{crmVipInfo1.servicechannel},
+            </if>
+            <if test="crmVipInfo1.servicesaler != null">
+                `ServiceSaler` = #{crmVipInfo1.servicesaler},
+            </if>
+            <if test="crmVipInfo1.servicebindtime != null">
+                `ServiceBindTime` = #{crmVipInfo1.servicebindtime},
+            </if>
+            <if test="crmVipInfo1.regtime != null">
+                `RegTime` = #{crmVipInfo1.regtime},
+            </if>
+            <if test="crmVipInfo1.regchannel != null">
+                `RegChannel` = #{crmVipInfo1.regchannel},
+            </if>
+            <if test="crmVipInfo1.regyearint != null">
+                `RegYearInt` = #{crmVipInfo1.regyearint},
+            </if>
+            <if test="crmVipInfo1.regmonthint != null">
+                `RegMonthInt` = #{crmVipInfo1.regmonthint},
+            </if>
+            <if test="crmVipInfo1.regweekint != null">
+                `RegWeekInt` = #{crmVipInfo1.regweekint},
+            </if>
+            <if test="crmVipInfo1.regsource != null">
+                `RegSource` = #{crmVipInfo1.regsource},
+            </if>
+            <if test="crmVipInfo1.referee != null">
+                `Referee` = #{crmVipInfo1.referee},
+            </if>
+            <if test="crmVipInfo1.invitedate != null">
+                `InviteDate` = #{crmVipInfo1.invitedate},
+            </if>
+            <if test="crmVipInfo1.inviteshopid != null">
+                `InviteShopId` = #{crmVipInfo1.inviteshopid},
+            </if>
+            <if test="crmVipInfo1.inviteuserid != null">
+                `InviteUserId` = #{crmVipInfo1.inviteuserid},
+            </if>
+            <if test="crmVipInfo1.bonus != null">
+                `Bonus` = #{crmVipInfo1.bonus},
+            </if>
+            <if test="crmVipInfo1.bonustotal != null">
+                `BonusTotal` = #{crmVipInfo1.bonustotal},
+            </if>
+            <if test="crmVipInfo1.isforbid != null">
+                `IsForbid` = #{crmVipInfo1.isforbid},
+            </if>
+            <if test="crmVipInfo1.createdate != null">
+                `CreateDate` = #{crmVipInfo1.createdate},
+            </if>
+            <if test="crmVipInfo1.lastmodifieddate != null">
+                `LastModifiedDate` = #{crmVipInfo1.lastmodifieddate},
+            </if>
+            <if test="crmVipInfo1.invitevipid != null">
+                `InviteVipId` = #{crmVipInfo1.invitevipid},
+            </if>
+            <if test="crmVipInfo1.invitescene != null">
+                `InviteScene` = #{crmVipInfo1.invitescene},
+            </if>
+            <if test="crmVipInfo1.regsaler != null">
+                `RegSaler` = #{crmVipInfo1.regsaler},
+            </if>
+            <if test="crmVipInfo1.fansuptime != null">
+                `FansUpTime` = #{crmVipInfo1.fansuptime},
+            </if>
+            <if test="crmVipInfo1.regisveeker != null">
+                `RegIsVeeker` = #{crmVipInfo1.regisveeker},
+            </if>
+            <if test="crmVipInfo1.bindsaler != null">
+                `BindSaler` = #{crmVipInfo1.bindsaler},
+            </if>
+            <if test="crmVipInfo1.bindchannel != null">
+                `BindChannel` = #{crmVipInfo1.bindchannel},
+            </if>
+            <if test="crmVipInfo1.bindscene != null">
+                `BindScene` = #{crmVipInfo1.bindscene},
+            </if>
+            <if test="crmVipInfo1.nofsource != null">
+                `NOFSource` = #{crmVipInfo1.nofsource},
+            </if>
+            <if test="crmVipInfo1.nofarrivetime != null">
+                `NOFArriveTime` = #{crmVipInfo1.nofarrivetime},
+            </if>
+            <if test="crmVipInfo1.nofassignshopid != null">
+                `NOFAssignShopId` = #{crmVipInfo1.nofassignshopid},
+            </if>
+            <if test="crmVipInfo1.nofassignsaler != null">
+                `NOFAssignSaler` = #{crmVipInfo1.nofassignsaler},
+            </if>
+            <if test="crmVipInfo1.nofassigntime != null">
+                `NOFAssignTime` = #{crmVipInfo1.nofassigntime},
+            </if>
+            <if test="crmVipInfo1.nofassignvipgradeid != null">
+                `NOFAssignVipGradeId` = #{crmVipInfo1.nofassignvipgradeid},
+            </if>
+        </set>
+        where Id = #{crmVipInfo1.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from crm_vip_info1
+        where Id = #{id}
+    </delete>
+
+</mapper>

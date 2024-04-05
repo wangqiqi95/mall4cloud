@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.group.mapper.PopUpAdPageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.group.model.PopUpAdPage">
+        <id column="pop_up_ad_page_id" property="popUpAdPageId" />
+        <result column="pop_up_ad_id" property="popUpAdId" />
+        <result column="page_url" property="pageUrl" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_user" property="createUser" />
+        <result column="update_user" property="updateUser" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        open_screen_ad_page_id, open_screen_ad_id, page_url, create_time, update_time, create_user
+    </sql>
+
+    <insert id="insertBatch">
+        insert into t_pop_up_ad_page
+        (pop_up_ad_id, page_url, create_user)
+        values
+        <foreach collection ="pageList" item="item" index= "index" separator =",">
+            (#{adId},#{item},#{createUser})
+        </foreach >
+    </insert>
+
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.AuthAccountMapper">
+    <resultMap id="authAccountMap" type="com.mall4j.cloud.transfer.model.AuthAccount">
+        <id column="uid" property="uid"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="create_ip" property="createIp"/>
+        <result column="status" property="status"/>
+        <result column="sys_type" property="sysType"/>
+        <result column="user_id" property="userId"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="is_admin" property="isAdmin"/>
+        <result column="is_pass_shop" property="isPassShop"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `uid`
+        ,
+        `create_time`,
+        `update_time`,
+        `email`,
+        `phone`,
+        `username`,
+        `password`,
+        `create_ip`,
+        `status`,
+        `sys_type`,
+        `user_id`,
+        `tenant_id`,
+        `is_admin`,
+        `is_pass_shop`
+    </sql>
+    <select id="list" resultMap="authAccountMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from auth_account order by uid desc
+    </select>
+    <select id="getByUid" resultMap="authAccountMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from auth_account where uid = #{uid}
+    </select>
+    <insert id="save">
+        insert into auth_account (uid,`email`, `phone`, `username`, `password`, `create_ip`, `status`, `sys_type`,
+                                  `user_id`, `tenant_id`, `is_admin`, `is_pass_shop`
+        )
+        values (#{authAccount.uid},#{authAccount.email}, #{authAccount.phone}, #{authAccount.username}, #{authAccount.password},
+                #{authAccount.createIp}, #{authAccount.status}, #{authAccount.sysType}, #{authAccount.userId},
+                #{authAccount.tenantId}, #{authAccount.isAdmin}, #{authAccount.isPassShop});
+    </insert>
+    <insert id="batchSave">
+        insert into auth_account (uid,`email`, `phone`, `username`, `password`, `create_ip`, `status`, `sys_type`,
+                                  `user_id`, `tenant_id`, `is_admin`, `is_pass_shop`)
+        values
+        <foreach collection="authAccounts" item="authAccount" separator=",">
+            (#{authAccount.uid},#{authAccount.email}, #{authAccount.phone}, #{authAccount.username}, #{authAccount.password},
+            #{authAccount.createIp}, #{authAccount.status}, #{authAccount.sysType}, #{authAccount.userId},
+            #{authAccount.tenantId}, #{authAccount.isAdmin}, #{authAccount.isPassShop})
+        </foreach>
+    </insert>
+    <insert id="batchSave2">
+        insert into auth_account_add (uid,`email`, `phone`, `username`, `password`, `create_ip`, `status`, `sys_type`,
+        `user_id`, `tenant_id`, `is_admin`, `is_pass_shop`)
+        values
+        <foreach collection="authAccounts" item="authAccount" separator=",">
+            (#{authAccount.uid},#{authAccount.email}, #{authAccount.phone}, #{authAccount.username}, #{authAccount.password},
+            #{authAccount.createIp}, #{authAccount.status}, #{authAccount.sysType}, #{authAccount.userId},
+            #{authAccount.tenantId}, #{authAccount.isAdmin}, #{authAccount.isPassShop})
+        </foreach>
+    </insert>
+
+    <insert id="batchSave3">
+        insert into eto_auth_account_add (uid,`email`, `phone`, `username`, `password`, `create_ip`, `status`, `sys_type`,
+        `user_id`, `tenant_id`, `is_admin`, `is_pass_shop`)
+        values
+        <foreach collection="authAccounts" item="authAccount" separator=",">
+            (#{authAccount.uid},#{authAccount.email}, #{authAccount.phone}, #{authAccount.username}, #{authAccount.password},
+            #{authAccount.createIp}, #{authAccount.status}, #{authAccount.sysType}, #{authAccount.userId},
+            #{authAccount.tenantId}, #{authAccount.isAdmin}, #{authAccount.isPassShop})
+        </foreach>
+    </insert>
+    <update id="update">
+        update auth_account
+        <set>
+            <if test="authAccount.email != null">
+                `email` = #{authAccount.email},
+            </if>
+            <if test="authAccount.phone != null">
+                `phone` = #{authAccount.phone},
+            </if>
+            <if test="authAccount.username != null">
+                `username` = #{authAccount.username},
+            </if>
+            <if test="authAccount.password != null">
+                `password` = #{authAccount.password},
+            </if>
+            <if test="authAccount.createIp != null">
+                `create_ip` = #{authAccount.createIp},
+            </if>
+            <if test="authAccount.status != null">
+                `status` = #{authAccount.status},
+            </if>
+            <if test="authAccount.sysType != null">
+                `sys_type` = #{authAccount.sysType},
+            </if>
+            <if test="authAccount.userId != null">
+                `user_id` = #{authAccount.userId},
+            </if>
+            <if test="authAccount.tenantId != null">
+                `tenant_id` = #{authAccount.tenantId},
+            </if>
+            <if test="authAccount.isAdmin != null">
+                `is_admin` = #{authAccount.isAdmin},
+            </if>
+            <if test="authAccount.isPassShop != null">
+                `is_pass_shop` = #{authAccount.isPassShop},
+            </if>
+        </set>
+        where uid = #{authAccount.uid}
+    </update>
+    <delete id="deleteById">
+        delete
+        from auth_account
+        where uid = #{uid}
+    </delete>
+
+</mapper>

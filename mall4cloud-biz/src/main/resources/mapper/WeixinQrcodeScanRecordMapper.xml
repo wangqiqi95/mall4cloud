@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinQrcodeScanRecordMapper">
+  <resultMap id="weixinQrcodeScanRecordMap" type="com.mall4j.cloud.biz.model.WeixinQrcodeScanRecord">
+    <id column="id" property="id" />
+    <result column="nick_name" property="nickName"/>
+    <result column="headimgurl" property="headimgurl"/>
+    <result column="openid" property="openid"/>
+    <result column="scan_time" property="scanTime"/>
+    <result column="scene_id" property="sceneId"/>
+    <result column="scene_src" property="sceneSrc"/>
+    <result column="app_id" property="appId"/>
+    <result column="is_scan_subscribe" property="isScanSubscribe"/>
+    <result column="qrcode_id" property="qrcodeId"/>
+    <result column="ticket" property="ticket"/>
+    <result column="auto_scan_id" property="autoScanId"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`nick_name`,`headimgurl`,`openid`,`scan_time`,`scene_id`,`scene_src`,`app_id`,`is_scan_subscribe`,`qrcode_id`,`ticket`,`auto_scan_id`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinQrcodeScanRecordMap">
+    select <include refid="Vo_Column_List"/> from weixin_qrcode_scan_record order by id desc
+  </select>
+  <select id="getById" resultMap="weixinQrcodeScanRecordMap">
+    select <include refid="Vo_Column_List"/> from weixin_qrcode_scan_record where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_qrcode_scan_record (`id`,`nick_name`,`headimgurl`,`openid`,`scan_time`,`scene_id`,`scene_src`,`app_id`,`is_scan_subscribe`,`qrcode_id`,`ticket`,`auto_scan_id`,`create_by`,`create_time`,`del_flag`)
+    values (#{weixinQrcodeScanRecord.id},#{weixinQrcodeScanRecord.nickName},#{weixinQrcodeScanRecord.headimgurl},#{weixinQrcodeScanRecord.openid},#{weixinQrcodeScanRecord.scanTime},#{weixinQrcodeScanRecord.sceneId},#{weixinQrcodeScanRecord.sceneSrc},#{weixinQrcodeScanRecord.appId},#{weixinQrcodeScanRecord.isScanSubscribe},#{weixinQrcodeScanRecord.qrcodeId},#{weixinQrcodeScanRecord.ticket},#{weixinQrcodeScanRecord.autoScanId},#{weixinQrcodeScanRecord.createBy},#{weixinQrcodeScanRecord.createTime},#{weixinQrcodeScanRecord.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_qrcode_scan_record
+    <set>
+      <if test="weixinQrcodeScanRecord.nickName != null">
+        `nick_name` = #{weixinQrcodeScanRecord.nickName},
+      </if>
+      <if test="weixinQrcodeScanRecord.headimgurl != null">
+        `headimgurl` = #{weixinQrcodeScanRecord.headimgurl},
+      </if>
+      <if test="weixinQrcodeScanRecord.openid != null">
+        `openid` = #{weixinQrcodeScanRecord.openid},
+      </if>
+      <if test="weixinQrcodeScanRecord.scanTime != null">
+        `scan_time` = #{weixinQrcodeScanRecord.scanTime},
+      </if>
+      <if test="weixinQrcodeScanRecord.sceneId != null">
+        `scene_id` = #{weixinQrcodeScanRecord.sceneId},
+      </if>
+      <if test="weixinQrcodeScanRecord.sceneSrc != null">
+        `scene_src` = #{weixinQrcodeScanRecord.sceneSrc},
+      </if>
+      <if test="weixinQrcodeScanRecord.appId != null">
+        `app_id` = #{weixinQrcodeScanRecord.appId},
+      </if>
+      <if test="weixinQrcodeScanRecord.isScanSubscribe != null">
+        `is_scan_subscribe` = #{weixinQrcodeScanRecord.isScanSubscribe},
+      </if>
+      <if test="weixinQrcodeScanRecord.qrcodeId != null">
+        `qrcode_id` = #{weixinQrcodeScanRecord.qrcodeId},
+      </if>
+      <if test="weixinQrcodeScanRecord.ticket != null">
+        `ticket` = #{weixinQrcodeScanRecord.ticket},
+      </if>
+      <if test="weixinQrcodeScanRecord.autoScanId != null">
+        `auto_scan_id` = #{weixinQrcodeScanRecord.autoScanId},
+      </if>
+      <if test="weixinQrcodeScanRecord.updateBy != null">
+        `update_by` = #{weixinQrcodeScanRecord.updateBy},
+      </if>
+      <if test="weixinQrcodeScanRecord.updateTime != null">
+        `update_time` = #{weixinQrcodeScanRecord.updateTime},
+      </if>
+      <if test="weixinQrcodeScanRecord.delFlag != null">
+        `del_flag` = #{weixinQrcodeScanRecord.delFlag},
+      </if>
+    </set>
+    where id = #{weixinQrcodeScanRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_qrcode_scan_record where id = #{id}
+  </delete>
+
+  <select id="getList" resultType="com.mall4j.cloud.biz.vo.WeixinQrcodeScanRecordVO">
+    select *
+    from weixin_qrcode_scan_record
+    where del_flag=0
+    <if test="autoScanId!=null and autoScanId!=''">
+      and auto_scan_id=#{autoScanId}
+    </if>
+    <if test="qrcodeId!=null and qrcodeId!=''">
+      and qrcode_id=#{qrcodeId}
+    </if>
+    <if test="sceneSrc!=null">
+      and scene_src=#{sceneSrc}
+    </if>
+    <if test="isScanSubscribe!=null and isScanSubscribe!=''">
+      and is_scan_subscribe=#{isScanSubscribe}
+    </if>
+    <if test="openid!=null and openid!=''">
+      and openid=#{openid}
+    </if>
+    <if test="startDate!=null and endDate!=null">
+      and create_time between #{startDate} and #{endDate}
+    </if>
+    order by id desc
+  </select>
+</mapper>

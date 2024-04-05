@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.TCouponMapper">
+
+    <select id="list" resultType="com.mall4j.cloud.coupon.vo.CouponListVO">
+        select c.id as id,
+               c.name as name,
+               c.kind as kind,
+               c.type as type,
+               c.reduce_amount as reduceAmount,
+               c.coupon_discount as couponDiscount,
+               c.status as status,
+               c.start_time as startTime,
+               c.end_time as endTime,
+               c.source_type as sourceType,
+               c.crm_coupon_id as crmCouponId,
+               c.is_all_shop as isAllShop,
+               c.apply_scope_type as applyScopeType,
+               c.time_type as timeType,
+               c.after_receive_days as afterReceiveDays
+        from t_coupon c
+        <where>
+            <if test="name != null">
+                and (
+                    c.name like concat('%',#{name},'%')
+                    or c.id like concat('%', #{name}, '%')
+                    or c.crm_coupon_id like concat('%', #{name}, '%')
+                )
+            </if>
+            <if test="status != null">
+                and c.status = #{status}
+            </if>
+            <if test="kind != null">
+                and c.kind = #{kind}
+            </if>
+            <if test="sourceType != null">
+                and c.source_type = #{sourceType}
+            </if>
+            <if test="crmCouponId != null">
+                and c.crm_coupon_id = #{crmCouponId}
+            </if>
+        </where>
+        order by c.create_time desc
+    </select>
+
+    <select id="selectCouponByIds" resultType="com.mall4j.cloud.coupon.model.TCoupon">
+        select * from t_coupon
+        <where>
+            1 = 1
+            <if test="ids != null and ids.size() > 0">
+                and id in
+                <foreach collection="ids" item="item"  index="index" open="("  separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="queryCrmIds" resultType="java.lang.String">
+        select
+        c.crm_coupon_id as crmCouponId
+        from t_coupon c
+        <where>
+            c.source_type = 2
+            <if test="kinds != null and kinds.size() > 0">
+                and c.kind in
+                <foreach collection="kinds" item="kind"  index="index" open="("  separator="," close=")">
+                    #{kind}
+                </foreach>
+            </if>
+            <if test="couponPictures != null and couponPictures.size() > 0">
+                and c.coupon_picture in
+                <foreach collection="couponPictures" item="couponPicture"  index="index" open="("  separator="," close=")">
+                    #{couponPicture}
+                </foreach>
+            </if>
+            <if test="couponName != null and couponName != ''">
+                AND c.`name` LIKE CONCAT("%",#{couponName},"%")
+            </if>
+        </where>
+    </select>
+</mapper>

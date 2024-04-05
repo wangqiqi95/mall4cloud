@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpCodeChannelMapper">
+  <resultMap id="cpCodeChannelMap" type="com.mall4j.cloud.biz.model.cp.CpCodeChannel">
+    <id column="id" property="id" />
+    <result column="source_from" property="sourceFrom"/>
+    <result column="source_id" property="sourceId"/>
+    <result column="base_id" property="baseId"/>
+    <result column="source_state" property="sourceState"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="is_delete" property="isDelete"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`source_from`,`source_id`,`base_id`,`source_state`,`create_by`,`create_time`,`update_by`,`update_time`,`is_delete`
+  </sql>
+  <select id="list" resultMap="cpCodeChannelMap">
+    select <include refid="Vo_Column_List"/> from cp_code_channel order by id desc
+  </select>
+  <select id="getById" resultMap="cpCodeChannelMap">
+    select <include refid="Vo_Column_List"/> from cp_code_channel where id = #{id}
+  </select>
+
+  <select id="getBySourceState" resultMap="cpCodeChannelMap">
+    select <include refid="Vo_Column_List"/>
+    from cp_code_channel
+    where is_delete=0 AND source_state = #{sourceState}
+  </select>
+
+  <select id="getBySourceStates" resultMap="cpCodeChannelMap">
+    select <include refid="Vo_Column_List"/>
+    from cp_code_channel
+    where is_delete=0
+    AND source_state in
+    <foreach collection="sourceStates" item="sourceState" open="(" close=")" separator=",">
+      #{sourceState}
+    </foreach>
+  </select>
+
+  <delete id="deleteById">
+    delete from cp_code_channel where id = #{id}
+  </delete>
+
+</mapper>

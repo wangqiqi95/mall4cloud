@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserTagMapper">
+  <resultMap id="userTagMap" type="com.mall4j.cloud.user.model.UserTag">
+    <id column="user_tag_id" property="userTagId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="tag_name" property="tagName"/>
+    <result column="tag_type" property="tagType"/>
+    <result column="is_sys_turn_on" property="isSysTurnOn"/>
+    <result column="register_min_time" property="registerMinTime"/>
+    <result column="register_max_time" property="registerMaxTime"/>
+    <result column="subscribe_min_time" property="subscribeMinTime"/>
+    <result column="subscribe_max_time" property="subscribeMaxTime"/>
+    <result column="to_be_member_min_time" property="toBeMemberMinTime"/>
+    <result column="to_be_member_max_time" property="toBeMemberMaxTime"/>
+    <result column="recent_purchase_time" property="recentPurchaseTime"/>
+    <result column="purchase_num_time" property="purchaseNumTime"/>
+    <result column="purchase_num_min_num" property="purchaseNumMinNum"/>
+    <result column="purchase_num_max_num" property="purchaseNumMaxNum"/>
+    <result column="purchase_amount_time" property="purchaseAmountTime"/>
+    <result column="purchase_amount_min_amount" property="purchaseAmountMinAmount"/>
+    <result column="purchase_amount_max_amount" property="purchaseAmountMaxAmount"/>
+    <result column="order_average_price_time" property="orderAveragePriceTime"/>
+    <result column="order_average_price_min_amount" property="orderAveragePriceMinAmount"/>
+    <result column="order_average_price_max_amount" property="orderAveragePriceMaxAmount"/>
+    <result column="recharge_amount_time" property="rechargeAmountTime"/>
+    <result column="recharge_amount_min_amount" property="rechargeAmountMinAmount"/>
+    <result column="recharge_amount_max_amount" property="rechargeAmountMaxAmount"/>
+    <result column="recharge_num_time" property="rechargeNumTime"/>
+    <result column="recharge_num_min_num" property="rechargeNumMinNum"/>
+    <result column="recharge_num_max_num" property="rechargeNumMaxNum"/>
+    <result column="user_num" property="userNum"/>
+    <result column="statistic_update_time" property="statisticUpdateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `user_tag_id`,`create_time`,`update_time`,`tag_name`,`tag_type`,`is_sys_turn_on`,`register_min_time`,`register_max_time`,`subscribe_min_time`,`subscribe_max_time`,`to_be_member_min_time`,`to_be_member_max_time`,`recent_purchase_time`,`purchase_num_time`,`purchase_num_min_num`,`purchase_num_max_num`,`purchase_amount_time`,`purchase_amount_min_amount`,`purchase_amount_max_amount`,`order_average_price_time`,`order_average_price_min_amount`,`order_average_price_max_amount`,`recharge_amount_time`,`recharge_amount_min_amount`,`recharge_amount_max_amount`,`recharge_num_time`,`recharge_num_min_num`,`recharge_num_max_num`,`user_num`,`statistic_update_time`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.user.vo.UserTagVO">
+    select <include refid="Vo_Column_List"/> from user_tag
+    <where>
+      <if test="userTag.tagType != null ">
+        and tag_type = #{userTag.tagType}
+      </if>
+      <if test="userTag.tagName != null and userTag.tagName != ''">
+        and tag_name like concat('%', #{userTag.tagName}, '%')
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+  <select id="getByUserTagId" resultType="com.mall4j.cloud.user.model.UserTag">
+    select <include refid="Vo_Column_List"/> from user_tag where user_tag_id = #{userTagId}
+  </select>
+  <select id="count" resultType="java.lang.Integer" parameterType="com.mall4j.cloud.user.model.UserTag">
+    select count(*) from user_tag
+    <where>
+      <if test="userTag.tagName != null and userTag.tagName != ''">
+        and tag_name = #{userTag.tagName}
+      </if>
+      <if test="userTag.tagType != null">
+        and tag_type = #{userTag.tagType}
+      </if>
+      <if test="userTag.userTagId != null">
+        and user_tag_id != #{userTag.userTagId}
+      </if>
+    </where>
+  </select>
+  <select id="getByUserTagIds" resultType="com.mall4j.cloud.api.user.vo.UserTagApiVO"
+          parameterType="java.util.List">
+    select `user_tag_id` as tagId,`tag_name`,`tag_type` from user_tag
+    where user_tag_id IN
+    <foreach collection="tagIds" item="userTagId" open="(" close=")" separator=",">
+      #{userTagId}
+    </foreach>
+  </select>
+  <select id="getStaffUserTagList" resultType="com.mall4j.cloud.api.user.vo.UserTagApiVO">
+    select `user_tag_id` as tagId,`tag_name`,`tag_type` from user_tag
+    where user_tag_id IN
+    <foreach collection="tagIds" item="userTagId" open="(" close=")" separator=",">
+      #{userTagId}
+    </foreach>
+    <if test="tagName != null and tagName != ''">
+      and tag_name = #{tagName}
+    </if>
+    order by convert(tag_name using 'gbk')
+  </select>
+    <select id="listUserTagByType" resultType="com.mall4j.cloud.api.user.vo.UserTagApiVO">
+    select `user_tag_id` as tagId,`tag_name`,`tag_type` from user_tag
+    where tag_type = #{tagType}
+    </select>
+    <insert id="save" useGeneratedKeys="true" keyProperty="userTagId">
+    insert into user_tag (`tag_name`,`tag_type`,`is_sys_turn_on`,`register_min_time`,`register_max_time`,`subscribe_min_time`,`subscribe_max_time`,`to_be_member_min_time`,`to_be_member_max_time`,`recent_purchase_time`,`purchase_num_time`,`purchase_num_min_num`,`purchase_num_max_num`,`purchase_amount_time`,`purchase_amount_min_amount`,`purchase_amount_max_amount`,`order_average_price_time`,`order_average_price_min_amount`,`order_average_price_max_amount`,`recharge_amount_time`,`recharge_amount_min_amount`,`recharge_amount_max_amount`,`recharge_num_time`,`recharge_num_min_num`,`recharge_num_max_num`,`user_num`,`statistic_update_time`)
+    values (#{userTag.tagName},#{userTag.tagType},#{userTag.isSysTurnOn},#{userTag.registerMinTime},#{userTag.registerMaxTime},#{userTag.subscribeMinTime},#{userTag.subscribeMaxTime},#{userTag.toBeMemberMinTime},#{userTag.toBeMemberMaxTime},#{userTag.recentPurchaseTime},#{userTag.purchaseNumTime},#{userTag.purchaseNumMinNum},#{userTag.purchaseNumMaxNum},#{userTag.purchaseAmountTime},#{userTag.purchaseAmountMinAmount},#{userTag.purchaseAmountMaxAmount},#{userTag.orderAveragePriceTime},#{userTag.orderAveragePriceMinAmount},#{userTag.orderAveragePriceMaxAmount},#{userTag.rechargeAmountTime},#{userTag.rechargeAmountMinAmount},#{userTag.rechargeAmountMaxAmount},#{userTag.rechargeNumTime},#{userTag.rechargeNumMinNum},#{userTag.rechargeNumMaxNum},#{userTag.userNum},#{userTag.statisticUpdateTime});
+  </insert>
+  <update id="update">
+    update user_tag
+    <set>
+      <if test="userTag.tagName != null">
+        `tag_name` = #{userTag.tagName},
+      </if>
+      <if test="userTag.tagType != null">
+        `tag_type` = #{userTag.tagType},
+      </if>
+      <if test="userTag.isSysTurnOn != null">
+        `is_sys_turn_on` = #{userTag.isSysTurnOn},
+      </if>
+      `register_min_time` = #{userTag.registerMinTime},
+      `register_max_time` = #{userTag.registerMaxTime},
+      `subscribe_min_time` = #{userTag.subscribeMinTime},
+      `subscribe_max_time` = #{userTag.subscribeMaxTime},
+      `to_be_member_min_time` = #{userTag.toBeMemberMinTime},
+      `to_be_member_max_time` = #{userTag.toBeMemberMaxTime},
+      `recent_purchase_time` = #{userTag.recentPurchaseTime},
+      `purchase_num_time` = #{userTag.purchaseNumTime},
+      `purchase_num_min_num` = #{userTag.purchaseNumMinNum},
+      `purchase_num_max_num` = #{userTag.purchaseNumMaxNum},
+      `purchase_amount_time` = #{userTag.purchaseAmountTime},
+      `purchase_amount_min_amount` = #{userTag.purchaseAmountMinAmount},
+      `purchase_amount_max_amount` = #{userTag.purchaseAmountMaxAmount},
+      `order_average_price_time` = #{userTag.orderAveragePriceTime},
+      `order_average_price_min_amount` = #{userTag.orderAveragePriceMinAmount},
+      `order_average_price_max_amount` = #{userTag.orderAveragePriceMaxAmount},
+      `recharge_amount_time` = #{userTag.rechargeAmountTime},
+      `recharge_amount_min_amount` = #{userTag.rechargeAmountMinAmount},
+      `recharge_amount_max_amount` = #{userTag.rechargeAmountMaxAmount},
+      `recharge_num_time` = #{userTag.rechargeNumTime},
+      `recharge_num_min_num` = #{userTag.rechargeNumMinNum},
+      `recharge_num_max_num` = #{userTag.rechargeNumMaxNum},
+      <if test="userTag.userNum != null">
+        `user_num` = #{userTag.userNum},
+      </if>
+      <if test="userTag.statisticUpdateTime != null">
+        `statistic_update_time` = #{userTag.statisticUpdateTime},
+      </if>
+    </set>
+    where user_tag_id = #{userTag.userTagId}
+  </update>
+  <update id="updateBatchTagUserNum" parameterType="java.util.Map">
+    <foreach collection="tagUser" item="changeUserNum" index="tagId" separator=";">
+      UPDATE `user_tag` SET user_num = user_num + #{changeUserNum} where user_tag_id = #{tagId} and #{changeUserNum} + user_num >= 0
+    </foreach>
+  </update>
+  <delete id="deleteById">
+    delete from user_tag where user_tag_id = #{userTagId}
+  </delete>
+
+</mapper>

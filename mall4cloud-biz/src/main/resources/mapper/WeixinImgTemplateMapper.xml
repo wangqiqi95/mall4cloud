@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinImgTemplateMapper">
+  <resultMap id="weixinImgTemplateMap" type="com.mall4j.cloud.biz.model.WeixinImgTemplate">
+    <id column="id" property="id" />
+    <result column="template_img" property="templateImg"/>
+    <result column="media_id" property="mediaId"/>
+    <result column="app_id" property="appId"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`template_img`,`media_id`,`app_id`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinImgTemplateMap">
+    select <include refid="Vo_Column_List"/> from weixin_img_template order by id desc
+  </select>
+  <select id="getById" resultMap="weixinImgTemplateMap">
+    select <include refid="Vo_Column_List"/> from weixin_img_template where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_img_template (`id`,`template_img`,`media_id`,`app_id`,`create_by`,`create_time`,`del_flag`)
+    values (#{weixinImgTemplate.id},#{weixinImgTemplate.templateImg},#{weixinImgTemplate.mediaId},#{weixinImgTemplate.appId},#{weixinImgTemplate.createBy},#{weixinImgTemplate.createTime},#{weixinImgTemplate.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_img_template
+    <set>
+      <if test="weixinImgTemplate.templateImg != null">
+        `template_img` = #{weixinImgTemplate.templateImg},
+      </if>
+      <if test="weixinImgTemplate.mediaId != null">
+        `media_id` = #{weixinImgTemplate.mediaId},
+      </if>
+      <if test="weixinImgTemplate.appId != null">
+        `app_id` = #{weixinImgTemplate.appId},
+      </if>
+      <if test="weixinImgTemplate.updateTime != null">
+        `update_time` = #{weixinImgTemplate.updateTime},
+      </if>
+      <if test="weixinImgTemplate.updateBy != null">
+        `update_by` = #{weixinImgTemplate.updateBy},
+      </if>
+      <if test="weixinImgTemplate.delFlag != null">
+        `del_flag` = #{weixinImgTemplate.delFlag},
+      </if>
+    </set>
+    where id = #{weixinImgTemplate.id}
+  </update>
+
+  <update id="updateMediaId">
+    update weixin_img_template
+    <set>
+      <if test="weixinImgTemplate.mediaId != null">
+        `media_id` = #{weixinImgTemplate.mediaId},
+      </if>
+      <if test="weixinImgTemplate.updateTime != null">
+        `update_time` = #{weixinImgTemplate.updateTime},
+      </if>
+      <if test="weixinImgTemplate.updateBy != null">
+        `update_by` = #{weixinImgTemplate.updateBy},
+      </if>
+    </set>
+    where id = #{weixinImgTemplate.id}
+  </update>
+
+  <delete id="deleteById">
+    delete from weixin_img_template where id = #{id}
+  </delete>
+
+  <select id="listAfterThreeDayPicMediaIds" resultType="com.mall4j.cloud.biz.model.WeixinImgTemplate">
+    select * from weixin_img_template
+    WHERE  update_time <![CDATA[ <= ]]> date_add(now(), interval -70 hour)
+  </select>
+
+</mapper>

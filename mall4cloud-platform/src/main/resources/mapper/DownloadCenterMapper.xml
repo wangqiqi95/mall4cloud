@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.platform.mapper.DownloadCenterMapper">
+
+    <select id="queryByPrams" resultType="com.mall4j.cloud.platform.model.DownloadCenter">
+        select * from download_center
+        <where>
+            1 = 1
+            and del_status=1
+            <if test="dto.operatorNoOrName != null and dto.operatorNoOrName != ''">
+                and concat(operator_name,operator_no) like concat('%',#{dto.operatorNoOrName},'%')
+            </if>
+            <if test="dto.fileName != null and dto.fileName != ''">
+                AND file_name LIKE CONCAT("%",#{dto.fileName},"%")
+            </if>
+            <if test="dto.startTime != null and dto.endTime !=  null ">
+                AND (create_time between #{dto.startTime} and #{dto.endTime})
+            </if>
+        </where>
+        order by id desc
+    </select>
+
+</mapper>

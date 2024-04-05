@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.GoodsCouponActivityMapper">
+
+    <select id="list" resultType="com.mall4j.cloud.coupon.vo.GoodsActivityListVO">
+        select a.id as id,
+        a.title as title,
+        a.status as status,
+        a.is_all_shop as isAllShop,
+        a.start_time as startTime,
+        a.end_time as endTime,
+        a.create_name as createName,
+        a.create_time as createTime,
+        c.name as couponName
+        from goods_coupon_activity a
+        left join t_coupon c on c.id = a.coupon_id
+        <if test="shops != null ">
+            left join goods_coupon_activity_shop gas on a.id = gas.activity_id
+        </if>
+        <where>
+            a.del = 0
+            <if test="activityName != null">
+                and a.title like concat('%',#{activityName},'%')
+            </if>
+            <if test="couponId != null">
+                and c.id = #{couponId}
+            </if>
+            <if test="CouponName != null">
+                and c.name like concat('%',#{CouponName},'%')
+            </if>
+            <if test="status == 0 or status == 1">
+                and a.status = #{status}
+            </if>
+            <if test="isAllShop != null">
+                and a.is_all_shop = #{isAllShop}
+            </if>
+            <if test="status == 2">
+                and (a.start_time &gt; now()) and a.status = 0
+            </if>
+            <if test="status == 3">
+                and (a.start_time &lt;= now() and a.end_time &gt;= now()) and a.status = 0
+            </if>
+            <if test="status == 4">
+                and (a.end_time &lt; now()) and a.status = 0
+            </if>
+            <if test="shops != null">
+                and (gas.shop_id in
+                <foreach collection="shops" item="item"  index="index" open="("  separator="," close=")">
+                    #{item}
+                </foreach>
+                or a.is_all_shop = 1)
+            </if>
+        </where>
+        group by a.id
+        order by a.create_time desc
+    </select>
+
+    <select id="couponsForGoods" resultType="com.mall4j.cloud.coupon.vo.AppGoodsActivityVO">
+        select a.id as id,
+               c.id as couponId,
+               c.name as couponName,
+               c.kind as kind,
+               c.type as type,
+               c.reduce_amount as reduceAmount,
+               c.coupon_discount as couponDiscount,
+               c.amount_limit_type as amountLimitType,
+               c.amount_limit_num as amountLimitNum,
+               c.time_type as timeType,
+               c.after_receive_days as afterReceiveDays,
+               c.start_time as startTime,
+               c.end_time as endTime,
+               a.person_max_amount as personMaxAmount
+        from goods_coupon_activity a
+        left join t_coupon c on c.id = a.coupon_id
+        left join goods_coupon_activity_shop gas on a.id = gas.activity_id
+        left join goods_coupon_activity_commodity am on a.id = am.activity_id
+        where a.status = 0
+          and a.del = 0
+          and NOW() between a.start_time and a.end_time
+          and (a.is_all_shop = 1 or (a.is_all_shop = 0 and gas.shop_id = #{shopId}))
+          and am.commodity_id = #{commodityId}
+          and c.status = 0
+        group by a.id
+        order by a.create_time desc
+    </select>
+</mapper>

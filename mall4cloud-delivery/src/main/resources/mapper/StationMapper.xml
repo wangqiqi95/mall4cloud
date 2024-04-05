@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.delivery.mapper.StationMapper">
+  <resultMap id="stationMap" type="com.mall4j.cloud.delivery.model.Station">
+    <id column="station_id" property="stationId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="station_name" property="stationName"/>
+    <result column="img_url" property="imgUrl"/>
+    <result column="mobile_prefix" property="mobilePrefix"/>
+    <result column="mobile" property="mobile"/>
+    <result column="province_id" property="provinceId"/>
+    <result column="province" property="province"/>
+    <result column="city_id" property="cityId"/>
+    <result column="city" property="city"/>
+    <result column="area_id" property="areaId"/>
+    <result column="area" property="area"/>
+    <result column="post_code" property="postCode"/>
+    <result column="addr" property="addr"/>
+    <result column="lng" property="lng"/>
+    <result column="lat" property="lat"/>
+    <result column="time_info" property="timeInfo"/>
+    <result column="status" property="status"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `station_id`,`create_time`,`update_time`,`shop_id`,`station_name`,`img_url`,`mobile_prefix`,`mobile`,`province_id`,`province`,`city_id`,`city`,`area_id`,`area`,`post_code`,`addr`,`lng`,`lat`,`time_info`,`status`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.delivery.vo.StationVO">
+    select <include refid="Vo_Column_List"/> from station order by station_id desc
+  </select>
+  <select id="getByStationId" resultType="com.mall4j.cloud.delivery.vo.StationVO">
+    select <include refid="Vo_Column_List"/> from station where station_id = #{stationId}
+  </select>
+  <insert id="save">
+    insert into station (`shop_id`,`station_name`,`img_url`,`mobile_prefix`,`mobile`,`province_id`,`province`,`city_id`,`city`,`area_id`,`area`,`post_code`,`addr`,`lng`,`lat`,`time_info`,`status`)
+    values (#{station.shopId},#{station.stationName},#{station.imgUrl},#{station.mobilePrefix},#{station.mobile},#{station.provinceId},#{station.province},#{station.cityId},#{station.city},#{station.areaId},#{station.area},#{station.postCode},#{station.addr},#{station.lng},#{station.lat},#{station.timeInfo},#{station.status});
+  </insert>
+  <update id="update">
+    update station
+    <set>
+      <if test="station.shopId != null">
+        `shop_id` = #{station.shopId},
+      </if>
+      <if test="station.stationName != null">
+        `station_name` = #{station.stationName},
+      </if>
+      <if test="station.imgUrl != null">
+        `img_url` = #{station.imgUrl},
+      </if>
+      <if test="station.mobilePrefix != null">
+        `mobile_prefix` = #{station.mobilePrefix},
+      </if>
+      <if test="station.mobile != null">
+        `mobile` = #{station.mobile},
+      </if>
+      <if test="station.provinceId != null">
+        `province_id` = #{station.provinceId},
+      </if>
+      <if test="station.province != null">
+        `province` = #{station.province},
+      </if>
+      <if test="station.cityId != null">
+        `city_id` = #{station.cityId},
+      </if>
+      <if test="station.city != null">
+        `city` = #{station.city},
+      </if>
+      <if test="station.areaId != null">
+        `area_id` = #{station.areaId},
+      </if>
+      <if test="station.area != null">
+        `area` = #{station.area},
+      </if>
+      <if test="station.postCode != null">
+        `post_code` = #{station.postCode},
+      </if>
+      <if test="station.addr != null">
+        `addr` = #{station.addr},
+      </if>
+      <if test="station.lng != null">
+        `lng` = #{station.lng},
+      </if>
+      <if test="station.lat != null">
+        `lat` = #{station.lat},
+      </if>
+      <if test="station.timeInfo != null">
+        `time_info` = #{station.timeInfo},
+      </if>
+      <if test="station.status != null">
+        `status` = #{station.status},
+      </if>
+    </set>
+    where station_id = #{station.stationId}
+  </update>
+  <delete id="deleteById">
+    delete from station where station_id = #{stationId}
+  </delete>
+
+</mapper>

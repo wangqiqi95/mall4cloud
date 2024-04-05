@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinConfigMapper">
+  <resultMap id="weixinConfigMap" type="com.mall4j.cloud.biz.model.WeixinConfig">
+    <id column="id" property="id" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="param_key" property="paramKey"/>
+    <result column="param_value" property="paramValue"/>
+    <result column="remark" property="remark"/>
+    <result column="app_id" property="appId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`create_time`,`update_time`,`param_key`,`param_value`,`remark`,`app_id`
+  </sql>
+  <select id="list" resultMap="weixinConfigMap">
+    select <include refid="Vo_Column_List"/> from weixin_config order by id desc
+  </select>
+  <select id="getById" resultMap="weixinConfigMap">
+    select <include refid="Vo_Column_List"/> from weixin_config where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_config (`param_key`,`param_value`,`remark`,`app_id`,`create_by`,`create_time`)
+    values (#{weixinConfig.paramKey},#{weixinConfig.paramValue},#{weixinConfig.remark},#{weixinConfig.appId},#{weixinConfig.createBy},#{weixinConfig.createTime});
+  </insert>
+  <update id="update">
+    update weixin_config
+    <set>
+      <if test="weixinConfig.paramKey != null">
+        `param_key` = #{weixinConfig.paramKey},
+      </if>
+      <if test="weixinConfig.paramValue != null">
+        `param_value` = #{weixinConfig.paramValue},
+      </if>
+      <if test="weixinConfig.remark != null">
+        `remark` = #{weixinConfig.remark},
+      </if>
+      <if test="weixinConfig.appId != null">
+        `app_id` = #{weixinConfig.appId},
+      </if>
+      <if test="weixinConfig.updateBy != null">
+        `update_by` = #{weixinConfig.updateBy},
+      </if>
+      <if test="weixinConfig.updateTime != null">
+        `update_time` = #{weixinConfig.updateTime},
+      </if>
+    </set>
+    where id = #{weixinConfig.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_config where id = #{id}
+  </delete>
+
+  <select id="getWeixinConfigByKey" parameterType="Object"  resultType="com.mall4j.cloud.biz.model.WeixinConfig">
+    SELECT
+      *
+    FROM   weixin_config
+    WHERE
+      app_id=#{appid}
+      and param_key=#{paramKey}
+  </select>
+
+</mapper>

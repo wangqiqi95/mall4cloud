@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.product.mapper.SpuStoreMapper">
+
+
+    <update id="updateBatchPriceFee">
+        <foreach collection="spuStoreList" item="spuStore" separator=";">
+            update spu_store
+            <set>
+                <if test="spuStore.priceFee != null">
+                    `price_fee` = #{spuStore.priceFee},
+                </if>
+                <if test="spuStore.marketPriceFee != null">
+                    `market_price_fee` = #{spuStore.marketPriceFee},
+                </if>
+                <if test="spuStore.updateTime != null">
+                    `update_time` = #{spuStore.updateTime},
+                </if>
+            </set>
+            where spu_id = #{spuStore.spuId} and store_id = #{spuStore.storeId}
+        </foreach>
+    </update>
+</mapper>
+

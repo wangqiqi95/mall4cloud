@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.MallSalesOrderRemarkMapper">
+    <resultMap id="mallSalesOrderRemarkMap" type="com.mall4j.cloud.transfer.model.MallSalesOrderRemark">
+        <id column="Id" property="id"/>
+        <result column="CopId" property="copid"/>
+        <result column="BrandId" property="brandid"/>
+        <result column="OrderId" property="orderid"/>
+        <result column="RemarkDescription" property="remarkdescription"/>
+        <result column="Remark" property="remark"/>
+        <result column="CreateDate" property="createdate"/>
+        <result column="OrderRemarkType" property="orderremarktype"/>
+        <result column="TableId" property="tableid"/>
+        <result column="FlagType" property="flagtype"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `Id`
+        ,
+        `CopId`,
+        `BrandId`,
+        `OrderId`,
+        `RemarkDescription`,
+        `Remark`,
+        `CreateDate`,
+        `OrderRemarkType`,
+        `TableId`,
+        `FlagType`
+    </sql>
+    <select id="list" resultMap="mallSalesOrderRemarkMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall_sales_order_remark order by Id desc
+    </select>
+    <select id="getById" resultMap="mallSalesOrderRemarkMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall_sales_order_remark where Id = #{id}
+    </select>
+
+    <select id="getByOrderId" resultMap="mallSalesOrderRemarkMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall_sales_order_remark where BrandId = 665 and OrderId = #{orderId} and OrderRemarkType = 1 limit 1
+    </select>
+    <insert id="save">
+        insert into mall_sales_order_remark (`CopId`, `BrandId`, `OrderId`, `RemarkDescription`, `Remark`, `CreateDate`,
+                                             `OrderRemarkType`, `TableId`, `FlagType`)
+        values (#{mallSalesOrderRemark.copid}, #{mallSalesOrderRemark.brandid}, #{mallSalesOrderRemark.orderid},
+                #{mallSalesOrderRemark.remarkdescription}, #{mallSalesOrderRemark.remark},
+                #{mallSalesOrderRemark.createdate}, #{mallSalesOrderRemark.orderremarktype},
+                #{mallSalesOrderRemark.tableid}, #{mallSalesOrderRemark.flagtype});
+    </insert>
+    <update id="update">
+        update mall_sales_order_remark
+        <set>
+            <if test="mallSalesOrderRemark.copid != null">
+                `CopId` = #{mallSalesOrderRemark.copid},
+            </if>
+            <if test="mallSalesOrderRemark.brandid != null">
+                `BrandId` = #{mallSalesOrderRemark.brandid},
+            </if>
+            <if test="mallSalesOrderRemark.orderid != null">
+                `OrderId` = #{mallSalesOrderRemark.orderid},
+            </if>
+            <if test="mallSalesOrderRemark.remarkdescription != null">
+                `RemarkDescription` = #{mallSalesOrderRemark.remarkdescription},
+            </if>
+            <if test="mallSalesOrderRemark.remark != null">
+                `Remark` = #{mallSalesOrderRemark.remark},
+            </if>
+            <if test="mallSalesOrderRemark.createdate != null">
+                `CreateDate` = #{mallSalesOrderRemark.createdate},
+            </if>
+            <if test="mallSalesOrderRemark.orderremarktype != null">
+                `OrderRemarkType` = #{mallSalesOrderRemark.orderremarktype},
+            </if>
+            <if test="mallSalesOrderRemark.tableid != null">
+                `TableId` = #{mallSalesOrderRemark.tableid},
+            </if>
+            <if test="mallSalesOrderRemark.flagtype != null">
+                `FlagType` = #{mallSalesOrderRemark.flagtype},
+            </if>
+        </set>
+        where Id = #{mallSalesOrderRemark.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from mall_sales_order_remark
+        where Id = #{id}
+    </delete>
+
+</mapper>

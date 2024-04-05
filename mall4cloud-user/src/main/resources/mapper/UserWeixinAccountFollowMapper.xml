@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserWeixinAccountFollowMapper">
+    <resultMap id="userWeixinAccountFollowMap" type="com.mall4j.cloud.user.model.UserWeixinAccountFollow">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="un_follow_time" property="unFollowTime"/>
+        <result column="ticket" property="ticket"/>
+        <result column="app_id" property="appId"/>
+        <result column="type" property="type"/>
+        <result column="status" property="status"/>
+        <result column="open_id" property="openId"/>
+        <result column="union_id" property="unionId"/>
+        <result column="is_delete" property="isDelete"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`,`create_time`,`update_time`,`app_id`,`type`,`status`,`open_id`,`union_id`,`un_follow_time`,`ticket`,`is_delete`
+    </sql>
+
+    <select id="list" resultType="com.mall4j.cloud.user.vo.UserWeixinAccountFollowVo">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_weixin_account_follow
+        where is_delete=0
+        <if test="dto.appId!=null and dto.appId!=''">
+           and app_id=#{dto.appId}
+        </if>
+        <if test="dto.status!=null">
+            and status=#{dto.status}
+        </if>
+        <if test="dto.startTime!=null and dto.endTime!=null">
+            and create_time between #{dto.startTime} and #{dto.endTime}
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="followData" resultType="com.mall4j.cloud.api.user.vo.UserWeixinAccountFollowDataListVo">
+        select
+        app_id,
+        count(1) as count,
+        status,
+        DATE_FORMAT(create_time, '%Y-%m-%d') as time
+        from user_weixin_account_follow
+        where is_delete = 0
+        and status=1
+        and app_id=#{dto.appId}
+        <if test="dto.startTime!=null and dto.endTime!=null">
+            and create_time between #{dto.startTime} and #{dto.endTime}
+        </if>
+        group by DATE_FORMAT(create_time, '%Y-%m-%d')
+    </select>
+
+    <select id="unFollowData" resultType="com.mall4j.cloud.api.user.vo.UserWeixinAccountFollowDataListVo">
+        select
+        app_id,
+        count(1) as count,
+        status,
+        DATE_FORMAT(update_time, '%Y-%m-%d') as time
+        from user_weixin_account_follow
+        where is_delete = 0
+        and status=2
+        and app_id=#{dto.appId}
+        <if test="dto.startTime!=null and dto.endTime!=null">
+            and update_time between #{dto.startTime} and #{dto.endTime}
+        </if>
+        group by DATE_FORMAT(update_time, '%Y-%m-%d')
+    </select>
+
+    <select id="getById" resultMap="userWeixinAccountFollowMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_weixin_account_follow where id = #{id}
+    </select>
+    <select id="getUserFollowByUnionIdAndAppid" resultType="com.mall4j.cloud.api.user.vo.UserWeixinAccountFollowVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_weixin_account_follow where app_id = #{appId} and union_Id = #{unionId}
+    </select>
+    <insert id="save">
+        insert into user_weixin_account_follow (`app_id`, `type`, `status`, `open_id`, `union_id`,`create_time`)
+        values (#{userWeixinAccountFollow.appId}, #{userWeixinAccountFollow.type}, #{userWeixinAccountFollow.status},
+                #{userWeixinAccountFollow.openId}, #{userWeixinAccountFollow.unionId}, #{userWeixinAccountFollow.createTime});
+    </insert>
+    <update id="update">
+        update user_weixin_account_follow
+        <set>
+            <if test="userWeixinAccountFollow.appId != null">
+                `app_id` = #{userWeixinAccountFollow.appId},
+            </if>
+            <if test="userWeixinAccountFollow.type != null">
+                `type` = #{userWeixinAccountFollow.type},
+            </if>
+            <if test="userWeixinAccountFollow.status != null">
+                `status` = #{userWeixinAccountFollow.status},
+            </if>
+            <if test="userWeixinAccountFollow.openId != null">
+                `open_id` = #{userWeixinAccountFollow.openId},
+            </if>
+            <if test="userWeixinAccountFollow.unionId != null">
+                `union_id` = #{userWeixinAccountFollow.unionId},
+            </if>
+        </set>
+        where id = #{userWeixinAccountFollow.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from user_weixin_account_follow
+        where id = #{id}
+    </delete>
+    <select id="getByUnionIdAndType" resultMap="userWeixinAccountFollowMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from
+        user_weixin_account_follow where union_id = #{unionId} and `type` = #{type}
+    </select>
+
+    <select id="getByOpenId" resultMap="userWeixinAccountFollowMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from
+        user_weixin_account_follow where open_id = #{openId}
+    </select>
+
+    <select id="getListByAppId" resultMap="userWeixinAccountFollowMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from
+        user_weixin_account_follow where is_delete=0 and status=1 and app_id = #{appId}
+    </select>
+
+    <update id="updateStatusByOpneId">
+        update user_weixin_account_follow
+        <set>
+            <if test="status != null">
+                `status` = #{status},
+            </if>
+            <if test="unionId != null and unionId != ''">
+                `union_id` = #{unionId},
+            </if>
+            <if test="unFollowTime != null">
+                `un_follow_time` = #{unFollowTime},
+            </if>
+            <if test="createTime != null">
+                `create_time` = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                `update_time` = #{updateTime},
+            </if>
+        </set>
+        where open_id = #{openId}
+    </update>
+
+    <select id="listByUnionId" resultMap="userWeixinAccountFollowMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from
+        user_weixin_account_follow where union_id = #{unionId}
+    </select>
+
+    <select id="listFollowUpAppIdByUnionId" resultType="java.lang.String">
+        SELECT `app_id`
+        FROM user_weixin_account_follow
+        WHERE `union_id` = #{unionId}
+          AND `status` = 1
+    </select>
+
+    <select id="getUserFollowList" resultType="com.mall4j.cloud.user.vo.UserWeixinAccountFollowVo">
+        SELECT follow.*
+        FROM user_weixin_account_follow follow
+                 LEFT JOIN user ON follow.union_id = user.union_id
+        WHERE user.union_id = #{unionId}
+    </select>
+</mapper>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinQrcodeMapper">
+  <resultMap id="weixinQrcodeMap" type="com.mall4j.cloud.biz.model.WeixinQrcode">
+    <id column="id" property="id" />
+    <result column="action_info" property="actionInfo"/>
+    <result column="action_name" property="actionName"/>
+    <result column="scene_id" property="sceneId"/>
+    <result column="scene_str" property="sceneStr"/>
+    <result column="scene_src" property="sceneSrc"/>
+    <result column="ticket" property="ticket"/>
+    <result column="expire_seconds" property="expireSeconds"/>
+    <result column="expire_date" property="expireDate"/>
+    <result column="qrcode_url" property="qrcodeUrl"/>
+    <result column="url" property="url"/>
+    <result column="app_id" property="appId"/>
+    <result column="msg_type" property="msgType"/>
+    <result column="text_content" property="textContent"/>
+    <result column="action_news_type" property="actionNewsType"/>
+    <result column="news_title" property="newsTitle"/>
+    <result column="news_desc" property="newsDesc"/>
+    <result column="news_img" property="newsImg"/>
+    <result column="news_url" property="newsUrl"/>
+    <result column="news_templateid" property="newsTemplateid"/>
+    <result column="tags" property="tags"/>
+    <result column="store_id" property="storeId"/>
+    <result column="logo_url" property="logoUrl"/>
+    <result column="is_expire" property="isExpire"/>
+    <result column="status" property="status"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+    <result column="contact_type" property="contactType"/>
+    <result column="contact_str" property="contactStr"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`action_info`,`action_name`,`scene_id`,`scene_str`,`scene_src`,`ticket`,`expire_seconds`,`expire_date`,`qrcode_url`,`url`,`app_id`,`msg_type`,`text_content`,`action_news_type`,`news_title`,`news_desc`,`news_img`,`news_url`,`news_templateid`,`tags`,`store_id`,`logo_url`,`is_expire`,`status`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`,`contact_type`,`contact_str`
+  </sql>
+  <select id="list" resultMap="weixinQrcodeMap">
+    select <include refid="Vo_Column_List"/> from weixin_qrcode order by id desc
+  </select>
+  <select id="getById" resultMap="weixinQrcodeMap">
+    select <include refid="Vo_Column_List"/> from weixin_qrcode where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_qrcode (`id`,`action_info`,`action_name`,`scene_id`,`scene_str`,`scene_src`,`ticket`,`expire_seconds`,`expire_date`,`qrcode_url`,`url`,`app_id`,`msg_type`,`text_content`,`action_news_type`,`news_title`,`news_desc`,`news_img`,`news_url`,`news_templateid`,`tags`,`store_id`,`logo_url`,`is_expire`,`status`,`create_by`,`create_time`,`del_flag`,`contact_type`,`contact_str`)
+    values (#{weixinQrcode.id},#{weixinQrcode.actionInfo},#{weixinQrcode.actionName},#{weixinQrcode.sceneId},#{weixinQrcode.sceneStr},#{weixinQrcode.sceneSrc},#{weixinQrcode.ticket},#{weixinQrcode.expireSeconds},#{weixinQrcode.expireDate},#{weixinQrcode.qrcodeUrl},#{weixinQrcode.url},#{weixinQrcode.appId},#{weixinQrcode.msgType},#{weixinQrcode.textContent},#{weixinQrcode.actionNewsType},#{weixinQrcode.newsTitle},#{weixinQrcode.newsDesc},#{weixinQrcode.newsImg},#{weixinQrcode.newsUrl},#{weixinQrcode.newsTemplateid},#{weixinQrcode.tags},#{weixinQrcode.storeId},#{weixinQrcode.logoUrl},#{weixinQrcode.isExpire},#{weixinQrcode.status},#{weixinQrcode.createBy},#{weixinQrcode.createTime},#{weixinQrcode.delFlag},#{weixinQrcode.contactType},#{weixinQrcode.contactStr});
+  </insert>
+  <update id="update">
+    update weixin_qrcode
+    <set>
+      <if test="weixinQrcode.actionInfo != null">
+        `action_info` = #{weixinQrcode.actionInfo},
+      </if>
+      <if test="weixinQrcode.actionName != null">
+        `action_name` = #{weixinQrcode.actionName},
+      </if>
+      <if test="weixinQrcode.sceneId != null">
+        `scene_id` = #{weixinQrcode.sceneId},
+      </if>
+      <if test="weixinQrcode.sceneStr != null">
+        `scene_str` = #{weixinQrcode.sceneStr},
+      </if>
+      <if test="weixinQrcode.sceneSrc != null">
+        `scene_src` = #{weixinQrcode.sceneSrc},
+      </if>
+      <if test="weixinQrcode.ticket != null">
+        `ticket` = #{weixinQrcode.ticket},
+      </if>
+      <if test="weixinQrcode.expireSeconds != null">
+        `expire_seconds` = #{weixinQrcode.expireSeconds},
+      </if>
+      <if test="weixinQrcode.expireDate != null">
+        `expire_date` = #{weixinQrcode.expireDate},
+      </if>
+      <if test="weixinQrcode.qrcodeUrl != null">
+        `qrcode_url` = #{weixinQrcode.qrcodeUrl},
+      </if>
+      <if test="weixinQrcode.url != null">
+        `url` = #{weixinQrcode.url},
+      </if>
+      <if test="weixinQrcode.appId != null">
+        `app_id` = #{weixinQrcode.appId},
+      </if>
+      <if test="weixinQrcode.msgType != null">
+        `msg_type` = #{weixinQrcode.msgType},
+      </if>
+      <if test="weixinQrcode.textContent != null">
+        `text_content` = #{weixinQrcode.textContent},
+      </if>
+      <if test="weixinQrcode.actionNewsType != null">
+        `action_news_type` = #{weixinQrcode.actionNewsType},
+      </if>
+      <if test="weixinQrcode.newsTitle != null">
+        `news_title` = #{weixinQrcode.newsTitle},
+      </if>
+      <if test="weixinQrcode.newsDesc != null">
+        `news_desc` = #{weixinQrcode.newsDesc},
+      </if>
+      <if test="weixinQrcode.newsImg != null">
+        `news_img` = #{weixinQrcode.newsImg},
+      </if>
+      <if test="weixinQrcode.newsUrl != null">
+        `news_url` = #{weixinQrcode.newsUrl},
+      </if>
+      <if test="weixinQrcode.newsTemplateid != null">
+        `news_templateid` = #{weixinQrcode.newsTemplateid},
+      </if>
+      <if test="weixinQrcode.tags != null">
+        `tags` = #{weixinQrcode.tags},
+      </if>
+      <if test="weixinQrcode.storeId != null">
+        `store_id` = #{weixinQrcode.storeId},
+      </if>
+      <if test="weixinQrcode.logoUrl != null">
+        `logo_url` = #{weixinQrcode.logoUrl},
+      </if>
+      <if test="weixinQrcode.isExpire != null">
+        `is_expire` = #{weixinQrcode.isExpire},
+      </if>
+      <if test="weixinQrcode.status != null">
+        `status` = #{weixinQrcode.status},
+      </if>
+      <if test="weixinQrcode.updateBy != null">
+        `update_by` = #{weixinQrcode.updateBy},
+      </if>
+      <if test="weixinQrcode.updateTime != null">
+        `update_time` = #{weixinQrcode.updateTime},
+      </if>
+      <if test="weixinQrcode.delFlag != null">
+        `del_flag` = #{weixinQrcode.delFlag},
+      </if>
+      <if test="weixinQrcode.contactType != null">
+        `contact_type` = #{weixinQrcode.contactType},
+      </if>
+      <if test="weixinQrcode.contactStr != null">
+        `contact_str` = #{weixinQrcode.contactStr},
+      </if>
+    </set>
+    where id = #{weixinQrcode.id}
+  </update>
+  <delete id="deleteById">
+    update weixin_qrcode set del_flag=1,update_time=now() where id = #{id}
+  </delete>
+
+  <select id="getList" resultType="com.mall4j.cloud.biz.vo.WeixinQrcodeVO">
+    select *
+    from weixin_qrcode
+    where del_flag=0
+    <if test="actionInfo!=null and actionInfo!=''">
+      AND action_info LIKE CONCAT('%',#{actionInfo},'%')
+    </if>
+    <if test="storeIds!=null and storeIds.size>0">
+      AND
+      store_id in
+      <foreach collection="storeIds" item="storeId" open="(" close=")" separator=",">
+        #{storeId}
+      </foreach>
+    </if>
+    <if test="startDate!=null and endDate!=null">
+      AND create_time between #{startDate} and #{endDate}
+    </if>
+    order by create_time desc
+  </select>
+
+  <select id="getDownList" resultType="com.mall4j.cloud.biz.model.WeixinQrcode">
+    select *
+    from weixin_qrcode
+    where del_flag=0
+      AND find_in_set(id,#{ids})
+  </select>
+
+  <select id="getByTicket" resultType="com.mall4j.cloud.biz.vo.WeixinQrcodeVO">
+    select *
+    from weixin_qrcode
+    where del_flag=0
+      AND ticket=#{ticket}
+      AND app_id=#{appId}
+  </select>
+
+  <select id="getByStaff" resultType="com.mall4j.cloud.biz.vo.WeixinQrcodeVO">
+    select *
+    from weixin_qrcode
+    where del_flag=0
+      AND store_id=#{staffId}
+      AND app_id=#{appId}
+  </select>
+
+  <select id="getByActionInfo" resultType="com.mall4j.cloud.biz.vo.WeixinQrcodeVO">
+    select *
+    from weixin_qrcode
+    where del_flag=0
+      AND action_info=#{actionInfo}
+      AND app_id=#{appId}
+  </select>
+
+  <select id="getByContactStr" resultType="com.mall4j.cloud.biz.vo.WeixinQrcodeVO">
+    select *
+    from weixin_qrcode
+    where del_flag=0
+      AND contact_str=#{contactStr}
+      AND app_id=#{appId}
+  </select>
+
+  <!-- 查询最大的场景值 -->
+  <select id="queryMaxSceneId" resultType="java.lang.Integer"  >
+    SELECT MAX(a.scene_id)
+    FROM weixin_qrcode AS a
+    WHERE a.app_id = #{appId}
+      AND a.action_name = #{actionName}
+  </select>
+</mapper>

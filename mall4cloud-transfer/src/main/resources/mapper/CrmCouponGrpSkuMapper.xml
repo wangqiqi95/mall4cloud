@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.CrmCouponGrpSkuMapper">
+    <resultMap id="crmCouponGrpSkuMap" type="com.mall4j.cloud.transfer.model.CrmCouponGrpSku">
+        <id column="Id" property="id"/>
+        <result column="CopId" property="copid"/>
+        <result column="BrandId" property="brandid"/>
+        <result column="CouponGrpId" property="coupongrpid"/>
+        <result column="ProdId" property="prodid"/>
+        <result column="Sku" property="sku"/>
+        <result column="Name" property="name"/>
+        <result column="CreateUser" property="createuser"/>
+        <result column="CreateDate" property="createdate"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `Id`
+        ,
+        `CopId`,
+        `BrandId`,
+        `CouponGrpId`,
+        `ProdId`,
+        `Sku`,
+        `Name`,
+        `CreateUser`,
+        `CreateDate`
+    </sql>
+    <select id="list" resultMap="crmCouponGrpSkuMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from crm_coupon_grp_sku order by Id desc
+    </select>
+    <select id="listByCouponId" resultMap="crmCouponGrpSkuMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from crm_coupon_grp_sku_add
+        where CouponGrpId = #{couponId}
+        order by Id desc
+    </select>
+    <select id="getById" resultMap="crmCouponGrpSkuMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from crm_coupon_grp_sku where Id = #{id}
+    </select>
+    <insert id="save">
+        insert into crm_coupon_grp_sku (`CopId`, `BrandId`, `CouponGrpId`, `ProdId`, `Sku`, `Name`, `CreateUser`,
+                                        `CreateDate`)
+        values (#{crmCouponGrpSku.copid}, #{crmCouponGrpSku.brandid}, #{crmCouponGrpSku.coupongrpid},
+                #{crmCouponGrpSku.prodid}, #{crmCouponGrpSku.sku}, #{crmCouponGrpSku.name},
+                #{crmCouponGrpSku.createuser}, #{crmCouponGrpSku.createdate});
+    </insert>
+    <update id="update">
+        update crm_coupon_grp_sku
+        <set>
+            <if test="crmCouponGrpSku.copid != null">
+                `CopId` = #{crmCouponGrpSku.copid},
+            </if>
+            <if test="crmCouponGrpSku.brandid != null">
+                `BrandId` = #{crmCouponGrpSku.brandid},
+            </if>
+            <if test="crmCouponGrpSku.coupongrpid != null">
+                `CouponGrpId` = #{crmCouponGrpSku.coupongrpid},
+            </if>
+            <if test="crmCouponGrpSku.prodid != null">
+                `ProdId` = #{crmCouponGrpSku.prodid},
+            </if>
+            <if test="crmCouponGrpSku.sku != null">
+                `Sku` = #{crmCouponGrpSku.sku},
+            </if>
+            <if test="crmCouponGrpSku.name != null">
+                `Name` = #{crmCouponGrpSku.name},
+            </if>
+            <if test="crmCouponGrpSku.createuser != null">
+                `CreateUser` = #{crmCouponGrpSku.createuser},
+            </if>
+            <if test="crmCouponGrpSku.createdate != null">
+                `CreateDate` = #{crmCouponGrpSku.createdate},
+            </if>
+        </set>
+        where Id = #{crmCouponGrpSku.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from crm_coupon_grp_sku
+        where Id = #{id}
+    </delete>
+
+</mapper>

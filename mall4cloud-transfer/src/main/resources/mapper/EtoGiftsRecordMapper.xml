@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.EtoGiftsRecordMapper">
+    <resultMap id="etoGiftsRecordMap" type="com.mall4j.cloud.transfer.model.EtoGiftsRecord">
+        <id column="id" property="id"/>
+        <result column="userId" property="userid"/>
+        <result column="number" property="number"/>
+        <result column="mobile" property="mobile"/>
+        <result column="cost_integral" property="costIntegral"/>
+        <result column="gift_id" property="giftId"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`
+        ,
+        `userId`,
+        `number`,
+        `mobile`,
+        `cost_integral`,
+        `gift_id`,
+        `created_at`
+    </sql>
+    <select id="list" resultMap="etoGiftsRecordMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from eto_gifts_record order by id desc
+    </select>
+    <select id="listByGiftsId" resultMap="etoGiftsRecordMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from eto_gifts_record_add
+        where gift_id = #{giftId}
+        order by id desc
+    </select>
+    <select id="getById" resultMap="etoGiftsRecordMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from eto_gifts_record where id = #{id}
+    </select>
+    <insert id="save">
+        insert into eto_gifts_record (`userId`, `number`, `mobile`, `cost_integral`, `gift_id`, `created_at`)
+        values (#{etoGiftsRecord.userid}, #{etoGiftsRecord.number}, #{etoGiftsRecord.mobile},
+                #{etoGiftsRecord.costIntegral}, #{etoGiftsRecord.giftId}, #{etoGiftsRecord.createdAt});
+    </insert>
+    <update id="update">
+        update eto_gifts_record
+        <set>
+            <if test="etoGiftsRecord.userid != null">
+                `userId` = #{etoGiftsRecord.userid},
+            </if>
+            <if test="etoGiftsRecord.number != null">
+                `number` = #{etoGiftsRecord.number},
+            </if>
+            <if test="etoGiftsRecord.mobile != null">
+                `mobile` = #{etoGiftsRecord.mobile},
+            </if>
+            <if test="etoGiftsRecord.costIntegral != null">
+                `cost_integral` = #{etoGiftsRecord.costIntegral},
+            </if>
+            <if test="etoGiftsRecord.giftId != null">
+                `gift_id` = #{etoGiftsRecord.giftId},
+            </if>
+            <if test="etoGiftsRecord.createdAt != null">
+                `created_at` = #{etoGiftsRecord.createdAt},
+            </if>
+        </set>
+        where id = #{etoGiftsRecord.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from eto_gifts_record
+        where id = #{id}
+    </delete>
+
+</mapper>

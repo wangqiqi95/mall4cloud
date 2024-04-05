@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.coupon.mapper.ChooseMemberEventMobileRelationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.coupon.model.ChooseMemberEventMobileRelation">
+        <id column="event_user_relation_id" property="eventUserRelationId" />
+        <result column="choose_member_event_id" property="chooseMemberEventId" />
+        <result column="mobile" property="mobile" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        event_user_relation_id, choose_member_event_id, mobile, create_time
+    </sql>
+
+    <insert id="insertBatch">
+        insert into t_choose_member_event_mobile_relation (choose_member_event_id,mobile) values
+        <foreach collection="relationList" item="relation" separator="," close=";">
+            (#{relation.chooseMemberEventId},#{relation.mobile})
+        </foreach>
+    </insert>
+
+</mapper>

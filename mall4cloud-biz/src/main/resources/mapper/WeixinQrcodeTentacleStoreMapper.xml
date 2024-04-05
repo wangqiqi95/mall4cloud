@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinQrcodeTentacleStoreMapper">
+  <resultMap id="weixinQrcodeTentacleStoreMap" type="com.mall4j.cloud.biz.model.WeixinQrcodeTentacleStore">
+    <id column="id" property="id" />
+    <result column="tentacle_id" property="tentacleId"/>
+    <result column="store_id" property="storeId"/>
+    <result column="path" property="path"/>
+    <result column="scene" property="scene"/>
+    <result column="code_width" property="codeWidth"/>
+    <result column="qrcode_path" property="qrcodePath"/>
+    <result column="status" property="status"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`tentacle_id`,`store_id`,`path`,`scene`,`code_width`,`qrcode_path`,`status`,`create_time`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinQrcodeTentacleStoreMap">
+    select <include refid="Vo_Column_List"/> from weixin_qrcode_tentacle_store order by id desc
+  </select>
+  <select id="getById" resultMap="weixinQrcodeTentacleStoreMap">
+    select <include refid="Vo_Column_List"/> from weixin_qrcode_tentacle_store where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_qrcode_tentacle_store (`id`,`tentacle_id`,`store_id`,`path`,`scene`,`code_width`,`qrcode_path`,`status`,`create_time`,`del_flag`)
+    values (#{weixinQrcodeTentacleStore.id},#{weixinQrcodeTentacleStore.tentacleId},#{weixinQrcodeTentacleStore.storeId},#{weixinQrcodeTentacleStore.path},#{weixinQrcodeTentacleStore.scene},#{weixinQrcodeTentacleStore.codeWidth},#{weixinQrcodeTentacleStore.qrcodePath},#{weixinQrcodeTentacleStore.status},#{weixinQrcodeTentacleStore.createTime},#{weixinQrcodeTentacleStore.delFlag});
+  </insert>
+  <insert id="saveBatch">
+    insert into weixin_qrcode_tentacle_store (`id`,`tentacle_id`,`store_id`,`path`,`scene`,`code_width`,`qrcode_path`,`status`,`create_time`,`del_flag`) values
+    <foreach collection="tentacleStores" item="weixinQrcodeTentacleStore" separator=",">
+      (#{weixinQrcodeTentacleStore.id},#{weixinQrcodeTentacleStore.tentacleId},#{weixinQrcodeTentacleStore.storeId},#{weixinQrcodeTentacleStore.path},#{weixinQrcodeTentacleStore.scene},#{weixinQrcodeTentacleStore.codeWidth},#{weixinQrcodeTentacleStore.qrcodePath},#{weixinQrcodeTentacleStore.status},#{weixinQrcodeTentacleStore.createTime},#{weixinQrcodeTentacleStore.delFlag})
+    </foreach>
+  </insert>
+
+  <update id="update">
+    update weixin_qrcode_tentacle_store
+    <set>
+      <if test="weixinQrcodeTentacleStore.tentacleId != null">
+        `tentacle_id` = #{weixinQrcodeTentacleStore.tentacleId},
+      </if>
+      <if test="weixinQrcodeTentacleStore.storeId != null">
+        `store_id` = #{weixinQrcodeTentacleStore.storeId},
+      </if>
+      <if test="weixinQrcodeTentacleStore.path != null">
+        `path` = #{weixinQrcodeTentacleStore.path},
+      </if>
+      <if test="weixinQrcodeTentacleStore.scene != null">
+        `scene` = #{weixinQrcodeTentacleStore.scene},
+      </if>
+      <if test="weixinQrcodeTentacleStore.codeWidth != null">
+        `code_width` = #{weixinQrcodeTentacleStore.codeWidth},
+      </if>
+      <if test="weixinQrcodeTentacleStore.qrcodePath != null">
+        `qrcode_path` = #{weixinQrcodeTentacleStore.qrcodePath},
+      </if>
+      <if test="weixinQrcodeTentacleStore.status != null">
+        `status` = #{weixinQrcodeTentacleStore.status},
+      </if>
+      <if test="weixinQrcodeTentacleStore.updateTime != null">
+        `update_time` = #{weixinQrcodeTentacleStore.updateTime},
+      </if>
+      <if test="weixinQrcodeTentacleStore.delFlag != null">
+        `del_flag` = #{weixinQrcodeTentacleStore.delFlag},
+      </if>
+    </set>
+    where id = #{weixinQrcodeTentacleStore.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_qrcode_tentacle_store where id = #{id}
+  </delete>
+
+  <select id="getList" resultType="com.mall4j.cloud.biz.vo.WeixinQrcodeTentacleStoreVO">
+    select *
+    from weixin_qrcode_tentacle_store
+    where del_flag=0
+      and tentacle_id=#{tentacleId}
+    order by create_time desc
+  </select>
+
+  <select id="selectQrcodeTentacleStoreItemOfUserId" resultType="java.lang.Integer">
+    SELECT COUNT(1)
+    FROM mall4cloud_biz.weixin_qrcode_tentacle_store_item t1
+    WHERE t1.uniid = #{unionId}
+    AND t1.tentacle_store_id = #{tentacleStoreId};
+  </select>
+
+  <select id="getStoreListByTentacleIds" resultType="com.mall4j.cloud.biz.vo.WeixinQrcodeTentacleStoreItemExportVO">
+    SELECT
+        i.id,
+        i.tentacle_store_id AS tentacleStoreId,
+        s.store_id AS storeId,
+        i.uniid AS uniId,
+        i.vipcode AS vipCode,
+        i.nick_name AS nickName,
+        i.check_time AS checkTime
+    FROM weixin_qrcode_tentacle_store_item AS i
+    LEFT JOIN weixin_qrcode_tentacle_store AS s ON i.tentacle_store_id = s.id
+    WHERE
+        i.tentacle_store_id IN
+    <foreach collection = "tentacleStoreIds" item="item"  index="index" open="("  separator="," close=")">
+        #{item}
+    </foreach>
+    ORDER BY i.check_time DESC
+  </select>
+
+  <update id="updateByTentacleStoreId">
+    update weixin_qrcode_tentacle_store
+    <set>
+      `open_number` = `open_number`+1,
+      <if test = "checkNum == 0">
+        `open_people` = open_people+1
+      </if>
+    </set>
+    where id = #{tentacleStoreId}
+  </update>
+
+</mapper>

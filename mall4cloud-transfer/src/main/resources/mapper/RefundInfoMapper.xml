@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.RefundInfoMapper">
+  <resultMap id="refundInfoMap" type="com.mall4j.cloud.transfer.model.RefundInfo">
+    <id column="refund_id" property="refundId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="order_id" property="orderId"/>
+    <result column="pay_id" property="payId"/>
+    <result column="user_id" property="userId"/>
+    <result column="refund_status" property="refundStatus"/>
+    <result column="refund_amount" property="refundAmount"/>
+    <result column="pay_type" property="payType"/>
+    <result column="callback_content" property="callbackContent"/>
+    <result column="callback_time" property="callbackTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `refund_id`,`create_time`,`update_time`,`order_id`,`pay_id`,`user_id`,`refund_status`,`refund_amount`,`pay_type`,`callback_content`,`callback_time`
+  </sql>
+  <select id="list" resultMap="refundInfoMap">
+    select <include refid="Vo_Column_List"/> from refund_info order by refund_id desc
+  </select>
+  <select id="getByRefundId" resultMap="refundInfoMap">
+    select <include refid="Vo_Column_List"/> from refund_info where refund_id = #{refundId}
+  </select>
+  <insert id="save">
+    insert into refund_info_add (refund_id,`order_id`,`pay_id`,`user_id`,`refund_status`,`refund_amount`,`pay_type`,`callback_content`,`callback_time`)
+    values (#{refundInfo.refundId},#{refundInfo.orderId},#{refundInfo.payId},#{refundInfo.userId},#{refundInfo.refundStatus},#{refundInfo.refundAmount},#{refundInfo.payType},#{refundInfo.callbackContent},#{refundInfo.callbackTime});
+  </insert>
+
+    <insert id="save2">
+        insert into refund_info_add (refund_id,`order_id`,`pay_id`,`user_id`,`refund_status`,`refund_amount`,`pay_type`,`callback_content`,`callback_time`)
+        values (#{refundInfo.refundId},#{refundInfo.orderId},#{refundInfo.payId},#{refundInfo.userId},#{refundInfo.refundStatus},#{refundInfo.refundAmount},#{refundInfo.payType},#{refundInfo.callbackContent},#{refundInfo.callbackTime});
+    </insert>
+  <update id="update">
+    update refund_info
+    <set>
+      <if test="refundInfo.orderId != null">
+        `order_id` = #{refundInfo.orderId},
+      </if>
+      <if test="refundInfo.payId != null">
+        `pay_id` = #{refundInfo.payId},
+      </if>
+      <if test="refundInfo.userId != null">
+        `user_id` = #{refundInfo.userId},
+      </if>
+      <if test="refundInfo.refundStatus != null">
+        `refund_status` = #{refundInfo.refundStatus},
+      </if>
+      <if test="refundInfo.refundAmount != null">
+        `refund_amount` = #{refundInfo.refundAmount},
+      </if>
+      <if test="refundInfo.payType != null">
+        `pay_type` = #{refundInfo.payType},
+      </if>
+      <if test="refundInfo.callbackContent != null">
+        `callback_content` = #{refundInfo.callbackContent},
+      </if>
+      <if test="refundInfo.callbackTime != null">
+        `callback_time` = #{refundInfo.callbackTime},
+      </if>
+    </set>
+    where refund_id = #{refundInfo.refundId}
+  </update>
+  <delete id="deleteById">
+    delete from refund_info where refund_id = #{refundId}
+  </delete>
+
+</mapper>

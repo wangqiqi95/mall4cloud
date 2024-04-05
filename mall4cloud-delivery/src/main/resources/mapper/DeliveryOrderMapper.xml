@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.delivery.mapper.DeliveryOrderMapper">
+    <resultMap id="deliveryOrderMap" type="com.mall4j.cloud.delivery.model.DeliveryOrder">
+        <id column="delivery_order_id" property="deliveryOrderId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="order_id" property="orderId"/>
+        <result column="delivery_company_id" property="deliveryCompanyId"/>
+        <result column="delivery_no" property="deliveryNo"/>
+        <result column="consignee_name" property="consigneeName"/>
+        <result column="consignee_mobile" property="consigneeMobile"/>
+        <result column="status" property="status"/>
+        <result column="all_count" property="allCount"/>
+        <result column="delete_time" property="deleteTime"/>
+        <result column="delivery_type" property="deliveryType"/>
+    </resultMap>
+
+    <resultMap type="com.mall4j.cloud.api.delivery.vo.DeliveryOrderFeignVO" id="deliveryOrderAndOrderItem"
+               extends="deliveryOrderMap">
+        <result column="delivery_mame" property="deliveryName"/>
+        <collection property="orderItems" ofType="com.mall4j.cloud.api.delivery.vo.DeliveryOrderItemFeignVO">
+            <id column="id" property="id"/>
+            <result column="create_time" property="createTime"/>
+            <result column="update_time" property="updateTime"/>
+            <result column="delivery_order_id" property="deliveryOrderId"/>
+            <result column="img_url" property="imgUrl"/>
+            <result column="spu_name" property="spuName"/>
+            <result column="count" property="count"/>
+        </collection>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `delivery_order_id`,
+        `create_time`,
+        `update_time`,
+        `order_id`,
+        `delivery_company_id`,
+        `delivery_no`,
+        `consignee_name`,
+        `consignee_mobile`,
+        `status`,
+        `all_count`,
+        `delete_time`,
+        `delivery_type`
+    </sql>
+    <select id="list" resultType="com.mall4j.cloud.delivery.vo.DeliveryOrderVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from delivery_order
+        order by delivery_order_id desc
+    </select>
+    <select id="getByDeliveryOrderId" resultType="com.mall4j.cloud.delivery.vo.DeliveryOrderVO">
+        select od.delivery_order_id
+             , od.create_time
+             , od.update_time
+             , od.order_id
+             , od.delivery_company_id
+             , od.delivery_no
+             , od.consignee_name
+             , od.consignee_mobile
+             , od.status
+             , od.all_count
+             , od.delete_time
+             , od.delivery_type
+             , dc.name as delivery_name
+        from delivery_order od
+                     left join delivery_company dc on dc.delivery_company_id = od.delivery_company_id
+        where delivery_order_id = #{deliveryOrderId}
+    </select>
+    <insert id="save" useGeneratedKeys="true" keyProperty="deliveryOrderId">
+        insert into delivery_order (`order_id`, `delivery_company_id`, `delivery_no`, `consignee_name`,
+                                    `consignee_mobile`, `status`, `all_count`, `delete_time`,`delivery_type`)
+        values (#{deliveryOrder.orderId}, #{deliveryOrder.deliveryCompanyId}, #{deliveryOrder.deliveryNo},
+                #{deliveryOrder.consigneeName}, #{deliveryOrder.consigneeMobile}, #{deliveryOrder.status},
+                #{deliveryOrder.allCount}, #{deliveryOrder.deleteTime},#{deliveryOrder.deliveryType});
+    </insert>
+    <update id="update">
+        update delivery_order
+        <set>
+            <if test="deliveryOrder.orderId != null">
+                `order_id` = #{deliveryOrder.orderId},
+            </if>
+            <if test="deliveryOrder.deliveryCompanyId != null">
+                `delivery_company_id` = #{deliveryOrder.deliveryCompanyId},
+            </if>
+            <if test="deliveryOrder.deliveryNo != null">
+                `delivery_no` = #{deliveryOrder.deliveryNo},
+            </if>
+            <if test="deliveryOrder.consigneeName != null">
+                `consignee_name` = #{deliveryOrder.consigneeName},
+            </if>
+            <if test="deliveryOrder.consigneeMobile != null">
+                `consignee_mobile` = #{deliveryOrder.consigneeMobile},
+            </if>
+            <if test="deliveryOrder.status != null">
+                `status` = #{deliveryOrder.status},
+            </if>
+            <if test="deliveryOrder.allCount != null">
+                `all_count` = #{deliveryOrder.allCount},
+            </if>
+            <if test="deliveryOrder.deleteTime != null">
+                `delete_time` = #{deliveryOrder.deleteTime},
+            </if>
+            <if test="deliveryOrder.deliveryType != null">
+                `delivery_type` = #{deliveryOrder.deliveryType},
+            </if>
+        </set>
+        where delivery_order_id = #{deliveryOrder.deliveryOrderId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from delivery_order
+        where delivery_order_id = #{deliveryOrderId}
+    </delete>
+
+    <select id="getByDeliveryByOrderId" resultMap="deliveryOrderAndOrderItem">
+        SELECT dor.*, doi.*
+        FROM delivery_order dor
+        JOIN delivery_order_item doi ON dor.delivery_order_id = doi.delivery_order_id
+        where dor.order_id = #{orderId}
+    </select>
+
+    <update id="updateBatch">
+        <foreach collection="deliveryOrderList" item="deliveryOrder" separator=";">
+            update delivery_order
+            <set>
+                <if test="deliveryOrder.deliveryCompanyId != null">
+                    `delivery_company_id` = #{deliveryOrder.deliveryCompanyId},
+                </if>
+                <if test="deliveryOrder.deliveryNo != null">
+                    `delivery_no` = #{deliveryOrder.deliveryNo},
+                </if>
+            </set>
+            where delivery_order_id = #{deliveryOrder.deliveryOrderId}
+        </foreach>
+    </update>
+</mapper>

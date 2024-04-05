@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.flow.mapper.ProductAnalyseMapper">
+  <resultMap id="productAnalyseMap" type="com.mall4j.cloud.flow.model.ProductAnalyse">
+    <id column="product_analyse_id" property="productAnalyseId" />
+    <result column="create_date" property="createDate"/>
+    <result column="system_type" property="systemType"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="visis" property="visis"/>
+    <result column="click" property="click"/>
+    <result column="stop_time" property="stopTime"/>
+    <result column="share_visit" property="shareVisit"/>
+    <result column="place_order_amount" property="placeOrderAmount"/>
+    <result column="pay_amount" property="payAmount"/>
+    <result column="plus_shop_cart" property="plusShopCart"/>
+  </resultMap>
+
+  <resultMap id="productAnalyseAndUserMap" type="com.mall4j.cloud.flow.model.ProductAnalyse">
+    <id column="product_analyse_id" property="productAnalyseId" />
+    <result column="create_date" property="createDate"/>
+    <result column="system_type" property="systemType"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="visis" property="visis"/>
+    <result column="click" property="click"/>
+    <result column="share_visit" property="shareVisit"/>
+    <result column="plus_shop_cart" property="plusShopCart"/>
+    <collection property="productAnalyseUsers" ofType="com.mall4j.cloud.flow.model.ProductAnalyseUser">
+      <result column="product_analyse_user_id" property="productAnalyseUserId"/>
+      <result column="product_analyse_id" property="productAnalyseId"/>
+      <result column="user_id" property="userId"/>
+      <result column="create_date" property="createDate"/>
+      <result column="spu_id" property="spuId"/>
+      <result column="is_visit" property="isVisit"/>
+      <result column="is_click" property="isClick"/>
+      <result column="is_plus_shop_cart" property="isPlusShopCart"/>
+    </collection>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `product_analyse_id`,`create_date`,`system_type`,`spu_id`,`shop_id`,`visis`,`click`,`share_visit`,`plus_shop_cart`
+  </sql>
+  <select id="list" resultMap="productAnalyseMap">
+    select <include refid="Vo_Column_List"/> from product_analyse order by product_analyse_id desc
+  </select>
+  <select id="getByProductAnalyseId" resultMap="productAnalyseMap">
+    select <include refid="Vo_Column_List"/> from product_analyse where product_analyse_id = #{productAnalyseId}
+  </select>
+  <insert id="save">
+    insert into product_analyse (`create_date`,`system_type`,`spu_id`,`shop_id`,`visis`,`click`,`share_visit`,`plus_shop_cart`)
+    values (#{productAnalyse.createDate},#{productAnalyse.systemType},#{productAnalyse.spuId},#{productAnalyse.shopId},#{productAnalyse.visis},#{productAnalyse.click},#{productAnalyse.shareVisit},#{productAnalyse.plusShopCart});
+  </insert>
+  <update id="update">
+    update product_analyse
+    <set>
+      <if test="productAnalyse.createDate != null">
+        `create_date` = #{productAnalyse.createDate},
+      </if>
+      <if test="productAnalyse.systemType != null">
+        `system_type` = #{productAnalyse.systemType},
+      </if>
+      <if test="productAnalyse.spuId != null">
+        `spu_id` = #{productAnalyse.spuId},
+      </if>
+      <if test="productAnalyse.shopId != null">
+        `shop_id` = #{productAnalyse.shopId},
+      </if>
+      <if test="productAnalyse.visis != null">
+        `visis` = #{productAnalyse.visis},
+      </if>
+      <if test="productAnalyse.click != null">
+        `click` = #{productAnalyse.click},
+      </if>
+      <if test="productAnalyse.shareVisit != null">
+        `share_visit` = #{productAnalyse.shareVisit},
+      </if>
+      <if test="productAnalyse.plusShopCart != null">
+        `plus_shop_cart` = #{productAnalyse.plusShopCart},
+      </if>
+    </set>
+    where product_analyse_id = #{productAnalyse.productAnalyseId}
+  </update>
+  <delete id="deleteById">
+    delete from product_analyse where product_analyse_id = #{productAnalyseId}
+  </delete>
+
+  <select id="listByDate" resultMap="productAnalyseAndUserMap">
+    SELECT pa.product_analyse_id,pa.create_date,pa.system_type,pa.spu_id,pa.shop_id,pa.visis,pa.click,pa.share_visit,pa.plus_shop_cart,
+           pau.product_analyse_user_id,pau.product_analyse_id,pau.user_id,pau.spu_id,pau.is_visit,pau.is_click,pau.is_plus_shop_cart
+    FROM product_analyse pa
+    LEFT JOIN product_analyse_user pau ON pa.product_analyse_id = pau.product_analyse_id
+    WHERE pa.create_date = #{date}
+    <if test="spuIds != null and spuIds.size() != 0">
+      AND pa.spu_id IN
+      <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+        #{spuId}
+      </foreach>
+    </if>
+    <if test="userIds != null and userIds.size() != 0">
+      AND pau.user_id IN
+      <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+        #{userId}
+      </foreach>
+    </if>
+  </select>
+  <select id="getProdEffectByParam" resultType="com.mall4j.cloud.flow.vo.FlowProdEffectRespVO">
+    SELECT pa.*,pau.add_cart_person,pau.expose_person_num
+    FROM (
+    SELECT SUM(plus_shop_cart) add_cart,SUM(visis) expose,spu_id
+    FROM product_analyse
+    GROUP BY spu_id ) AS pa
+    JOIN ( SELECT SUM(IF(u.is_plus_shop_cart > 0,1,0)) add_cart_person,COUNT(*) expose_person_num,spu_id
+    FROM ( SELECT `user_id`,SUM(is_plus_shop_cart) is_plus_shop_cart,spu_id
+    FROM product_analyse_user
+    WHERE create_date &gt;= #{startTime} AND create_date &lt;= #{endTime} AND spu_id IN
+    <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+      #{spuId}
+    </foreach>
+    GROUP BY spu_id,`user_id` ) AS u
+    GROUP BY u.spu_id ) AS pau ON pa.spu_id = pau.spu_id
+  </select>
+  <select id="listShopRankIngByFlow" resultType="com.mall4j.cloud.flow.vo.ShopFlowInfoVO">
+    SELECT
+    pa.shop_id AS shopId,
+    ifnull( sum( pa.visis ), 0 ) AS visitCount,
+    count( DISTINCT pau.user_id ) AS visitUserCount
+    FROM
+    product_analyse pa
+    LEFT JOIN product_analyse_user pau ON pa.product_analyse_id = pau.product_analyse_id
+    <where>
+      <if test="startTime != null">
+        AND pa.create_date &gt;= #{startTime}
+      </if>
+      <if test="endTime != null">
+        AND pa.create_date &lt;= #{endTime}
+      </if>
+    </where>
+    GROUP BY
+    pa.shop_id
+    ORDER BY
+    ifnull( sum( pa.visis ), 0 ) DESC
+    limit 0, #{limit}
+  </select>
+  <select id="getProdEffectRespByTime" resultType="com.mall4j.cloud.api.product.vo.ProdEffectRespVO">
+    select distinct spu_id
+    from product_analyse
+    where create_date &gt;= #{startTime} AND create_date &lt;= #{endTime}
+    <if test="shopId != null">
+      AND shop_id = #{shopId}
+    </if>
+    group by spu_id
+  </select>
+  <insert id="saveBatch" useGeneratedKeys="true" keyProperty="productAnalyseId">
+    insert into product_analyse (`create_date`,`system_type`,`spu_id`,`shop_id`,`visis`,`click`,`share_visit`,`plus_shop_cart`)
+    values
+    <foreach collection="productAnalyses" item="productAnalyse" separator=",">
+        (#{productAnalyse.createDate},#{productAnalyse.systemType},#{productAnalyse.spuId},#{productAnalyse.shopId},#{productAnalyse.visis},#{productAnalyse.click},#{productAnalyse.shareVisit},#{productAnalyse.plusShopCart})
+    </foreach>
+  </insert>
+
+  <update id="updateBatch">
+    <foreach collection="productAnalyses" item="productAnalyse">
+      update product_analyse
+      <set>
+        <if test="productAnalyse.visis != null">
+          `visis` = #{productAnalyse.visis},
+        </if>
+        <if test="productAnalyse.click != null">
+          `click` = #{productAnalyse.click},
+        </if>
+        <if test="productAnalyse.shareVisit != null">
+          `share_visit` = #{productAnalyse.shareVisit},
+        </if>
+        <if test="productAnalyse.plusShopCart != null">
+          `plus_shop_cart` = #{productAnalyse.plusShopCart},
+        </if>
+      </set>
+      where product_analyse_id = #{productAnalyse.productAnalyseId};
+    </foreach>
+  </update>
+
+  <delete id="deleteSpuDataBySpuId">
+    delete from product_analyse where spu_id = #{spuId}
+  </delete>
+</mapper>

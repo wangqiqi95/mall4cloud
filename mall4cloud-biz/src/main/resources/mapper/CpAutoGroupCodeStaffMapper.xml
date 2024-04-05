@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpAutoGroupCodeStaffMapper">
+  <resultMap id="cpAutoGroupCodeStaffMap" type="com.mall4j.cloud.biz.model.cp.CpAutoGroupCodeStaff">
+    <id column="id" property="id" />
+    <result column="code_id" property="codeId"/>
+    <result column="staff_id" property="staffId"/>
+    <result column="staff_name" property="staffName"/>
+    <result column="user_id" property="userId"/>
+    <result column="is_delete" property="isDelete"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`code_id`,`staff_id`,`staff_name`,`user_id`,`is_delete`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.biz.vo.cp.CpAutoGroupCodeStaffVO">
+    select <include refid="Vo_Column_List"/>
+    from cp_auto_group_code_staff
+    where is_delete=0
+    and code_id=#{dto.codeId}
+    <if test="dto.staffs!=null and dto.staffs.size()>0">
+      and staff_id in
+      <foreach collection="dto.staffs" item="staffId" open="(" close=")" separator=",">
+        #{staffId}
+      </foreach>
+    </if>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="cpAutoGroupCodeStaffMap">
+    select <include refid="Vo_Column_List"/> from cp_auto_group_code_staff where id = #{id}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into cp_auto_group_code_staff (`id`,`code_id`,`staff_id`,`staff_name`,`user_id`,`is_delete`)
+    values (#{cpAutoGroupCodeStaff.id},#{cpAutoGroupCodeStaff.codeId},#{cpAutoGroupCodeStaff.staffId},#{cpAutoGroupCodeStaff.staffName},#{cpAutoGroupCodeStaff.userId},#{cpAutoGroupCodeStaff.isDelete});
+  </insert>
+  <update id="update">
+    update cp_auto_group_code_staff
+    <set>
+      <if test="cpAutoGroupCodeStaff.codeId != null">
+        `code_id` = #{cpAutoGroupCodeStaff.codeId},
+      </if>
+      <if test="cpAutoGroupCodeStaff.staffId != null">
+        `staff_id` = #{cpAutoGroupCodeStaff.staffId},
+      </if>
+      <if test="cpAutoGroupCodeStaff.staffName != null">
+        `staff_name` = #{cpAutoGroupCodeStaff.staffName},
+      </if>
+      <if test="cpAutoGroupCodeStaff.userId != null">
+        `user_id` = #{cpAutoGroupCodeStaff.userId},
+      </if>
+      <if test="cpAutoGroupCodeStaff.isDelete != null">
+        `is_delete` = #{cpAutoGroupCodeStaff.isDelete},
+      </if>
+    </set>
+    where id = #{cpAutoGroupCodeStaff.id}
+  </update>
+  <delete id="deleteById">
+    delete from cp_auto_group_code_staff where id = #{id}
+  </delete>
+
+  <delete id="deleteByCodeId">
+    update cp_auto_group_code_staff set is_delete=1 where code_id = #{codeId}
+  </delete>
+
+</mapper>

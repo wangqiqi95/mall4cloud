@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.DistributionMomentsMapper">
+  <resultMap id="distributionMomentsMap" type="com.mall4j.cloud.biz.model.cp.DistributionMoments">
+    <id column="id" property="id" />
+    <result column="title" property="title"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="avatar_url" property="avatarUrl"/>
+    <result column="desc_html" property="descHtml"/>
+    <result column="comment" property="comment"/>
+    <result column="product_type" property="productType"/>
+    <result column="store_type" property="storeType"/>
+    <result column="distribution_type" property="distributionType"/>
+    <result column="status" property="status"/>
+    <result column="top" property="top"/>
+    <result column="top_time" property="topTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="enable_time" property="enableTime"/>
+    <result column="qw_job_id" property="qwJobId"/>
+    <result column="qw_moments_id" property="qwMomentsId"/>
+    <result column="send_result" property="sendResult"/>
+    <result column="send_status" property="sendStatus"/>
+  </resultMap>
+
+  <resultMap id="distributionMomentsVOMap" extends="distributionMomentsMap" type="com.mall4j.cloud.biz.vo.cp.DistributionMomentsVO">
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `id`,`title`,`start_time`,`end_time`,`avatar_url`,`desc_html`,`comment`,`product_type`,
+    `store_type`,`distribution_type`,`status`,`top`,`top_time`,`create_time`,`update_time`,enable_time,qw_job_id,qw_moments_id,send_result,send_status
+  </sql>
+  <select id="list" resultMap="distributionMomentsMap">
+    select
+        <include refid="Vo_Column_List"/>
+    from distribution_moments
+    <where>
+      <if test="distributionMoments.title != null and distributionMoments.title != ''">
+        and title like concat('%',#{distributionMoments.title},'%')
+      </if>
+      <if test="distributionMoments.status != null">
+        and status = #{distributionMoments.status}
+      </if>
+      <if test="distributionMoments.sendStatus != null">
+        and send_status = #{distributionMoments.sendStatus}
+      </if>
+      <if test="distributionMoments.top != null">
+        and top = #{distributionMoments.top}
+      </if>
+      <if test="distributionMoments.startTime != null">
+        and start_time >= #{distributionMoments.startTime}
+      </if>
+      <if test="distributionMoments.endTime != null">
+        and #{distributionMoments.endTime} >= end_time
+      </if>
+      <if test="distributionMoments.ids != null and distributionMoments.ids.size() > 0">
+        and id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+          #{id}
+        </foreach>
+      </if>
+      <if test="distributionMoments.queryStoreId != null">
+        and (store_type = 0 or
+          id in (select moments_id from distribution_moments_store where store_id in(#{distributionMoments.queryStoreId}))
+        )
+      </if>
+      <if test="distributionMoments.queryStoreIds != null and distributionMoments.queryStoreIds.size() > 0">
+        and (store_type = 0 or
+            id in (select moments_id from distribution_moments_store where store_id in
+            <foreach collection="distributionMoments.queryStoreIds" item="storeId" open="(" close=")" separator=",">
+              #{storeId}
+            </foreach>
+        ))
+      </if>
+    </where>
+    order by top_time desc, id desc
+  </select>
+  <select id="getById" resultMap="distributionMomentsMap">
+    select <include refid="Vo_Column_List"/> from distribution_moments where id = #{id}
+  </select>
+  <select id="countMomentsTopNum" resultType="java.lang.Integer">
+    select count(id) from distribution_moments where top = 1
+  </select>
+
+    <select id="pageEffect" resultMap="distributionMomentsVOMap">
+      select
+        dm.*
+      from
+        distribution_moments_send_record dmsr
+        left join distribution_moments dm dmsr.moments_id = dm.id
+      where dm.status = 1
+      and now() >= dm.start_time
+      and dm.end_time >= now()
+      order by dm.top_time desc, dm.id desc
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into distribution_moments (`title`,`start_time`,`end_time`,`avatar_url`,`desc_html`,`comment`,`product_type`,`store_type`,`distribution_type`,`status`,`send_status`)
+    values (#{distributionMoments.title},#{distributionMoments.startTime},#{distributionMoments.endTime},#{distributionMoments.avatarUrl},#{distributionMoments.descHtml},#{distributionMoments.comment},#{distributionMoments.productType},#{distributionMoments.storeType},#{distributionMoments.distributionType},#{distributionMoments.status},#{distributionMoments.sendStatus});
+  </insert>
+  <update id="update">
+    update distribution_moments
+    <set>
+      `start_time` = #{distributionMoments.startTime},
+      `end_time` = #{distributionMoments.endTime},
+      <if test="distributionMoments.title != null">
+        `title` = #{distributionMoments.title},
+      </if>
+<!--      <if test="distributionMoments.startTime != null">-->
+<!--        `start_time` = #{distributionMoments.startTime},-->
+<!--      </if>-->
+<!--      <if test="distributionMoments.endTime != null">-->
+<!--        `end_time` = #{distributionMoments.endTime},-->
+<!--      </if>-->
+      <if test="distributionMoments.avatarUrl != null">
+        `avatar_url` = #{distributionMoments.avatarUrl},
+      </if>
+      <if test="distributionMoments.descHtml != null">
+        `desc_html` = #{distributionMoments.descHtml},
+      </if>
+      <if test="distributionMoments.comment != null">
+        `comment` = #{distributionMoments.comment},
+      </if>
+      <if test="distributionMoments.productType != null">
+        `product_type` = #{distributionMoments.productType},
+      </if>
+      <if test="distributionMoments.storeType != null">
+        `store_type` = #{distributionMoments.storeType},
+      </if>
+      <if test="distributionMoments.distributionType != null">
+        `distribution_type` = #{distributionMoments.distributionType},
+      </if>
+      <if test="distributionMoments.status != null">
+        `status` = #{distributionMoments.status},
+      </if>
+    </set>
+    where id = #{distributionMoments.id}
+  </update>
+
+  <update id="updateStatusBatch">
+    update distribution_moments
+    set status = #{status}
+    where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </update>
+
+  <update id="momentsTop">
+    update distribution_moments
+    set top = #{top}, top_time = now()
+    where id = #{id}
+  </update>
+
+  <delete id="deleteById">
+    delete from distribution_moments where id = #{id}
+  </delete>
+
+  <update id="updateJobId">
+    update distribution_moments
+    set qw_job_id = #{jobId}
+    where id = #{id}
+  </update>
+
+  <update id="enable">
+    update distribution_moments
+    set status = 1,send_status=1,
+        enable_time = now()
+    where id = #{id}
+  </update>
+
+  <update id="disable">
+    update distribution_moments
+    set status = 0,send_status=2
+    where id = #{id}
+  </update>
+
+  <update id="timeOut">
+    update distribution_moments
+    set send_status = #{sendStatus},update_time = now(),update_by = #{updateBy}
+    where id = #{id}
+  </update>
+
+
+  <select id="getMomentTaskResult" resultMap="distributionMomentsMap">
+    select
+        *
+    from distribution_moments
+    where qw_job_id is not null
+      and qw_moments_id is null
+    and status = 1
+  </select>
+
+  <select id="getMomentPublishStatus" resultMap="distributionMomentsMap">
+    select
+      *
+    from distribution_moments
+    where qw_moments_id is not null
+      and status = 1
+      and enable_time is not null
+      and enable_time >= DATE_SUB(CURDATE(), INTERVAL 14 DAY);
+  </select>
+
+  <update id="updateTaskResult">
+    update distribution_moments
+    set
+        qw_moments_id = #{momentId},
+        send_result = #{result}
+    where id = #{id}
+  </update>
+
+  <select id="timeOutList" resultMap="distributionMomentsMap">
+    select
+    <include refid="Vo_Column_List"/>
+    from distribution_moments
+      where send_status=0
+        and qw_moments_id is not null
+      and end_time &lt; now()
+    and id in(select moments_id from distribution_moments_send_record where qw_publish_status=0)
+  </select>
+
+</mapper>

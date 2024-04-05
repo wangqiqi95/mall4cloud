@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.TaskPushMapper">
+  <resultMap id="pushTaskMap" type="com.mall4j.cloud.biz.model.cp.TaskPush">
+    <id column="ID" property="id" />
+    <result column="PUSH_NAME" property="pushName"/>
+    <result column="task_id" property="taskId"/>
+    <result column="START_TIME" property="startTime"/>
+    <result column="END_TIME" property="endTime"/>
+    <result column="CONTENT" property="content"/>
+    <result column="UPDATE_TIME" property="updateTime"/>
+    <result column="CREATE_BY" property="createBy"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="STATUS" property="status"/>
+    <result column="FLAG" property="flag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `ID`,`PUSH_NAME`,`task_id`,`CREATE_BY`,`CREATE_TIME`,`START_TIME`,`END_TIME`,`CONTENT`,`UPDATE_TIME`,`STATUS`,`FLAG`
+  </sql>
+  <select id="list" resultMap="pushTaskMap">
+    select <include refid="Vo_Column_List"/> from CP_TASK_PUSH
+    where FLAG=0  and task_id =#{taskId}
+    order by ID asc
+  </select>
+  <select id="getById" resultMap="pushTaskMap">
+    select <include refid="Vo_Column_List"/> from CP_TASK_PUSH where ID = #{id}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+    insert into CP_TASK_PUSH (`PUSH_NAME`,`task_id`,`CREATE_BY`,`CREATE_TIME`,`START_TIME`,`END_TIME`,`CONTENT`,`UPDATE_TIME`,`STATUS`,`FLAG`)
+    values (#{et.pushName},#{et.taskId},#{et.createBy},#{et.createTime},#{et.startTime},#{et.endTime},#{et.content},#{et.updateTime},#{et.status},#{et.flag});
+  </insert>
+  <update id="update">
+    update CP_TASK_PUSH
+    <set>
+      <if test="et.pushName != null">
+        `PUSH_NAME` = #{et.pushName},
+      </if>
+      <if test="et.taskId != null">
+        `task_id` = #{et.taskId},
+      </if>
+
+      <if test="et.createBy != null">
+        `CREATE_BY` = #{et.createBy},
+      </if>
+      <if test="et.createTime != null">
+        `CREATE_TIME` = #{et.createTime},
+      </if>
+      <if test="et.startTime != null">
+        `START_TIME` = #{et.startTime},
+      </if>
+      <if test="et.endTime != null">
+        `END_TIME` = #{et.endTime},
+      </if>
+      <if test="et.content != null">
+        `CONTENT` = #{et.content},
+      </if>
+      <if test="et.updateTime != null">
+        `UPDATE_TIME` = #{et.updateTime},
+      </if>
+      <if test="et.status != null">
+        `STATUS` = #{et.status},
+      </if>
+      <if test="et.flag != null">
+        `FLAG` = #{et.flag},
+      </if>
+    </set>
+    where ID = #{et.id}
+  </update>
+  <delete id="deleteById">
+    delete from CP_TASK_PUSH where ID = #{id}
+  </delete>
+
+  <delete id="deleteByTaskId">
+    delete from CP_TASK_PUSH where task_id = #{taskId}
+  </delete>
+
+  <!-- 更新推送-->
+  <update id="updateTaskPushCompleteSend">
+    update CP_TASK_PUSH  p set status = 1   where  not EXISTS(select 1 from cp_task_send_detail d where d.PUSH_ID = p.id and d.SEND_STATUS =0 ) and ID = #{pushId}
+  </update>
+
+</mapper>

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.order.mapper.OrderAnalysisMapper">
+    <resultMap id="orderMap" type="com.mall4j.cloud.order.model.Order">
+        <id column="order_id" property="orderId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="user_id" property="userId"/>
+        <result column="order_addr_id" property="orderAddrId"/>
+        <result column="shop_name" property="shopName"/>
+        <result column="total" property="total"/>
+        <result column="actual_total" property="actualTotal"/>
+        <result column="order_score" property="orderScore"/>
+        <result column="remarks" property="remarks"/>
+        <result column="shop_remarks" property="shopRemarks"/>
+        <result column="status" property="status"/>
+        <result column="pay_type" property="payType"/>
+        <result column="delivery_type" property="deliveryType"/>
+        <result column="order_type" property="orderType"/>
+        <result column="close_type" property="closeType"/>
+        <result column="all_count" property="allCount"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="delivery_time" property="deliveryTime"/>
+        <result column="finally_time" property="finallyTime"/>
+        <result column="cancel_time" property="cancelTime"/>
+        <result column="book_time" property="bookTime"/>
+        <result column="is_payed" property="isPayed"/>
+        <result column="delete_status" property="deleteStatus"/>
+        <result column="refund_status" property="refundStatus"/>
+        <result column="freight_amount" property="freightAmount"/>
+        <result column="score_amount" property="scoreAmount"/>
+        <result column="member_amount" property="memberAmount"/>
+        <result column="platform_coupon_amount" property="platformCouponAmount"/>
+        <result column="shop_coupon_amount" property="shopCouponAmount"/>
+        <result column="discount_amount" property="discountAmount"/>
+        <result column="platform_amount" property="platformAmount"/>
+        <result column="reduce_amount" property="reduceAmount"/>
+        <result column="shop_change_free_amount" property="shopChangeFreeAmount"/>
+        <result column="free_freight_amount" property="freeFreightAmount"/>
+    </resultMap>
+
+    <resultMap type="com.mall4j.cloud.order.model.Order" id="orderAndOrderItem" extends="orderMap">
+        <collection property="orderItems" columnPrefix="oi_" ofType="com.mall4j.cloud.order.model.OrderItem">
+            <id column="order_item_id" jdbcType="BIGINT" property="orderItemId"/>
+            <result column="shop_id" property="shopId"/>
+            <result column="order_id" property="orderId"/>
+            <result column="spu_id" property="spuId"/>
+            <result column="sku_id" property="skuId"/>
+            <result column="user_id" property="userId"/>
+            <result column="final_refund_id" property="finalRefundId"/>
+            <result column="distribution_user_id" property="distributionUserId"/>
+            <result column="count" property="count"/>
+            <result column="spu_name" property="spuName"/>
+            <result column="sku_name" property="skuName"/>
+            <result column="pic" property="pic"/>
+            <result column="is_comm" property="isComm"/>
+            <result column="refund_status" property="refundStatus"/>
+            <result column="be_delivered_num" property="beDeliveredNum"/>
+            <result column="delivery_type" property="deliveryType"/>
+            <result column="shop_cart_time" property="shopCartTime"/>
+            <result column="price" property="price"/>
+            <result column="spu_total_amount" property="spuTotalAmount"/>
+            <result column="actual_total" property="actualTotal"/>
+            <result column="share_reduce" property="shareReduce"/>
+            <result column="platform_share_reduce" property="platformShareReduce"/>
+            <result column="distribution_amount" property="distributionAmount"/>
+            <result column="distribution_parent_amount" property="distributionParentAmount"/>
+            <result column="use_score" property="useScore"/>
+            <result column="gain_score" property="gainScore"/>
+        </collection>
+    </resultMap>
+
+    <resultMap type="com.mall4j.cloud.api.order.bo.EsOrderBO" id="esOrderAndOrderItemAndUserAddrMap" extends="orderMap">
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="consignee" jdbcType="VARCHAR" property="consignee"/>
+        <collection property="orderItems" columnPrefix="oi_" ofType="com.mall4j.cloud.order.model.OrderItem">
+            <id column="order_item_id" jdbcType="BIGINT" property="orderItemId"/>
+            <result column="shop_id" property="shopId"/>
+            <result column="order_id" property="orderId"/>
+            <result column="spu_id" property="spuId"/>
+            <result column="sku_id" property="skuId"/>
+            <result column="user_id" property="userId"/>
+            <result column="final_refund_id" property="finalRefundId"/>
+            <result column="distribution_user_id" property="distributionUserId"/>
+            <result column="count" property="count"/>
+            <result column="spu_name" property="spuName"/>
+            <result column="sku_name" property="skuName"/>
+            <result column="pic" property="pic"/>
+            <result column="is_comm" property="isComm"/>
+            <result column="refund_status" property="refundStatus"/>
+            <result column="be_delivered_num" property="beDeliveredNum"/>
+            <result column="delivery_type" property="deliveryType"/>
+            <result column="shop_cart_time" property="shopCartTime"/>
+            <result column="price" property="price"/>
+            <result column="spu_total_amount" property="spuTotalAmount"/>
+            <result column="actual_total" property="actualTotal"/>
+            <result column="share_reduce" property="shareReduce"/>
+            <result column="platform_share_reduce" property="platformShareReduce"/>
+            <result column="distribution_amount" property="distributionAmount"/>
+            <result column="distribution_parent_amount" property="distributionParentAmount"/>
+            <result column="use_score" property="useScore"/>
+            <result column="gain_score" property="gainScore"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="esOrderVO" type="com.mall4j.cloud.common.order.vo.EsOrderVO">
+        <id column="order_id" property="orderId"/>
+        <result column="actual_total" property="actualTotal"/>
+        <result column="order_score" property="orderScore"/>
+        <result column="status" property="status"/>
+        <result column="order_type" property="orderType"/>
+        <result column="refund_status" property="refundStatus"/>
+        <result column="delivery_type" property="deliveryType"/>
+        <result column="shop_name" property="shopName"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="freight_amount" property="freightAmount"/>
+        <result column="create_time" property="createTime"/>
+        <result column="all_count" property="allCount"/>
+        <result column="remarks" property="remarks"/>
+        <result column="consignee" property="consignee"/>
+        <result column="mobile" property="mobile"/>
+        <result column="order_addr_id" property="orderAddrId"/>
+        <result column="total" property="total"/>
+        <result column="shop_remarks" property="shopRemarks"/>
+        <result column="pay_type" property="payType"/>
+        <result column="close_type" property="closeType"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="delivery_time" property="deliveryTime"/>
+        <result column="finally_time" property="finallyTime"/>
+        <result column="cancel_time" property="cancelTime"/>
+        <result column="book_time" property="bookTime"/>
+        <result column="is_payed" property="isPayed"/>
+        <result column="delete_status" property="deleteStatus"/>
+        <result column="score_amount" property="scoreAmount"/>
+        <result column="member_amount" property="memberAmount"/>
+        <result column="platform_coupon_amount" property="platformCouponAmount"/>
+        <result column="shop_coupon_amount" property="shopCouponAmount"/>
+        <result column="discount_amount" property="discountAmount"/>
+        <result column="platform_amount" property="platformAmount"/>
+        <result column="reduce_amount" property="reduceAmount"/>
+        <collection property="orderItems" ofType="com.mall4j.cloud.common.order.vo.EsOrderItemVO">
+            <id column="order_item_id" property="orderItemId"/>
+            <result column="pic" property="pic"/>
+            <result column="count" property="count"/>
+            <result column="price" property="price"/>
+            <result column="use_score" property="useScore"/>
+            <result column="sku_id" property="skuId"/>
+            <result column="spu_id" property="spuId"/>
+            <result column="return_money_sts" property="returnMoneySts"/>
+            <result column="shop_id" property="shopId"/>
+            <result column="user_id" property="userId"/>
+            <result column="final_refund_id" property="finalRefundId"/>
+            <result column="distribution_user_id" property="distributionUserId"/>
+            <result column="is_comm" property="isComm"/>
+            <result column="comm_time" property="commTime"/>
+            <result column="refund_status" property="refundStatus"/>
+            <result column="be_delivered_num" property="beDeliveredNum"/>
+            <result column="delivery_type" property="deliveryType"/>
+            <result column="shop_cart_time" property="shopCartTime"/>
+            <result column="spu_total_amount" property="spuTotalAmount"/>
+            <result column="item_actual_total" property="actualTotal"/>
+            <result column="share_reduce" property="shareReduce"/>
+            <result column="platform_share_reduce" property="platformShareReduce"/>
+
+        </collection>
+    </resultMap>
+
+    <sql id="Vo_Column_List">
+        `order_id`,
+        `create_time`,
+        `update_time`,
+        `shop_id`,
+        `user_id`,
+        `order_addr_id`,
+        `shop_name`,
+        `total`,
+        `actual_total`,
+        order_score,
+        `remarks`,
+        `shop_remarks`,
+        `status`,
+        `pay_type`,
+        `delivery_type`,
+        `order_type`,
+        `close_type`,
+        `all_count`,
+        `pay_time`,
+        `delivery_time`,
+        `finally_time`,
+        `cancel_time`,
+        `book_time`,
+        `is_payed`,
+        `delete_status`,
+        `refund_status`,
+        `freight_amount`,
+        `score_amount`,
+        `member_amount`,
+        `platform_coupon_amount`,
+        `shop_coupon_amount`,
+        `discount_amount`,
+        `platform_amount`,
+        `reduce_amount`
+    </sql>
+
+    <select id="getTradeRetained" resultType="com.mall4j.cloud.api.order.vo.CustomerRetainVO"
+            parameterType="com.mall4j.cloud.api.order.dto.CustomerRetainedDTO">
+        SELECT
+        <!--当前月-->
+        a.pay_time_month AS currentMonth,
+        <!--新成交客户数-->
+        COUNT(DISTINCT a.user_id_a) AS newCustomers,
+        <!--第1月留存数-->
+        COUNT(DISTINCT CASE WHEN PERIOD_DIFF(DATE_FORMAT(b.pay_time,'%Y%m'), DATE_FORMAT(CONCAT(a.pay_time_month, '-01'),'%Y%m')) = 1 THEN b.user_id ELSE NULL END) AS firstMonthRemain,
+        <!--第2月留存数-->
+        COUNT(DISTINCT CASE WHEN PERIOD_DIFF(DATE_FORMAT(b.pay_time,'%Y%m'), DATE_FORMAT(CONCAT(a.pay_time_month, '-01'),'%Y%m')) = 2 THEN b.user_id ELSE NULL END) AS secondMonthRemain,
+        <!--第3月留存数-->
+        COUNT(DISTINCT CASE WHEN PERIOD_DIFF(DATE_FORMAT(b.pay_time,'%Y%m'), DATE_FORMAT(CONCAT(a.pay_time_month, '-01'),'%Y%m')) = 3 THEN b.user_id ELSE NULL END) AS thirdMonthRemain,
+        <!--第4月留存数-->
+        COUNT(DISTINCT CASE WHEN PERIOD_DIFF(DATE_FORMAT(b.pay_time,'%Y%m'), DATE_FORMAT(CONCAT(a.pay_time_month, '-01'),'%Y%m')) = 4 THEN b.user_id ELSE NULL END) AS fourthMonthRemain,
+        <!--第5月留存数-->
+        COUNT(DISTINCT CASE WHEN PERIOD_DIFF(DATE_FORMAT(b.pay_time,'%Y%m'), DATE_FORMAT(CONCAT(a.pay_time_month, '-01'),'%Y%m')) = 5 THEN b.user_id ELSE NULL END) AS fifthMonthRemain,
+        <!--第6月留存数-->
+        COUNT(DISTINCT CASE WHEN PERIOD_DIFF(DATE_FORMAT(b.pay_time,'%Y%m'), DATE_FORMAT(CONCAT(a.pay_time_month, '-01'),'%Y%m')) = 6 THEN b.user_id ELSE NULL END) AS sixthMonthRemain
+        FROM
+        (
+        SELECT DISTINCT
+        DATE_FORMAT(pay_time,'%Y-%m') AS pay_time_month,
+        user_id AS user_id_a
+        FROM `order`
+        WHERE is_payed = 1
+        <if test="customerRetainedDTO.shopId != null and customerRetainedDTO.shopId != 0">
+            AND shop_id = #{customerRetainedDTO.shopId}
+        </if>
+        GROUP BY user_id
+        ORDER BY pay_time_month
+        ) a
+        LEFT JOIN `order` b ON a.user_id_a = b.user_id AND b.is_payed = 1
+        <if test="customerRetainedDTO.shopId != null and customerRetainedDTO.shopId != 0">
+            AND b.shop_id = #{customerRetainedDTO.shopId}
+        </if>
+        GROUP BY a.pay_time_month
+        <if test="customerRetainedDTO.startTime != null and customerRetainedDTO.endTime != null">
+            HAVING (a.pay_time_month &gt;= #{customerRetainedDTO.startTime} AND a.pay_time_month &lt;= #{customerRetainedDTO.endTime})
+        </if>
+    </select>
+
+
+</mapper>

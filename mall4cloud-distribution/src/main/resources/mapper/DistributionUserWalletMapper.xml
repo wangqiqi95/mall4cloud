@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionUserWalletMapper">
+  <resultMap id="distributionUserWalletMap" type="com.mall4j.cloud.distribution.model.DistributionUserWallet">
+    <id column="wallet_id" property="walletId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="distribution_user_id" property="distributionUserId"/>
+    <result column="unsettled_amount" property="unsettledAmount"/>
+    <result column="settled_amount" property="settledAmount"/>
+    <result column="invalid_amount" property="invalidAmount"/>
+    <result column="accumulate_amount" property="accumulateAmount"/>
+    <result column="version" property="version"/>
+    <result column="state" property="state"/>
+  </resultMap>
+  <resultMap id="distributionUserWalletVOMap" type="com.mall4j.cloud.distribution.vo.DistributionUserWalletVO">
+    <id column="wallet_id" property="walletId" />
+    <result column="distribution_user_id" property="distributionUserId"/>
+    <result column="unsettled_amount" property="unsettledAmount"/>
+    <result column="settled_amount" property="settledAmount"/>
+    <result column="invalid_amount" property="invalidAmount"/>
+    <result column="accumulate_amount" property="accumulateAmount"/>
+    <result column="version" property="version"/>
+    <result column="state" property="state"/>
+    <association property="distributionUserVO" javaType="com.mall4j.cloud.distribution.vo.DistributionUserVO">
+      <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+      <result column="user_mobile" jdbcType="VARCHAR" property="userMobile" />
+    </association>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `wallet_id`,`create_time`,`update_time`,`distribution_user_id`,`unsettled_amount`,`settled_amount`,`invalid_amount`,`accumulate_amount`,`version`,`state`
+  </sql>
+  <select id="list" resultMap="distributionUserWalletMap">
+    select <include refid="Vo_Column_List"/> from distribution_user_wallet order by wallet_id desc
+  </select>
+  <select id="getByWalletId" resultMap="distributionUserWalletMap">
+    select <include refid="Vo_Column_List"/> from distribution_user_wallet where wallet_id = #{walletId}
+  </select>
+  <insert id="save">
+      insert into distribution_user_wallet
+      (`distribution_user_id`,`unsettled_amount`,`settled_amount`,`invalid_amount`,`accumulate_amount`,`version`,`state`)
+      values
+      (#{distributionUserWallet.distributionUserId},#{distributionUserWallet.unsettledAmount},#{distributionUserWallet.settledAmount},#{distributionUserWallet.invalidAmount},#{distributionUserWallet.accumulateAmount},#{distributionUserWallet.version},#{distributionUserWallet.state});
+  </insert>
+  <update id="update">
+    update distribution_user_wallet
+    <set>
+      `version` = `version` + 1,
+      <if test="distributionUserWallet.distributionUserId != null">
+        `distribution_user_id` = #{distributionUserWallet.distributionUserId},
+      </if>
+      <if test="distributionUserWallet.unsettledAmount != null">
+        `unsettled_amount` = #{distributionUserWallet.unsettledAmount},
+      </if>
+      <if test="distributionUserWallet.settledAmount != null">
+        `settled_amount` = #{distributionUserWallet.settledAmount},
+      </if>
+      <if test="distributionUserWallet.invalidAmount != null">
+        `invalid_amount` = #{distributionUserWallet.invalidAmount},
+      </if>
+      <if test="distributionUserWallet.accumulateAmount != null">
+          `accumulate_amount` = #{distributionUserWallet.accumulateAmount},
+      </if>
+      <if test="distributionUserWallet.state != null">
+        `state` = #{distributionUserWallet.state},
+      </if>
+    </set>
+    where wallet_id = #{distributionUserWallet.walletId}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_user_wallet where wallet_id = #{walletId}
+  </delete>
+
+  <select id="walletPage" resultMap="distributionUserWalletVOMap">
+    SELECT
+            duw.wallet_id,
+            duw.distribution_user_id,
+            duw.unsettled_amount,
+            duw.settled_amount,
+            duw.invalid_amount,
+            duw.accumulate_amount,
+            duw.version,
+            duw.state,
+            du.nick_name,
+            du.user_mobile
+    FROM distribution_user_wallet duw
+                 LEFT JOIN distribution_user du ON du.distribution_user_id = duw.distribution_user_id
+    <where>
+      du.state != 0 and du.state != 3
+      <if test="userMobile !=null and userMobile != ''">
+        and du.user_mobile like concat('%',#{userMobile},'%')
+      </if>
+    </where>
+    order by du.distribution_user_id DESC
+  </select>
+  <update id="updateAmountByDistributionUserId">
+    update distribution_user_wallet
+    set unsettled_amount = 0,settled_amount = 0,invalid_amount = 0,accumulate_amount = 0
+    where
+      distribution_user_id = #{distributionUserId}
+  </update>
+
+  <select id="getByDistributionUserId" resultMap="distributionUserWalletMap">
+    select <include refid="Vo_Column_List"/> from distribution_user_wallet where distribution_user_id = #{distributionUserId}
+  </select>
+
+  <update id="updateWalletAmount">
+    update distribution_user_wallet
+    <set>
+      `version` = `version` + 1,
+      <if test="updateWallet.unsettledAmount != null">
+        `unsettled_amount` = `unsettled_amount` + #{updateWallet.unsettledAmount},
+      </if>
+      <if test="updateWallet.settledAmount != null">
+        `settled_amount` = `settled_amount` + #{updateWallet.settledAmount},
+      </if>
+      <if test="updateWallet.invalidAmount != null">
+        `invalid_amount` = `invalid_amount` + #{updateWallet.invalidAmount},
+      </if>
+      <if test="updateWallet.accumulateAmount != null">
+        `accumulate_amount` = `accumulate_amount` + #{updateWallet.accumulateAmount},
+      </if>
+    </set>
+    where wallet_id = #{updateWallet.walletId}
+  </update>
+</mapper>

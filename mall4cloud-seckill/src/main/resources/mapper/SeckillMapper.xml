@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.seckill.mapper.SeckillMapper">
+    <resultMap id="seckillMap" type="com.mall4j.cloud.seckill.model.Seckill">
+        <id column="seckill_id" property="seckillId"/>
+        <result column="seckill_name" property="seckillName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="selected_lot" property="selectedLot"/>
+        <result column="seckill_tag" property="seckillTag"/>
+        <result column="max_num" property="maxNum"/>
+        <result column="max_cancel_time" property="maxCancelTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="status" property="status"/>
+        <result column="spu_id" property="spuId"/>
+        <result column="seckill_total_stocks" property="seckillTotalStocks"/>
+        <result column="seckill_origin_stocks" property="seckillOriginStocks"/>
+        <result column="seckill_price" property="seckillPrice"/>
+        <result column="limit_store_type" property="limitStoreType"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `seckill_id`
+        ,`seckill_name`,`start_time`,`end_time`,`selected_lot`,seckill.category_id,`seckill_tag`,`max_num`,`max_cancel_time`,`shop_id`,`is_delete`,`status`,`spu_id`,`seckill_total_stocks`,`seckill_origin_stocks`,`seckill_price`,`limit_store_type`
+    </sql>
+    <select id="list" resultType="com.mall4j.cloud.seckill.vo.SeckillVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from seckill
+        <where>
+            `is_delete` = 0 AND `end_time` &gt;= NOW()
+            <if test="seckill != null">
+                <if test="seckill.seckillName != null and seckill.seckillName != ''">
+                    AND seckill_name LIKE CONCAT('%',#{seckill.seckillName},'%')
+                </if>
+                <if test="seckill.shopId != null and seckill.shopId != 0">
+                    and `shop_id` = #{seckill.shopId}
+                </if>
+                <if test="seckill.selectedLot != null">
+                    and `selected_lot` = #{seckill.selectedLot}
+                </if>
+                <if test="seckill.status != null">
+                    and `status` = #{seckill.status}
+                </if>
+                <if test="seckill.limitStoreType != null">
+                    and `limit_store_type` = #{seckill.limitStoreType}
+                </if>
+                <if test="seckill.startTime != null and seckill.endTime != null">
+                    and `start_time` between #{seckill.startTime} and #{seckill.endTime}
+                </if>
+            </if>
+        </where>
+        order by start_time,selected_lot,seckill_id desc
+    </select>
+
+    <!--<select id="listByShopId" resultType="com.mall4j.cloud.seckill.vo.SeckillAdminVO">-->
+    <!--SELECT DATE_ADD(start_time, INTERVAL selected_lot HOUR)AS date_time,start_time,end_time,selected_lot,shop_id,COUNT(shop_id) num FROM `seckill`-->
+    <!--WHERE `is_delete` = 0-->
+    <!--<if test="shopId != null and shopId != 0">-->
+    <!--and shop_id = #{shopId}-->
+    <!--</if>-->
+    <!--<if test="specDate != null">-->
+    <!--and start_time = #{specDate}-->
+    <!--</if>-->
+    <!--GROUP BY start_time,selected_lot,shop_id-->
+    <!--order by start_time desc,selected_lot desc-->
+    <!--</select>-->
+    <select id="listByShopId" resultType="com.mall4j.cloud.seckill.vo.SeckillAdminVO">
+        SELECT seckill_id,date_time,date_time as start_time,end_time,SUM(num) prod_num,COUNT(shop_id) AS join_shop_num,selected_lot
+        FROM (
+        SELECT seckill_id,start_time AS date_time,
+        end_time,selected_lot,COUNT(shop_id) num,shop_id FROM `seckill`
+        WHERE `is_delete` = 0
+        <if test="isClosed == 0">
+            AND start_time <![CDATA[>]]> NOW()
+            and status = 1
+        </if>
+        <if test="isClosed == 1">
+            AND end_time <![CDATA[<]]> NOW()
+            <if test="specDate != null">
+                and DATE(start_time) = #{specDate}
+            </if>
+        </if>
+        <if test="isClosed == 2">
+            AND end_time <![CDATA[>]]> NOW() and status = 1
+            AND start_time <![CDATA[ < ]]> #{specDate}
+        </if>
+        <if test="shopId != null and shopId != 0">
+            and shop_id = #{shopId}
+        </if>
+        GROUP BY start_time,selected_lot,shop_id
+        ORDER BY start_time DESC,selected_lot DESC
+        ) seckill
+        GROUP BY date_time
+    </select>
+
+    <select id="listBySelectLotList" resultType="com.mall4j.cloud.seckill.vo.SeckillVO">
+        SELECT
+        <include refid="Vo_Column_List"/>
+        FROM seckill
+        WHERE `is_delete` = 0
+        and selected_lot IN
+        <foreach collection="selectedLots" item="selectedLot" separator="," open="(" close=")">
+            #{selectedLot}
+        </foreach>
+    </select>
+
+    <select id="listByStartTimeAndSelectedLot" resultType="com.mall4j.cloud.seckill.vo.SeckillSpuVO">
+        SELECT<include refid="Vo_Column_List"/>,sc.name as category_name FROM seckill
+        left join seckill_category sc on seckill.category_id = sc.category_id
+        WHERE `is_delete` = 0 and selected_lot = #{productSearchDTO.selectedLot} AND start_time = #{startTime}
+        <if test="productSearchDTO.shopId != null">
+            and shop_id = #{productSearchDTO.shopId}
+        </if>
+        <if test="productSearchDTO.spuIds != null and productSearchDTO.spuIds.size > 0">
+            AND spu_id IN
+            <foreach collection="productSearchDTO.spuIds" open="(" separator="," close=")" item="spuId">
+                #{spuId}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="listBySelectLot" resultType="com.mall4j.cloud.seckill.vo.SeckillVO">
+        SELECT
+        <include refid="Vo_Column_List"/>
+        FROM `seckill`
+        WHERE start_time = (
+        select start_time from seckill
+        <where>
+            `is_delete` = 0 AND `end_time` &gt;= NOW() and status = 1
+            <if test="seckill.seckillName != null and seckill.seckillName != ''">
+                AND seckill_name LIKE CONCAT('%',#{seckill.seckillName},'%')
+            </if>
+            <if test="seckill.shopId != null and seckill.shopId != 0">
+                and `shop_id` = #{seckill.shopId}
+            </if>
+            <if test="seckill.selectedLot != null">
+                and `selected_lot` = #{seckill.selectedLot}
+            </if>
+            <if test="seckill.status != null">
+                and `status` = #{seckill.status}
+            </if>
+        </where>
+        order by start_time,selected_lot,seckill_id desc
+        limit 1
+        )
+        and `is_delete` = 0 AND `end_time` &gt;= NOW() and status = 1
+        order by seckill_id desc
+        limit 10
+    </select>
+
+    <select id="getBySeckillId" resultType="com.mall4j.cloud.seckill.vo.SeckillVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from seckill where seckill_id = #{seckillId}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="seckillId">
+        insert into seckill (`seckill_name`, `start_time`, `end_time`, `selected_lot`, `category_id`, `seckill_tag`,
+                             `max_num`, `max_cancel_time`, `shop_id`, `is_delete`, `status`, `spu_id`,
+                             `seckill_total_stocks`, `seckill_origin_stocks`, `seckill_price`, `limit_store_type`)
+        values (#{seckill.seckillName}, #{seckill.startTime}, #{seckill.endTime}, #{seckill.selectedLot},
+                #{seckill.categoryId}, #{seckill.seckillTag}, #{seckill.maxNum}, #{seckill.maxCancelTime},
+                #{seckill.shopId}, #{seckill.isDelete}, #{seckill.status}, #{seckill.spuId},
+                #{seckill.seckillTotalStocks}, #{seckill.seckillOriginStocks}, #{seckill.seckillPrice},
+                #{seckill.limitStoreType});
+    </insert>
+
+    <update id="update">
+        update seckill
+        <set>
+            <if test="seckill.seckillName != null">
+                `seckill_name` = #{seckill.seckillName},
+            </if>
+            <if test="seckill.startTime != null">
+                `start_time` = #{seckill.startTime},
+            </if>
+            <if test="seckill.selectedLot != null">
+                `selected_lot` = #{seckill.selectedLot},
+            </if>
+            <if test="seckill.seckillTag != null">
+                `seckill_tag` = #{seckill.seckillTag},
+            </if>
+            <if test="seckill.maxNum != null">
+                `max_num` = #{seckill.maxNum},
+            </if>
+            <if test="seckill.maxCancelTime != null">
+                `max_cancel_time` = #{seckill.maxCancelTime},
+            </if>
+            <if test="seckill.shopId != null">
+                `shop_id` = #{seckill.shopId},
+            </if>
+            <if test="seckill.isDelete != null">
+                `is_delete` = #{seckill.isDelete},
+            </if>
+            <if test="seckill.status != null">
+                `status` = #{seckill.status},
+            </if>
+            <if test="seckill.spuId != null">
+                `spu_id` = #{seckill.spuId},
+            </if>
+            <if test="seckill.seckillTotalStocks != null">
+                `seckill_total_stocks` = #{seckill.seckillTotalStocks},
+            </if>
+            <if test="seckill.seckillOriginStocks != null">
+                `seckill_origin_stocks` = #{seckill.seckillOriginStocks},
+            </if>
+            <if test="seckill.seckillPrice != null">
+                `seckill_price` = #{seckill.seckillPrice},
+            </if>
+            <if test="seckill.limitStoreType != null">
+                `limit_store_type` = #{seckill.limitStoreType},
+            </if>
+        </set>
+        where seckill_id = #{seckill.seckillId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from seckill
+        where seckill_id = #{seckillId}
+    </delete>
+
+    <select id="getBySpuId" resultType="com.mall4j.cloud.seckill.vo.SeckillVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from seckill where spu_id = #{spuId} and `status` = 1
+        and `is_delete` &lt;&gt; 1
+    </select>
+
+    <select id="listBySelectLotAndSpuIds" resultType="com.mall4j.cloud.common.product.vo.SekillActivitySpuVO">
+        SELECT s.spu_id,s.seckill_id,s.seckill_price,s.seckill_total_stocks,s.seckill_origin_stocks,ss.sku_id
+        FROM seckill s
+        LEFT JOIN seckill_sku ss ON s.seckill_id = ss.seckill_id
+        WHERE s.seckill_price = ss.seckill_price AND s.status = 1 AND s.is_delete = 0
+        <if test="selectedLot != null">
+            and s.selected_lot = #{selectedLot}
+        </if>
+        and s.spu_id IN
+        <foreach collection="spuIds" item="spuId" separator="," open="(" close=")">
+            #{spuId}
+        </foreach>
+        GROUP BY s.spu_id;
+    </select>
+
+    <update id="updateStocksById">
+        UPDATE seckill
+        set seckill_total_stocks = seckill_total_stocks - #{prodCount}
+        where seckill_id = #{seckillId}
+          and seckill_total_stocks >= #{prodCount}
+    </update>
+
+    <update id="updateListToDelete">
+        UPDATE seckill set is_delete = -1,status = -1 where seckill_id in
+        <foreach collection="seckillList" item="seckill" open="(" close=")" separator=",">
+            #{seckill.seckillId}
+        </foreach>
+    </update>
+    <update id="returnStocksByOrderId">
+        UPDATE seckill s JOIN seckill_order so
+        ON s.seckill_id = so.seckill_id AND so.order_id = #{orderId}
+            SET s.seckill_total_stocks = s.seckill_total_stocks + so.prod_count
+    </update>
+
+    <select id="listUnEndButNeedEndActivity" resultMap="seckillMap">
+        select seckill_id, spu_id, `status`
+        FROM seckill
+        WHERE `status` not in (-1, 0)
+          and end_time &lt; now()
+    </select>
+
+    <select id="getJoinSeckillMerchantNum" resultType="int">
+        SELECT ifnull(COUNT(DISTINCT (shop_id)), 0)
+        FROM `seckill`
+        WHERE `is_delete` = 0
+          AND end_time > NOW()
+    </select>
+
+    <update id="changeSeckillActivityStatusBySeckillIdList">
+        UPDATE seckill SET `status` = 0 WHERE seckill_id IN
+        <foreach collection="seckillList" item="seckill" separator="," open="(" close=")">
+            #{seckill.seckillId}
+        </foreach>
+    </update>
+
+    <update id="offlineSeckillBySpuIds">
+        UPDATE seckill SET `status` = 0 WHERE spu_id IN
+        <foreach collection="spuIds" item="spuId" separator="," open="(" close=")">
+            #{spuId}
+        </foreach>
+    </update>
+
+    <select id="countBySeckillConditions" resultType="long">
+        select ifnull(count(*), 0)
+        from seckill
+        <where>
+            `is_delete` = 0 AND `end_time` &gt;= NOW()
+            <if test="seckill.seckillName != null and seckill.seckillName != ''">
+                AND seckill_name LIKE CONCAT('%', #{seckill.seckillName}, '%')
+            </if>
+            <if test="seckill.shopId != null and seckill.shopId != 0">
+                and `shop_id` = #{seckill.shopId}
+            </if>
+            <if test="seckill.categoryId != null">
+                and `category_id` = #{seckill.categoryId}
+            </if>
+            <if test="seckill.selectedLot != null">
+                and `selected_lot` = #{seckill.selectedLot}
+            </if>
+            <if test="seckill.status != null">
+                and `status` = #{seckill.status}
+            </if>
+        </where>
+        order by seckill_id desc
+    </select>
+
+    <select id="listBySearchParam" resultType="com.mall4j.cloud.common.product.vo.search.SpuAdminVO">
+        SELECT DISTINCT(spu_id) FROM `seckill`
+        WHERE `is_delete` = 0
+        <if test="prodSearch.shopId != null">
+            AND shop_id = #{prodSearch.shopId}
+        </if>
+        AND start_time = #{startTime}
+        AND selected_lot = #{prodSearch.selectedLot}
+        ORDER BY `status` DESC
+        LIMIT #{page.begin}, #{page.size}
+    </select>
+
+    <select id="countListBySearchParam" resultType="int">
+        SELECT COUNT(spu_id) FROM `seckill`
+        WHERE `is_delete` = 0
+        <if test="prodSearch.shopId != null">
+            AND shop_id = #{prodSearch.shopId}
+        </if>
+        <if test="prodSearch.spuIds != null and prodSearch.spuIds.size > 0">
+            AND spu_id IN
+            <foreach collection="prodSearch.spuIds" open="(" separator="," close=")" item="spuId">
+                #{spuId}
+            </foreach>
+        </if>
+        AND start_time = #{startTime}
+        AND selected_lot = #{prodSearch.selectedLot}
+    </select>
+
+    <select id="listSpuIdIdByShopId" resultType="java.lang.Long">
+        SELECT spu_id
+        FROM seckill
+        WHERE `status` = 1
+          AND is_delete = 0
+          AND shop_id = #{shopId}
+    </select>
+    <select id="getBySeckillIdAndStoreId" resultType="com.mall4j.cloud.seckill.vo.SeckillVO">
+        SELECT s.*
+        FROM seckill s
+                 LEFT JOIN seckill_store ss ON s.seckill_id = ss.seckill_id
+        WHERE (s.seckill_id = #{seckillId}
+            AND limit_store_type = 0)
+           OR (
+                s.seckill_id = #{seckillId}
+                AND s.limit_store_type = 1
+                AND ss.store_id = #{storeId}
+            )
+    </select>
+</mapper>

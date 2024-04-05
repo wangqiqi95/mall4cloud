@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.order.mapper.OrderSettlementMapper">
+    <resultMap id="orderSettlementMap" type="com.mall4j.cloud.order.model.OrderSettlement">
+        <id column="settlement_id" property="settlementId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="order_id" property="orderId"/>
+        <result column="pay_id" property="payId"/>
+        <result column="is_clearing" property="isClearing"/>
+        <result column="pay_score" property="payScore"/>
+        <result column="pay_amount" property="payAmount"/>
+        <result column="clearing_time" property="clearingTime"/>
+        <result column="version" property="version"/>
+        <result column="pay_type" property="payType"/>
+    </resultMap>
+    <resultMap id="OrderSettlementSimpleMap" type="com.mall4j.cloud.api.order.vo.OrderSettlementSimpleVO">
+        <id column="pay_id" property="payId" />
+        <collection property="orderIds" javaType="list" ofType="java.lang.Long">
+            <result column="order_id"/>
+        </collection>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `settlement_id`,
+        `create_time`,
+        `update_time`,
+        `order_id`,
+        `pay_id`,
+        `is_clearing`,
+        `pay_score`,
+        `pay_amount`,
+        `clearing_time`,
+        `pay_type`,
+        `version`
+    </sql>
+    <select id="list" resultType="com.mall4j.cloud.order.vo.OrderSettlementVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_settlement
+        order by settlement_id desc
+    </select>
+    <select id="getBySettlementId" resultType="com.mall4j.cloud.order.vo.OrderSettlementVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_settlement
+        where settlement_id = #{settlementId}
+    </select>
+    <update id="update">
+        update order_settlement
+        <set>
+            <if test="orderSettlement.orderId != null">
+                `order_id` = #{orderSettlement.orderId},
+            </if>
+            <if test="orderSettlement.payId != null">
+                `pay_id` = #{orderSettlement.payId},
+            </if>
+            <if test="orderSettlement.isClearing != null">
+                `is_clearing` = #{orderSettlement.isClearing},
+            </if>
+            <if test="orderSettlement.payScore != null">
+                `pay_score` = #{orderSettlement.payScore},
+            </if>
+            <if test="orderSettlement.payAmount != null">
+                `pay_amount` = #{orderSettlement.payAmount},
+            </if>
+            <if test="orderSettlement.clearingTime != null">
+                `clearing_time` = #{orderSettlement.clearingTime},
+            </if>
+            <if test="orderSettlement.version != null">
+                `version` = #{orderSettlement.version},
+            </if>
+        </set>
+        where settlement_id = #{orderSettlement.settlementId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from order_settlement
+        where settlement_id = #{settlementId}
+    </delete>
+
+    <insert id="saveBatch">
+        insert into order_settlement (`order_id`,`order_number`, `pay_id`, `is_clearing`, `pay_score`, `pay_amount`, `clearing_time`,
+                                      `version`)
+                values
+        <foreach collection="orderSettlements" item="orderSettlement" separator=",">
+            (#{orderSettlement.orderId},#{orderSettlement.orderNumber}, #{orderSettlement.payId}, #{orderSettlement.isClearing},
+             #{orderSettlement.payScore}, #{orderSettlement.payAmount}, #{orderSettlement.clearingTime},
+             #{orderSettlement.version})
+        </foreach>
+    </insert>
+    <select id="getByOrderId" resultMap="orderSettlementMap">
+        select <include refid="Vo_Column_List"/> from order_settlement where order_id = #{orderId}
+    </select>
+    <select id="listOrderIdsByPayIds" resultMap="OrderSettlementSimpleMap">
+        select order_id, pay_id
+        from `order_settlement`
+        where pay_id in
+        <foreach collection="payIds" item="payId" separator="," open="(" close=")">
+            #{payId}
+        </foreach>
+    </select>
+
+    <update id="updateToPaySuccess">
+        update `order_settlement` set is_payed =1,update_time=NOW(),pay_id = #{payId},pay_type = #{payType} where
+        order_id in
+        <foreach collection="orderIds" item="orderId" separator="," open="(" close=")">
+            #{orderId}
+        </foreach>
+    </update>
+</mapper>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpMaterialBrowseRecordMapper">
+  <resultMap id="cpMaterialBrowseRecordMap" type="com.mall4j.cloud.biz.model.cp.CpMaterialBrowseRecord">
+    <id column="id" property="id" />
+    <result column="mat_id" property="matId"/>
+    <result column="nick_name" property="nickName"/>
+    <result column="remark" property="remark"/>
+    <result column="user_id" property="userId"/>
+    <result column="union_id" property="unionId"/>
+    <result column="phone" property="phone"/>
+    <result column="browse_duration" property="browseDuration"/>
+    <result column="browse_count" property="browseCount"/>
+    <result column="labal_id" property="labalId"/>
+    <result column="labal_name" property="labalName"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="browse_id" property="browseId"/>
+    <result column="status" property="status"/>
+    <result column="staff_id" property="staffId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`mat_id`,`nick_name`,`remark`,`user_id`,`union_id`,`phone`,`browse_duration`,`browse_count`,
+    `labal_id`,`labal_name`,`create_time`,`update_time`,`browse_id`,`status`,`staff_id`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.biz.vo.cp.CpMaterialBrowseRecordVO">
+    select
+        <include refid="Vo_Column_List"/>
+    from cp_material_browse_record
+    where mat_id = #{materialBrowsePageDTO.id}
+    <if test="materialBrowsePageDTO.createTimeStart != null and materialBrowsePageDTO.createTimeStart !='' and materialBrowsePageDTO.createTimeEnd != null and materialBrowsePageDTO.createTimeEnd !='' ">
+      AND CREATE_TIME between #{materialBrowsePageDTO.createTimeStart} and #{materialBrowsePageDTO.createTimeEnd}
+    </if>
+    <if test="materialBrowsePageDTO.nickName != null and materialBrowsePageDTO.nickName !='' ">
+      AND nick_name = #{materialBrowsePageDTO.nickName}
+    </if>
+    <if test="materialBrowsePageDTO.phone != null and materialBrowsePageDTO.phone !='' ">
+      AND phone = #{materialBrowsePageDTO.phone}
+    </if>
+    <if test="materialBrowsePageDTO.lable != null and materialBrowsePageDTO.lable !='' ">
+      AND labal_name = #{materialBrowsePageDTO.lable}
+    </if>
+    <if test="materialBrowsePageDTO.labalIds != null and materialBrowsePageDTO.labalIds.size>0 ">
+      AND labal_id in
+      <foreach collection="materialBrowsePageDTO.labalIds" item="labalId" open="(" close=")" separator=",">
+        #{labalId}
+      </foreach>
+    </if>
+    order by id desc
+  </select>
+
+  <select id="listByUnionId" resultType="com.mall4j.cloud.api.biz.vo.MaterialBrowseRecordApiVO">
+    select
+        cm.MAT_NAME as matName,
+        record.mat_id as matId,
+        record.browse_duration as browseDuration,
+        record.user_id as userId,
+        record.union_id as unionId,
+        record.create_time as createTime,
+        record.staff_id as staffId
+    from cp_material_browse_record record left join CP_MATERIAL cm on record.mat_id = cm.ID
+    where record.union_id = #{unionId}
+    and ( record.create_time between #{startTime} and #{endTime} )
+  </select>
+
+  <select id="getById" resultMap="cpMaterialBrowseRecordMap">
+    select <include refid="Vo_Column_List"/> from cp_material_browse_record where id = #{id}
+  </select>
+
+  <select id="getByUnionIdAndMatId" resultMap="cpMaterialBrowseRecordMap">
+    select <include refid="Vo_Column_List"/> from cp_material_browse_record where union_id = #{unionId} and mat_id = #{matId} limit 1
+  </select>
+
+  <select id="getByBrowseId" resultMap="cpMaterialBrowseRecordMap">
+    select <include refid="Vo_Column_List"/> from cp_material_browse_record where browse_id = #{browseId}
+  </select>
+
+  <insert id="save">
+    insert into cp_material_browse_record (`mat_id`,`nick_name`,`remark`,`user_id`,`union_id`,`phone`,
+                                           `browse_duration`,`browse_count`,`labal_id`,`labal_name`,`browse_id`,`status`,`staff_id`)
+    values (#{cpMaterialBrowseRecord.matId},#{cpMaterialBrowseRecord.nickName},#{cpMaterialBrowseRecord.remark},
+            #{cpMaterialBrowseRecord.userId},#{cpMaterialBrowseRecord.unionId},#{cpMaterialBrowseRecord.phone},
+            #{cpMaterialBrowseRecord.browseDuration},#{cpMaterialBrowseRecord.browseCount},#{cpMaterialBrowseRecord.labalId},
+            #{cpMaterialBrowseRecord.labalName},#{cpMaterialBrowseRecord.browseId},#{cpMaterialBrowseRecord.status},#{cpMaterialBrowseRecord.staffId});
+  </insert>
+  <update id="update">
+    update cp_material_browse_record
+    <set>
+      <if test="cpMaterialBrowseRecord.matId != null">
+        `mat_id` = #{cpMaterialBrowseRecord.matId},
+      </if>
+      <if test="cpMaterialBrowseRecord.nickName != null">
+        `nick_name` = #{cpMaterialBrowseRecord.nickName},
+      </if>
+      <if test="cpMaterialBrowseRecord.remark != null">
+        `remark` = #{cpMaterialBrowseRecord.remark},
+      </if>
+      <if test="cpMaterialBrowseRecord.userId != null">
+        `user_id` = #{cpMaterialBrowseRecord.userId},
+      </if>
+      <if test="cpMaterialBrowseRecord.unionId != null">
+        `union_id` = #{cpMaterialBrowseRecord.unionId},
+      </if>
+      <if test="cpMaterialBrowseRecord.phone != null">
+        `phone` = #{cpMaterialBrowseRecord.phone},
+      </if>
+      <if test="cpMaterialBrowseRecord.browseDuration != null">
+        `browse_duration` = #{cpMaterialBrowseRecord.browseDuration},
+      </if>
+      <if test="cpMaterialBrowseRecord.browseCount != null">
+        `browse_count` = #{cpMaterialBrowseRecord.browseCount},
+      </if>
+      <if test="cpMaterialBrowseRecord.labalId != null">
+        `labal_id` = #{cpMaterialBrowseRecord.labalId},
+      </if>
+      <if test="cpMaterialBrowseRecord.labalName != null">
+        `labal_name` = #{cpMaterialBrowseRecord.labalName},
+      </if>
+      <if test="cpMaterialBrowseRecord.browseId != null">
+        `browse_id` = #{cpMaterialBrowseRecord.browseId},
+      </if>
+      <if test="cpMaterialBrowseRecord.status != null">
+        `status` = #{cpMaterialBrowseRecord.status},
+      </if>
+      <if test="cpMaterialBrowseRecord.staffId != null">
+        `staff_id` = #{cpMaterialBrowseRecord.staffId},
+      </if>
+    </set>
+    where id = #{cpMaterialBrowseRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from cp_material_browse_record where id = #{id}
+  </delete>
+
+  <select id="totalBrowseCount" resultType="java.lang.Integer">
+    select
+      ifnull(count(1),0)
+    from cp_material_browse_record
+    where MAT_ID = #{matId}
+    and create_time between #{startTime} and #{endTime}
+  </select>
+
+  <select id="totalVisitorCount" resultType="java.lang.Integer">
+    select
+      ifnull(count(distinct union_id),0)
+    from cp_material_browse_record
+    where MAT_ID = #{matId}
+      and create_time between #{startTime} and #{endTime}
+  </select>
+
+  <select id="browseCountByDay" resultType="com.mall4j.cloud.biz.vo.cp.MaterialBrowseRecordByDayVO">
+    select
+      date(create_time) as day1,count(1) as num
+    from cp_material_browse_record
+    where MAT_ID = #{matId}
+      and create_time between #{startTime} and #{endTime}
+    group by date(create_time)
+  </select>
+
+  <select id="visitorCountByDay" resultType="com.mall4j.cloud.biz.vo.cp.MaterialBrowseRecordByDayVO">
+    select
+      date(create_time) as day1,count(distinct  union_id) as num
+    from cp_material_browse_record
+    where MAT_ID = #{matId}
+      and create_time between #{startTime} and #{endTime}
+    group by date(create_time)
+  </select>
+
+  <update id="updateBrowseDuration">
+    update cp_material_browse_record set
+      browse_duration = #{browseDuration}
+    where id = #{id}
+  </update>
+
+  <select id="getUnSetTagRecord" resultMap="cpMaterialBrowseRecordMap">
+    select * from cp_material_browse_record where status = 0 and create_time &lt; DATE_SUB(now(),INTERVAL 10 MINUTE)
+  </select>
+
+  <update id="finish">
+    update cp_material_browse_record set
+      status = 1,labal_name=#{labalName}
+    where id = #{id}
+  </update>
+
+</mapper>

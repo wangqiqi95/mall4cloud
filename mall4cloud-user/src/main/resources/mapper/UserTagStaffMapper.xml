@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserTagStaffMapper">
+  <resultMap id="userTagStaffMap" type="com.mall4j.cloud.user.model.UserTagStaff">
+    <id column="id" property="id" />
+    <result column="staff_id" property="staffId"/>
+    <result column="tag_id" property="tagId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`staff_id`,`tag_id`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="userTagStaffMap">
+    select <include refid="Vo_Column_List"/> from user_tag_staff order by id desc
+  </select>
+  <select id="getById" resultMap="userTagStaffMap">
+    select <include refid="Vo_Column_List"/> from user_tag_staff where id = #{id}
+  </select>
+  <select id="listByStaff" resultType="com.mall4j.cloud.user.model.UserTagStaff">
+    select <include refid="Vo_Column_List"/> from user_tag_staff where staff_id = #{staffId}
+  </select>
+
+    <select id="getStaffTagByStaffAndTag" resultType="com.mall4j.cloud.user.model.UserTagStaff">
+      select <include refid="Vo_Column_List"/> from user_tag_staff where staff_id = #{staffId} and tag_id = #{tagId}
+    </select>
+
+    <insert id="save">
+    insert into user_tag_staff (`staff_id`,`tag_id`)
+    values (#{userTagStaff.staffId},#{userTagStaff.tagId});
+  </insert>
+  <update id="update">
+    update user_tag_staff
+    <set>
+      <if test="userTagStaff.staffId != null">
+        `staff_id` = #{userTagStaff.staffId},
+      </if>
+      <if test="userTagStaff.tagId != null">
+        `tag_id` = #{userTagStaff.tagId},
+      </if>
+    </set>
+    where id = #{userTagStaff.id}
+  </update>
+  <delete id="deleteById">
+    delete from user_tag_staff where id = #{id}
+  </delete>
+
+</mapper>

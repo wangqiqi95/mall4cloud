@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.GroupTagRefMapper">
+  <resultMap id="groupTagRefMap" type="com.mall4j.cloud.biz.model.cp.GroupTagRef">
+    <id column="GROUP_ID" property="groupId" />
+    <result column="TAG_ID" property="tagId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `GROUP_ID`,`TAG_ID`
+  </sql>
+  <select id="list" resultMap="groupTagRefMap">
+    select <include refid="Vo_Column_List"/> from CP_GROUP_TAG_REF order by GROUP_ID desc
+  </select>
+  <select id="getByGroupId" resultMap="groupTagRefMap">
+    select <include refid="Vo_Column_List"/> from CP_GROUP_TAG_REF where GROUP_ID = #{groupId}
+  </select>
+  <insert id="save">
+    insert into CP_GROUP_TAG_REF (`TAG_ID`,GROUP_ID)
+    values (#{groupTagRef.tagId},#{groupTagRef.groupId});
+  </insert>
+  <update id="update">
+    update CP_GROUP_TAG_REF
+    <set>
+      <if test="groupTagRef.tagId != null">
+        `TAG_ID` = #{groupTagRef.tagId},
+      </if>
+    </set>
+    where GROUP_ID = #{groupTagRef.groupId}
+  </update>
+  <delete id="deleteByGroupId">
+    delete from CP_GROUP_TAG_REF where GROUP_ID = #{groupId}
+  </delete>
+
+</mapper>

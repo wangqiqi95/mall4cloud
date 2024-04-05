@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionRecommendSpuMapper">
+  <resultMap id="distributionRecommendSpuMap" type="com.mall4j.cloud.distribution.model.DistributionRecommendSpu">
+    <id column="id" property="id" />
+    <result column="spu_id" property="spuId"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="limit_store_type" property="limitStoreType"/>
+    <result column="limit_store_ids" property="limitStoreIds"/>
+    <result column="status" property="status"/>
+    <result column="sort" property="sort"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`spu_id`,`start_time`,`end_time`,`limit_store_type`,`limit_store_ids`,`status`,`sort`,`create_time`,`update_time`
+  </sql>
+
+  <select id="listSpuIdListByParam" resultType="java.lang.Long">
+    select spu_id from distribution_recommend_spu
+    <where>
+      <if test="spuQueryDTO.status != null and spuQueryDTO.status != -1">
+        AND status = #{spuQueryDTO.status}
+      </if>
+      <if test="spuQueryDTO.storeId != null">
+        AND (limit_store_type = 0  or (limit_store_type = 1 and FIND_IN_SET(#{spuQueryDTO.storeId},limit_store_ids)))
+      </if>
+      <if test="spuQueryDTO.currentTime != null">
+        and #{spuQueryDTO.currentTime} &gt;= start_time and #{spuQueryDTO.currentTime} &lt;= end_time
+      </if>
+    </where>
+  </select>
+
+  <select id="listBySpuIdList" resultMap="distributionRecommendSpuMap">
+    select <include refid="Vo_Column_List"/> from distribution_recommend_spu
+    where spu_id IN
+    <foreach collection="spuIdList" item="spuId" separator="," open="(" close=")">
+      #{spuId}
+    </foreach>
+    order by end_time desc
+  </select>
+
+  <select id="getById" resultMap="distributionRecommendSpuMap">
+    select <include refid="Vo_Column_List"/> from distribution_recommend_spu where id = #{id}
+  </select>
+  <insert id="save">
+    insert into distribution_recommend_spu (`spu_id`,`start_time`,`end_time`,`limit_store_type`,`limit_store_ids`,`status`,`sort`)
+    values (#{distributionRecommendSpu.spuId},#{distributionRecommendSpu.startTime},#{distributionRecommendSpu.endTime},#{distributionRecommendSpu.limitStoreType},#{distributionRecommendSpu.limitStoreIds},#{distributionRecommendSpu.status},#{distributionRecommendSpu.sort});
+  </insert>
+
+  <insert id="saveBatch">
+    insert into distribution_recommend_spu (`spu_id`,`start_time`,`end_time`,`limit_store_type`,`limit_store_ids`,`status`,`sort`)
+    values
+    <foreach collection="distributionRecommendSpuList" item="distributionRecommendSpu" separator=",">
+      (#{distributionRecommendSpu.spuId},#{distributionRecommendSpu.startTime},
+      #{distributionRecommendSpu.endTime},#{distributionRecommendSpu.limitStoreType},
+      #{distributionRecommendSpu.limitStoreIds},#{distributionRecommendSpu.status},#{distributionRecommendSpu.sort})
+    </foreach>
+  </insert>
+
+  <update id="update">
+    update distribution_recommend_spu
+    <set>
+      <if test="distributionRecommendSpu.spuId != null">
+        `spu_id` = #{distributionRecommendSpu.spuId},
+      </if>
+      <if test="distributionRecommendSpu.startTime != null">
+        `start_time` = #{distributionRecommendSpu.startTime},
+      </if>
+      <if test="distributionRecommendSpu.endTime != null">
+        `end_time` = #{distributionRecommendSpu.endTime},
+      </if>
+      <if test="distributionRecommendSpu.limitStoreType != null">
+        `limit_store_type` = #{distributionRecommendSpu.limitStoreType},
+      </if>
+      <if test="distributionRecommendSpu.limitStoreIds != null">
+        `limit_store_ids` = #{distributionRecommendSpu.limitStoreIds},
+      </if>
+      <if test="distributionRecommendSpu.status != null">
+        `status` = #{distributionRecommendSpu.status},
+      </if>
+      <if test="distributionRecommendSpu.sort != null">
+        `sort` = #{distributionRecommendSpu.sort},
+      </if>
+    </set>
+    where id = #{distributionRecommendSpu.id}
+  </update>
+
+  <update id="updateStatus">
+      update distribution_recommend_spu set status = #{status} where id in
+      <foreach collection="idList" item="id" separator="," open="(" close=")">
+        #{id}
+      </foreach>
+  </update>
+
+  <select id="listSpuIdListByParamClash" resultType="com.mall4j.cloud.distribution.model.DistributionRecommendSpu">
+    select * from(
+    select spu_id,start_time,end_time from distribution_recommend_spu
+    where
+    status = 1
+    and end_time &gt; #{beginTime}
+    and start_time &lt; #{endTime}
+    <if test="storeIds != null and storeIds.size()>0">
+      and (store_id in
+      <foreach collection="storeIds" item="storeId" open="(" close=")" separator=",">
+        #{storeId}
+      </foreach>
+      OR store_id=-1)
+    </if>
+    )temp
+    where
+    temp.end_time &gt; NOW()
+    AND spu_id in
+    <foreach collection="commodityIds" item="commodityId" open="(" close=")" separator=",">
+      #{commodityId}
+    </foreach>
+  </select>
+
+
+
+</mapper>

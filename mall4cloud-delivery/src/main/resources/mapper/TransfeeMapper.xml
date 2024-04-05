@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.delivery.mapper.TransfeeMapper">
+  <resultMap id="transfeeMap" type="com.mall4j.cloud.delivery.model.Transfee">
+    <id column="transfee_id" property="transfeeId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="transport_id" property="transportId"/>
+    <result column="continuous_piece" property="continuousPiece"/>
+    <result column="first_piece" property="firstPiece"/>
+    <result column="continuous_fee" property="continuousFee"/>
+    <result column="first_fee" property="firstFee"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `transfee_id`,`create_time`,`update_time`,`transport_id`,`continuous_piece`,`first_piece`,`continuous_fee`,`first_fee`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.delivery.vo.TransfeeVO">
+    select <include refid="Vo_Column_List"/> from transfee order by transfee_id desc
+  </select>
+  <select id="getByTransfeeId" resultType="com.mall4j.cloud.delivery.vo.TransfeeVO">
+    select <include refid="Vo_Column_List"/> from transfee where transfee_id = #{transfeeId}
+  </select>
+  <insert id="save">
+    insert into transfee (`transport_id`,`continuous_piece`,`first_piece`,`continuous_fee`,`first_fee`)
+    values (#{transfee.transportId},#{transfee.continuousPiece},#{transfee.firstPiece},#{transfee.continuousFee},#{transfee.firstFee});
+  </insert>
+  <update id="update">
+    update transfee
+    <set>
+      <if test="transfee.transportId != null">
+        `transport_id` = #{transfee.transportId},
+      </if>
+      <if test="transfee.continuousPiece != null">
+        `continuous_piece` = #{transfee.continuousPiece},
+      </if>
+      <if test="transfee.firstPiece != null">
+        `first_piece` = #{transfee.firstPiece},
+      </if>
+      <if test="transfee.continuousFee != null">
+        `continuous_fee` = #{transfee.continuousFee},
+      </if>
+      <if test="transfee.firstFee != null">
+        `first_fee` = #{transfee.firstFee},
+      </if>
+    </set>
+    where transfee_id = #{transfee.transfeeId}
+  </update>
+
+  <delete id="deleteById">
+    delete from transfee where transfee_id = #{transfeeId}
+  </delete>
+
+  <delete id="deleteByTransportId">
+    delete from transfee where transport_id = #{transportId}
+  </delete>
+
+  <insert id="saveBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="transfeeId">
+    insert into transfee (`transport_id`,`continuous_piece`,`first_piece`,`continuous_fee`,`first_fee`) values
+    <foreach collection="transFees" item="transFee" separator=",">
+      (#{transFee.transportId},#{transFee.continuousPiece},#{transFee.firstPiece},#{transFee.continuousFee},#{transFee.firstFee})
+    </foreach>
+  </insert>
+
+</mapper>

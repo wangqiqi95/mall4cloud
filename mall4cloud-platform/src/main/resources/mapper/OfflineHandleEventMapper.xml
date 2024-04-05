@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.platform.mapper.OfflineHandleEventMapper">
+  <resultMap id="offlineHandleEventMap" type="com.mall4j.cloud.platform.model.OfflineHandleEvent">
+    <id column="event_id" property="eventId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="handle_type" property="handleType"/>
+    <result column="handle_id" property="handleId"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="handler_id" property="handlerId"/>
+    <result column="status" property="status"/>
+    <result column="offline_reason" property="offlineReason"/>
+  </resultMap>
+
+  <resultMap id="offlineHandleEventVOMap" type="com.mall4j.cloud.api.platform.vo.OfflineHandleEventVO">
+        <id column="event_id" property="eventId"/>
+        <result column="handle_type" property="handleType"/>
+        <result column="handle_id" property="handleId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="handler_id" property="handlerId"/>
+        <result column="status" property="status"/>
+        <result column="offline_reason" property="offlineReason"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="handler" property="handler"/>
+        <collection property="offlineHandleEventItemList" javaType="list"
+                    ofType="com.mall4j.cloud.api.platform.vo.OfflineHandleEventItemVO">
+            <id column="event_item_id" property="eventItemId"/>
+            <result column="reapply_reason" property="reapplyReason"/>
+            <result column="refuse_reason" property="refuseReason"/>
+            <result column="item_create_time" property="createTime"/>
+            <result column="reapply_time" property="reapplyTime"/>
+            <result column="audit_time" property="auditTime"/>
+        </collection>
+    </resultMap>
+  <sql id="Vo_Column_List">
+    `event_id`,`create_time`,`update_time`,`handle_type`,`handle_id`,`shop_id`,`handler_id`,`status`,`offline_reason`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.api.platform.vo.OfflineHandleEventVO">
+    select <include refid="Vo_Column_List"/> from offline_handle_event order by event_id desc
+  </select>
+  <select id="getByEventId" resultType="com.mall4j.cloud.platform.model.OfflineHandleEvent">
+    select <include refid="Vo_Column_List"/> from offline_handle_event where event_id = #{eventId}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="offlineHandleEvent.eventId">
+    insert into offline_handle_event (`handle_type`,`handle_id`,`shop_id`,`handler_id`,`status`,`offline_reason`)
+    values (#{offlineHandleEvent.handleType},#{offlineHandleEvent.handleId},#{offlineHandleEvent.shopId},#{offlineHandleEvent.handlerId},#{offlineHandleEvent.status},#{offlineHandleEvent.offlineReason});
+  </insert>
+  <update id="update">
+    update offline_handle_event
+    <set>
+      <if test="offlineHandleEvent.handleType != null">
+        `handle_type` = #{offlineHandleEvent.handleType},
+      </if>
+      <if test="offlineHandleEvent.handleId != null">
+        `handle_id` = #{offlineHandleEvent.handleId},
+      </if>
+      <if test="offlineHandleEvent.shopId != null">
+        `shop_id` = #{offlineHandleEvent.shopId},
+      </if>
+      <if test="offlineHandleEvent.handlerId != null">
+        `handler_id` = #{offlineHandleEvent.handlerId},
+      </if>
+      <if test="offlineHandleEvent.status != null">
+        `status` = #{offlineHandleEvent.status},
+      </if>
+      <if test="offlineHandleEvent.offlineReason != null">
+        `offline_reason` = #{offlineHandleEvent.offlineReason},
+      </if>
+    </set>
+    where event_id = #{offlineHandleEvent.eventId}
+  </update>
+  <delete id="deleteById">
+    delete from offline_handle_event where event_id = #{eventId}
+  </delete>
+  <delete id="deleteByHandleTypeAndHandleId">
+    delete from offline_handle_event where handle_type = #{handleType} and handle_id = #{handleId}
+  </delete>
+  <update id="updateToApply">
+    UPDATE offline_handle_event e SET e.`status` = 2
+    WHERE e.`event_id` = #{eventId}
+  </update>
+  <select id="getProcessingEventByHandleTypeAndHandleId" resultMap="offlineHandleEventVOMap">
+    SELECT
+    u.`nick_name`as handler, e.*,ei.*,ei.create_time as item_create_time
+    FROM offline_handle_event e
+    LEFT JOIN offline_handle_event_item ei ON e.`event_id` = ei.`event_id`
+    LEFT JOIN `sys_user` u ON u.`sys_user_id` = e.`handler_id`
+    WHERE e.handle_type = #{handleType} AND e.status != 3 AND e.`handle_id` = #{handleId}
+  </select>
+  <select id="offlineCount" resultType="int">
+    select count(*) from offline_handle_event where handle_type = #{handleType} and handle_id = #{handleId} and status != 3
+  </select>
+  <select id="listIdByHandleTypeAndHandleId" resultType="java.lang.Long">
+    select event_id from offline_handle_event where handle_type = #{handleType} and handle_id = #{handleId}
+  </select>
+</mapper>

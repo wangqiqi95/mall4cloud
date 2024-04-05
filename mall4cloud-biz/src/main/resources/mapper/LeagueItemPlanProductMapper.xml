@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.channels.LeagueItemPlanProductMapper">
+    <insert id="insertBatch" parameterType="com.mall4j.cloud.biz.model.channels.LeagueItemPlanProduct">
+        insert into channels_league_item_plan_product(id,create_time,update_time,plan_id,product_id,ratio,err_code,err_msg)
+        values
+        <foreach collection="reqs" item="item" separator=",">
+            (null,#{item.createTime},#{item.updateTime},#{item.planId},#{item.productId},#{item.ratio},#{item.errCode},#{item.errMsg})
+        </foreach>
+
+    </insert>
+</mapper>

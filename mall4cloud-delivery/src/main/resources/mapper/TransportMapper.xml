@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.delivery.mapper.TransportMapper">
+  <resultMap id="transportMap" type="com.mall4j.cloud.delivery.model.Transport">
+    <id column="transport_id" property="transportId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="trans_name" property="transName"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="charge_type" property="chargeType"/>
+    <result column="is_free_fee" property="isFreeFee"/>
+    <result column="has_free_condition" property="hasFreeCondition"/>
+  </resultMap>
+
+  <resultMap id="TransportAndTransFeeAndTransCityMap" type="com.mall4j.cloud.delivery.vo.TransportVO" extends="com.mall4j.cloud.delivery.mapper.TransportMapper.transportMap">
+    <collection property="transFees" ofType="com.mall4j.cloud.delivery.vo.TransfeeVO" >
+      <result column="transfee_id" jdbcType="BIGINT" property="transfeeId" />
+      <result column="transport_id" jdbcType="BIGINT" property="transportId" />
+      <result column="continuous_piece" jdbcType="DECIMAL" property="continuousPiece" />
+      <result column="first_piece" jdbcType="DECIMAL" property="firstPiece" />
+      <result column="continuous_fee" jdbcType="BIGINT" property="continuousFee" />
+      <result column="first_fee" jdbcType="BIGINT" property="firstFee" />
+      <collection property="cityList" ofType="com.mall4j.cloud.api.delivery.vo.AreaVO" >
+        <id column="area_id" jdbcType="BIGINT" property="areaId" />
+        <result column="area_name" jdbcType="VARCHAR" property="areaName" />
+        <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+        <result column="level" jdbcType="INTEGER" property="level" />
+      </collection>
+    </collection>
+  </resultMap>
+
+  <resultMap id="TransfeeFreeAndTranscityFreeMap" type="com.mall4j.cloud.delivery.vo.TransfeeFreeVO" extends="com.mall4j.cloud.delivery.mapper.TransfeeFreeMapper.transfeeFreeMap">
+    <id column="transfee_free_id" jdbcType="BIGINT" property="transfeeFreeId" />
+    <result column="transport_id" jdbcType="BIGINT" property="transportId" />
+    <result column="free_type" jdbcType="TINYINT" property="freeType" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="piece" jdbcType="DECIMAL" property="piece" />
+    <collection property="freeCityList" ofType="com.mall4j.cloud.api.delivery.vo.AreaVO">
+      <id column="area_id" jdbcType="BIGINT" property="areaId" />
+      <result column="area_name" jdbcType="VARCHAR" property="areaName" />
+      <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+      <result column="level" jdbcType="INTEGER" property="level" />
+    </collection>
+  </resultMap>
+
+
+  <sql id="Vo_Column_List">
+    `transport_id`,`create_time`,`update_time`,`trans_name`,`shop_id`,`charge_type`,`is_free_fee`,`has_free_condition`
+  </sql>
+
+  <select id="list" resultType="com.mall4j.cloud.delivery.vo.TransportVO">
+    select <include refid="Vo_Column_List"/> from transport
+    <where>
+      <if test="transportDTO.transName != null and transportDTO.transName != ''">
+        and trans_name like concat('%',#{transportDTO.transName},'%')
+      </if>
+      <if test="transportDTO.shopId != null">
+        and shop_id = #{transportDTO.shopId}
+      </if>
+    </where>
+    order by update_time desc
+  </select>
+
+  <select id="listTransport" resultType="com.mall4j.cloud.delivery.vo.TransportVO">
+    select <include refid="Vo_Column_List"/> from transport
+    where 1=1
+    <if test="tenantId!=null">
+        and shop_id = #{tenantId}
+    </if>
+    order by update_time desc
+  </select>
+
+  <select id="getTransportAndTransfeeAndTranscityById" resultMap="TransportAndTransFeeAndTransCityMap">
+    select port.*,fee.*,city.*,ta.* from transport port
+    left join transfee fee on port.transport_id = fee.transport_id
+    left join transcity city on fee.transfee_id = city.transfee_id
+    left join area ta on city.city_id = ta.area_id
+    where port.transport_id = #{transportId}
+    order by fee.transfee_id
+  </select>
+
+  <select id="getTransFeeFreeAndTransCityFreeByTransportId" resultMap="TransfeeFreeAndTranscityFreeMap">
+    select feefree.*,cityfree.*,ta.* from transfee_free feefree
+    left join transcity_free cityfree on feefree.transfee_free_id = cityfree.transfee_free_id
+    left join area ta on cityfree.free_city_id = ta.area_id
+    where feefree.transport_id = #{transportId} order by feefree.transfee_free_id
+  </select>
+
+  <insert id="save" useGeneratedKeys="true" keyProperty="transportId">
+    insert into transport (`trans_name`,`shop_id`,`charge_type`,`is_free_fee`,`has_free_condition`)
+    values (#{transport.transName},#{transport.shopId},#{transport.chargeType},#{transport.isFreeFee},#{transport.hasFreeCondition});
+  </insert>
+  <update id="updateById">
+    update transport
+    <set>
+      <if test="transport.transName != null">
+        `trans_name` = #{transport.transName},
+      </if>
+      <if test="transport.shopId != null">
+        `shop_id` = #{transport.shopId},
+      </if>
+      <if test="transport.chargeType != null">
+        `charge_type` = #{transport.chargeType},
+      </if>
+      <if test="transport.isFreeFee != null">
+        `is_free_fee` = #{transport.isFreeFee},
+      </if>
+      <if test="transport.hasFreeCondition != null">
+        `has_free_condition` = #{transport.hasFreeCondition},
+      </if>
+      update_time = now()
+    </set>
+    where transport_id = #{transport.transportId}
+  </update>
+  <delete id="deleteById">
+    delete from transport where transport_id = #{transportId}
+  </delete>
+
+  <delete id="deleteByIds">
+    delete from transport where transport_id in
+    <foreach collection="transportIds" item="transportId" open="(" close=")" separator=",">
+      #{transportId}
+    </foreach>
+  </delete>
+
+  <select id="countByTransName" resultType="int">
+    select count(*) from transport where shop_id = #{shopId} and trans_name = #{transName}
+    <if test="transportId != null">
+      and transport_id != #{transportId}
+    </if>
+  </select>
+
+  <select id="countByFreeAndShopId" resultType="int">
+    select count(*) from transport where shop_id = #{shopId} and is_free_fee = #{isFreeFee}
+  </select>
+</mapper>

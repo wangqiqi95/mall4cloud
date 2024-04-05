@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpChatScriptStoreMapper">
+  <resultMap id="cpChatScriptStoreMap" type="com.mall4j.cloud.biz.model.cp.CpChatScriptStore">
+    <id column="id" property="id" />
+    <result column="store_id" property="storeId"/>
+    <result column="script_id" property="scriptId"/>
+    <result column="type" property="type"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`store_id`,`script_id`,`type`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="cpChatScriptStoreMap">
+    select <include refid="Vo_Column_List"/> from cp_chat_script_store order by id desc
+  </select>
+  <select id="getById" resultMap="cpChatScriptStoreMap">
+    select <include refid="Vo_Column_List"/> from cp_chat_script_store where id = #{id}
+  </select>
+  <insert id="save">
+    insert into cp_chat_script_store (`store_id`,`script_id`,`type`)
+    values (#{cpChatScriptStore.storeId},#{cpChatScriptStore.scriptId},#{cpChatScriptStore.type});
+  </insert>
+  <update id="update">
+    update cp_chat_script_store
+    <set>
+      <if test="cpChatScriptStore.storeId != null">
+        `store_id` = #{cpChatScriptStore.storeId},
+      </if>
+      <if test="cpChatScriptStore.scriptId != null">
+        `script_id` = #{cpChatScriptStore.scriptId},
+      </if>
+      <if test="cpChatScriptStore.type != null">
+        `type` = #{cpChatScriptStore.type},
+      </if>
+    </set>
+    where id = #{cpChatScriptStore.id}
+  </update>
+  <delete id="deleteById">
+    delete from cp_chat_script_store where id = #{id}
+  </delete>
+
+  <delete id="deleteByScriptId">
+    delete from cp_chat_script_store where script_id = #{scriptId}
+  </delete>
+
+  <select id="getByScriptId" resultMap="cpChatScriptStoreMap">
+    select <include refid="Vo_Column_List"/> from cp_chat_script_store where script_id = #{scriptId}
+  </select>
+
+</mapper>

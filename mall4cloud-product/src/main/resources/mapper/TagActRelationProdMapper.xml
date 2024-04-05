@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.TagActRelationProdMapper">
+    <resultMap id="tagActRelationProdMap" type="com.mall4j.cloud.product.model.TagActRelationProd">
+        <result column="act_id" property="actId"/>
+        <result column="spu_id" property="spuId"/>
+    </resultMap>
+    <resultMap id="tagActRelationProdVoMap" extends="tagActRelationProdMap" type="com.mall4j.cloud.product.vo.TagActRelationProdVO">
+        <result column="name" property="spuName" />
+        <result column="spu_code" property="spuCode" />
+        <result column="price_fee" property="priceFee" />
+    </resultMap>
+    <sql id="Vo_Column_List">
+       `act_id`,`spu_id`
+    </sql>
+    <!--根据活动id获取商品列表-->
+    <select id="listByActId" resultMap="tagActRelationProdVoMap">
+        select  p.`act_id`,p.`spu_id`,s.spu_code,s.`name`,s.price_fee
+        from tag_act_relation_prod p
+            left join spu s on p.spu_id = s.spu_id
+        where  `act_id` = #{actId}
+    </select>
+
+    <select id="listsByActId" resultType="com.mall4j.cloud.product.model.TagActRelationProd">
+        select  p.`act_id`,p.`spu_id`,s.spu_code,s.`name`,s.price_fee
+        from tag_act_relation_prod p
+            left join spu s on p.spu_id = s.spu_id
+        where  `act_id` = #{actId}
+    </select>
+
+    <insert id="save"   >
+        insert into tag_act_relation_prod (`act_id`,`spu_id`)
+        values (#{et.actId},#{et.spuId});
+    </insert>
+
+    <delete id="deleteById">
+        delete from tag_act_relation_prod where act_id = #{actId} and spu_id = #{spuId}
+    </delete>
+
+    <delete id="deleteByActId">
+        delete from tag_act_relation_prod where act_id = #{actId}
+    </delete>
+
+</mapper>

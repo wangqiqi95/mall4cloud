@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.ReceiveActivityCouponMapper">
+
+
+    <insert id="insertBatch">
+        insert into receive_coupon_activity_coupon
+        (activity_id,coupon_id,stocks,stocks_limit,limit_num,is_person_limit,is_common,is_daily_limit,daily_limit_num)
+        values
+        <foreach collection ="list" item="item" index= "index" separator =",">
+            (#{item.activityId},
+             #{item.couponId},
+             #{item.stocks},
+             #{item.stocksLimit},
+             #{item.limitNum},
+             #{item.isPersonLimit},
+             #{item.isCommon},
+             #{item.isDailyLimit},
+             #{item.dailyLimitNum})
+        </foreach >
+    </insert>
+
+
+    <select id="couponList" resultType="com.mall4j.cloud.coupon.vo.ReceiveActivityCouponVO">
+        select c.id as couponId,
+               c.name as name,
+               c.kind as kind,
+               c.type as type,
+               c.reduce_amount as reduceAmount,
+               c.coupon_discount as couponDiscount,
+               c.status as status,
+               c.time_type as timeType,
+               c.after_receive_days as afterReceiveDays,
+               c.start_time as startTime,
+               c.end_time as endTime,
+               rcac.id as id,
+               rcac.limit_num as limitNum,
+               rcac.daily_limit_num as dailyLimitNum,
+               rcac.stocks,
+               rcac.is_common as isCommon
+        from receive_coupon_activity_coupon rcac
+                 left join t_coupon c on rcac.coupon_id = c.id
+        where rcac.activity_id = #{activityId}
+    </select>
+
+    <select id="appCouponList" resultType="com.mall4j.cloud.coupon.vo.AppCouponVO">
+        select c.id as couponId,
+               c.type as type,
+               c.reduce_amount as reduceAmount,
+               c.coupon_discount as couponDiscount,
+               c.amount_limit_type as amountLimitType,
+               c.amount_limit_num as amountLimitNum,
+               c.commodity_scope_type as commodityScopeType,
+               c.apply_scope_type as applyScopeType,
+               c.is_all_shop as isAllShop,
+               rcac.is_common as isCommon,
+               rcac.stocks_limit as stocksLimit,
+               rcac.stocks as stocks,
+               rcac.activity_id as activityId,
+               rcac.is_person_limit as isPersonLimit,
+               rcac.limit_num as limitNum
+        from receive_coupon_activity_coupon rcac
+                 left join t_coupon c on rcac.coupon_id = c.id
+        where rcac.activity_id = #{activityId} and c.status = 0
+    </select>
+
+    <update id="updateCouponStocks">
+        update receive_coupon_activity_coupon set `version` = `version` + 1, `stocks` = `stocks` - 1
+        where coupon_id = #{couponId} and activity_id = #{activityId} and version = #{version} and `stocks` > 0 and `limit_num` > 0
+    </update>
+</mapper>

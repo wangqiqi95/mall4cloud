@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.ConfigMapper">
+  <resultMap id="configMap" type="com.mall4j.cloud.biz.model.cp.Config">
+    <id column="CP_ID" property="cpId" />
+    <result column="COMPANY_NAME" property="companyName"/>
+    <result column="Token" property="token"/>
+    <result column="EncodingAESKey" property="EncodingAesKey"/>
+    <result column="EXTERNAL_Secret" property="externalSecret"/>
+    <result column="CONNET_SECRET" property="connetSecret"/>
+    <result column="SECRET" property="secret"/>
+    <result column="STATUS" property="status"/>
+    <result column="FLAG" property="flag"/>
+    <result column="CONNECT_TOKEN" property="connectToken"/>
+    <result column="CONNECT_AES_KEY" property="connectAesKey"/>
+    <result column="EXTERNAL_TOKEN" property="externalToken"/>
+    <result column="EXTERNAL_AES_KEY" property="externalAesKey"/>
+    <result column="AGENT_ID" property="agentId"/>
+    <result column="AGENT_Secret" property="agentSecret"/>
+    <result column="MIN_APP_ID" property="minAppId"/>
+    <result column="PIC_URL" property="picUrl"/>
+    <result column="auth2_redirect_uri" property="auth2RedirectUri"/>
+    <result column="session_token" property="sessionToken"/>
+    <result column="session_encoding_aes_key" property="sessionEncodingAesKey"/>
+    <result column="session_secret" property="sessionSecret"/>
+    <result column="session_res_public_key" property="sessionResPublicKey"/>
+    <result column="session_res_private_key" property="sessionResPrivateKey"/>
+    <result column="session_cp_id" property="sessionCpId"/>
+    <result column="session_lose_time" property="sessionLoseTime"/>
+    <result column="session_agree_token" property="sessionAgreeToken"/>
+    <result column="create_by" property="createBy"/>
+    <result column="update_by" property="updateBy"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `CP_ID`,`COMPANY_NAME`,`Token`,`EncodingAESKey`,`EXTERNAL_Secret`,`CONNET_SECRET`,`SECRET`,`STATUS`,`FLAG`,`CONNECT_TOKEN`,`CONNECT_AES_KEY`,`EXTERNAL_TOKEN`,`EXTERNAL_AES_KEY`,`AGENT_ID`,`AGENT_Secret`,`MIN_APP_ID`,`PIC_URL`,`auth2_redirect_uri`,`session_token`,`session_encoding_aes_key`,`session_secret`,`session_res_public_key`,`session_res_private_key`,`session_cp_id`,`session_lose_time`,`session_agree_token`,`create_by`,`update_by`
+  </sql>
+  <select id="list" resultMap="configMap">
+    select <include refid="Vo_Column_List"/> from CP_CONFIG order by CP_ID desc
+  </select>
+  <select id="getByCpId" resultMap="configMap">
+    select <include refid="Vo_Column_List"/> from CP_CONFIG where CP_ID = #{cpId}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into CP_CONFIG (`CP_ID`,`COMPANY_NAME`,`Token`,`EncodingAESKey`,`EXTERNAL_Secret`,`CONNET_SECRET`,`SECRET`,`STATUS`,`FLAG`,`CONNECT_TOKEN`,`CONNECT_AES_KEY`,`EXTERNAL_TOKEN`,`EXTERNAL_AES_KEY`,`AGENT_ID`,`AGENT_Secret`,`MIN_APP_ID`,`PIC_URL`,`auth2_redirect_uri`,`session_token`,`session_encoding_aes_key`,`session_secret`,`session_res_public_key`,`session_res_private_key`,`session_cp_id`,`session_lose_time`,`session_agree_token`,`create_by`)
+    values (#{cpConfig.cpId},#{cpConfig.companyName},#{cpConfig.token},#{cpConfig.encodingaeskey},#{cpConfig.externalSecret},#{cpConfig.connetSecret},#{cpConfig.secret},#{cpConfig.status},#{cpConfig.flag},#{cpConfig.connectToken},#{cpConfig.connectAesKey},#{cpConfig.externalToken},#{cpConfig.externalAesKey},#{cpConfig.agentId},#{cpConfig.agentSecret},#{cpConfig.minAppId},#{cpConfig.picUrl},#{cpConfig.auth2RedirectUri},#{cpConfig.sessionToken},#{cpConfig.sessionEncodingAesKey},#{cpConfig.sessionSecret},#{cpConfig.sessionResPublicKey},#{cpConfig.sessionResPrivateKey},#{cpConfig.sessionCpId},#{cpConfig.sessionLoseTime},#{cpConfig.sessionAgreeToken},#{cpConfig.createBy});
+  </insert>
+  <update id="update">
+    update CP_CONFIG
+    <set>
+      <if test="cpConfig.companyName != null">
+        `COMPANY_NAME` = #{cpConfig.companyName},
+      </if>
+      <if test="cpConfig.token != null">
+        `Token` = #{cpConfig.token},
+      </if>
+      <if test="cpConfig.encodingaeskey != null">
+        `EncodingAESKey` = #{cpConfig.EncodingAesKey},
+      </if>
+      <if test="cpConfig.externalSecret != null">
+        `EXTERNAL_Secret` = #{cpConfig.externalSecret},
+      </if>
+      <if test="cpConfig.connetSecret != null">
+        `CONNET_SECRET` = #{cpConfig.connetSecret},
+      </if>
+      <if test="cpConfig.secret != null">
+        `SECRET` = #{cpConfig.secret},
+      </if>
+      <if test="cpConfig.status != null">
+        `STATUS` = #{cpConfig.status},
+      </if>
+      <if test="cpConfig.flag != null">
+        `FLAG` = #{cpConfig.flag},
+      </if>
+      <if test="cpConfig.connectToken != null">
+        `CONNECT_TOKEN` = #{cpConfig.connectToken},
+      </if>
+      <if test="cpConfig.connectAesKey != null">
+        `CONNECT_AES_KEY` = #{cpConfig.connectAesKey},
+      </if>
+      <if test="cpConfig.externalToken != null">
+        `EXTERNAL_TOKEN` = #{cpConfig.externalToken},
+      </if>
+      <if test="cpConfig.externalAesKey != null">
+        `EXTERNAL_AES_KEY` = #{cpConfig.externalAesKey},
+      </if>
+      <if test="cpConfig.agentId != null">
+        `AGENT_ID` = #{cpConfig.agentId},
+      </if>
+      <if test="cpConfig.agentSecret != null">
+        `AGENT_Secret` = #{cpConfig.agentSecret},
+      </if>
+      <if test="cpConfig.minAppId != null">
+        `MIN_APP_ID` = #{cpConfig.minAppId},
+      </if>
+      <if test="cpConfig.picUrl != null">
+        `PIC_URL` = #{cpConfig.picUrl},
+      </if>
+      <if test="cpConfig.auth2RedirectUri != null">
+        `auth2_redirect_uri` = #{cpConfig.auth2RedirectUri},
+      </if>
+      <if test="cpConfig.sessionToken != null">
+        `session_token` = #{cpConfig.sessionToken},
+      </if>
+      <if test="cpConfig.sessionEncodingAesKey != null">
+        `session_encoding_aes_key` = #{cpConfig.sessionEncodingAesKey},
+      </if>
+      <if test="cpConfig.sessionSecret != null">
+        `session_secret` = #{cpConfig.sessionSecret},
+      </if>
+      <if test="cpConfig.sessionResPublicKey != null">
+        `session_res_public_key` = #{cpConfig.sessionResPublicKey},
+      </if>
+      <if test="cpConfig.sessionResPrivateKey != null">
+        `session_res_private_key` = #{cpConfig.sessionResPrivateKey},
+      </if>
+      <if test="cpConfig.sessionCpId != null">
+        `session_cp_id` = #{cpConfig.sessionCpId},
+      </if>
+      <if test="cpConfig.sessionLoseTime != null">
+        `session_lose_time` = #{cpConfig.sessionLoseTime},
+      </if>
+      <if test="cpConfig.sessionAgreeToken != null">
+        `session_agree_token` = #{cpConfig.sessionAgreeToken},
+      </if>
+      <if test="cpConfig.updateBy != null">
+        `update_by` = #{cpConfig.updateBy},
+      </if>
+    </set>
+    where CP_ID = #{cpConfig.cpId}
+  </update>
+  <delete id="deleteById">
+    delete from CP_CONFIG where CP_ID = #{cpId}
+  </delete>
+  <delete id="deleteAll">
+    delete from CP_CONFIG
+  </delete>
+</mapper>

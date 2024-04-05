@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionDevelopingRewardMapper">
+  <resultMap id="distributionDevelopingRewardMap" type="com.mall4j.cloud.distribution.model.DistributionDevelopingReward">
+    <id column="id" property="id" />
+    <result column="numbering" property="numbering"/>
+    <result column="store_type" property="storeType"/>
+    <result column="distribution_type" property="distributionType"/>
+    <result column="reward_amount" property="rewardAmount"/>
+    <result column="reward_max" property="rewardMax"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="index" property="index"/>
+    <result column="status" property="status"/>
+    <result column="staff_num" property="staffNum"/>
+    <result column="member_num" property="memberNum"/>
+    <result column="total_reward" property="totalReward"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`numbering`,`store_type`,`distribution_type`,`reward_amount`,`reward_max`,`start_time`,`end_time`,`index`,`status`,`staff_num`,`member_num`,`total_reward`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionDevelopingRewardMap">
+    select <include refid="Vo_Column_List"/> from distribution_developing_reward
+    <where>
+      <if test="distributionDevelopingReward.numbering != null">
+        and numbering = #{distributionDevelopingReward.numbering}
+      </if>
+      <if test="distributionDevelopingReward.ids != null and distributionDevelopingReward.size() > 0">
+        and id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+          #{id}
+        </foreach>
+      </if>
+      <if test="distributionDevelopingReward.status != null">
+        and status = #{distributionDevelopingReward.status}
+      </if>
+    </where>
+    order by `index` desc, id desc
+  </select>
+  <select id="getById" resultMap="distributionDevelopingRewardMap">
+    select <include refid="Vo_Column_List"/> from distribution_developing_reward where id = #{id}
+  </select>
+  <select id="listEffectRewardByIds" resultMap="distributionDevelopingRewardMap">
+    select <include refid="Vo_Column_List"/> from distribution_developing_reward
+    where status = 1
+    and now() >= start_time
+    and end_time >= now()
+    and (
+    <if test="ids != null and ids.size() > 0">
+      (id in
+      <foreach collection="ids" item="id" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+      and store_type = 1) or
+    </if> store_type = 0)
+    order by `index` desc, id desc
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into distribution_developing_reward (`numbering`,`store_type`,`distribution_type`,`reward_amount`,`reward_max`,`start_time`,`end_time`,`index`,`status`,`staff_num`,`member_num`,`total_reward`)
+    values (#{distributionDevelopingReward.numbering},#{distributionDevelopingReward.storeType},#{distributionDevelopingReward.distributionType},#{distributionDevelopingReward.rewardAmount},#{distributionDevelopingReward.rewardMax},#{distributionDevelopingReward.startTime},#{distributionDevelopingReward.endTime},#{distributionDevelopingReward.index},#{distributionDevelopingReward.status},#{distributionDevelopingReward.staffNum},#{distributionDevelopingReward.memberNum},#{distributionDevelopingReward.totalReward});
+  </insert>
+  <update id="update">
+    update distribution_developing_reward
+    <set>
+      <if test="distributionDevelopingReward.numbering != null">
+        `numbering` = #{distributionDevelopingReward.numbering},
+      </if>
+      <if test="distributionDevelopingReward.storeType != null">
+        `store_type` = #{distributionDevelopingReward.storeType},
+      </if>
+      <if test="distributionDevelopingReward.distributionType != null">
+        `distribution_type` = #{distributionDevelopingReward.distributionType},
+      </if>
+      <if test="distributionDevelopingReward.rewardAmount != null">
+        `reward_amount` = #{distributionDevelopingReward.rewardAmount},
+      </if>
+      <if test="distributionDevelopingReward.rewardMax != null">
+        `reward_max` = #{distributionDevelopingReward.rewardMax},
+      </if>
+      <if test="distributionDevelopingReward.startTime != null">
+        `start_time` = #{distributionDevelopingReward.startTime},
+      </if>
+      <if test="distributionDevelopingReward.endTime != null">
+        `end_time` = #{distributionDevelopingReward.endTime},
+      </if>
+      <if test="distributionDevelopingReward.index != null">
+        `index` = #{distributionDevelopingReward.index},
+      </if>
+      <if test="distributionDevelopingReward.status != null">
+        `status` = #{distributionDevelopingReward.status},
+      </if>
+      <if test="distributionDevelopingReward.staffNum != null">
+        `staff_num` = #{distributionDevelopingReward.staffNum},
+      </if>
+      <if test="distributionDevelopingReward.memberNum != null">
+        `member_num` = #{distributionDevelopingReward.memberNum},
+      </if>
+      <if test="distributionDevelopingReward.totalReward != null">
+        `total_reward` = #{distributionDevelopingReward.totalReward},
+      </if>
+    </set>
+    where id = #{distributionDevelopingReward.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_developing_reward where id = #{id}
+  </delete>
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionFavoriteRecordMapper">
+  <resultMap id="distributionFavoriteRecordMap" type="com.mall4j.cloud.distribution.model.DistributionFavoriteRecord">
+    <id column="id" property="id" />
+    <result column="user_id" property="userId"/>
+    <result column="user_name" property="userName"/>
+    <result column="product_id" property="productId"/>
+    <result column="product_name" property="productName"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`user_id`,`user_name`,`product_id`,`product_name`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionFavoriteRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_favorite_record order by id desc
+  </select>
+  <insert id="save">
+    insert into distribution_favorite_record (`user_id`,`user_name`,`product_id`,`product_name`,)
+    values (#{distributionFavoriteRecord.userId},#{distributionFavoriteRecord.userName},#{distributionFavoriteRecord.productId},#{distributionFavoriteRecord.productName},);
+  </insert>
+</mapper>

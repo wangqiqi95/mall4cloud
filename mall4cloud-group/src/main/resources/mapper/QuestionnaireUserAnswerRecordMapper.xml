@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.QuestionnaireUserAnswerRecordMapper">
+  <resultMap id="questionnaireUserAnswerRecordMap" type="com.mall4j.cloud.group.model.QuestionnaireUserAnswerRecord">
+    <id column="id" property="id" />
+    <result column="activity_id" property="activityId"/>
+    <result column="user_id" property="userId"/>
+    <result column="vipcode" property="vipcode"/>
+    <result column="phone" property="phone"/>
+    <result column="nick_name" property="nickName"/>
+    <result column="union_id" property="unionId"/>
+    <result column="submitted" property="submitted"/>
+    <result column="submitted_time" property="submittedTime"/>
+    <result column="awarded" property="awarded"/>
+    <result column="awarded_time" property="awardedTime"/>
+    <result column="shipped" property="shipped"/>
+    <result column="shipped_time" property="shippedTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="browse_count" property="browseCount"/>
+    <result column="is_set_addr" property="isSetAddr"/>
+    <result column="store_id" property="storeId"/>
+    <result column="store_code" property="storeCode"/>
+    <result column="store_name" property="storeName"/>
+
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`activity_id`,`user_id`,`vipcode`,`phone`,`nick_name`,`union_id`,`submitted`,`submitted_time`,`awarded`,`awarded_time`,`shipped`,`shipped_time`,`create_time`,`update_time`,`browse_count`,`is_set_addr`,`store_id`,`store_code`,`store_name`
+  </sql>
+  <select id="list" resultMap="questionnaireUserAnswerRecordMap">
+    select <include refid="Vo_Column_List"/> from questionnaire_user_answer_record order by id desc
+  </select>
+
+  <select id="page" resultType="com.mall4j.cloud.group.vo.questionnaire.QuestionnaireUserAnswerRecordPageVO">
+    select
+        a.id,a.activity_id as 'activityId',a.user_id as 'userId',a.vipcode,a.phone,
+        a.nick_name as 'nickName',a.union_id as 'unionId',a.submitted,a.submitted_time,
+        a.awarded,a.awarded_time,a.shipped,a.shipped_time,
+        b.content,c.form_names as 'formNames',
+        d.gift_type as giftType,d.gift_id as giftId,d.gift_name as giftName,d.gift_pic as giftPic,
+        e.name,a.is_set_addr, d.game_type, a.store_id, a.store_code, a.store_name, a.store_id, a.store_code,
+        a.store_name, e.title
+    from questionnaire_user_answer_record a
+    left join questionnaire_user_answer_record_content b on a.id = b.id
+    left join questionnaire_form c on a.activity_id = c.id
+    left join questionnaire_gift d on a.activity_id = d.activity_id
+    left join questionnaire e on a.activity_id = e.id
+    where 1=1
+    <if test="activityId != null">
+      and a.activity_id = #{activityId}
+    </if>
+    <if test="userId != null">
+      and a.user_id = #{userId}
+    </if>
+    <if test="submitted != null">
+      and a.submitted = #{submitted}
+    </if>
+    <if test="isFilterNoPrize == 1">
+      and d.gift_type IN (0, 1, 2, 3)
+    </if>
+    order by a.id desc
+  </select>
+
+  <select id="getById" resultMap="questionnaireUserAnswerRecordMap">
+    select <include refid="Vo_Column_List"/> from questionnaire_user_answer_record where id = #{id}
+  </select>
+  <select id="selectCountUnSubmit"
+          resultType="com.mall4j.cloud.group.vo.questionnaire.QuestionnaireUserUnSubmitVO">
+    select
+        user_id, nick_name, vipcode, phone, browse_count AS unSubmitCount, create_time, store_id, store_code, store_name
+    from questionnaire_user_answer_record
+    where submitted = 0 and activity_id = #{activityId}
+  </select>
+  <insert id="save">
+    insert into questionnaire_user_answer_record (`activity_id`,`user_id`,`vipcode`,`phone`,`nick_name`,`union_id`,`submitted`,`submitted_time`,`awarded`,`awarded_time`,`shipped`,`shipped_time`,`store_id`,`store_code`,`store_name`)
+    values (#{questionnaireUserAnswerRecord.activityId},#{questionnaireUserAnswerRecord.userId},#{questionnaireUserAnswerRecord.vipcode},#{questionnaireUserAnswerRecord.phone},#{questionnaireUserAnswerRecord.nickName},#{questionnaireUserAnswerRecord.unionId},#{questionnaireUserAnswerRecord.submitted},#{questionnaireUserAnswerRecord.submittedTime},#{questionnaireUserAnswerRecord.awarded},#{questionnaireUserAnswerRecord.awardedTime},#{questionnaireUserAnswerRecord.shipped},#{questionnaireUserAnswerRecord.shippedTime},#{questionnaireUserAnswerRecord.storeId},#{questionnaireUserAnswerRecord.storeCode},#{questionnaireUserAnswerRecord.storeName});
+  </insert>
+  <update id="update">
+    update questionnaire_user_answer_record
+    <set>
+      <if test="questionnaireUserAnswerRecord.activityId != null">
+        `activity_id` = #{questionnaireUserAnswerRecord.activityId},
+      </if>
+      <if test="questionnaireUserAnswerRecord.userId != null">
+        `user_id` = #{questionnaireUserAnswerRecord.userId},
+      </if>
+      <if test="questionnaireUserAnswerRecord.vipcode != null">
+        `vipcode` = #{questionnaireUserAnswerRecord.vipcode},
+      </if>
+      <if test="questionnaireUserAnswerRecord.phone != null">
+        `phone` = #{questionnaireUserAnswerRecord.phone},
+      </if>
+      <if test="questionnaireUserAnswerRecord.nickName != null">
+        `nick_name` = #{questionnaireUserAnswerRecord.nickName},
+      </if>
+      <if test="questionnaireUserAnswerRecord.unionId != null">
+        `union_id` = #{questionnaireUserAnswerRecord.unionId},
+      </if>
+      <if test="questionnaireUserAnswerRecord.submitted != null">
+        `submitted` = #{questionnaireUserAnswerRecord.submitted},
+      </if>
+      <if test="questionnaireUserAnswerRecord.submittedTime != null">
+        `submitted_time` = #{questionnaireUserAnswerRecord.submittedTime},
+      </if>
+      <if test="questionnaireUserAnswerRecord.awarded != null">
+        `awarded` = #{questionnaireUserAnswerRecord.awarded},
+      </if>
+      <if test="questionnaireUserAnswerRecord.awardedTime != null">
+        `awarded_time` = #{questionnaireUserAnswerRecord.awardedTime},
+      </if>
+      <if test="questionnaireUserAnswerRecord.shipped != null">
+        `shipped` = #{questionnaireUserAnswerRecord.shipped},
+      </if>
+      <if test="questionnaireUserAnswerRecord.shippedTime != null">
+        `shipped_time` = #{questionnaireUserAnswerRecord.shippedTime},
+      </if>
+      <if test="questionnaireUserAnswerRecord.storeId != null">
+        `store_id` = #{questionnaireUserAnswerRecord.storeId},
+      </if>
+      <if test="questionnaireUserAnswerRecord.storeCode != null">
+        `store_code` = #{questionnaireUserAnswerRecord.storeCode},
+      </if>
+      <if test="questionnaireUserAnswerRecord.storeName != null">
+        `store_name` = #{questionnaireUserAnswerRecord.storeName}
+      </if>
+    </set>
+    where id = #{questionnaireUserAnswerRecord.id}
+  </update>
+
+  <update id="increaseBrowse">
+    update questionnaire_user_answer_record set browse_count = browse_count + 1 where id = #{id}
+  </update>
+
+  <delete id="deleteById">
+    delete from questionnaire_user_answer_record where id = #{id}
+  </delete>
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.discount.mapper.DiscountSpuMapper">
+    <resultMap id="discountSpuMap" type="com.mall4j.cloud.discount.model.DiscountSpu">
+        <id column="discount_spu_id" property="discountSpuId"/>
+        <result column="discount_id" property="discountId"/>
+        <result column="spu_id" property="spuId"/>
+    </resultMap>
+    <delete id="deleteByDiscountId">
+        delete
+        from discount_spu
+        where discount_id = #{discountId}
+    </delete>
+
+    <insert id="insertDiscountSpuList">
+        insert into discount_spu (discount_id, spu_id) values
+        <foreach collection="discountSpuList" item="discountSpu" separator=",">
+            (#{discountSpu.discountId}, #{discountSpu.spuId})
+        </foreach>
+    </insert>
+
+    <select id="getDiscountSpuByDiscountId" resultType="com.mall4j.cloud.discount.model.DiscountSpu">
+        select dp.*
+        from discount_spu dp
+        where dp.discount_id = #{discountId}
+    </select>
+
+    <delete id="deleteBySpuIds">
+        delete
+        from discount_spu
+        where spu_id in
+        <foreach collection="spuIds" open="(" item="spuId" separator="," close=")">
+         #{spuId}
+        </foreach>
+    </delete>
+
+    <select id="listSpuIdByDiscountId" resultType="java.lang.Long">
+        select spu_id from discount_spu where discount_id = #{discountId}
+    </select>
+</mapper>

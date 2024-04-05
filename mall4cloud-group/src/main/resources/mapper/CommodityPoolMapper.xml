@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.CommodityPoolMapper">
+
+
+  <select id="getCommodityPoolsByStore" resultType="com.mall4j.cloud.group.model.CommodityPool">
+    select * from (
+      SELECT
+      *
+      FROM
+      commodity_pool
+      WHERE
+      del_flag = 0
+      and end_time &gt; #{beginTime}
+      and begin_time &lt; #{endTime}
+      and (store_id in
+      <foreach collection="storeIds" item="storeId" open="(" close=")" separator=",">
+        #{storeId}
+      </foreach>
+      OR store_id=-1)
+    )temp
+    where
+      temp.end_time &gt; NOW()
+      AND commodity_id in
+      <foreach collection="commodityIds" item="commodityId" open="(" close=")" separator=",">
+        #{commodityId}
+      </foreach>
+  </select>
+
+  <select id="getOpenCommoditys" resultType="com.mall4j.cloud.group.model.CommodityPool">
+    SELECT
+    *
+    FROM
+      commodity_pool
+    WHERE
+      begin_time &lt; NOW() AND end_time &gt; NOW()
+      AND activity_channel IN
+      <foreach collection="activityChannels" item="activityChannel" open="(" close=")" separator=",">
+        #{activityChannel}
+      </foreach>
+      AND ( store_id = #{storeId} OR store_id =- 1 )
+    GROUP BY commodity_id
+  </select>
+
+<!--  <select id="getCommodityPoolsByStore" resultType="com.mall4j.cloud.group.model.CommodityPool">-->
+<!--    SELECT-->
+<!--    *-->
+<!--    FROM-->
+<!--    commodity_pool-->
+<!--    WHERE-->
+<!--    del_flag = 0-->
+<!--    and end_time &gt; #{beginTime}-->
+<!--    and begin_time &lt; #{endTime}-->
+<!--    and end_time &gt; NOW()-->
+<!--    AND commodity_id in-->
+<!--    <foreach collection="commodityIds" item="commodityId" open="(" close=")" separator=",">-->
+<!--      #{commodityId}-->
+<!--    </foreach>-->
+<!--    <if test="storeIds!=null and storeIds.size>0">-->
+<!--      and store_id in-->
+<!--      <foreach collection="storeIds" item="storeId" open="(" close=")" separator=",">-->
+<!--        #{storeId}-->
+<!--      </foreach>-->
+<!--      OR (store_id=-1 and end_time &gt; NOW()-->
+<!--        AND commodity_id in-->
+<!--        <foreach collection="commodityIds" item="commodityId" open="(" close=")" separator=",">-->
+<!--          #{commodityId}-->
+<!--        </foreach>-->
+<!--      )-->
+<!--    </if>-->
+<!--  </select>-->
+
+</mapper>

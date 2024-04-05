@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.TCouponCategoryMapper">
+  <resultMap id="tCouponCategoryMap" type="com.mall4j.cloud.transfer.model.TCouponCategory">
+    <id column="id" property="id" />
+    <result column="coupon_id" property="couponId"/>
+    <result column="category" property="category"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`coupon_id`,`category`
+  </sql>
+  <select id="list" resultMap="tCouponCategoryMap">
+    select <include refid="Vo_Column_List"/> from t_coupon_category order by id desc
+  </select>
+  <select id="getById" resultMap="tCouponCategoryMap">
+    select <include refid="Vo_Column_List"/> from t_coupon_category where id = #{id}
+  </select>
+  <insert id="save">
+    insert into t_coupon_category (`coupon_id`,`category`)
+    values (#{tCouponCategory.couponId},#{tCouponCategory.category});
+  </insert>
+  <update id="update">
+    update t_coupon_category
+    <set>
+      <if test="tCouponCategory.couponId != null">
+        `coupon_id` = #{tCouponCategory.couponId},
+      </if>
+      <if test="tCouponCategory.category != null">
+        `category` = #{tCouponCategory.category},
+      </if>
+    </set>
+    where id = #{tCouponCategory.id}
+  </update>
+  <delete id="deleteById">
+    delete from t_coupon_category where id = #{id}
+  </delete>
+
+</mapper>

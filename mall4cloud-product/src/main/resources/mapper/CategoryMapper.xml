@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.CategoryMapper">
+  <resultMap id="categoryMap" type="com.mall4j.cloud.product.model.Category">
+    <id column="category_id" property="categoryId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="parent_id" property="parentId"/>
+    <result column="desc" property="desc"/>
+    <result column="path" property="path"/>
+    <result column="status" property="status"/>
+    <result column="icon" property="icon"/>
+    <result column="img_url" property="imgUrl"/>
+    <result column="level" property="level"/>
+    <result column="seq" property="seq"/>
+    <result column="deduction_rate" property="deductionRate"/>
+    <result column="name" property="name"/>
+  </resultMap>
+  <resultMap id="categoryVOMap" type="com.mall4j.cloud.common.product.vo.CategoryVO">
+    <id column="category_id" property="categoryId" />
+    <result column="shop_id" property="shopId"/>
+    <result column="parent_id" property="parentId"/>
+    <result column="path" property="path"/>
+    <result column="status" property="status"/>
+    <result column="icon" property="icon"/>
+    <result column="img_url" property="imgUrl"/>
+    <result column="level" property="level"/>
+    <result column="seq" property="seq"/>
+    <result column="name" property="name"/>
+    <result column="deduction_rate" property="deductionRate"/>
+    <collection property="categoryLangList" ofType="com.mall4j.cloud.common.product.vo.CategoryLangVO">
+      <id column="lang" property="lang"/>
+      <result column="name" property="name"/>
+    </collection>
+  </resultMap>
+
+
+  <sql id="Vo_Column_List">
+    `category_id`,`create_time`,`update_time`,`shop_id`,`parent_id`,`desc`,`path`,`status`,`icon`,`img_url`,`level`,`deduction_rate`,`seq`
+  </sql>
+  <select id="getById" resultMap="categoryVOMap">
+    SELECT c.category_id,c.create_time,c.update_time,c.shop_id,c.parent_id,c.path,c.status,c.icon,c.img_url,c.level,c.seq,c.deduction_rate,c.name
+    FROM category c
+    WHERE c.category_id = #{categoryId}
+  </select>
+  <select id="selectById" resultMap="categoryVOMap">
+    SELECT c.category_id,c.create_time,c.update_time,c.shop_id,c.parent_id,c.path,c.status,c.icon,c.img_url,c.level,c.seq,c.deduction_rate
+    FROM category c
+    WHERE c.category_id = #{categoryId}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="category.categoryId">
+    insert into category (`shop_id`,`parent_id`,`desc`,`path`,`status`,`icon`,`img_url`,`level`,`deduction_rate`,`seq`,`name`)
+    values (#{category.shopId},#{category.parentId},#{category.desc},#{category.path},#{category.status},#{category.icon},#{category.imgUrl},#{category.level},#{category.deductionRate},#{category.seq},#{category.name});
+  </insert>
+  <update id="update">
+    update category
+    <set>
+      <if test="category.desc != null">
+        `desc` = #{category.desc},
+      </if>
+      <if test="category.icon != null">
+        `icon` = #{category.icon},
+      </if>
+      <if test="category.imgUrl != null">
+        `img_url` = #{category.imgUrl},
+      </if>
+      <if test="category.deductionRate != null">
+        `deduction_rate` = #{category.deductionRate},
+      </if>
+      <if test="category.seq != null">
+        `seq` = #{category.seq},
+      </if>
+      <if test="category.name != null">
+        `name` = #{category.name},
+      </if>
+    </set>
+    where category_id = #{category.categoryId}
+  </update>
+  <delete id="deleteById">
+    delete from category where category_id = #{categoryId}
+  </delete>
+
+  <select id="list" resultMap="categoryVOMap">
+    SELECT c.category_id,c.create_time,c.update_time,c.shop_id,c.parent_id,c.path,c.status,c.icon,c.img_url,c.level,c.seq,c.`name`
+    FROM category c
+    WHERE shop_id = #{shopId} AND `status` != -1
+    <if test="level != null">
+      AND `level` = #{level}
+    </if>
+  </select>
+
+  <select id="listByShopIdAndParenId" resultMap="categoryVOMap">
+    SELECT c.category_id,c.create_time,c.update_time,c.shop_id,c.parent_id,c.path,c.status,c.icon,c.img_url,c.level,c.seq,c.deduction_rate,c.`name`
+    FROM `category`c
+    WHERE c.shop_id = #{shopId} AND c.`status` = 1
+    <if test="parentId != null">
+      AND parent_id = #{parentId}
+    </if>
+  </select>
+
+  <select id="getChildCategory" resultType="com.mall4j.cloud.product.model.Category">
+    SELECT `category_id`,`level` FROM category WHERE parent_id = #{categoryId}
+    UNION
+    SELECT `category_id`,`level` FROM category
+    WHERE parent_id IN (SELECT category_id FROM category WHERE parent_id = #{categoryId})
+  </select>
+
+  <update id="updateBatchOfStatus">
+    UPDATE category SET `status` = #{status} WHERE `category_id` in
+    <foreach collection="categoryIds" item="categoryId" open="(" close=")" separator=",">
+      #{categoryId}
+    </foreach>
+  </update>
+
+  <select id="getListByCategoryIds" resultMap="categoryVOMap">
+    SELECT c.category_id,c.create_time,c.update_time,c.shop_id,c.parent_id,c.path,c.status,c.icon,c.img_url,c.level,c.seq,c.name
+    FROM category c
+    WHERE c.category_id IN
+    <foreach collection="categoryIds" item="categoryId" open="(" close=")" separator=",">
+      #{categoryId}
+    </foreach>
+  </select>
+  <select id="listCategoryId" resultType="java.lang.Long">
+    SELECT category_id FROM category WHERE parent_id IN (SELECT category_id FROM category WHERE parent_id = 2)
+    <where>
+        <if test="shopId == 0 and parentId ==0">
+         parent_id IN (SELECT category_id FROM category WHERE parent_id = #{parentId})
+        </if>
+        <if test="parentId != 0">
+         AND parent_id = #{parentId}
+        </if>
+    </where>
+  </select>
+  <select id="listSigningCategoryByShopIdAndStatus" resultMap="categoryVOMap">
+    SELECT c.category_id,c.level,c.parent_id,c.seq,c.name
+    FROM category c
+    JOIN category_lang cl ON c.category_id = cl.category_id
+    JOIN category_shop cs ON c.category_id = cs.category_id
+    WHERE cs.shop_id = #{shopId} AND `status` != -1
+    <if test="status != null">
+      AND `status` = #{status}
+    </if>
+  </select>
+
+  <select id="listRate" resultType="com.mall4j.cloud.product.bo.CategoryRateBO">
+    select category_id,deduction_rate as rate from category where shop_id = 0 and level = 2
+  </select>
+
+  <select id="listByCategoryIds" resultMap="categoryVOMap">
+    SELECT c.category_id,c.name
+    FROM category c
+    WHERE c.category_id IN
+    <foreach collection="categoryIds" item="categoryId" open="(" close=")" separator=",">
+      #{categoryId}
+    </foreach>
+  </select>
+  <select id="getCategoryUseNum" resultType="com.mall4j.cloud.product.vo.CategoryUseNumVO">
+    SELECT 1 as type,COUNT(*) AS num FROM category WHERE parent_id = #{categoryId} AND status != -1
+    UNION ALL
+    (
+        SELECT 2 as type,COUNT(*) AS num FROM attr_category WHERE category_id = #{categoryId}
+    )
+    UNION ALL
+    (
+      SELECT 3 as type,COUNT(*) AS num FROM category_brand cb
+      JOIN brand b ON cb.brand_id = b.brand_id
+      WHERE cb.category_id = #{categoryId} AND b.status != -1
+    )
+    UNION ALL
+    (
+      SELECT 4 as type, COUNT(*) AS num FROM spu
+      WHERE status != -1
+        <if test="shopId == 0">
+          AND category_id = #{categoryId}
+        </if>
+        <if test="shopId != 0">
+          AND shop_category_id = #{categoryId}
+        </if>
+    )
+  </select>
+
+  <select id="getParentIdsByCategoryId" resultType="java.lang.Long"
+          parameterType="java.util.List">
+    SELECT parent_id FROM category WHERE category_id IN
+      <foreach collection="categoryIds" item="categoryId" separator="," open="(" close=")">
+        #{categoryId}
+      </foreach>
+    UNION ALL
+    SELECT parent_id FROM category
+    WHERE category_id IN (SELECT parent_id FROM category WHERE category_id IN
+      <foreach collection="categoryIds" item="categoryId" separator="," open="(" close=")">
+        #{
+      categoryId}
+      </foreach>
+    )
+  </select>
+
+  <select id="listBySkuIds" resultType="com.mall4j.cloud.api.product.bo.PlatformCommissionOrderItemBO">
+    SELECT sku.sku_id,c.category_id FROM sku
+    LEFT JOIN spu ON sku.`spu_id` = spu.`spu_id`
+    LEFT JOIN `category` c ON spu.`category_id` = c.`category_id`
+    WHERE sku.sku_id IN
+    <foreach collection="platformCommissionOrderItems" item="platformCommissionOrderItem" separator="," open="(" close=")">
+      #{platformCommissionOrderItem.skuId}
+    </foreach>
+  </select>
+  <select id="listCategoryIdByShopIdAndParentId" resultType="java.lang.Long">
+    SELECT category_id FROM category
+    <where>
+      <if test="shopId != null">
+        AND shop_id = #{shopId}
+      </if>
+      <if test="parentId != null">
+        AND parent_id = #{parentId}
+      </if>
+    </where>
+  </select>
+  <select id="getByName" resultMap="categoryMap">
+    SELECT c.category_id,c.create_time,c.update_time,c.shop_id,c.parent_id,c.path,c.status,c.icon,c.img_url,c.level,c.seq,c.deduction_rate,c.`name`
+    FROM category c
+    WHERE c.`name` = #{name} and c.shop_id = #{shopId} and category_id != #{categoryId}
+  </select>
+  <select id="getCountByName" resultType="java.lang.Long">
+    SELECT count(1)
+    FROM category c
+    WHERE c.`name` = #{name} and c.shop_id = #{shopId} and category_id != #{categoryId}
+  </select>
+  <select id="listbyParentId" resultMap="categoryVOMap">
+      SELECT c.category_id,c.create_time,c.update_time,c.shop_id,c.parent_id,c.path,c.status,c.icon,c.img_url,c.level,c.seq,c.deduction_rate,c.name
+      FROM category c
+      WHERE c.parent_id = #{parentId} and c.shop_id = #{shopId}
+  </select>
+</mapper>
+

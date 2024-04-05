@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.TimeLimitedDiscountSkuMapper">
+  <resultMap id="timeLimitedDiscountSkuMap" type="com.mall4j.cloud.group.model.TimeLimitedDiscountSku">
+    <id column="id" property="id" />
+    <result column="activity_id" property="activityId"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="sku_id" property="skuId"/>
+    <result column="price" property="price"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`activity_id`,`spu_id`,`sku_id`,`price`
+  </sql>
+  <select id="list" resultMap="timeLimitedDiscountSkuMap">
+    select <include refid="Vo_Column_List"/> from time_limited_discount_sku order by id desc
+  </select>
+  <select id="getById" resultMap="timeLimitedDiscountSkuMap">
+    select <include refid="Vo_Column_List"/> from time_limited_discount_sku where id = #{id}
+  </select>
+  <insert id="save">
+    insert into time_limited_discount_sku (`activity_id`,`spu_id`,`sku_id`,`price`)
+    values (#{timeLimitedDiscountSku.activityId},#{timeLimitedDiscountSku.spuId},#{timeLimitedDiscountSku.skuId},#{timeLimitedDiscountSku.price});
+  </insert>
+  <update id="update">
+    update time_limited_discount_sku
+    <set>
+      <if test="timeLimitedDiscountSku.activityId != null">
+        `activity_id` = #{timeLimitedDiscountSku.activityId},
+      </if>
+      <if test="timeLimitedDiscountSku.spuId != null">
+        `spu_id` = #{timeLimitedDiscountSku.spuId},
+      </if>
+      <if test="timeLimitedDiscountSku.skuId != null">
+        `sku_id` = #{timeLimitedDiscountSku.skuId},
+      </if>
+      <if test="timeLimitedDiscountSku.price != null">
+        `price` = #{timeLimitedDiscountSku.price},
+      </if>
+    </set>
+    where id = #{timeLimitedDiscountSku.id}
+  </update>
+  <delete id="deleteById">
+    delete from time_limited_discount_sku where id = #{id}
+  </delete>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into time_limited_discount_sku (`activity_id`,`spu_id`,`sku_id`,`price`)
+        values
+        <foreach collection="list" item="entity" separator=",">
+            (#{entity.activityId},#{entity.spuId},#{entity.skuId},#{entity.price})
+        </foreach>
+    </insert>
+
+    <delete id="removeActivityId">
+        delete from time_limited_discount_sku where activity_id = #{activityId}
+    </delete>
+
+    <select id="selectByActivityId" resultType="com.mall4j.cloud.group.vo.TimeLimitedDiscountSkuVO">
+        select * from time_limited_discount_sku where activity_id = #{activityId} and spu_id = #{spuId}
+    </select>
+
+    <select id="selectByActivityAndSpuIds" resultType="com.mall4j.cloud.group.vo.TimeLimitedDiscountSkuVO">
+        select * from time_limited_discount_sku where activity_id = #{activityId}
+        and spu_id in
+        <foreach collection="spuIds" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectBySkuIds" resultType="com.mall4j.cloud.api.group.feign.vo.TimeDiscountActivityVO">
+        select * from time_limited_discount_sku where
+        activity_id in
+        <foreach collection="activityids" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        and sku_id in
+        <foreach collection="spuIds" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

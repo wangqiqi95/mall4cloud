@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.platform.mapper.TentacleContentMapper">
+  <resultMap id="tentacleContentMap" type="com.mall4j.cloud.platform.model.TentacleContent">
+    <id column="id" property="id" />
+    <result column="org_id" property="orgId"/>
+    <result column="tentacle_no" property="tentacleNo"/>
+    <result column="tentacle_id" property="tentacleId"/>
+    <result column="content_title" property="contentTitle"/>
+    <result column="content_type" property="contentType"/>
+    <result column="content_id" property="contentId"/>
+    <result column="content" property="content"/>
+    <result column="description" property="description"/>
+    <result column="status" property="status"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`org_id`,`tentacle_no`,`tentacle_id`,`content_title`,`content_type`,`content_id`,`content`,`description`,`status`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="tentacleContentMap">
+    select <include refid="Vo_Column_List"/> from tentacle_content order by id desc
+  </select>
+  <select id="getById" resultMap="tentacleContentMap">
+    select <include refid="Vo_Column_List"/> from tentacle_content where id = #{id}
+  </select>
+    <select id="findByTentacleIdAndContentType" resultMap="tentacleContentMap">
+      select <include refid="Vo_Column_List"/> from tentacle_content
+      where tentacle_id = #{tentacleId}
+      and content_type = #{contentType}
+      order by create_time desc
+      limit 1
+    </select>
+  <select id="findByTentacleNo" resultMap="tentacleContentMap">
+    select <include refid="Vo_Column_List"/> from tentacle_content
+    where tentacle_no = #{tentacleNo} limit 1
+  </select>
+  <insert id="save">
+    insert into tentacle_content (`org_id`,`tentacle_no`,`tentacle_id`,`content_title`,`content_type`,`content_id`,`content`,`description`,`status`)
+    values (#{tentacleContent.orgId},#{tentacleContent.tentacleNo},#{tentacleContent.tentacleId},#{tentacleContent.contentTitle},#{tentacleContent.contentType},#{tentacleContent.contentId},#{tentacleContent.content},#{tentacleContent.description},#{tentacleContent.status});
+  </insert>
+  <update id="update">
+    update tentacle_content
+    <set>
+      <if test="tentacleContent.orgId != null">
+        `org_id` = #{tentacleContent.orgId},
+      </if>
+      <if test="tentacleContent.tentacleNo != null">
+        `tentacle_no` = #{tentacle.tentacleNo},
+      </if>
+      <if test="tentacleContent.tentacleId != null">
+        `tentacle_id` = #{tentacleContent.tentacleId},
+      </if>
+      <if test="tentacleContent.contentTitle != null">
+        `content_title` = #{tentacleContent.contentTitle},
+      </if>
+      <if test="tentacleContent.contentType != null">
+        `content_type` = #{tentacleContent.contentType},
+      </if>
+      <if test="tentacleContent.contentId != null">
+        `content_id` = #{tentacleContent.contentId},
+      </if>
+      <if test="tentacleContent.content != null">
+        `content` = #{tentacleContent.content},
+      </if>
+      <if test="tentacleContent.description != null">
+        `description` = #{tentacleContent.description},
+      </if>
+      <if test="tentacleContent.status != null">
+        `status` = #{tentacleContent.status},
+      </if>
+    </set>
+    where id = #{tentacleContent.id}
+  </update>
+  <delete id="deleteById">
+    delete from tentacle_content where id = #{id}
+  </delete>
+
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserScoreLockMapper">
+    <resultMap id="userScoreLockMap" type="com.mall4j.cloud.user.model.UserScoreLock">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="user_id" property="userId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="status" property="status"/>
+        <result column="score" property="score"/>
+        <result column="score_get_log_ids" property="scoreGetLogIds"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`,
+        `create_time`,
+        `update_time`,
+        `user_id`,
+        `order_id`,
+        `status`,
+        `score`,
+        `score_get_log_ids`
+    </sql>
+    <select id="list" resultMap="userScoreLockMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_score_lock
+        order by id desc
+    </select>
+    <select id="getById" resultMap="userScoreLockMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_score_lock
+        where id = #{id}
+    </select>
+    <select id="listUserScoreLocksByOrderId" resultMap="userScoreLockMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_score_lock where order_id=#{orderId}
+    </select>
+    <insert id="save">
+        insert into user_score_lock (`user_id`, `order_id`, `status`, `score`, `score_get_log_ids`)
+        values (#{userScoreLock.userId}, #{userScoreLock.orderId}, #{userScoreLock.status}, #{userScoreLock.score}, #{userScoreLock.scoreGetLogIds});
+    </insert>
+    <update id="update">
+        update user_score_lock
+        <set>
+            <if test="userScoreLock.userId != null">
+                `user_id` = #{userScoreLock.userId},
+            </if>
+            <if test="userScoreLock.orderId != null">
+                `order_id` = #{userScoreLock.orderId},
+            </if>
+            <if test="userScoreLock.status != null">
+                `status` = #{userScoreLock.status},
+            </if>
+            <if test="userScoreLock.score != null">
+                `score` = #{userScoreLock.score},
+            </if>
+            <if test="userScoreLock.scoreGetLogIds != null">
+                `score_get_log_ids` = #{userScoreLock.scoreGetLogIds},
+            </if>
+        </set>
+        where id = #{userScoreLock.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from user_score_lock
+        where id = #{id}
+    </delete>
+
+    <insert id="saveBatch">
+        insert into user_score_lock (`user_id`,`order_id`,`status`,`score`,`score_get_log_ids`)
+        values
+        <foreach collection="userScoreLocks" item="userScoreLock" separator=",">
+            (#{userScoreLock.userId}, #{userScoreLock.orderId}, #{userScoreLock.status}, #{userScoreLock.score}, #{userScoreLock.scoreGetLogIds})
+        </foreach>
+    </insert>
+    <update id="unLockByIds">
+        update user_score_lock
+        set status = #{status} where id in
+        <foreach collection="userScoreLockIds" item="userScoreLockId" separator="," open="(" close=")">
+            #{userScoreLockId}
+        </foreach>
+        and status = 0
+    </update>
+</mapper>

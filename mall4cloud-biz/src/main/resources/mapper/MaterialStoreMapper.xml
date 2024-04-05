@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.MaterialStoreMapper">
+  <resultMap id="materialStoreMap" type="com.mall4j.cloud.biz.model.cp.MaterialStore">
+    <id column="ID" property="id" />
+    <result column="STORE_ID" property="storeId"/>
+    <result column="MAT_ID" property="matId"/>
+    <result column="STATUS" property="status"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="UPDATE_TIME" property="updateTime"/>
+    <result column="FLAG" property="flag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `ID`,`STORE_ID`,`MAT_ID`,`STATUS`,`CREATE_TIME`,`UPDATE_TIME`,`FLAG`
+  </sql>
+  <select id="list" resultMap="materialStoreMap">
+    select <include refid="Vo_Column_List"/> from CP_MATERIAL_STORE
+    where 1=1
+    <if test="materialStore.matId != null "> AND  MAT_ID = #{materialStore.matId} </if>
+  </select>
+
+  <select id="listByMatId" resultMap="materialStoreMap">
+    select <include refid="Vo_Column_List"/> from CP_MATERIAL_STORE where   MAT_ID = #{matId}
+  </select>
+
+  <insert id="save">
+    insert into CP_MATERIAL_STORE (`STORE_ID`,`MAT_ID`,`STATUS`,`CREATE_TIME`,`UPDATE_TIME`,`FLAG`)
+    values (#{materialStore.storeId},#{materialStore.matId},#{materialStore.status},#{materialStore.createTime},#{materialStore.updateTime},#{materialStore.flag});
+  </insert>
+
+  <delete id="deleteByMatId">
+    delete from CP_MATERIAL_STORE where MAT_ID = #{matId}
+  </delete>
+
+</mapper>

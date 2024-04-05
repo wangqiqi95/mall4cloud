@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.TagActivityMapper">
+    <resultMap id="tagActivityMap" type="com.mall4j.cloud.product.model.TagActivity">
+        <id column="id" property="id"/>
+        <result column="activity_name" property="activityName"/>
+        <result column="tag_name" property="tagName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="is_all_shop" property="isAllShop"/>
+        <result column="tag_type" property="tagType"/>
+        <result column="tag_position" property="tagPosition"/>
+        <result column="tag_url" property="tagUrl"/>
+        <result column="weight" property="weight"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_name" property="createName"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+    </resultMap>
+    <resultMap id="tagActivityVoMap" extends="tagActivityMap" type="com.mall4j.cloud.product.vo.TagActivityVO">
+        <result column="prod_nums" property="prodNums" />
+        <collection property="stores" ofType="com.mall4j.cloud.product.model.TagActRelationStore" column="ID" select="com.mall4j.cloud.product.mapper.TagActRelationStoreMapper.listByActId" />
+    </resultMap>
+
+    <sql id="Vo_Column_List">
+         `id`,`activity_name`,`tag_name`,`start_time`,`end_time`,`is_all_shop`,`tag_type`,`tag_position`,tag_url,`weight`,`status`,`create_time`,`create_by`,`create_name`,`update_time`,`update_by`
+    </sql>
+    <!-- 管理后台分页查询 -->
+    <select id="list" resultMap="tagActivityVoMap">
+        select t.`id`,t.`activity_name`,t.`tag_name`,t.`start_time`,t.`end_time`,t.`is_all_shop`,t.`tag_type`,t.`tag_position`,t.tag_url,t.`weight`,t.`status`,t.`create_time`,t.`create_name`,
+               (select count(1) from tag_act_relation_prod  p where p.act_id = t.id) as prod_nums  from tag_activity t
+        where  1=1
+        <if test="et.activityName != null and et.activityName !='' "> and activity_name like CONCAT('%', #{et.activityName},'%')  </if>
+        <if test="et.status!= null"> and `status` = #{et.status}  </if>
+        <if test="et.tagType!= null"> and `tag_type` = #{et.tagType}  </if>
+        <if test="et.storeList!= null"> and   id in (
+             select act_id from tag_act_relation_store where store_id in
+                <foreach collection="et.storeList" item="item" open="(" close=")" separator=" or ">
+                    #{item}
+                </foreach>
+            )
+        </if>
+        order by create_time desc
+    </select>
+
+    <insert id="save"  useGeneratedKeys="true" keyProperty="id" keyColumn="ID" >
+        insert into tag_activity (`activity_name`,`tag_name`,`start_time`,`end_time`,`is_all_shop`,`tag_type`,`tag_position`,tag_url,`weight`,`status`,`create_time`,`create_by`,`create_name`,`update_time`,`update_by`)
+        values (#{et.activityName},#{et.tagName},#{et.startTime},#{et.endTime},#{et.isAllShop},#{et.tagType},#{et.tagPosition},#{et.tagUrl},#{et.weight},#{et.status},#{et.createTime},#{et.createBy},#{et.createName},#{et.updateTime},#{et.updateBy});
+    </insert>
+
+    <update id="update">
+        update tag_activity
+        <set>
+            <if test="et.activityName != null">
+                `activity_name` = #{et.activityName},
+            </if>
+            <if test="et.tagName != null">
+                `tag_name` = #{et.tagName},
+            </if>
+            <if test="et.startTime != null">
+                `start_time` = #{et.startTime},
+            </if>
+            <if test="et.endTime != null">
+                `end_time` = #{et.endTime},
+            </if>
+            <if test="et.isAllShop != null">
+                `is_all_shop` = #{et.isAllShop},
+            </if>
+            <if test="et.tagType != null">
+                `tag_type` = #{et.tagType},
+            </if>
+            <if test="et.tagPosition != null">
+                `tag_position` = #{et.tagPosition},
+            </if>
+            <if test="et.tagUrl!= null">
+                `tag_url` = #{et.tagUrl},
+            </if>
+            <if test="et.weight!= null">
+                `weight` = #{et.weight},
+            </if>
+            <if test="et.status!= null">
+                `status` = #{et.status},
+            </if>
+            <if test="et.updateTime!= null">
+                `update_time` = #{et.updateTime},
+            </if>
+            <if test="et.updateBy!= null">
+                `update_by` = #{et.updateBy},
+            </if>
+        </set>
+        where id = #{et.id}
+    </update>
+
+    <delete id="deleteById">
+        delete from tag_activity where id = #{id}
+    </delete>
+
+    <select id="getById" resultMap="tagActivityMap">
+        select <include refid="Vo_Column_List"/> from tag_activity where id = #{id}
+    </select>
+
+
+    <!-- 小程序前端根据商品id查询权重最高的活动标签-->
+    <select id="getTagBySpuId" resultMap="tagActivityMap">
+        select t.`id`,t.`activity_name`,t.`tag_name`,t.`start_time`,t.`end_time`,t.`tag_type`,t.`tag_position`,t.tag_url  from tag_activity t
+        where  t.status = 2
+          and  t.`start_time` <![CDATA[ <  ]]> now()
+          and  t.`end_time` > now()
+          and  (t.is_all_shop =1 or t.id in ( select s.act_id from tag_act_relation_store s where s.store_id  =#{storeId}))
+          and  t.id in (select act_id from tag_act_relation_prod p where p.spu_id = #{spuId})
+         order by t.weight asc,t.create_time desc
+         limit 0,1
+    </select>
+    <!-- 检测活动的开始时间和结束时间，将状态更新-->
+    <update id="updateTagActivityStatus">
+        update tag_activity  set status =(case when start_time <![CDATA[ <= ]]> now() and end_time>=now() then 2  when  end_time <![CDATA[ < ]]> now() then 3 else 1 END) where status in (1,2)
+    </update>
+
+</mapper>

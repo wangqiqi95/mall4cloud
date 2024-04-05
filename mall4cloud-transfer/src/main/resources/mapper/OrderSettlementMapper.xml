@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.OrderSettlementMapper">
+    <resultMap id="orderSettlementMap" type="com.mall4j.cloud.transfer.model.OrderSettlement">
+        <id column="settlement_id" property="settlementId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="order_id" property="orderId"/>
+        <result column="pay_id" property="payId"/>
+        <result column="pay_type" property="payType"/>
+        <result column="is_clearing" property="isClearing"/>
+        <result column="pay_score" property="payScore"/>
+        <result column="pay_amount" property="payAmount"/>
+        <result column="clearing_time" property="clearingTime"/>
+        <result column="version" property="version"/>
+        <result column="is_payed" property="isPayed"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `settlement_id`
+        ,
+        `create_time`,
+        `update_time`,
+        `order_id`,
+        `pay_id`,
+        `pay_type`,
+        `is_clearing`,
+        `pay_score`,
+        `pay_amount`,
+        `clearing_time`,
+        `version`,
+        `is_payed`
+    </sql>
+    <select id="list" resultMap="orderSettlementMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_settlement order by settlement_id desc
+    </select>
+    <select id="getBySettlementId" resultMap="orderSettlementMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_settlement where settlement_id = #{settlementId}
+    </select>
+    <select id="getByOrderId" resultMap="orderSettlementMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_settlement where order_id = #{orderId} limit 1
+    </select>
+    <select id="getByOrderId2" resultMap="orderSettlementMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall4cloud_order.order_settlement where order_id = #{orderId} limit 1
+    </select>
+    <insert id="save">
+        insert into order_settlement_add (`order_id`, `pay_id`, `pay_type`, `is_clearing`, `pay_score`, `pay_amount`,
+                                      `clearing_time`, `version`, `is_payed`)
+        values (#{orderSettlement.orderId}, #{orderSettlement.payId}, #{orderSettlement.payType},
+                #{orderSettlement.isClearing}, #{orderSettlement.payScore}, #{orderSettlement.payAmount},
+                #{orderSettlement.clearingTime}, #{orderSettlement.version}, #{orderSettlement.isPayed});
+    </insert>
+    <update id="update">
+        update order_settlement
+        <set>
+            <if test="orderSettlement.orderId != null">
+                `order_id` = #{orderSettlement.orderId},
+            </if>
+            <if test="orderSettlement.payId != null">
+                `pay_id` = #{orderSettlement.payId},
+            </if>
+            <if test="orderSettlement.payType != null">
+                `pay_type` = #{orderSettlement.payType},
+            </if>
+            <if test="orderSettlement.isClearing != null">
+                `is_clearing` = #{orderSettlement.isClearing},
+            </if>
+            <if test="orderSettlement.payScore != null">
+                `pay_score` = #{orderSettlement.payScore},
+            </if>
+            <if test="orderSettlement.payAmount != null">
+                `pay_amount` = #{orderSettlement.payAmount},
+            </if>
+            <if test="orderSettlement.clearingTime != null">
+                `clearing_time` = #{orderSettlement.clearingTime},
+            </if>
+            <if test="orderSettlement.version != null">
+                `version` = #{orderSettlement.version},
+            </if>
+            <if test="orderSettlement.isPayed != null">
+                `is_payed` = #{orderSettlement.isPayed},
+            </if>
+        </set>
+        where settlement_id = #{orderSettlement.settlementId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from order_settlement
+        where settlement_id = #{settlementId}
+    </delete>
+
+</mapper>

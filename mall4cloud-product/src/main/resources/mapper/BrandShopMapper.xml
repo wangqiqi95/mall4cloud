@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.BrandShopMapper">
+  <resultMap id="brandShopMap" type="com.mall4j.cloud.product.model.BrandShop">
+    <id column="brand_shop_id" property="brandShopId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="brand_id" property="brandId"/>
+    <result column="qualifications" property="qualifications"/>
+    <result column="type" property="type"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `brand_shop_id`,`create_time`,`update_time`,`shop_id`,`brand_id`,`qualifications`,`type`
+  </sql>
+  <select id="list" resultMap="brandShopMap">
+    select <include refid="Vo_Column_List"/> from brand_shop order by brand_shop_id desc
+  </select>
+  <select id="getByBrandShopId" resultMap="brandShopMap">
+    select <include refid="Vo_Column_List"/> from brand_shop where brand_shop_id = #{brandShopId}
+  </select>
+  <select id="listByShopIdAndType" resultType="com.mall4j.cloud.product.vo.BrandShopVO">
+    SELECT
+      bs.brand_shop_id,
+      bl.`name` AS name,
+      b.img_url AS img_url,
+      b.first_letter AS first_letter,
+      b.status AS brand_status,
+      bs.brand_id,
+      bs.type,
+      bs.qualifications
+    FROM
+      brand_shop bs
+      JOIN brand b ON b.brand_id = bs.brand_id
+      JOIN brand_lang bl ON b.brand_id = bl.brand_id AND lang = #{lang}
+    WHERE
+      bs.shop_id = #{shopId}
+      AND bs.type = #{type}
+  </select>
+  <select id="countByShopIdAndBrandId" resultType="java.lang.Integer">
+    select count(*) from brand_shop
+    <where>
+      <if test="shopId != null and shopId != ''">
+        and shop_id = #{shopId}
+      </if>
+      <if test="brandId != null and brandId != ''">
+        and brand_id = #{brandId}
+      </if>
+    </where>
+  </select>
+
+  <insert id="save">
+    insert into brand_shop (`shop_id`,`brand_id`,`qualifications`,`type`)
+    values (#{brandShop.shopId},#{brandShop.brandId},#{brandShop.qualifications},#{brandShop.type});
+  </insert>
+  <insert id="insertBatch">
+    insert into brand_shop (`brand_shop_id`,`shop_id`,`brand_id`,`qualifications`,`type`) values
+    <foreach collection="brandShopList" item="brandShop" separator=",">
+       (#{brandShop.brandShopId},#{shopId},#{brandShop.brandId},#{brandShop.qualifications},#{type})
+    </foreach>
+  </insert>
+
+  <update id="update">
+    update brand_shop
+    <set>
+      <if test="brandShop.shopId != null">
+        `shop_id` = #{brandShop.shopId},
+      </if>
+      <if test="brandShop.brandId != null">
+        `brand_id` = #{brandShop.brandId},
+      </if>
+      <if test="brandShop.qualifications != null">
+        `qualifications` = #{brandShop.qualifications},
+      </if>
+      <if test="brandShop.type != null">
+        `type` = #{brandShop.type},
+      </if>
+    </set>
+    where brand_shop_id = #{brandShop.brandShopId}
+  </update>
+  <update id="updateTypeByShopId">
+    update brand_shop set `type` = #{type} where shop_id = #{shopId}
+  </update>
+  <delete id="deleteById">
+    delete from brand_shop where brand_shop_id = #{brandShopId}
+  </delete>
+  <delete id="deleteBatchByShopId">
+    delete from brand_shop where shop_id = #{shopId}
+  </delete>
+  <delete id="deleteByBrandId">
+    delete from brand_shop where brand_id = #{brandId}
+  </delete>
+
+</mapper>

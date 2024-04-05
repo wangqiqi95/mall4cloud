@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.channels.LeagueItemProductMapper">
+    <select id="queryList" resultType="com.mall4j.cloud.biz.dto.channels.league.ItemListPageRespDto" parameterType="com.mall4j.cloud.biz.dto.channels.league.ItemListPageReqDto">
+        SELECT
+            a.*,
+            a.forerver as isForerver,
+            b.title,
+            b.head_imgs
+        FROM
+            channels_league_item_product a
+                LEFT JOIN channels_spu b ON a.out_product_id = b.out_spu_id
+                LEFT JOIN channels_league_item_finder c on a.id=c.product_id
+        <where>
+                and type=#{reqDto.type}
+
+            <if test="reqDto.title != null">
+                and b.title LIKE CONCAT( #{reqDto.title}, "%" )
+            </if>
+            <if test="reqDto.status != null and (reqDto.status=='0'.toString() or reqDto.status=='1'.toString())">
+                AND a.`status` = #{reqDto.status}
+            </if>
+            <if test="reqDto.status != null and reqDto.status=='2'.toString() ">
+                AND a.`status` = 0
+                AND a.begin_time > now()
+            </if>
+            <if test="reqDto.status != null and reqDto.status=='3'.toString() ">
+                AND a.`status` = 0
+                <if test="reqDto.type != '1'.toString">
+                    AND ((a.begin_time &lt; now() and a.end_time > now()) or a.forerver=1)
+                </if>
+            </if>
+            <if test="reqDto.spuCodes != null and reqDto.spuCodes.size > 0 ">
+                and a.spu_code in
+                <foreach collection="reqDto.spuCodes" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="reqDto.finderIds != null and reqDto.finderIds.size>0">
+                and c.finder_id in
+                <foreach collection="reqDto.finderIds" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+
+    <select id="allowPromotionListPageByType" parameterType="com.mall4j.cloud.biz.dto.channels.league.ItemAllowPromotionListPageReqDto" resultType="com.mall4j.cloud.biz.dto.channels.league.ItemAllowPromotionListPageRespDto">
+        SELECT
+            a.id,
+            a.spu_id,
+            a.spu_code,
+            a.title,
+            a.head_imgs,
+            a.out_spu_id
+        FROM
+            channels_spu a
+        <where>
+            and  a.`status` = 5
+            <if test="reqDto.title != null">
+              and a.title like concat(#{reqDto.title},'%')
+            </if>
+            <if test="reqDto.spuCodes != null and reqDto.spuCodes.size > 0">
+              and a.spu_code in
+              <foreach collection="reqDto.spuCodes" item="item" separator="," open="(" close=")" >
+                  #{item}
+              </foreach>
+            </if>
+            <if test="reqDto.outProductIds != null">
+            and a.out_spu_id in
+            <foreach collection="reqDto.outProductIds" item="item" separator="," open="(" close=")" >
+                #{item}
+            </foreach>
+          </if>
+          <if test="reqDto.type != null and reqDto.type == '1'.toString() ">
+              AND NOT EXISTS (
+                    SELECT
+                    b.out_product_id
+                    FROM channels_league_item_product b
+                    WHERE
+                    a.out_spu_id = b.out_product_id
+                    AND b.type = 3 and b.status=0)
+          </if>
+          <if test="reqDto.type !=null and reqDto.type == '2'.toString() ">
+              AND EXISTS (
+                  SELECT
+                  b.out_product_id
+                  FROM
+                  channels_league_item_product b
+                  WHERE
+                  a.out_spu_id = b.out_product_id
+                  AND b.type = 1 and b.status=0)
+          </if>
+          <if test="reqDto.type !=null and reqDto.type == '3'.toString()">
+              AND (NOT EXISTS (
+              SELECT
+              b.out_product_id
+              FROM channels_league_item_product b
+              WHERE
+              a.out_spu_id = b.out_product_id
+              AND b.type = 1 and b.status=0)
+
+              and NOT EXISTS (
+              SELECT
+              b.out_product_id
+              FROM channels_league_item_product b
+              WHERE
+              a.out_spu_id = b.out_product_id
+              AND b.type = 2 and b.status=0))
+          </if>
+
+        </where>
+    </select>
+</mapper>

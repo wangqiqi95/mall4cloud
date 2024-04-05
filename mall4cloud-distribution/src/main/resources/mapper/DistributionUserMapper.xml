@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionUserMapper">
+  <resultMap id="distributionUser_achievementMap" type="com.mall4j.cloud.distribution.vo.DistributionUserAchievementVO">
+    <id column="distribution_user_id" property="distributionUserId" />
+    <result column="wallet_id" property="walletId"/>
+    <result column="nick_name" property="nickName"/>
+    <result column="user_mobile" property="userMobile"/>
+    <result property="aGenerationCommission" jdbcType="DECIMAL" column="a_generation_commission"/>
+    <result property="secondGenerationCommission" jdbcType="DECIMAL" column="second_generation_commission"/>
+    <result property="invitationRewards" jdbcType="DECIMAL" column="invitation_rewards"/>
+    <result property="accumulateAmount" jdbcType="DECIMAL" column="accumulate_amount"/>
+    <result property="unsettledAmount" jdbcType="DECIMAL" column="unsettled_amount"/>
+    <result property="settledAmount" jdbcType="DECIMAL" column="settled_amount"/>
+    <result column="invalid_amount" jdbcType="DECIMAL" property="invalidAmount" />
+  </resultMap>
+    <resultMap id="distributionUserVOMap" type="com.mall4j.cloud.distribution.vo.DistributionUserVO" extends="distributionUserMap">
+    </resultMap>
+    <resultMap id="distributionUserMap" type="com.mall4j.cloud.distribution.model.DistributionUser">
+        <id column="distribution_user_id" property="distributionUserId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="user_id" property="userId"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="parent_ids" property="parentIds"/>
+        <result column="grade" property="grade"/>
+        <result column="bind_time" property="bindTime"/>
+        <result column="state" property="state"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="pic" property="pic"/>
+        <result column="user_mobile" property="userMobile"/>
+        <result column="real_name" property="realName"/>
+        <result column="identity_card_number" property="identityCardNumber"/>
+        <result column="identity_card_pic_front" property="identityCardPicFront"/>
+        <result column="identity_card_pic_back" property="identityCardPicBack"/>
+        <result column="identity_card_pic_hold" property="identityCardPicHold"/>
+        <result column="state_record" property="stateRecord"/>
+    </resultMap>
+    <!--分销员管理页面-->
+    <resultMap id="distribution_user_page" type="com.mall4j.cloud.distribution.vo.DistributionUserVO">
+        <id column="distribution_user_id" jdbcType="BIGINT" property="distributionUserId" />
+        <result column="user_id" jdbcType="VARCHAR" property="userId" />
+        <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+        <result column="parent_ids" jdbcType="VARCHAR" property="parentIds" />
+        <result column="grade" jdbcType="INTEGER" property="grade" />
+        <result column="bind_time" jdbcType="TIMESTAMP" property="bindTime" />
+        <result column="state" jdbcType="TINYINT" property="state" />
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+        <result column="user_mobile" jdbcType="VARCHAR" property="userMobile" />
+        <result column="real_name" jdbcType="VARCHAR" property="realName" />
+        <result column="identity_card_number" jdbcType="VARCHAR" property="identityCardNumber" />
+        <result column="identity_card_pic_front" jdbcType="VARCHAR" property="identityCardPicFront" />
+        <result column="identity_card_pic_back" jdbcType="VARCHAR" property="identityCardPicBack" />
+        <result column="identity_card_pic_hold" jdbcType="VARCHAR" property="identityCardPicHold" />
+        <result column="parent_user_mobile" property="inviteeMobile"/>
+        <result column="parent_nick_name" property="invitee"/>
+        <result column="bound_customers" property="boundCustomers"/>
+        <result column="invited_veeker" property="invitedVeeker"/>
+        <result column="accumulate_amount" property="accumulateAmount"/>
+    </resultMap>
+
+    <!--分销中心-->
+    <resultMap id="DistributionUserAchievementDataAppDto" type="com.mall4j.cloud.distribution.vo.AchievementDataVO">
+        <result column="bound_customers" property="boundCustomers"/>
+        <result column="invited_distributors" property="invitedDistributors"/>
+        <result column="order_count" property="orderCount"/>
+        <result column="unsettled_amount" jdbcType="DECIMAL" property="unsettledAmount" />
+        <result column="settled_amount" jdbcType="DECIMAL" property="settledAmount" />
+        <result column="accumulate_amount" jdbcType="DECIMAL" property="accumulateAmount" />
+        <result column="invalid_amount" jdbcType="DECIMAL" property="invalidAmount" />
+    </resultMap>
+
+    <resultMap id="distributionUserSimpleInfoMap" type="com.mall4j.cloud.distribution.vo.DistributionUserSimpleInfoVO">
+        <id column="distribution_user_id" jdbcType="BIGINT" property="distributionUserId" />
+        <result column="bind_time" jdbcType="TIMESTAMP" property="bindTime" />
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+        <result column="real_name" jdbcType="VARCHAR" property="realName" />
+        <result column="pic" property="pic"/>
+    </resultMap>
+
+    <sql id="Vo_Column_List">
+        `distribution_user_id`,`create_time`,`update_time`,`user_id`,`parent_id`,`parent_ids`,`grade`,`bind_time`,`state`,`nick_name`,`pic`,`user_mobile`,`real_name`,`identity_card_number`,`identity_card_pic_front`,`identity_card_pic_back`,`identity_card_pic_hold`,`state_record`
+    </sql>
+    <select id="listDistributionUser" resultMap="distribution_user_page">
+        SELECT
+        du.distribution_user_id,
+        du.parent_id,
+        du.grade,
+        du.bind_time,
+        du.state,
+        du.nick_name,
+        du.user_mobile,
+        du.real_name,
+        du.identity_card_number,
+        du.identity_card_pic_front,
+        du.identity_card_pic_back,
+        du.identity_card_pic_hold,
+        pdu.user_mobile AS parent_user_mobile,
+        pdu.nick_name AS parent_nick_name,
+        -- 积累客户
+        IFNULL(MAX(dub.bound_customers),0) AS bound_customers,
+        -- 积累邀请
+        IFNULL(COUNT(da.distribution_user_id),0) AS invited_veeker,
+        -- 积累收益
+        any_value(IFNULL(duw.accumulate_amount,0)) AS accumulate_amount
+        FROM distribution_user du
+        LEFT JOIN distribution_user_wallet duw ON duw.distribution_user_id = du.distribution_user_id
+        LEFT JOIN distribution_user pdu ON pdu.distribution_user_id=du.parent_id
+        LEFT JOIN (
+        SELECT dub.distribution_user_id,COUNT(dub.distribution_user_id) AS bound_customers FROM
+        distribution_user_bind dub
+        WHERE dub.state = 1
+        GROUP BY dub.distribution_user_id
+        ) AS dub ON dub.distribution_user_id = du.distribution_user_id
+        LEFT JOIN distribution_auditing da ON da.parent_distribution_user_id=du.distribution_user_id AND da.state = 1
+        <where> du.state != 0 and du.state != 3
+            <if test="distributionUser.userMobile!= null and distributionUser.userMobile!=''">
+                and trim(replace(du.user_mobile,' ','')) like trim(replace(concat('%',#{distributionUser.userMobile},'%'),' ',''))
+            </if>
+            <if test="distributionUser.inviteeMobile!= null and distributionUser.inviteeMobile!= ''">
+                and trim(replace(pdu.user_mobile,' ','')) like trim(replace(concat('%',#{distributionUser.inviteeMobile},'%'),' ',''))
+            </if>
+        </where>
+        GROUP BY du.distribution_user_id
+        <if test="distributionUser.sortParam != null and distributionUser.sortType != null">
+            ORDER BY
+            <choose>
+                <when test="distributionUser.sortParam == 1">
+                    bind_time
+                </when>
+                <when test="distributionUser.sortParam == 2">
+                    bound_customers
+                </when>
+                <when test="distributionUser.sortParam == 3">
+                    invited_veeker
+                </when>
+                <when test="distributionUser.sortParam == 4">
+                    accumulate_amount
+                </when>
+                <otherwise>
+                    distribution_user_id
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="distributionUser.sortType == 1">
+                    ASC
+                </when>
+                <when test="distributionUser.sortType == 2">
+                    DESC
+                </when>
+                <otherwise>
+                    DESC
+                </otherwise>
+            </choose>
+        </if>
+    </select>
+    <select id="getByDistributionUserId" resultMap="distributionUserMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from distribution_user where distribution_user_id = #{distributionUserId}
+    </select>
+    <insert id="save">
+        insert into distribution_user (`distribution_user_id`, `user_id`, `parent_id`,
+                                       `parent_ids`, `grade`, `bind_time`, `state`, `nick_name`, `pic`, `user_mobile`,
+                                       `real_name`, `identity_card_number`, `identity_card_pic_front`,
+                                       `identity_card_pic_back`, `identity_card_pic_hold`, `state_record`)
+        values (#{distributionUser.distributionUserId},
+                #{distributionUser.userId}, #{distributionUser.parentId}, #{distributionUser.parentIds},
+                #{distributionUser.grade}, #{distributionUser.bindTime}, #{distributionUser.state},
+                #{distributionUser.nickName}, #{distributionUser.pic}, #{distributionUser.userMobile},
+                #{distributionUser.realName}, #{distributionUser.identityCardNumber},
+                #{distributionUser.identityCardPicFront}, #{distributionUser.identityCardPicBack},
+                #{distributionUser.identityCardPicHold}, #{distributionUser.stateRecord});
+    </insert>
+    <update id="update">
+        update distribution_user
+        <set>
+            <if test="distributionUser.userId != null">
+                `user_id` = #{distributionUser.userId},
+            </if>
+            <if test="distributionUser.parentId != null">
+                `parent_id` = #{distributionUser.parentId},
+            </if>
+            <if test="distributionUser.parentIds != null">
+                `parent_ids` = #{distributionUser.parentIds},
+            </if>
+            <if test="distributionUser.grade != null">
+                `grade` = #{distributionUser.grade},
+            </if>
+            <if test="distributionUser.bindTime != null">
+                `bind_time` = #{distributionUser.bindTime},
+            </if>
+            <if test="distributionUser.state != null">
+                `state` = #{distributionUser.state},
+            </if>
+            <if test="distributionUser.nickName != null">
+                `nick_name` = #{distributionUser.nickName},
+            </if>
+            <if test="distributionUser.pic != null">
+                `pic` = #{distributionUser.pic},
+            </if>
+            <if test="distributionUser.userMobile != null">
+                `user_mobile` = #{distributionUser.userMobile},
+            </if>
+            <if test="distributionUser.realName != null">
+                `real_name` = #{distributionUser.realName},
+            </if>
+            <if test="distributionUser.identityCardNumber != null">
+                `identity_card_number` = #{distributionUser.identityCardNumber},
+            </if>
+            <if test="distributionUser.identityCardPicFront != null">
+                `identity_card_pic_front` = #{distributionUser.identityCardPicFront},
+            </if>
+            <if test="distributionUser.identityCardPicBack != null">
+                `identity_card_pic_back` = #{distributionUser.identityCardPicBack},
+            </if>
+            <if test="distributionUser.identityCardPicHold != null">
+                `identity_card_pic_hold` = #{distributionUser.identityCardPicHold},
+            </if>
+            <if test="distributionUser.stateRecord != null">
+                `state_record` = #{distributionUser.stateRecord},
+            </if>
+        </set>
+        where distribution_user_id = #{distributionUser.distributionUserId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from distribution_user
+        where distribution_user_id = #{distributionUserId}
+    </delete>
+
+  <select id="getByUserId" resultMap="distributionUserVOMap">
+    select <include refid="Vo_Column_List"/> from distribution_user
+    where user_id = #{userId}
+  </select>
+    <select id="achievementPage" resultMap="distributionUser_achievementMap">
+        SELECT
+        du.distribution_user_id,
+        du.nick_name,
+        du.user_mobile,
+        da.wallet_id,
+        ANY_VALUE(da.accumulate_amount) AS accumulate_amount,
+        ANY_VALUE(da.settled_amount) AS settled_amount,
+        ANY_VALUE(da.unsettled_amount) AS unsettled_amount,
+        ANY_VALUE(da.invalid_amount) AS invalid_amount,
+        SUM( CASE WHEN dui.income_type = 1 THEN dui.income_amount ELSE 0 END ) AS a_generation_commission,
+        SUM( CASE WHEN dui.income_type = 2 THEN dui.income_amount ELSE 0 END ) AS second_generation_commission,
+        SUM( CASE WHEN dui.income_type = 3 THEN dui.income_amount ELSE 0 END ) AS invitation_rewards
+        FROM
+        distribution_user du
+        LEFT JOIN distribution_user_wallet da ON da.distribution_user_id = du.distribution_user_id
+        LEFT JOIN distribution_user_income dui ON dui.wallet_id = da.wallet_id AND dui.state != 0 AND dui.state != -1
+        <where>
+            du.state = 1
+            <if test="userMobile!= null and userMobile!=''">
+                and du.user_mobile like concat('%',#{userMobile},'%')
+            </if>
+        </where>
+        GROUP BY
+        du.distribution_user_id
+        <if test="distributionUserDTO.sortParam != 0 and distributionUserDTO.sortType != 0">
+            ORDER BY
+            <choose>
+                <when test="distributionUserDTO.sortParam == 1">
+                    a_generation_commission
+                </when>
+                <when test="distributionUserDTO.sortParam == 2">
+                    second_generation_commission
+                </when>
+                <when test="distributionUserDTO.sortParam == 3">
+                    invitation_rewards
+                </when>
+                <when test="distributionUserDTO.sortParam == 4">
+                    unsettled_amount
+                </when>
+                <when test="distributionUserDTO.sortParam == 5">
+                    settled_amount
+                </when>
+                <when test="distributionUserDTO.sortParam == 6">
+                    invalid_amount
+                </when>
+                <otherwise>
+                    distribution_user_id
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="distributionUserDTO.sortType == 1">
+                    ASC
+                </when>
+                <when test="distributionUserDTO.sortType == 2">
+                    DESC
+                </when>
+            </choose>
+        </if>
+    </select>
+    <update id="updateParentIdById">
+        update
+            distribution_user
+        set
+            parent_id = "",
+            parent_ids = replace(parent_ids,concat(',',#{distributionUserId}),"")
+        where parent_id = #{distributionUserId}
+          and parent_ids like concat(',',#{distributionUserId})
+    </update>
+    <update id="updateStatus">
+        update
+        distribution_user
+        set
+        `state` = #{distributionUser.state}, bind_time = #{distributionUser.bindTime}, state_record = #{distributionUser.stateRecord}
+        where distribution_user_id = #{distributionUser.distributionUserId}
+    </update>
+
+  <select id="getDistributionUserByIdCardNumberAndUserMobile" resultMap="distributionUserMap">
+      SELECT identity_card_number,user_mobile FROM distribution_user WHERE state = 1
+      AND (identity_card_number = #{identityCardNumber} OR  user_mobile = #{userMobile})
+  </select>
+
+  <select id="getAchievementDataById" resultMap="DistributionUserAchievementDataAppDto">
+      SELECT
+              duw.unsettled_amount,
+              duw.settled_amount,
+              duw.accumulate_amount,
+              duw.invalid_amount,
+              bud.bound_customers,
+              pdu.invited_distributors,
+              dui.order_count
+      FROM
+              distribution_user_wallet duw,
+              ( SELECT COUNT( distribution_user_id ) AS bound_customers FROM distribution_user_bind WHERE distribution_user_id = #{distributionUserId} ) AS bud,
+              ( SELECT COUNT( distribution_user_id ) AS invited_distributors FROM distribution_user WHERE parent_id = #{distributionUserId} ) AS pdu,
+              ( SELECT COUNT( distribution_user_id ) AS order_count FROM distribution_user_income WHERE distribution_user_id = #{distributionUserId} ) AS dui
+      WHERE duw.distribution_user_id = #{distributionUserId}
+  </select>
+
+  <select id="getPageDistributionUserSimpleInfoByParentUserId" resultMap="distributionUserSimpleInfoMap">
+      select
+      distribution_user_id,
+      nick_name,
+      pic,
+      bind_time,
+      real_name
+      from
+      distribution_user
+      where
+      parent_id = #{parentDistributionUserId}
+  </select>
+</mapper>

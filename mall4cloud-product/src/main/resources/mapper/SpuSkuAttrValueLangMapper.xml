@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SpuSkuAttrValueLangMapper">
+  <resultMap id="spuSkuAttrValueLangMap" type="com.mall4j.cloud.product.model.SpuSkuAttrValueLang">
+    <id column="spu_sku_attr_id" property="spuSkuAttrId" />
+    <result column="lang" property="lang"/>
+    <result column="attr_name" property="attrName"/>
+    <result column="attr_value_name" property="attrValueName"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `spu_sku_attr_id`,`lang`,`attr_name`,`attr_value_name`
+  </sql>
+  <select id="list" resultMap="spuSkuAttrValueLangMap">
+    select <include refid="Vo_Column_List"/> from spu_sku_attr_value_lang order by spu_sku_attr_id desc
+  </select>
+  <select id="getBySpuSkuAttrId" resultMap="spuSkuAttrValueLangMap">
+    select <include refid="Vo_Column_List"/> from spu_sku_attr_value_lang where spu_sku_attr_id = #{spuSkuAttrId}
+  </select>
+  <insert id="save">
+    insert into spu_sku_attr_value_lang (`lang`,`attr_name`,`attr_value_name`)
+    values (#{spuSkuAttrValueLang.lang},#{spuSkuAttrValueLang.attrName},#{spuSkuAttrValueLang.attrValueName});
+  </insert>
+  <update id="update">
+    update spu_sku_attr_value_lang
+    <set>
+      <if test="spuSkuAttrValueLang.lang != null">
+        `lang` = #{spuSkuAttrValueLang.lang},
+      </if>
+      <if test="spuSkuAttrValueLang.attrName != null">
+        `attr_name` = #{spuSkuAttrValueLang.attrName},
+      </if>
+      <if test="spuSkuAttrValueLang.attrValueName != null">
+        `attr_value_name` = #{spuSkuAttrValueLang.attrValueName},
+      </if>
+    </set>
+    where spu_sku_attr_id = #{spuSkuAttrValueLang.spuSkuAttrId}
+  </update>
+  <delete id="deleteById">
+    delete from spu_sku_attr_value_lang where spu_sku_attr_id = #{spuSkuAttrId}
+  </delete>
+
+  <insert id="batchSave">
+    insert into spu_sku_attr_value_lang (`spu_sku_attr_id`,`lang`,`attr_name`,`attr_value_name`) values
+    <foreach collection="spuSkuAttrValueLangList" item="spuSkuAttrValueLang" separator=",">
+      (#{spuSkuAttrValueLang.spuSkuAttrId},#{spuSkuAttrValueLang.lang},#{spuSkuAttrValueLang.attrName},#{spuSkuAttrValueLang.attrValueName})
+    </foreach>
+  </insert>
+</mapper>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.AuthSocialMapper">
+    <resultMap id="authSocialMap" type="com.mall4j.cloud.transfer.model.AuthSocial">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="uid" property="uid"/>
+        <result column="temp_uid" property="tempUid"/>
+        <result column="staff_uid" property="staffUid"/>
+        <result column="social_type" property="socialType"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="image_url" property="imageUrl"/>
+        <result column="biz_user_id" property="bizUserId"/>
+        <result column="biz_unionid" property="bizUnionid"/>
+        <result column="biz_temp_session" property="bizTempSession"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`
+        ,
+        `create_time`,
+        `update_time`,
+        `uid`,
+        `temp_uid`,
+        `staff_uid`,
+        `social_type`,
+        `nick_name`,
+        `image_url`,
+        `biz_user_id`,
+        `biz_unionid`,
+        `biz_temp_session`
+    </sql>
+    <select id="list" resultMap="authSocialMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from auth_social order by id desc
+    </select>
+    <select id="getById" resultMap="authSocialMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from auth_social where id = #{id}
+    </select>
+    <insert id="save">
+        insert into auth_social (`uid`, `temp_uid`, `staff_uid`, `social_type`, `nick_name`, `image_url`, `biz_user_id`,
+                                 `biz_unionid`, `biz_temp_session`)
+        values (#{authSocial.uid}, #{authSocial.tempUid}, #{authSocial.staffUid}, #{authSocial.socialType},
+                #{authSocial.nickName}, #{authSocial.imageUrl}, #{authSocial.bizUserId}, #{authSocial.bizUnionid},
+                #{authSocial.bizTempSession});
+    </insert>
+    <insert id="batchSave">
+        insert into auth_social (`uid`,`temp_uid`,`staff_uid`,`social_type`,
+        `nick_name`,`image_url`,`biz_user_id`,`biz_unionid`,`biz_temp_session`)
+        values
+        <foreach collection="authSocials" item="authSocial" separator=",">
+            (#{authSocial.uid},#{authSocial.tempUid},#{authSocial.staffUid},#{authSocial.socialType},
+            #{authSocial.nickName},#{authSocial.imageUrl},#{authSocial.bizUserId},
+            #{authSocial.bizUnionid},#{authSocial.bizTempSession})
+        </foreach>
+
+    </insert>
+
+    <insert id="batchSave2">
+        insert into auth_social_add (`uid`,`temp_uid`,`staff_uid`,`social_type`,
+        `nick_name`,`image_url`,`biz_user_id`,`biz_unionid`,`biz_temp_session`)
+        values
+        <foreach collection="authSocials" item="authSocial" separator=",">
+            (#{authSocial.uid},#{authSocial.tempUid},#{authSocial.staffUid},#{authSocial.socialType},
+            #{authSocial.nickName},#{authSocial.imageUrl},#{authSocial.bizUserId},
+            #{authSocial.bizUnionid},#{authSocial.bizTempSession})
+        </foreach>
+
+    </insert>
+
+    <insert id="batchSave3">
+        insert into eto_auth_social_add (`uid`,`temp_uid`,`staff_uid`,`social_type`,
+        `nick_name`,`image_url`,`biz_user_id`,`biz_unionid`,`biz_temp_session`)
+        values
+        <foreach collection="authSocials" item="authSocial" separator=",">
+            (#{authSocial.uid},#{authSocial.tempUid},#{authSocial.staffUid},#{authSocial.socialType},
+            #{authSocial.nickName},#{authSocial.imageUrl},#{authSocial.bizUserId},
+            #{authSocial.bizUnionid},#{authSocial.bizTempSession})
+        </foreach>
+
+    </insert>
+    <update id="update">
+        update auth_social
+        <set>
+            <if test="authSocial.uid != null">
+                `uid` = #{authSocial.uid},
+            </if>
+            <if test="authSocial.tempUid != null">
+                `temp_uid` = #{authSocial.tempUid},
+            </if>
+            <if test="authSocial.staffUid != null">
+                `staff_uid` = #{authSocial.staffUid},
+            </if>
+            <if test="authSocial.socialType != null">
+                `social_type` = #{authSocial.socialType},
+            </if>
+            <if test="authSocial.nickName != null">
+                `nick_name` = #{authSocial.nickName},
+            </if>
+            <if test="authSocial.imageUrl != null">
+                `image_url` = #{authSocial.imageUrl},
+            </if>
+            <if test="authSocial.bizUserId != null">
+                `biz_user_id` = #{authSocial.bizUserId},
+            </if>
+            <if test="authSocial.bizUnionid != null">
+                `biz_unionid` = #{authSocial.bizUnionid},
+            </if>
+            <if test="authSocial.bizTempSession != null">
+                `biz_temp_session` = #{authSocial.bizTempSession},
+            </if>
+        </set>
+        where id = #{authSocial.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from auth_social
+        where id = #{id}
+    </delete>
+
+</mapper>

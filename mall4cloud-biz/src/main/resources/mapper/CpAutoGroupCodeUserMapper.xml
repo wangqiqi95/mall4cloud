@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpAutoGroupCodeUserMapper">
+  <resultMap id="cpAutoGroupCodeUserMap" type="com.mall4j.cloud.biz.model.cp.CpAutoGroupCodeUser">
+    <id column="id" property="id" />
+    <result column="user_id" property="userId"/>
+    <result column="qi_wei_user_id" property="qiWeiUserId"/>
+    <result column="staff_id" property="staffId"/>
+    <result column="nick_name" property="nickName"/>
+    <result column="code_id" property="codeId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="create_by" property="createBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="is_delete" property="isDelete"/>
+    <result column="status" property="status"/>
+    <result column="send_status" property="sendStatus"/>
+    <result column="join_group" property="joinGroup"/>
+    <result column="chat_id" property="chatId"/>
+    <result column="group_id" property="groupId"/>
+    <result column="bind_time" property="bindTime"/>
+    <result column="join_group_time" property="joinGroupTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`user_id`,`qi_wei_user_id`,`staff_id`,`nick_name`,`code_id`,`create_time`,`create_by`,`update_time`,`update_by`,`is_delete`,`status`,`send_status`,`join_group`,`chat_id`,`group_id`,`bind_time`,`join_group_time`
+  </sql>
+
+  <select id="list" resultMap="cpAutoGroupCodeUserMap">
+    select <include refid="Vo_Column_List"/> from cp_auto_group_code_user order by id desc
+  </select>
+
+  <select id="getById" resultMap="cpAutoGroupCodeUserMap">
+    select <include refid="Vo_Column_List"/> from cp_auto_group_code_user where id = #{id}
+  </select>
+
+  <select id="getByUserId" resultMap="cpAutoGroupCodeUserMap">
+    select <include refid="Vo_Column_List"/> from cp_auto_group_code_user where is_delete=0 and qi_wei_user_id = #{qiWeiUserId} and code_id=#{codeId}
+  </select>
+
+
+  <select id="listAutoCodeRelUser" resultType="com.mall4j.cloud.biz.vo.cp.analyze.CpAutoGroupCodeSendUserVO">
+    select
+    cu.id,
+    cu.qi_wei_user_id,
+    cu.staff_id,
+    cu.user_id,
+    cu.nick_name,
+    cu.create_time,
+    cu.update_time,
+    cu.status,
+    cu.send_status,
+    cu.join_group,
+    cu.chat_id,
+    cu.group_id,
+    cu.bind_time,
+    cu.join_group_time,
+    cg.GROUP_NAME as group_name
+    from cp_auto_group_code_user cu
+    left join cp_cust_group cg on cg.ID=cu.chat_id
+    where cu.is_delete=0
+    <if test="dto.codeId!=null">
+      and cu.code_id=#{dto.codeId}
+    </if>
+    <if test="dto.sendStatus!=null">
+      and cu.send_status=#{dto.sendStatus}
+    </if>
+    <if test="dto.joinGroup!=null">
+      and cu.join_group=#{dto.joinGroup}
+    </if>
+    <if test="dto.groupName!=null and dto.groupName!=''">
+      and cg.GROUP_NAME LIKE CONCAT('%',#{dto.groupName},'%')
+    </if>
+    <if test="dto.chatIds!=null and dto.chatIds.size()>0">
+      and cu.chat_id in
+      <foreach collection="dto.chatIds" item="chatId" open="(" close=")" separator=",">
+        #{chatId}
+      </foreach>
+    </if>
+    <if test="dto.groupCodeIds!=null and dto.groupCodeIds.size()>0">
+      and cu.group_id in
+      <foreach collection="dto.groupCodeIds" item="groupId" open="(" close=")" separator=",">
+        #{groupId}
+      </foreach>
+    </if>
+    <if test="dto.staffs!=null and dto.staffs.size()>0">
+      and cu.staff_id in
+      <foreach collection="dto.staffs" item="staffId" open="(" close=")" separator=",">
+        #{staffId}
+      </foreach>
+    </if>
+    <if test="dto.userQiWeiUserIds!=null and dto.userQiWeiUserIds.size()>0">
+      and cu.qi_wei_user_id in
+      <foreach collection="dto.userQiWeiUserIds" item="qiWeiUserId" open="(" close=")" separator=",">
+        #{qiWeiUserId}
+      </foreach>
+    </if>
+    order by cu.create_time desc
+  </select>
+
+</mapper>

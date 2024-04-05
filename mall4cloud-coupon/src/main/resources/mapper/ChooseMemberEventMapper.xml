@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.coupon.mapper.ChooseMemberEventMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.coupon.model.ChooseMemberEvent">
+        <id column="choose_member_event_id" property="chooseMemberEventId" />
+        <result column="event_title" property="eventTitle" />
+        <result column="event_start_time" property="eventStartTime" />
+        <result column="event_end_time" property="eventEndTime" />
+        <result column="is_all_shop" property="isAllShop" />
+        <result column="exchange_type" property="exchangeType" />
+        <result column="stock_num" property="stockNum" />
+        <result column="last_stock_num" property="lastStockNum" />
+        <result column="restrict_num" property="restrictNum" />
+        <result column="cover_image_url" property="coverImageUrl" />
+        <result column="gift_image_url" property="giftImageUrl" />
+        <result column="non_choose_member_message" property="nonChooseMemberMessage" />
+        <result column="non_member_message" property="nonMemberMessage" />
+        <result column="event_enabled_status" property="eventEnabledStatus" />
+        <result column="del_flag" property="delFlag" />
+        <result column="create_user" property="createUser" />
+        <result column="create_user_name" property="createUserName" />
+        <result column="create_time" property="createTime" />
+        <result column="update_user" property="updateUser" />
+        <result column="update_user_name" property="updateUserName" />
+        <result column="update_time" property="updateTime" />
+        <result column="presentation" property="presentation" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        choose_member_event_id, event_title, event_start_time, event_end_time, is_all_shop, exchange_flag, stock_num, last_stock_num, restrict_num, cover_image_url, gift_image_url, non_choose_member_message, non_member_message, event_enabled_status, del_flag, create_user, create_user_name, create_time, update_user, update_user_name, update_time,presentation
+    </sql>
+
+    <select id="queryEventPage" resultType="com.mall4j.cloud.coupon.vo.ChooseMemberEventVO">
+        SELECT
+        member_event.*
+        FROM
+            t_choose_member_event member_event
+        <if test="pageDTO.shopIdList != null and pageDTO.shopIdList.size() > 0">
+            LEFT JOIN t_choose_member_event_shop_relation shop_relation
+            ON member_event.choose_member_event_id = shop_relation.event_id
+        </if>
+
+        <where>
+            <if test="pageDTO.eventEnabledStatus != null">
+                and member_event.event_enabled_status = #{pageDTO.eventEnabledStatus}
+            </if>
+            <if test="pageDTO.exchangeType != null">
+                and member_event.exchange_type = #{pageDTO.exchangeType}
+            </if>
+            <if test="pageDTO.shopIdList != null and pageDTO.shopIdList.size() > 0">
+                and (is_all_shop = 1 or shop_relation.shop_id in
+                <foreach collection="pageDTO.shopIdList" item="shopId" separator="," open="(" close=")">
+                    #{shopId}
+                </foreach>)
+            </if>
+            <if test="pageDTO.eventTitle != null and pageDTO.eventTitle != ''" >
+                and member_event.event_title like concat('%',#{pageDTO.eventTitle},'%')
+            </if>
+        </where>
+
+        ORDER BY member_event.is_all_shop = 1 desc
+    </select>
+
+</mapper>

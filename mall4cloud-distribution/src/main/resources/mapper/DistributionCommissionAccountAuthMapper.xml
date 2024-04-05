@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionCommissionAccountAuthMapper">
+  <resultMap id="distributionCommissionAccountAuthMap" type="com.mall4j.cloud.distribution.model.DistributionCommissionAccountAuth">
+    <id column="id" property="id" />
+    <result column="identity_type" property="identityType"/>
+    <result column="user_id" property="userId"/>
+    <result column="auth_status" property="authStatus"/>
+    <result column="auth_fail_msg" property="authFailMsg"/>
+    <result column="name" property="name"/>
+    <result column="cert_no" property="certNo"/>
+    <result column="telephone" property="telephone"/>
+    <result column="province" property="province"/>
+    <result column="city" property="city"/>
+    <result column="district" property="district"/>
+    <result column="address" property="address"/>
+    <result column="id_photo_front" property="idPhotoFront"/>
+    <result column="id_photo_back" property="idPhotoBack"/>
+    <result column="card_no" property="cardNo"/>
+    <result column="card_name" property="cardName"/>
+    <result column="request_id" property="requestId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`identity_type`,`user_id`,`auth_status`,`auth_fail_msg`,`name`,`cert_no`,`telephone`
+    ,`province`,`city`,`district`,`address`,`id_photo_front`,`id_photo_back`,`card_no`,`card_name`,`request_id`,`create_time`,`update_time`
+  </sql>
+  <select id="getByIdentityTypeAndUserId" resultMap="distributionCommissionAccountAuthMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_account_auth where identity_type = #{identityType} and user_id = #{userId}
+  </select>
+  <insert id="save">
+    insert into distribution_commission_account_auth (`identity_type`,`user_id`,`auth_status`,`auth_fail_msg`,`name`,`cert_no`,`telephone`,`province`,`city`,`district`,`address`,`id_photo_front`,`id_photo_back`,`card_no`,`card_name`,`request_id`)
+    values (#{distributionCommissionAccountAuth.identityType},#{distributionCommissionAccountAuth.userId},#{distributionCommissionAccountAuth.authStatus},#{distributionCommissionAccountAuth.authFailMsg},#{distributionCommissionAccountAuth.name},#{distributionCommissionAccountAuth.certNo},
+    #{distributionCommissionAccountAuth.telephone},#{distributionCommissionAccountAuth.province},#{distributionCommissionAccountAuth.city},
+    #{distributionCommissionAccountAuth.district},#{distributionCommissionAccountAuth.address},#{distributionCommissionAccountAuth.idPhotoFront},
+    #{distributionCommissionAccountAuth.idPhotoBack},#{distributionCommissionAccountAuth.cardNo},#{distributionCommissionAccountAuth.cardName},
+    #{distributionCommissionAccountAuth.requestId});
+  </insert>
+  <update id="update">
+    update distribution_commission_account_auth
+    <set>
+      <if test="distributionCommissionAccountAuth.identityType != null">
+        `identity_type` = #{distributionCommissionAccountAuth.identityType},
+      </if>
+      <if test="distributionCommissionAccountAuth.userId != null">
+        `user_id` = #{distributionCommissionAccountAuth.userId},
+      </if>
+      <if test="distributionCommissionAccountAuth.authStatus != null">
+        `auth_status` = #{distributionCommissionAccountAuth.authStatus},
+      </if>
+      <if test="distributionCommissionAccountAuth.authFailMsg != null">
+        `auth_fail_msg` = #{distributionCommissionAccountAuth.authFailMsg},
+      </if>
+      <if test="distributionCommissionAccountAuth.name != null">
+        `name` = #{distributionCommissionAccountAuth.name},
+      </if>
+      <if test="distributionCommissionAccountAuth.certNo != null">
+        `cert_no` = #{distributionCommissionAccountAuth.certNo},
+      </if>
+      <if test="distributionCommissionAccountAuth.telephone != null">
+        `telephone` = #{distributionCommissionAccountAuth.telephone},
+      </if>
+      <if test="distributionCommissionAccountAuth.province != null">
+        `province` = #{distributionCommissionAccountAuth.province},
+      </if>
+      <if test="distributionCommissionAccountAuth.city != null">
+        `city` = #{distributionCommissionAccountAuth.city},
+      </if>
+      <if test="distributionCommissionAccountAuth.district != null">
+        `district` = #{distributionCommissionAccountAuth.district},
+      </if>
+      <if test="distributionCommissionAccountAuth.address != null">
+        `address` = #{distributionCommissionAccountAuth.address},
+      </if>
+      <if test="distributionCommissionAccountAuth.idPhotoFront != null">
+        `id_photo_front` = #{distributionCommissionAccountAuth.idPhotoFront},
+      </if>
+      <if test="distributionCommissionAccountAuth.idPhotoBack != null">
+        `id_photo_back` = #{distributionCommissionAccountAuth.idPhotoBack},
+      </if>
+      <if test="distributionCommissionAccountAuth.cardNo != null">
+        `card_no` = #{distributionCommissionAccountAuth.cardNo},
+      </if>
+      <if test="distributionCommissionAccountAuth.cardName != null">
+        `card_name` = #{distributionCommissionAccountAuth.cardName},
+      </if>
+      <if test="distributionCommissionAccountAuth.requestId != null">
+        `request_id` = #{distributionCommissionAccountAuth.requestId},
+      </if>
+    </set>
+    where id = #{distributionCommissionAccountAuth.id}
+  </update>
+
+</mapper>

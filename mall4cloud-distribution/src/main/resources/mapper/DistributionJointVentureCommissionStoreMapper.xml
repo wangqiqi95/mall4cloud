@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionJointVentureCommissionStoreMapper">
+
+    <resultMap id="entityMap" type="com.mall4j.cloud.distribution.model.DistributionJointVentureCommissionStore">
+        <id column="id" property="id"/>
+        <result column="joint_venture_id" property="jointVentureId"/>
+        <result column="org_id" property="orgId"/>
+        <result column="store_id" property="storeId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <resultMap id="countByJointVentureIdListMap"
+               type="com.mall4j.cloud.distribution.vo.DistributionJointVentureCommissionStoreCountVO">
+        <result column="joint_venture_id" property="jointVentureId"/>
+        <result column="count(1)" property="num"/>
+    </resultMap>
+
+    <sql id="Vo_Column_List">
+        `id`
+        ,`joint_venture_id`,`org_id`,`store_id`,`create_time`,`update_time`
+    </sql>
+
+    <select id="listByJointVentureId" resultMap="entityMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from distribution_joint_venture_commission_store where joint_venture_id = #{jointVentureId}
+    </select>
+
+    <select id="listByStoreId" resultMap="entityMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from distribution_joint_venture_commission_store where store_id = #{storeId}
+    </select>
+
+    <select id="getById" resultMap="entityMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from distribution_joint_venture_commission_store where id = #{id}
+    </select>
+
+    <insert id="save">
+        insert into distribution_joint_venture_commission_store (`joint_venture_id`, `org_id`, `store_id`)
+        values (#{entity.jointVentureId}, #{entity.orgId}, #{entity.storeId});
+    </insert>
+
+    <insert id="saveBatch">
+        insert into distribution_joint_venture_commission_store (`joint_venture_id`, `org_id`, `store_id`)
+        values
+        <foreach collection="jointVentureStoreList" item="jointVentureStore" separator=",">
+            (#{jointVentureStore.jointVentureId}, #{jointVentureStore.orgId}, #{jointVentureStore.storeId})
+        </foreach>
+    </insert>
+
+    <update id="update">
+        update distribution_joint_venture_commission_store
+        <set>
+            <if test="entity.jointVentureId != null">
+                `joint_venture_id` = #{entity.jointVentureId},
+            </if>
+            <if test="entity.orgId != null">
+                `org_id` = #{entity.orgId},
+            </if>
+            <if test="entity.storeId != null">
+                `store_id` = #{entity.storeId},
+            </if>
+        </set>
+        where id = #{entity.id}
+    </update>
+
+    <delete id="deleteByJointVentureIdAndStoreId">
+        delete
+        from distribution_joint_venture_commission_store
+        where joint_venture_id = #{jointVentureId}
+          and store_id = #{storeId}
+    </delete>
+
+    <delete id="deleteByJointVentureId">
+        delete
+        from distribution_joint_venture_commission_store
+        where joint_venture_id = #{jointVentureId}
+    </delete>
+    <delete id="batchDeleteByJointVentureIdAndStoreIds">
+        delete
+        from distribution_joint_venture_commission_store
+        where joint_venture_id = #{jointVentureId}
+        and store_id in
+        <foreach collection="needDeleteStoreIdList" item="storeId" open="(" close=")" separator=",">
+            #{storeId}
+        </foreach>
+    </delete>
+
+    <select id="countByJointVentureIdList" resultMap="countByJointVentureIdListMap">
+        select joint_venture_id, count(1) from distribution_joint_venture_commission_store where joint_venture_id in
+        <foreach collection="jointVentureIdList" item="jointVentureId" open="(" close=")" separator=",">
+            #{jointVentureId}
+        </foreach>
+        group by joint_venture_id
+    </select>
+
+    <select id="countByJointVentureId" resultType="java.lang.Integer">
+        select count(1)
+        from distribution_joint_venture_commission_store
+        where joint_venture_id = #{jointVentureId}
+    </select>
+
+    <select id="listJointVentureStoreIsItCited"
+            resultType="com.mall4j.cloud.distribution.vo.DistributionJointVentureCommissionCustomerStoreVO">
+        SELECT
+        c.customer_name,
+        s.store_id
+        FROM
+        distribution_joint_venture_commission_store s
+        INNER JOIN distribution_joint_venture_commission_customer c ON c.id = s.joint_venture_id
+        WHERE
+        s.joint_venture_id != 1
+        AND s.store_id IN
+        <foreach collection="limitStoreIdList" item="storeId" open="(" close=")" separator=",">
+            #{storeId}
+        </foreach>
+    </select>
+</mapper>

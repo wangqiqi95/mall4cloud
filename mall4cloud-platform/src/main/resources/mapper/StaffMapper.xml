@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.platform.mapper.StaffMapper">
+    <resultMap id="staffMap" type="com.mall4j.cloud.platform.model.Staff">
+        <id column="id" property="id"/>
+        <result column="mobile" property="mobile"/>
+        <result column="staff_code" property="staffCode"/>
+        <result column="staff_no" property="staffNo"/>
+        <result column="staff_name" property="staffName"/>
+        <result column="status" property="status"/>
+        <result column="store_id" property="storeId"/>
+        <result column="email" property="email"/>
+        <result column="position" property="position"/>
+        <result column="qiwei_user_id" property="qiWeiUserId"/>
+        <result column="qiwei_user_status" property="qiWeiUserStatus"/>
+        <result column="role_type" property="roleType"/>
+        <result column="avatar" property="avatar"/>
+        <result column="gender" property="gender"/>
+        <result column="qr_code" property="qrCode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="sys_user_id" property="sysUserId"/>
+        <result column="org_id" property="orgId"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`,
+        `mobile`,
+        `staff_code`,
+        `org_id`,
+        `staff_no`,
+        `staff_name`,
+        `status`,
+        `store_id`,
+        `email`,
+        `position`,
+        `qiwei_user_id`,
+        `qiwei_user_status`,
+        `role_type`,
+        `avatar`,
+        `create_time`,
+        `update_time`,
+         `we_chat_no`,
+         `cp_msg_audit`,
+         `sys_user_id`,
+         `is_delete`
+    </sql>
+
+    <select id="listByStaffQueryDTO" resultMap="staffMap">
+        select
+        staff.`id`,
+        staff.`mobile`,
+        staff.`staff_code`,
+        staff.`staff_no`,
+        staff.`staff_name`,
+        staff.`status`,
+        staff.`store_id`,
+        staff.`email`,
+        staff.`position`,
+        staff.`qiwei_user_id`,
+        staff.`qiwei_user_status`,
+        staff.`role_type`,
+        staff.`avatar`,
+        staff.`create_time`,
+        staff.`update_time`,
+        staff.`we_chat_no`,
+        staff.`cp_msg_audit`
+        from staff
+        left join staff_org_rel sor on staff.id = sor.staff_id and sor.is_delete = 0
+        <where>
+            1=1
+            <if test="staffQueryDTO.isDelete != null">
+                and staff.is_delete=#{staffQueryDTO.isDelete}
+            </if>
+
+            <if test="staffQueryDTO.keyword != null">
+                and concat(staff.staff_name,staff.staff_no) like concat('%',#{staffQueryDTO.keyword},'%')
+            </if>
+            <if test="staffQueryDTO.staffNo != null and staffQueryDTO.staffNo != ''">
+                AND staff.staff_no LIKE CONCAT("%",#{staffQueryDTO.staffNo},"%")
+            </if>
+            <if test="staffQueryDTO.staffName != null and staffQueryDTO.staffName != ''">
+                AND staff.staff_name LIKE CONCAT("%",#{staffQueryDTO.staffName},"%")
+            </if>
+            <if test="staffQueryDTO.mobile != null and staffQueryDTO.mobile != ''">
+                AND staff.mobile LIKE CONCAT("%",#{staffQueryDTO.mobile},"%")
+            </if>
+            <if test="staffQueryDTO.status != null">
+                AND staff.status = #{staffQueryDTO.status}
+            </if>
+            <if test="staffQueryDTO.cpMsgAudit != null">
+                AND staff.cp_msg_audit = #{staffQueryDTO.cpMsgAudit}
+            </if>
+            <if test="staffQueryDTO.qiweiUserStatus != null">
+                AND staff.qiwei_user_status = #{staffQueryDTO.qiweiUserStatus}
+            </if>
+            <if test="staffQueryDTO.roleType != null">
+                AND staff.role_type = #{staffQueryDTO.roleType}
+            </if>
+            <if test="staffQueryDTO.staffIdList != null and staffQueryDTO.staffIdList.size() > 0">
+                AND staff.id IN
+                <foreach collection="staffQueryDTO.staffIdList" item="staffId" separator="," open="(" close=")">
+                    #{staffId}
+                </foreach>
+            </if>
+            <if test="staffQueryDTO.qiWeiUserIds != null and staffQueryDTO.qiWeiUserIds.size() > 0">
+                AND staff.qiwei_user_id IN
+                <foreach collection="staffQueryDTO.qiWeiUserIds" item="qiWeiUserId" separator="," open="(" close=")">
+                    #{qiWeiUserId}
+                </foreach>
+            </if>
+            <if test="staffQueryDTO.qiweiUserStatusList != null and staffQueryDTO.qiweiUserStatusList.size() > 0">
+                AND staff.qiwei_user_status IN
+                <foreach collection="staffQueryDTO.qiweiUserStatusList" item="qiweiUserStatus" separator="," open="(" close=")">
+                    #{qiweiUserStatus}
+                </foreach>
+            </if>
+            <if test="staffQueryDTO.orgIds != null and staffQueryDTO.orgIds.size() > 0">
+                AND sor.org_id IN
+                <foreach collection="staffQueryDTO.orgIds" item="orgId" separator="," open="(" close=")">
+                    #{orgId}
+                </foreach>
+            </if>
+            <if test="staffQueryDTO.staffIdListNot != null and staffQueryDTO.staffIdListNot.size() > 0">
+                AND staff.id not IN
+                <foreach collection="staffQueryDTO.staffIdListNot" item="staffId" separator="," open="(" close=")">
+                    #{staffId}
+                </foreach>
+            </if>
+            <if test="staffQueryDTO.mobileStaffNoList != null and staffQueryDTO.mobileStaffNoList.size() > 0">
+                AND (
+                staff.staff_no IN
+                <foreach collection="staffQueryDTO.mobileStaffNoList" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+                OR mobile IN
+                <foreach collection="staffQueryDTO.mobileStaffNoList" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+        group by staff.id
+        <if test="staffQueryDTO.sort != null and staffQueryDTO.sort == 0">
+            order by staff.create_time desc
+        </if>
+        <if test="staffQueryDTO.sort != null and staffQueryDTO.sort == 1">
+            order by staff.staff_no desc
+        </if>
+
+    </select>
+
+    <insert id="saveBatch">
+        insert into staff
+        (`id`,`mobile`,`staff_code`,`staff_no`,`staff_name`,`status`,`store_id`,`email`,`position`,`qiwei_user_id`,`qiwei_user_status`,`role_type`,`avatar`)
+        values
+        <foreach collection="staffs" item="staff" separator=",">
+            (#{staff.id},#{staff.mobile},#{staff.staffCode},#{staff.staffNo},#{staff.staffName},#{staff.status},#{staff.storeId},#{staff.email},
+            #{staff.position},#{staff.qiWeiUserId},#{staff.qiWeiUserStatus},#{staff.roleType},#{staff.avatar})
+        </foreach>
+    </insert>
+
+    <select id="getById" resultMap="staffMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from staff where id = #{id}
+    </select>
+
+    <select id="getByQiWeiUserId" resultMap="staffMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from staff where qiwei_user_id = #{qiWeiUserId}
+    </select>
+
+    <select id="getBySysUserId" resultMap="staffMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from staff where sys_user_id = #{sysUserId}
+    </select>
+
+    <select id="getByMobile" resultMap="staffMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from staff where is_delete=0 and mobile = #{mobile}
+    </select>
+
+    <select id="getByStaffCode" resultMap="staffMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from staff where staff_code = #{staffCode}
+        limit 1
+    </select>
+
+    <insert id="save">
+        insert into staff (`id`, `mobile`, `staff_code`, `staff_no`, `staff_name`, `status`, `store_id`, `email`,
+                           `position`, `qiwei_user_id`, `qiwei_user_status`, `role_type`, `avatar`)
+        values (#{staff.id}, #{staff.mobile}, #{staff.staffCode}, #{staff.staffNo}, #{staff.staffName}, #{staff.status},
+                #{staff.storeId}, #{staff.email},
+                #{staff.position}, #{staff.qiWeiUserId}, #{staff.qiWeiUserStatus}, #{staff.roleType}, #{staff.avatar});
+    </insert>
+
+    <update id="update">
+        update staff
+        <set>
+            <if test="staff.mobile != null">
+                `mobile` = #{staff.mobile},
+            </if>
+            <if test="staff.staffCode != null">
+                `staff_code` = #{staff.staffCode},
+            </if>
+            <if test="staff.staffNo != null">
+                `staff_no` = #{staff.staffNo},
+            </if>
+            <if test="staff.staffName != null">
+                `staff_name` = #{staff.staffName},
+            </if>
+            <if test="staff.status != null">
+                `status` = #{staff.status},
+            </if>
+            <if test="staff.storeId != null">
+                `store_id` = #{staff.storeId},
+            </if>
+            <if test="staff.email != null">
+                `email` = #{staff.email},
+            </if>
+            <if test="staff.position != null">
+                `position` = #{staff.position},
+            </if>
+            <if test="staff.qiWeiUserId != null">
+                `qiwei_user_id` = #{staff.qiWeiUserId},
+            </if>
+            <if test="staff.qiWeiUserStatus != null">
+                `qiwei_user_status` = #{staff.qiWeiUserStatus},
+            </if>
+            <if test="staff.roleType != null">
+                `role_type` = #{staff.roleType},
+            </if>
+            <if test="staff.avatar != null">
+                `avatar` = #{staff.avatar},
+            </if>
+            <if test="staff.qrCode != null">
+                `qr_code` = #{staff.qrCode},
+            </if>
+            <if test="staff.gender != null">
+                `gender` = #{staff.gender},
+            </if>
+        </set>
+        where id = #{staff.id}
+    </update>
+
+    <update id="updateBatchWeChatNoByStaffNo">
+        <foreach collection="staffs" item="item" separator=";">
+            update staff
+            <set>
+                <if test="item.weChatNo != null">
+                    `we_chat_no` = #{item.weChatNo},
+                </if>
+            </set>
+            where `staff_no` = #{item.staffNo}
+        </foreach>
+    </update>
+
+    <select id="countByStaffNum" resultType="java.lang.Integer">
+        select count(id) from staff
+        <where>
+            <if test="staffQueryDTO.staffNo != null and staffQueryDTO.staffNo != ''">
+                AND staff_no LIKE CONCAT("%",#{staffQueryDTO.staffNo},"%")
+            </if>
+            <if test="staffQueryDTO.staffName != null and staffQueryDTO.staffName != ''">
+                AND staff_name LIKE CONCAT("%",#{staffQueryDTO.staffName},"%")
+            </if>
+            <if test="staffQueryDTO.mobile != null and staffQueryDTO.mobile != ''">
+                AND mobile LIKE CONCAT("%",#{staffQueryDTO.mobile},"%")
+            </if>
+            <if test="staffQueryDTO.status != null">
+                AND status = #{staffQueryDTO.status}
+            </if>
+            <if test="staffQueryDTO.storeId != null">
+                AND store_id = #{staffQueryDTO.storeId}
+            </if>
+            <if test="staffQueryDTO.storeIdList != null and staffQueryDTO.storeIdList.size() > 0">
+                AND store_id IN
+                <foreach collection="staffQueryDTO.storeIdList" item="storeId" separator="," open="(" close=")">
+                    #{storeId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="getStaffListByMobiles" resultType="com.mall4j.cloud.platform.model.Staff"
+            parameterType="java.util.List">
+        select
+        <include refid="Vo_Column_List"/>
+        from staff
+        where mobile in
+        <foreach collection="mobiles" item="mobile" separator="," open="(" close=")">
+            #{mobile}
+        </foreach>
+        order by id desc
+    </select>
+
+    <select id="getStaffListByStaffNos" resultType="com.mall4j.cloud.platform.model.Staff"
+            parameterType="java.util.List">
+        select
+        <include refid="Vo_Column_List"/>
+        from staff
+        where staff_no in
+        <foreach collection="staffNos" item="staffNo" separator="," open="(" close=")">
+            #{staffNo}
+        </foreach>
+        order by id desc
+    </select>
+
+    <select id="listStaffByStatus" resultType="com.mall4j.cloud.api.platform.vo.StaffVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from staff
+        where status = 0
+        <if test="staffQueryDTO.storeIdList != null and staffQueryDTO.storeIdList.size() > 0">
+            AND store_id IN
+            <foreach collection="staffQueryDTO.storeIdList" item="storeId" separator="," open="(" close=")">
+                #{storeId}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getByIds" resultType="com.mall4j.cloud.api.platform.vo.StaffVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from staff
+        where 1=1
+        AND id IN
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getStaffByWeChatNo" resultType="com.mall4j.cloud.platform.model.Staff" parameterType="list">
+        select
+           <include refid="Vo_Column_List"/>
+        from staff where `we_chat_no` in
+        <foreach collection="weChatNos" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

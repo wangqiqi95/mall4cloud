@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.TCouponMapper">
+  <resultMap id="tCouponMap" type="com.mall4j.cloud.transfer.model.TCoupon">
+    <id column="id" property="id" />
+    <result column="code" property="code"/>
+    <result column="name" property="name"/>
+    <result column="kind" property="kind"/>
+    <result column="type" property="type"/>
+    <result column="price_type" property="priceType"/>
+    <result column="reduce_amount" property="reduceAmount"/>
+    <result column="coupon_discount" property="couponDiscount"/>
+    <result column="amount_limit_type" property="amountLimitType"/>
+    <result column="amount_limit_num" property="amountLimitNum"/>
+    <result column="commodity_limit_type" property="commodityLimitType"/>
+    <result column="commodity_limit_num" property="commodityLimitNum"/>
+    <result column="commodity_scope_type" property="commodityScopeType"/>
+    <result column="apply_scope_type" property="applyScopeType"/>
+    <result column="is_all_shop" property="isAllShop"/>
+    <result column="cover_url" property="coverUrl"/>
+    <result column="description" property="description"/>
+    <result column="note" property="note"/>
+    <result column="time_type" property="timeType"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="after_receive_days" property="afterReceiveDays"/>
+    <result column="status" property="status"/>
+    <result column="create_id" property="createId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_id" property="updateId"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="source_type" property="sourceType"/>
+    <result column="crm_coupon_id" property="crmCouponId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`code`,`name`,`kind`,`type`,`price_type`,`reduce_amount`,`coupon_discount`,`amount_limit_type`,`amount_limit_num`,`commodity_limit_type`,`commodity_limit_num`,`commodity_scope_type`,`apply_scope_type`,`is_all_shop`,`cover_url`,`description`,`note`,`time_type`,`start_time`,`end_time`,`after_receive_days`,`status`,`create_id`,`create_time`,`update_id`,`update_time`,`source_type`,`crm_coupon_id`
+  </sql>
+  <select id="list" resultMap="tCouponMap">
+    select <include refid="Vo_Column_List"/> from t_coupon order by id desc
+  </select>
+  <select id="getById" resultMap="tCouponMap">
+    select <include refid="Vo_Column_List"/> from t_coupon where id = #{id}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into t_coupon (`code`,`name`,`kind`,`type`,`price_type`,`reduce_amount`,`coupon_discount`,`amount_limit_type`,`amount_limit_num`,`commodity_limit_type`,`commodity_limit_num`,`commodity_scope_type`,`apply_scope_type`,`is_all_shop`,`cover_url`,`description`,`note`,`time_type`,`start_time`,`end_time`,`after_receive_days`,`status`,`create_id`,`update_id`,`source_type`,`crm_coupon_id`)
+    values (#{tCoupon.code},#{tCoupon.name},#{tCoupon.kind},#{tCoupon.type},#{tCoupon.priceType},#{tCoupon.reduceAmount},#{tCoupon.couponDiscount},#{tCoupon.amountLimitType},#{tCoupon.amountLimitNum},#{tCoupon.commodityLimitType},#{tCoupon.commodityLimitNum},#{tCoupon.commodityScopeType},#{tCoupon.applyScopeType},#{tCoupon.isAllShop},#{tCoupon.coverUrl},#{tCoupon.description},#{tCoupon.note},#{tCoupon.timeType},#{tCoupon.startTime},#{tCoupon.endTime},#{tCoupon.afterReceiveDays},#{tCoupon.status},#{tCoupon.createId},#{tCoupon.updateId},#{tCoupon.sourceType},#{tCoupon.crmCouponId});
+  </insert>
+  <update id="update">
+    update t_coupon
+    <set>
+      <if test="tCoupon.code != null">
+        `code` = #{tCoupon.code},
+      </if>
+      <if test="tCoupon.name != null">
+        `name` = #{tCoupon.name},
+      </if>
+      <if test="tCoupon.kind != null">
+        `kind` = #{tCoupon.kind},
+      </if>
+      <if test="tCoupon.type != null">
+        `type` = #{tCoupon.type},
+      </if>
+      <if test="tCoupon.priceType != null">
+        `price_type` = #{tCoupon.priceType},
+      </if>
+      <if test="tCoupon.reduceAmount != null">
+        `reduce_amount` = #{tCoupon.reduceAmount},
+      </if>
+      <if test="tCoupon.couponDiscount != null">
+        `coupon_discount` = #{tCoupon.couponDiscount},
+      </if>
+      <if test="tCoupon.amountLimitType != null">
+        `amount_limit_type` = #{tCoupon.amountLimitType},
+      </if>
+      <if test="tCoupon.amountLimitNum != null">
+        `amount_limit_num` = #{tCoupon.amountLimitNum},
+      </if>
+      <if test="tCoupon.commodityLimitType != null">
+        `commodity_limit_type` = #{tCoupon.commodityLimitType},
+      </if>
+      <if test="tCoupon.commodityLimitNum != null">
+        `commodity_limit_num` = #{tCoupon.commodityLimitNum},
+      </if>
+      <if test="tCoupon.commodityScopeType != null">
+        `commodity_scope_type` = #{tCoupon.commodityScopeType},
+      </if>
+      <if test="tCoupon.applyScopeType != null">
+        `apply_scope_type` = #{tCoupon.applyScopeType},
+      </if>
+      <if test="tCoupon.isAllShop != null">
+        `is_all_shop` = #{tCoupon.isAllShop},
+      </if>
+      <if test="tCoupon.coverUrl != null">
+        `cover_url` = #{tCoupon.coverUrl},
+      </if>
+      <if test="tCoupon.description != null">
+        `description` = #{tCoupon.description},
+      </if>
+      <if test="tCoupon.note != null">
+        `note` = #{tCoupon.note},
+      </if>
+      <if test="tCoupon.timeType != null">
+        `time_type` = #{tCoupon.timeType},
+      </if>
+      <if test="tCoupon.startTime != null">
+        `start_time` = #{tCoupon.startTime},
+      </if>
+      <if test="tCoupon.endTime != null">
+        `end_time` = #{tCoupon.endTime},
+      </if>
+      <if test="tCoupon.afterReceiveDays != null">
+        `after_receive_days` = #{tCoupon.afterReceiveDays},
+      </if>
+      <if test="tCoupon.status != null">
+        `status` = #{tCoupon.status},
+      </if>
+      <if test="tCoupon.createId != null">
+        `create_id` = #{tCoupon.createId},
+      </if>
+      <if test="tCoupon.updateId != null">
+        `update_id` = #{tCoupon.updateId},
+      </if>
+      <if test="tCoupon.sourceType != null">
+        `source_type` = #{tCoupon.sourceType},
+      </if>
+      <if test="tCoupon.crmCouponId != null">
+        `crm_coupon_id` = #{tCoupon.crmCouponId},
+      </if>
+    </set>
+    where id = #{tCoupon.id}
+  </update>
+  <delete id="deleteById">
+    delete from t_coupon where id = #{id}
+  </delete>
+
+</mapper>

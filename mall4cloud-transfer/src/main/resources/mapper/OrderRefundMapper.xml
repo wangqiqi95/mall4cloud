@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.OrderRefundMapper">
+    <resultMap id="orderRefundMap" type="com.mall4j.cloud.transfer.model.OrderRefund">
+        <id column="refund_id" property="refundId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="user_id" property="userId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_item_id" property="orderItemId"/>
+        <result column="refund_count" property="refundCount"/>
+        <result column="refund_score" property="refundScore"/>
+        <result column="refund_amount" property="refundAmount"/>
+        <result column="platform_refund_commission" property="platformRefundCommission"/>
+        <result column="platform_refund_amount" property="platformRefundAmount"/>
+        <result column="distribution_total_amount" property="distributionTotalAmount"/>
+        <result column="refund_type" property="refundType"/>
+        <result column="apply_type" property="applyType"/>
+        <result column="is_received" property="isReceived"/>
+        <result column="close_type" property="closeType"/>
+        <result column="return_money_sts" property="returnMoneySts"/>
+        <result column="buyer_reason" property="buyerReason"/>
+        <result column="buyer_desc" property="buyerDesc"/>
+        <result column="buyer_mobile" property="buyerMobile"/>
+        <result column="img_urls" property="imgUrls"/>
+        <result column="over_time" property="overTime"/>
+        <result column="reject_message" property="rejectMessage"/>
+        <result column="seller_msg" property="sellerMsg"/>
+        <result column="handel_time" property="handelTime"/>
+        <result column="delivery_time" property="deliveryTime"/>
+        <result column="receive_time" property="receiveTime"/>
+        <result column="close_time" property="closeTime"/>
+        <result column="decision_time" property="decisionTime"/>
+        <result column="refund_time" property="refundTime"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `refund_id`
+        ,
+        `create_time`,
+        `update_time`,
+        `shop_id`,
+        `user_id`,
+        `order_id`,
+        `order_item_id`,
+        `refund_count`,
+        `refund_score`,
+        `refund_amount`,
+        `platform_refund_commission`,
+        `platform_refund_amount`,
+        `distribution_total_amount`,
+        `refund_type`,
+        `apply_type`,
+        `is_received`,
+        `close_type`,
+        `return_money_sts`,
+        `buyer_reason`,
+        `buyer_desc`,
+        `buyer_mobile`,
+        `img_urls`,
+        `over_time`,
+        `reject_message`,
+        `seller_msg`,
+        `handel_time`,
+        `delivery_time`,
+        `receive_time`,
+        `close_time`,
+        `decision_time`,
+        `refund_time`
+    </sql>
+    <select id="list" resultMap="orderRefundMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_refund order by refund_id desc
+    </select>
+    <select id="getByRefundId" resultMap="orderRefundMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_refund where refund_id = #{refundId}
+    </select>
+    <insert id="save">
+        insert into order_refund (refund_id,`shop_id`, `user_id`, `order_id`, `order_item_id`, `refund_count`, `refund_score`,
+                                  `refund_amount`, `platform_refund_commission`, `platform_refund_amount`,
+                                  `distribution_total_amount`, `refund_type`, `apply_type`, `is_received`, `close_type`,
+                                  `return_money_sts`, `buyer_reason`, `buyer_desc`, `buyer_mobile`, `img_urls`,
+                                  `over_time`, `reject_message`, `seller_msg`, `handel_time`, `delivery_time`,
+                                  `receive_time`, `close_time`, `decision_time`, `refund_time`)
+        values (#{orderRefund.refundId},#{orderRefund.shopId}, #{orderRefund.userId}, #{orderRefund.orderId}, #{orderRefund.orderItemId},
+                #{orderRefund.refundCount}, #{orderRefund.refundScore}, #{orderRefund.refundAmount},
+                #{orderRefund.platformRefundCommission}, #{orderRefund.platformRefundAmount},
+                #{orderRefund.distributionTotalAmount}, #{orderRefund.refundType}, #{orderRefund.applyType},
+                #{orderRefund.isReceived}, #{orderRefund.closeType}, #{orderRefund.returnMoneySts},
+                #{orderRefund.buyerReason}, #{orderRefund.buyerDesc}, #{orderRefund.buyerMobile},
+                #{orderRefund.imgUrls}, #{orderRefund.overTime}, #{orderRefund.rejectMessage}, #{orderRefund.sellerMsg},
+                #{orderRefund.handelTime}, #{orderRefund.deliveryTime}, #{orderRefund.receiveTime},
+                #{orderRefund.closeTime}, #{orderRefund.decisionTime}, #{orderRefund.refundTime});
+    </insert>
+    <insert id="save2">
+        insert into order_refund_add (refund_id,refund_number,`shop_id`, `user_id`, `order_id`, `order_item_id`, `refund_count`, `refund_score`,
+                                  `refund_amount`, `platform_refund_commission`, `platform_refund_amount`,
+                                  `distribution_total_amount`, `refund_type`, `apply_type`, `is_received`, `close_type`,
+                                  `return_money_sts`, `buyer_reason`, `buyer_desc`, `buyer_mobile`, `img_urls`,
+                                  `over_time`, `reject_message`, `seller_msg`, `handel_time`, `delivery_time`,
+                                  `receive_time`, `close_time`, `decision_time`, `refund_time`, `create_time`, `update_time`)
+        values (#{orderRefund.refundId},#{orderRefund.refundNumber},#{orderRefund.shopId}, #{orderRefund.userId}, #{orderRefund.orderId}, #{orderRefund.orderItemId},
+                #{orderRefund.refundCount}, #{orderRefund.refundScore}, #{orderRefund.refundAmount},
+                #{orderRefund.platformRefundCommission}, #{orderRefund.platformRefundAmount},
+                #{orderRefund.distributionTotalAmount}, #{orderRefund.refundType}, #{orderRefund.applyType},
+                #{orderRefund.isReceived}, #{orderRefund.closeType}, #{orderRefund.returnMoneySts},
+                #{orderRefund.buyerReason}, #{orderRefund.buyerDesc}, #{orderRefund.buyerMobile},
+                #{orderRefund.imgUrls}, #{orderRefund.overTime}, #{orderRefund.rejectMessage}, #{orderRefund.sellerMsg},
+                #{orderRefund.handelTime}, #{orderRefund.deliveryTime}, #{orderRefund.receiveTime},
+                #{orderRefund.closeTime}, #{orderRefund.decisionTime}, #{orderRefund.refundTime},#{orderRefund.createTime},#{orderRefund.updateTime});
+    </insert>
+    <insert id="batchSave">
+        insert into order_refund_add (refund_id,refund_number,`shop_id`, `user_id`, `order_id`, `order_item_id`, `refund_count`, `refund_score`,
+                                  `refund_amount`, `platform_refund_commission`, `platform_refund_amount`,
+                                  `distribution_total_amount`, `refund_type`, `apply_type`, `is_received`, `close_type`,
+                                  `return_money_sts`, `buyer_reason`, `buyer_desc`, `buyer_mobile`, `img_urls`,
+                                  `over_time`, `reject_message`, `seller_msg`, `handel_time`, `delivery_time`,
+                                  `receive_time`, `close_time`, `decision_time`, `refund_time`, `create_time`, `update_time`)
+        values
+        <foreach collection="orderRefunds" item="orderRefund" separator=",">
+            (#{orderRefund.refundId},#{orderRefund.refundNumber},#{orderRefund.shopId}, #{orderRefund.userId}, #{orderRefund.orderId}, #{orderRefund.orderItemId},
+            #{orderRefund.refundCount}, #{orderRefund.refundScore}, #{orderRefund.refundAmount},
+            #{orderRefund.platformRefundCommission}, #{orderRefund.platformRefundAmount},
+            #{orderRefund.distributionTotalAmount}, #{orderRefund.refundType}, #{orderRefund.applyType},
+            #{orderRefund.isReceived}, #{orderRefund.closeType}, #{orderRefund.returnMoneySts},
+            #{orderRefund.buyerReason}, #{orderRefund.buyerDesc}, #{orderRefund.buyerMobile},
+            #{orderRefund.imgUrls}, #{orderRefund.overTime}, #{orderRefund.rejectMessage}, #{orderRefund.sellerMsg},
+            #{orderRefund.handelTime}, #{orderRefund.deliveryTime}, #{orderRefund.receiveTime},
+            #{orderRefund.closeTime}, #{orderRefund.decisionTime}, #{orderRefund.refundTime},#{orderRefund.createTime},#{orderRefund.updateTime})
+        </foreach>
+    </insert>
+    <update id="update">
+        update order_refund
+        <set>
+            <if test="orderRefund.shopId != null">
+                `shop_id` = #{orderRefund.shopId},
+            </if>
+            <if test="orderRefund.userId != null">
+                `user_id` = #{orderRefund.userId},
+            </if>
+            <if test="orderRefund.orderId != null">
+                `order_id` = #{orderRefund.orderId},
+            </if>
+            <if test="orderRefund.orderItemId != null">
+                `order_item_id` = #{orderRefund.orderItemId},
+            </if>
+            <if test="orderRefund.refundCount != null">
+                `refund_count` = #{orderRefund.refundCount},
+            </if>
+            <if test="orderRefund.refundScore != null">
+                `refund_score` = #{orderRefund.refundScore},
+            </if>
+            <if test="orderRefund.refundAmount != null">
+                `refund_amount` = #{orderRefund.refundAmount},
+            </if>
+            <if test="orderRefund.platformRefundCommission != null">
+                `platform_refund_commission` = #{orderRefund.platformRefundCommission},
+            </if>
+            <if test="orderRefund.platformRefundAmount != null">
+                `platform_refund_amount` = #{orderRefund.platformRefundAmount},
+            </if>
+            <if test="orderRefund.distributionTotalAmount != null">
+                `distribution_total_amount` = #{orderRefund.distributionTotalAmount},
+            </if>
+            <if test="orderRefund.refundType != null">
+                `refund_type` = #{orderRefund.refundType},
+            </if>
+            <if test="orderRefund.applyType != null">
+                `apply_type` = #{orderRefund.applyType},
+            </if>
+            <if test="orderRefund.isReceived != null">
+                `is_received` = #{orderRefund.isReceived},
+            </if>
+            <if test="orderRefund.closeType != null">
+                `close_type` = #{orderRefund.closeType},
+            </if>
+            <if test="orderRefund.returnMoneySts != null">
+                `return_money_sts` = #{orderRefund.returnMoneySts},
+            </if>
+            <if test="orderRefund.buyerReason != null">
+                `buyer_reason` = #{orderRefund.buyerReason},
+            </if>
+            <if test="orderRefund.buyerDesc != null">
+                `buyer_desc` = #{orderRefund.buyerDesc},
+            </if>
+            <if test="orderRefund.buyerMobile != null">
+                `buyer_mobile` = #{orderRefund.buyerMobile},
+            </if>
+            <if test="orderRefund.imgUrls != null">
+                `img_urls` = #{orderRefund.imgUrls},
+            </if>
+            <if test="orderRefund.overTime != null">
+                `over_time` = #{orderRefund.overTime},
+            </if>
+            <if test="orderRefund.rejectMessage != null">
+                `reject_message` = #{orderRefund.rejectMessage},
+            </if>
+            <if test="orderRefund.sellerMsg != null">
+                `seller_msg` = #{orderRefund.sellerMsg},
+            </if>
+            <if test="orderRefund.handelTime != null">
+                `handel_time` = #{orderRefund.handelTime},
+            </if>
+            <if test="orderRefund.deliveryTime != null">
+                `delivery_time` = #{orderRefund.deliveryTime},
+            </if>
+            <if test="orderRefund.receiveTime != null">
+                `receive_time` = #{orderRefund.receiveTime},
+            </if>
+            <if test="orderRefund.closeTime != null">
+                `close_time` = #{orderRefund.closeTime},
+            </if>
+            <if test="orderRefund.decisionTime != null">
+                `decision_time` = #{orderRefund.decisionTime},
+            </if>
+            <if test="orderRefund.refundTime != null">
+                `refund_time` = #{orderRefund.refundTime},
+            </if>
+        </set>
+        where refund_id = #{orderRefund.refundId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from order_refund
+        where refund_id = #{refundId}
+    </delete>
+
+</mapper>

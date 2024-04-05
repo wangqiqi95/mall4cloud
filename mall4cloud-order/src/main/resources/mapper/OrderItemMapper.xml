@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.order.mapper.OrderItemMapper">
+    <resultMap id="orderItemMap" type="com.mall4j.cloud.order.model.OrderItem">
+        <id column="order_item_id" property="orderItemId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="spu_id" property="spuId"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="user_id" property="userId"/>
+        <result column="final_refund_id" property="finalRefundId"/>
+        <result column="distribution_user_id" property="distributionUserId"/>
+        <result column="count" property="count"/>
+        <result column="pic" property="pic"/>
+        <result column="is_comm" property="isComm"/>
+        <result column="refund_status" property="refundStatus"/>
+        <result column="be_delivered_num" property="beDeliveredNum"/>
+        <result column="delivery_type" property="deliveryType"/>
+        <result column="shop_cart_time" property="shopCartTime"/>
+        <result column="price" property="price"/>
+        <result column="spu_total_amount" property="spuTotalAmount"/>
+        <result column="actual_total" property="actualTotal"/>
+        <result column="share_reduce" property="shareReduce"/>
+        <result column="platform_share_reduce" property="platformShareReduce"/>
+        <result column="distribution_amount" property="distributionAmount"/>
+        <result column="distribution_parent_amount" property="distributionParentAmount"/>
+        <result column="use_score" property="useScore"/>
+        <result column="gain_score" property="gainScore"/>
+        <result column="gift_activity_id" property="giftActivityId"/>
+    </resultMap>
+    <resultMap id="orderItemVOMap" type="com.mall4j.cloud.common.order.vo.OrderItemVO">
+        <id column="order_item_id" property="orderItemId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_number" property="orderNumber"/>
+        <result column="spu_id" property="spuId"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="user_id" property="userId"/>
+        <result column="final_refund_id" property="finalRefundId"/>
+        <result column="final_refund_number" property="finalRefundNumber"/>
+        <result column="distribution_user_id" property="distributionUserId"/>
+        <result column="count" property="count"/>
+        <result column="pic" property="pic"/>
+        <result column="is_comm" property="isComm"/>
+        <result column="refund_status" property="refundStatus"/>
+        <result column="be_delivered_num" property="beDeliveredNum"/>
+        <result column="delivery_type" property="deliveryType"/>
+        <result column="shop_cart_time" property="shopCartTime"/>
+        <result column="price" property="price"/>
+        <result column="spu_total_amount" property="spuTotalAmount"/>
+        <result column="actual_total" property="actualTotal"/>
+        <result column="share_reduce" property="shareReduce"/>
+        <result column="platform_share_reduce" property="platformShareReduce"/>
+        <result column="distribution_amount" property="distributionAmount"/>
+        <result column="distribution_parent_amount" property="distributionParentAmount"/>
+        <result column="score_fee" property="scoreFee"/>
+        <result column="use_score" property="useScore"/>
+        <result column="gain_score" property="gainScore"/>
+        <result column="spu_name" property="spuName"/>
+        <result column="sku_name" property="skuName"/>
+        <result column="type" property="type"/>
+        <result column="gift_activity_id" property="giftActivityId"/>
+        <!--<collection property="orderItemLangList" ofType="com.mall4j.cloud.common.order.vo.OrderItemLangVO">-->
+        <!--<id column="lang" property="lang"/>-->
+        <!--<result column="spu_name" property="spuName"/>-->
+        <!--<result column="sku_name" property="skuName"/>-->
+        <!--</collection>-->
+    </resultMap>
+
+    <resultMap id="listOrderItemAndLangByOrderIdResultMap" type="com.mall4j.cloud.common.order.vo.OrderItemVO" extends="orderItemVOMap">
+        <result column="distribution_amount_rate" property="distributionAmountRate"/>
+        <result column="distribution_parent_amount_rate" property="distributionParentAmountRate"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `order_item_id`
+        ,
+        `create_time`,
+        `update_time`,
+        `shop_id`,
+        `order_id`,
+        `spu_id`,
+        `sku_id`,
+        `user_id`,
+        `final_refund_id`,
+        `distribution_user_id`,
+        `count`,
+        `pic`,
+        `is_comm`,
+        `refund_status`,
+        `be_delivered_num`,
+        `delivery_type`,
+        `shop_cart_time`,
+        `price`,
+        `spu_total_amount`,
+        `actual_total`,
+        `share_reduce`,
+        `platform_share_reduce`,
+        `distribution_amount`,
+        `distribution_parent_amount`,
+        `score_fee`,
+        `use_score`,
+        `platform_commission`,
+        `rate`,
+        `gain_score`
+    </sql>
+    <select id="list" resultType="com.mall4j.cloud.common.order.vo.OrderItemVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_item
+        order by order_item_id desc
+    </select>
+    <select id="getByOrderItemId" resultType="com.mall4j.cloud.common.order.vo.OrderItemVO">
+        select oi.`order_item_id`,
+               oi.`create_time`,
+               oi.`update_time`,
+               oi.`shop_id`,
+               oi.`order_id`,
+               oi.`order_number`,
+               oi.`spu_id`,
+               oi.`sku_id`,
+               oi.`user_id`,
+               oi.`final_refund_id`,
+               oi.`distribution_user_id`,
+               oi.`count`,
+               oi.`pic`,
+               oi.`is_comm`,
+               oi.`refund_status`,
+               oi.`be_delivered_num`,
+               oi.`delivery_type`,
+               oi.`shop_cart_time`,
+               oi.`price`,
+               oi.`spu_total_amount`,
+               oi.`actual_total`,
+               oi.`share_reduce`,
+               oi.`platform_share_reduce`,
+               oi.`distribution_amount`,
+               oi.`distribution_amount_snapshot`,
+               oi.`distribution_parent_amount`,
+               oi.`distribution_parent_amount_snapshot`,
+               oi.`use_score`,
+               oi.`platform_commission`,
+               oi.`rate`,
+               oi.`gain_score`,
+               shop_change_free_amount,
+               oi.gift_activity_id as giftActivityId,
+               oi.type,
+               oi.distribution_refund_status,
+               oil.spu_name,
+               oil.sku_name
+        from order_item oi
+                 left join order_item_lang oil on oi.order_item_id = oil.order_item_id and oil.lang = #{lang}
+        where oi.order_item_id = #{orderItemId}
+    </select>
+
+    <select id="getByItemId" resultType="com.mall4j.cloud.common.order.vo.OrderItemVO">
+        select oi.`order_item_id`,
+               oi.`create_time`,
+               oi.`update_time`,
+               oi.`shop_id`,
+               oi.`order_id`,
+               oi.`order_number`,
+               oi.`spu_id`,
+               oi.`sku_id`,
+               oi.`user_id`,
+               oi.`final_refund_id`,
+               oi.`distribution_user_id`,
+               oi.`count`,
+               oi.`pic`,
+               oi.`is_comm`,
+               oi.`refund_status`,
+               oi.`be_delivered_num`,
+               oi.`delivery_type`,
+               oi.`shop_cart_time`,
+               oi.`price`,
+               oi.`spu_total_amount`,
+               oi.`actual_total`,
+               oi.`share_reduce`,
+               oi.`platform_share_reduce`,
+               oi.`distribution_amount`,
+               oi.`distribution_amount_snapshot`,
+               oi.`distribution_parent_amount`,
+               oi.`distribution_parent_amount_snapshot`,
+               oi.`use_score`,
+               oi.`platform_commission`,
+               oi.`rate`,
+               oi.`gain_score`,
+               shop_change_free_amount,
+               oi.gift_activity_id as giftActivityId,
+               oi.type,
+               oi.distribution_refund_status
+        from order_item oi
+        where oi.order_item_id = #{orderItemId}
+    </select>
+
+    <insert id="save">
+        insert into order_item (`shop_id`, `order_id`, `spu_id`, `sku_id`, `user_id`, `final_refund_id`,
+                                `distribution_user_id`, `count`, `pic`, `is_comm`,
+                                `refund_status`, `be_delivered_num`, `delivery_type`, `shop_cart_time`, `price`,
+                                `spu_total_amount`, `actual_total`, `share_reduce`, `platform_share_reduce`,
+                                `distribution_amount`, `distribution_parent_amount`, `score_fee`, `use_score`,
+                                `gain_score`)
+        values (#{orderItem.shopId}, #{orderItem.orderId}, #{orderItem.spuId}, #{orderItem.skuId}, #{orderItem.userId},
+                #{orderItem.finalRefundId}, #{orderItem.distributionUserId}, #{orderItem.count}, #{orderItem.pic},
+                #{orderItem.isComm},
+                #{orderItem.refundStatus}, #{orderItem.beDeliveredNum}, #{orderItem.deliveryType},
+                #{orderItem.shopCartTime}, #{orderItem.price},
+                #{orderItem.spuTotalAmount}, #{orderItem.actualTotal}, #{orderItem.shareReduce},
+                #{orderItem.platformShareReduce},
+                #{orderItem.distributionAmount}, #{orderItem.distributionParentAmount}, #{orderItem.scoreFee},
+                #{orderItem.useScore}, #{orderItem.gainScore});
+    </insert>
+    <update id="update">
+        update order_item
+        <set>
+            <if test="orderItem.shopId != null">
+                `shop_id` = #{orderItem.shopId},
+            </if>
+            <if test="orderItem.orderId != null">
+                `order_id` = #{orderItem.orderId},
+            </if>
+            <if test="orderItem.spuId != null">
+                `spu_id` = #{orderItem.spuId},
+            </if>
+            <if test="orderItem.skuId != null">
+                `sku_id` = #{orderItem.skuId},
+            </if>
+            <if test="orderItem.userId != null">
+                `user_id` = #{orderItem.userId},
+            </if>
+            <if test="orderItem.finalRefundId != null">
+                `final_refund_id` = #{orderItem.finalRefundId},
+            </if>
+            <if test="orderItem.distributionUserId != null">
+                `distribution_user_id` = #{orderItem.distributionUserId},
+            </if>
+            <if test="orderItem.count != null">
+                `count` = #{orderItem.count},
+            </if>
+            <if test="orderItem.pic != null">
+                `pic` = #{orderItem.pic},
+            </if>
+            <if test="orderItem.isComm != null">
+                `is_comm` = #{orderItem.isComm},
+            </if>
+            <if test="orderItem.refundStatus != null">
+                `refund_status` = #{orderItem.refundStatus},
+            </if>
+            <if test="orderItem.beDeliveredNum != null">
+                `be_delivered_num` = #{orderItem.beDeliveredNum},
+            </if>
+            <if test="orderItem.deliveryType != null">
+                `delivery_type` = #{orderItem.deliveryType},
+            </if>
+            <if test="orderItem.shopCartTime != null">
+                `shop_cart_time` = #{orderItem.shopCartTime},
+            </if>
+            <if test="orderItem.price != null">
+                `price` = #{orderItem.price},
+            </if>
+            <if test="orderItem.spuTotalAmount != null">
+                `spu_total_amount` = #{orderItem.spuTotalAmount},
+            </if>
+            <if test="orderItem.actualTotal != null">
+                `actual_total` = #{orderItem.actualTotal},
+            </if>
+            <if test="orderItem.shareReduce != null">
+                `share_reduce` = #{orderItem.shareReduce},
+            </if>
+            <if test="orderItem.platformShareReduce != null">
+                `platform_share_reduce` = #{orderItem.platformShareReduce},
+            </if>
+            <if test="orderItem.distributionAmount != null">
+                `distribution_amount` = #{orderItem.distributionAmount},
+            </if>
+            <if test="orderItem.distributionParentAmount != null">
+                `distribution_parent_amount` = #{orderItem.distributionParentAmount},
+            </if>
+            <if test="orderItem.useScore != null">
+                `use_score` = #{orderItem.useScore},
+            </if>
+            <if test="orderItem.gainScore != null">
+                `gain_score` = #{orderItem.gainScore},
+            </if>
+            <if test="orderItem.jointVentureCommissionStatus != null">
+                `joint_venture_commission_status` = #{orderItem.jointVentureCommissionStatus},
+            </if>
+            <if test="orderItem.jointVentureRefundStatus != null">
+                `joint_venture_refund_status` = #{orderItem.jointVentureRefundStatus},
+            </if>
+            <if test="orderItem.distributionRefundStatus != null">
+                `distribution_refund_status` = #{orderItem.distributionRefundStatus},
+            </if>
+        </set>
+        where order_item_id = #{orderItem.orderItemId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from order_item
+        where order_item_id = #{orderItemId}
+    </delete>
+    <insert id="saveBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="orderItemId">
+        insert into order_item (`shop_id`, `order_id`,`order_number`,`category_id`, `spu_id`, `sku_id`, `user_id`,
+        `final_refund_id`,
+        `distribution_user_id`, `count`, `pic`, `is_comm`,
+        `refund_status`, `be_delivered_num`, `delivery_type`, `shop_cart_time`, `price`,
+        `spu_total_amount`, `actual_total`, `share_reduce`, `platform_share_reduce`,
+        `distribution_amount`, `distribution_parent_amount`, `score_fee`, `use_score`, `gain_score`,`rate`,
+        `platform_commission`,
+        `score_amount`, `member_amount`, `platform_coupon_amount`, `shop_coupon_amount`, `discount_amount`,
+        `platform_free_freight_amount`, `free_freight_amount`,`shop_change_free_amount`,`sku_name`,`spu_name`,`type`,`gift_activity_id`)
+        values
+        <foreach collection="orderItems" item="orderItem" separator=",">
+            (#{orderItem.shopId}, #{orderItem.orderId},#{orderItem.orderNumber}, #{orderItem.categoryId},
+            #{orderItem.spuId}, #{orderItem.skuId}, #{orderItem.userId},
+            #{orderItem.finalRefundId}, #{orderItem.distributionUserId}, #{orderItem.count}, #{orderItem.pic},
+            #{orderItem.isComm}, #{orderItem.refundStatus}, #{orderItem.beDeliveredNum}, #{orderItem.deliveryType},
+            #{orderItem.shopCartTime}, #{orderItem.price}, #{orderItem.spuTotalAmount}, #{orderItem.actualTotal},
+            #{orderItem.shareReduce}, #{orderItem.platformShareReduce}, #{orderItem.distributionAmount},
+            #{orderItem.distributionParentAmount}, #{orderItem.scoreFee},#{orderItem.useScore}, #{orderItem.gainScore},
+            #{orderItem.rate}, #{orderItem.platformCommission},
+            #{orderItem.scoreAmount}, #{orderItem.memberAmount}, #{orderItem.platformCouponAmount},
+            #{orderItem.shopCouponAmount}, #{orderItem.discountAmount},
+            #{orderItem.platformFreeFreightAmount}, #{orderItem.freeFreightAmount},
+            #{orderItem.shopChangeFreeAmount},#{orderItem.skuName},#{orderItem.spuName},#{orderItem.type},#{orderItem.giftActivityId})
+        </foreach>
+    </insert>
+
+    <select id="listOrderItemsByOrderId" resultMap="orderItemMap">
+        select toi.*
+        from order_item toi
+        where toi.order_id = #{orderId}
+    </select>
+
+    <select id="listOrderItemAndLangByOrderId" resultMap="listOrderItemAndLangByOrderIdResultMap">
+        select toi.order_item_id,
+               toi.shop_id,
+               toi.order_id,
+               toi.order_number,
+               toi.spu_id,
+               toi.sku_id,
+               toi.user_id,
+               toi.final_refund_id,
+               toi.distribution_user_id,
+               toi.pic,
+               toi.is_comm,
+               toi.refund_status,
+               toi.be_delivered_num,
+               toi.delivery_type,
+               toi.shop_cart_time,
+               toi.price,
+               toi.spu_total_amount,
+               toi.actual_total,
+               toi.share_reduce,
+               toi.platform_share_reduce,
+               toi.distribution_amount,
+               toi.distribution_parent_amount,
+               toi.distribution_amount_rate,
+               toi.distribution_parent_amount_rate,
+               toi.score_fee,
+               toi.use_score,
+               toi.gain_score,
+               toi.count,
+               toi.sku_name,
+               toi.spu_name,
+               toi.type,
+               orf.refund_number as final_refund_number
+        from order_item toi
+                 left join order_refund orf on toi.final_refund_id=orf.refund_id
+        where toi.order_id = #{orderId}
+    </select>
+
+    <select id="sumTotalDistributionAmountByOrderIds"
+            resultType="com.mall4j.cloud.api.order.bo.DistributionAmountWithOrderIdBO">
+        select order_id,ifnull(sum(distribution_amount), 0) as
+        distributionAmount,ifnull(sum(distribution_parent_amount), 0) as distributionParentAmount from order_item
+        where order_id in
+        <foreach collection="orderIds" item="orderId" open="(" close=")" separator=",">
+            #{orderId}
+        </foreach>
+    </select>
+    <update id="updateBatch">
+        <foreach collection="orderItems" item="orderItem">
+            UPDATE order_item SET
+            `count` = #{orderItem.count},
+            spu_total_amount = #{orderItem.spuTotalAmount},
+            actual_total = #{orderItem.actualTotal},
+            share_reduce = #{orderItem.shareReduce},
+            platform_share_reduce = #{orderItem.platformShareReduce},
+            platform_commission = #{orderItem.platformCommission},
+            shop_change_free_amount = #{orderItem.shopChangeFreeAmount}
+            WHERE order_item_id = #{orderItem.orderItemId};
+        </foreach>
+
+    </update>
+
+    <update id="updateCommissionBatch">
+        <foreach collection="orderItems" item="orderItem">
+            UPDATE order_item SET
+            distribution_amount = #{orderItem.distributionAmount},
+            distribution_parent_amount = #{orderItem.distributionParentAmount}
+            WHERE order_item_id = #{orderItem.orderItemId};
+        </foreach>
+    </update>
+
+    <!--    <select id="getSpuNameListByOrderIds" resultType="java.lang.String">-->
+    <!--        select spu_name from order_item where order_id in-->
+    <!--            <foreach collection="orderIdList" item="orderId" separator="," close=")" open="(">-->
+    <!--                #{orderId}-->
+    <!--            </foreach>-->
+    <!--    </select>-->
+    <select id="countByOrderId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM order_item
+        WHERE order_id = #{orderId}
+    </select>
+
+    <select id="allCountByOrderId" resultType="java.lang.Integer">
+        SELECT ifnull(sum(count),0)
+        FROM order_item
+        WHERE order_id = #{orderId}
+    </select>
+
+
+
+    <update id="updateByDelivery">
+        UPDATE order_item
+        set be_delivered_num=be_delivered_num - #{orderItem.changeNum},
+            delivery_type   = #{deliveryType}
+        WHERE order_item_id = #{orderItem.orderItemId}
+    </update>
+
+    <select id="countUnDeliveryNumByOrderId" resultType="int">
+        select sum(be_delivered_num)
+        from order_item
+        where order_id = #{orderId}
+    </select>
+    <select id="listSpuRankingByOrderCount" resultType="com.mall4j.cloud.order.vo.OrderOverviewVO">
+        SELECT
+        SUM(oi.count) AS payOrderCount,oi.spu_id, oil.spu_name
+        FROM
+        order_item oi
+        LEFT JOIN `order_item_lang` oil ON oi.order_item_id = oil.order_item_id
+        LEFT JOIN `order` o ON oi.order_id = o.order_id
+        WHERE
+        o.is_payed = 1
+        <if test="shopId != null">
+            AND oi.shop_id = #{shopId}
+        </if>
+        <if test="startTime != null">
+            AND o.pay_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND o.pay_time &lt;= #{endTime}
+        </if>
+        GROUP BY
+        oi.spu_id
+        ORDER BY
+        sum( oi.count ) DESC
+        limit 0, #{limit}
+    </select>
+    <select id="listShopRankingByPayActual" resultType="com.mall4j.cloud.order.vo.OrderOverviewVO">
+        SELECT
+        o.store_id as shopId,
+        shop_name,
+        count(*) AS payOrderCount,
+        count( DISTINCT user_id ) AS payUserCount,
+        sum( o.actual_total ) AS payActual
+        FROM
+        `order` o
+        WHERE
+        o.is_payed = 1
+        <if test="startTime != null">
+            AND o.pay_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND o.pay_time &lt;= #{endTime}
+        </if>
+        GROUP BY
+        o.store_id
+        ORDER BY sum( o.actual_total ) DESC
+        LIMIT 0, #{limit}
+    </select>
+    <select id="listDetailByOrderId" resultType="com.mall4j.cloud.order.vo.OrderItemDetailVO">
+        SELECT o.shop_name,
+               oil.spu_name,
+               oil.sku_name,
+               o.shop_name,
+               toi.spu_total_amount,
+               toi.actual_total,
+               toi.category_id,
+               toi.count,
+               toi.order_item_id,
+               (IFNULL(toi.share_reduce, 0) - IFNULL(toi.platform_share_reduce, 0))             AS multishop_reduce,
+               toi.platform_share_reduce,
+               (IFNULL(toi.distribution_amount, 0) + IFNULL(toi.distribution_parent_amount, 0)) AS distribution_amount,
+               toi.use_score,
+               toi.rate,
+               toi.platform_commission,
+               toi.score_amount,
+               toi.member_amount,
+               toi.platform_coupon_amount,
+               toi.shop_coupon_amount,
+               toi.discount_amount,
+               toi.platform_free_freight_amount,
+               toi.free_freight_amount,
+               toi.shop_change_free_amount
+        FROM `order_item` toi
+                 JOIN `order` o ON o.order_id = toi.order_id
+                 JOIN `order_item_lang` oil ON toi.order_item_id = oil.order_item_id and oil.lang = #{lang}
+        WHERE toi.order_id = #{orderId}
+    </select>
+    <update id="reduceUnDeliveryNumByOrderItemId">
+        UPDATE order_item
+        set be_delivered_num=be_delivered_num - #{count}
+        WHERE order_item_id = #{orderItemId}
+    </update>
+
+    <update id="updateRefundStatusByOrderId">
+        UPDATE order_item
+        set refund_status=#{refundStatus}
+        WHERE order_id = #{orderId}
+    </update>
+
+    <select id="getAll" resultMap="orderItemMap">
+        SELECT *
+        FROM order_item
+        WHERE order_item_id NOT IN (SELECT DISTINCT order_item_id FROM order_item_lang)
+    </select>
+    <select id="getSpuInfoByOrderItemId" resultType="com.mall4j.cloud.common.order.vo.OrderItemVO">
+        SELECT oil.spu_name, oil.sku_name, oi.create_time
+        FROM order_item oi
+                 LEFT JOIN order_item_lang oil ON oi.order_item_id = oil.order_item_id AND oil.lang = #{lang}
+        WHERE oi.order_item_id = #{orderItemId}
+    </select>
+    <select id="getDevTypeByOrderItemId" resultType="int">
+        SELECT ifnull(delivery_type, 0)
+        FROM `order_item`
+        WHERE order_item_id = #{orderItemId}
+    </select>
+    <select id="getDevTypeByOrderId" resultType="java.lang.Integer">
+        SELECT delivery_type
+        FROM `order_item`
+        WHERE order_id = #{orderId}
+    </select>
+
+    <select id="getOrderItems" resultMap="orderItemVOMap">
+        SELECT oil.spu_name, oil.sku_name,oil.lang,
+        oi.`order_item_id`,
+        oi.`shop_id`,
+        oi.`order_id`,
+        oi.`spu_id`,
+        oi.`sku_id`,
+        oi.`user_id`,
+        oi.`final_refund_id`,
+        oi.`distribution_user_id`,
+        oi.`count`,
+        oi.`pic`,
+        oi.`is_comm`,
+        oi.`refund_status`,
+        oi.`be_delivered_num`,
+        oi.`delivery_type`,
+        oi.`shop_cart_time`,
+        oi.`price`,
+        oi.`spu_total_amount`,
+        oi.`actual_total`,
+        oi.`share_reduce`,
+        oi.`platform_share_reduce`,
+        oi.`distribution_amount`,
+        oi.`distribution_parent_amount`,
+        oi.`use_score`,
+        oi.`gain_score`
+        FROM order_item oi
+        LEFT JOIN order_item_lang oil ON oi.order_item_id = oil.order_item_id
+        WHERE oi.order_item_id IN
+        <foreach collection="orderItemIds" item="orderItemId" open="(" close=")" separator=",">
+            #{orderItemId}
+        </foreach>
+    </select>
+
+    <update id="updateBatchDistributionAmount">
+        <foreach collection="orderItems" item="orderItem" separator=";">
+            UPDATE order_item set distribution_amount = #{orderItem.distributionAmount},
+            distribution_parent_amount = #{orderItem.distributionParentAmount},
+            distribution_amount_rate = ifnull(distribution_amount_rate, #{orderItem.distributionAmountRate}),
+            distribution_parent_amount_rate = ifnull(distribution_parent_amount_rate, #{orderItem.distributionParentAmountRate}),
+            distribution_amount_snapshot = if(distribution_amount_snapshot > 0, distribution_amount_snapshot, #{orderItem.distributionAmount}),
+            distribution_parent_amount_snapshot = if(distribution_parent_amount_snapshot > 0, distribution_parent_amount_snapshot, #{orderItem.distributionParentAmount})
+            WHERE order_item_id = #{orderItem.orderItemId}
+        </foreach>
+    </update>
+    <update id="jointVentureCommissionOrderItemSettled">
+        update order_item set `joint_venture_commission_status` = #{jointVentureCommissionStatus}
+            <if test="jointVentureRefundStatus != null">
+                ,joint_venture_refund_status = #{jointVentureRefundStatus}
+            </if>
+        <where>
+            AND `order_id` IN
+            <foreach collection="orderIds" item="orderId" separator="," open="(" close=")">
+                #{orderId}
+            </foreach>
+            <if test="jointVentureCommissionStatus != null and jointVentureCommissionStatus == 0">
+                AND joint_venture_commission_status != 2
+            </if>
+        </where>
+
+    </update>
+    <update id="updateDistributionRefundStatusBatchByOrderItemId">
+        update order_item set distribution_refund_status = #{distributionRefundStatus}
+        where order_item_id in (
+        <foreach collection="orderItemIds" item="orderItemId" separator=",">
+            #{orderItemId}
+        </foreach>
+        )
+    </update>
+    <update id="updateDistributionRefundStatusByOrderId">
+        update order_item
+        set distribution_refund_status = #{distributionRefundStatus}
+        where order_id = #{orderId}
+    </update>
+
+    <select id="listOrderItemByOrderIds" resultMap="orderItemVOMap">
+        SELECT * FROM order_item WHERE order_id IN
+        <foreach collection="orderIds" item="orderId" open="(" close=")" separator=",">
+            #{orderId}
+        </foreach>
+    </select>
+
+    <select id="listOrderItems" resultMap="orderItemVOMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_item
+        <where>
+            <if test="orderItem.orderId != null">
+                and order_id = #{orderItemDTO.orderId}
+            </if>
+            <if test="orderItem.spuName != null and orderItem.spuName != ''">
+                and spu_name like concat('%',#{orderItem.spuName},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="listOrderItemByIds" resultType="com.mall4j.cloud.common.order.vo.OrderItemVO">
+        select
+        oi.`order_item_id`, oi.`create_time`, oi.`update_time`, oi.`shop_id`, oi.`order_id`, oi.`spu_id`, oi.`sku_id`,
+        oi.`user_id`, oi.`final_refund_id`, oi.`distribution_user_id`, oi.`count`, oi.`pic`, oi.`is_comm`,
+        oi.`refund_status`,
+        oi.`be_delivered_num`, oi.`delivery_type`, oi.`shop_cart_time`, oi.`price`, oi.`spu_total_amount`,
+        oi.`actual_total`,
+        oi.`share_reduce`, oi.`platform_share_reduce`, oi.`distribution_amount`, oi.`distribution_parent_amount`,
+        oi.`use_score`,
+        oi.`platform_commission`, oi.`rate`, oi.`gain_score`,shop_change_free_amount,
+        oi.spu_name, oi.sku_name
+        from order_item oi
+        where oi.order_item_id in
+        <foreach collection="orderItems" item="orderItemId" open="(" close=")" separator=",">
+            #{orderItemId}
+        </foreach>
+    </select>
+
+    <select id="listOrderItemsIsPay" resultType="com.mall4j.cloud.order.vo.OrderItemPriceErrorVO">
+        SELECT
+            o.order_id,
+            o.order_number,
+            o.user_id,
+            o.store_id,
+            o.create_time,
+            o.pay_time,
+            item.spu_id,
+            item.sku_id,
+            item.actual_total,
+            item.price
+        FROM
+            `order` o
+                LEFT JOIN order_item item on o.order_id=item.order_id and item.type=0
+        WHERE
+            o.is_payed = 1
+          AND o.pay_time BETWEEN #{startTime} AND #{endTime}
+    </select>
+
+    <select id="getOrderItemByOrderNumberAndSkuId" resultType="com.mall4j.cloud.common.order.vo.OrderItemVO">
+        select
+            oi.`order_item_id`,oi.`create_time`,oi.`update_time`,oi.`shop_id`,oi.`order_id`,oi.`spu_id`,oi.`sku_id`,
+            oi.`user_id`,oi.`final_refund_id`,oi.`distribution_user_id`,oi.`count`,oi.`pic`,oi.`is_comm`,
+            oi.`refund_status`,
+            oi.`be_delivered_num`,
+            oi.`delivery_type`,
+            oi.`shop_cart_time`,
+            oi.`price`,
+            oi.`spu_total_amount`,
+            oi.`actual_total`,
+            oi.`share_reduce`,
+            oi.`platform_share_reduce`,
+            oi.`distribution_amount`,
+            oi.`distribution_parent_amount`,
+            oi.`use_score`,
+            oi.`platform_commission`,
+            oi.`rate`,
+            oi.`gain_score`,
+            shop_change_free_amount,
+            oi.spu_name,
+            oi.sku_name
+        from order_item oi
+        where oi.order_number = #{orderNumber}
+          AND oi.sku_id = #{skuId}
+    </select>
+    <select id="listPaperCouponOrderItemByIds" resultType="com.mall4j.cloud.order.vo.PaperCouponOrderItemVO">
+        SELECT
+            oi.order_id,
+            oi.order_number,
+            oi.count,
+            oi.spu_Id,
+            oi.sku_Id,
+            oi.price,
+            oi.actual_total,
+            oi.share_reduce,
+            o.create_time,
+            o.pay_time
+        FROM
+            `order` o
+                LEFT JOIN order_item oi on o.order_id = oi.order_id
+        WHERE
+            oi.order_id in
+            <foreach collection="orderNoList" item="orderId" open="(" close=")" separator=",">
+                #{orderId}
+            </foreach>
+    </select>
+
+</mapper>

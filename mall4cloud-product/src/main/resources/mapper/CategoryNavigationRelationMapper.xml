@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.product.mapper.CategoryNavigationRelationMapper">
+
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.product.model.CategoryNavigationRelation">
+            <id property="ancestorCategoryId" column="ancestor_category_id" jdbcType="BIGINT"/>
+            <id property="descendantCategoryId" column="descendant_category_id" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ancestor_category_id,descendant_category_id
+    </sql>
+
+    <!-- 删除节点关系	-->
+    <delete id="deleteCategoryRelations">
+        DELETE FROM category_navigation_relation
+        WHERE
+                descendant_category_id IN ( SELECT temp.descendant_category_id FROM
+                    ( SELECT descendant_category_id FROM category_navigation_relation WHERE ancestor_category_id = #{categoryNavigationRelation.descendantCategoryId} ) temp )
+          AND ancestor_category_id IN ( SELECT temp.ancestor_category_id FROM ( SELECT ancestor_category_id FROM
+            category_navigation_relation WHERE descendant_category_id = #{categoryNavigationRelation.descendantCategoryId} AND ancestor_category_id != descendant_category_id ) temp )
+    </delete>
+
+    <!-- 新增节点关系	-->
+    <insert id="insertCategoryRelations">
+        INSERT INTO category_navigation_relation (ancestor_category_id, descendant_category_id)
+        SELECT a.ancestor_category_id, b.descendant_category_id
+        FROM category_navigation_relation a
+                 CROSS JOIN category_navigation_relation b
+        WHERE a.descendant_category_id = #{categoryNavigationRelation.ancestorCategoryId}
+          AND b.ancestor_category_id = #{categoryNavigationRelation.descendantCategoryId}
+    </insert>
+
+    <insert id="insertBatchCategoryNavigationRelation">
+        INSERT INTO  category_navigation_relation (ancestor_category_id, descendant_category_id) VALUES 
+        <foreach collection="categoryNavigationRelationList" item="categoryNavigationRelation" separator=",">
+            (#{categoryNavigationRelation.ancestorCategoryId}, #{categoryNavigationRelation.descendantCategoryId})
+        </foreach>
+    </insert>
+
+    <!--删除分类 > 删除所有关联此分类子节点的闭包关系-->
+    <delete id="deleteCategoryRelationsByCategoryId">
+        DELETE
+        FROM
+            category_navigation_relation
+        WHERE
+                descendant_category_id IN (
+                SELECT
+                    temp.descendant_category_id
+                FROM
+                    (
+                        SELECT
+                            descendant_category_id
+                        FROM
+                            category_navigation_relation
+                        WHERE
+                            ancestor_category_id = #{categoryId}
+                    ) temp
+            )
+    </delete>
+</mapper>

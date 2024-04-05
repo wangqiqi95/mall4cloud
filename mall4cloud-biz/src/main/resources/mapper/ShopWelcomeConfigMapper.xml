@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.ShopWelcomeConfigMapper">
+  <resultMap id="shopWelcomeConfigMap" type="com.mall4j.cloud.biz.model.cp.ShopWelcomeConfig">
+    <id column="ID" property="id" />
+    <result column="wel_id" property="welId"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="status" property="status"/>
+    <result column="flag" property="flag"/>
+    <result column="type" property="type"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `ID`,`wel_id`,`shop_id`,`status`,`flag`,`type`
+  </sql>
+  <select id="listByWelId" resultMap="shopWelcomeConfigMap">
+    select <include refid="Vo_Column_List"/> from CP_SHOP_WELCOME_CONFIG WHERE wel_id = #{welId}
+  </select>
+
+  <insert id="save">
+    insert into CP_SHOP_WELCOME_CONFIG (`wel_id`,`shop_id`,`status`,`flag`,`type`)
+    values (#{shopWelcomeConfig.welId},#{shopWelcomeConfig.shopId},#{shopWelcomeConfig.status},#{shopWelcomeConfig.flag},#{shopWelcomeConfig.type});
+  </insert>
+  <!--根据欢迎语删除所有 -->
+  <delete id="deleteByWelId">
+    delete from CP_SHOP_WELCOME_CONFIG where wel_id = #{welId}
+  </delete>
+
+</mapper>

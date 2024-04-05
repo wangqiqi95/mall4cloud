@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinTextTemplateMapper">
+  <resultMap id="weixinTextTemplateMap" type="com.mall4j.cloud.biz.model.WeixinTextTemplate">
+    <id column="id" property="id" />
+    <result column="template_name" property="templateName"/>
+    <result column="template_content" property="templateContent"/>
+    <result column="app_id" property="appId"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+    <result column="text_herfs" property="textHerfs"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`template_name`,`template_content`,`app_id`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`,`text_herfs`
+  </sql>
+  <select id="list" resultMap="weixinTextTemplateMap">
+    select <include refid="Vo_Column_List"/> from weixin_text_template order by id desc
+  </select>
+  <select id="getById" resultMap="weixinTextTemplateMap">
+    select <include refid="Vo_Column_List"/> from weixin_text_template where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_text_template (`id`,`template_name`,`template_content`,`app_id`,`create_by`,`create_time`,`del_flag`,`text_herfs`)
+    values (#{weixinTextTemplate.id},#{weixinTextTemplate.templateName},#{weixinTextTemplate.templateContent},#{weixinTextTemplate.appId},#{weixinTextTemplate.createBy},#{weixinTextTemplate.createTime},#{weixinTextTemplate.delFlag},#{weixinTextTemplate.textHerfs});
+  </insert>
+  <update id="update">
+    update weixin_text_template
+    <set>
+      <if test="weixinTextTemplate.templateName != null">
+        `template_name` = #{weixinTextTemplate.templateName},
+      </if>
+      <if test="weixinTextTemplate.templateContent != null">
+        `template_content` = #{weixinTextTemplate.templateContent},
+      </if>
+      <if test="weixinTextTemplate.appId != null">
+        `app_id` = #{weixinTextTemplate.appId},
+      </if>
+      <if test="weixinTextTemplate.updateTime != null">
+        `update_time` = #{weixinTextTemplate.updateTime},
+      </if>
+      <if test="weixinTextTemplate.updateBy != null">
+        `update_by` = #{weixinTextTemplate.updateBy},
+      </if>
+      <if test="weixinTextTemplate.delFlag != null">
+        `del_flag` = #{weixinTextTemplate.delFlag},
+      </if>
+      <if test="weixinTextTemplate.textHerfs != null">
+        `text_herfs` = #{weixinTextTemplate.textHerfs},
+      </if>
+    </set>
+    where id = #{weixinTextTemplate.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_text_template where id = #{id}
+  </delete>
+
+</mapper>

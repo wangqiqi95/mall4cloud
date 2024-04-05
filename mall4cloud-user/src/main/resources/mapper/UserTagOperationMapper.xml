@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.user.mapper.UserTagOperationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.user.model.UserTagOperation">
+        <id column="user_tag_operation_id" property="userTagOperationId" />
+        <result column="operation_state" property="operationState" />
+        <result column="do_user" property="doUser" />
+        <result column="be_vip_code" property="beVipCode" />
+        <result column="create_time" property="createTime" />
+        <result column="tag_id" property="tagId" />
+        <result column="group_id" property="groupId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        user_tag_operation_id, operation_state, do_user, be_user, create_time, tag_id, group_id
+    </sql>
+    <insert id="insertBatch">
+        insert into t_user_tag_operation (group_id,tag_id,operation_state,do_user,be_vip_code) values
+        <foreach collection="userTagOperationList" item="operation" separator="," close=";">
+            (#{operation.groupId},#{operation.tagId},#{operation.operationState},#{operation.doUser},#{operation.beVipCode})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchToImport">
+        insert into t_user_tag_operation (group_id,tag_id,operation_state,do_user,be_vip_code) values
+        <foreach collection="codeList" item="code" separator="," close=";">
+            (#{groupId},#{tagId},#{operationState},#{doUser},#{code})
+        </foreach>
+    </insert>
+
+    <select id="selectOperationByBeVipCode" resultType="com.mall4j.cloud.user.vo.UserTagOperationVO">
+        SELECT
+            operation.*,
+            tgroup.group_name,
+            tgroup.parent_id as parentGroupId,
+            tag.tag_name
+        FROM
+            t_user_tag_operation operation
+                INNER JOIN t_tag_group tgroup ON operation.group_id = tgroup.tag_group_id
+                INNER JOIN t_tag tag ON tag.tag_id = operation.tag_id
+        WHERE
+            operation.be_vip_code = #{param.beVipCode}
+        ORDER BY operation.create_time desc
+    </select>
+
+
+</mapper>

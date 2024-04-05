@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionCommissionActivityMapper">
+  <resultMap id="distributionCommissionActivityMap" type="com.mall4j.cloud.distribution.model.DistributionCommissionActivity">
+    <id column="id" property="id" />
+    <result column="activity_name" property="activityName"/>
+    <result column="org_id" property="orgId"/>
+    <result column="guide_rate_status" property="guideRateStatus"/>
+    <result column="guide_rate" property="guideRate"/>
+    <result column="share_rate_status" property="shareRateStatus"/>
+    <result column="share_rate" property="shareRate"/>
+    <result column="develop_rate_status" property="developRateStatus"/>
+    <result column="develop_rate" property="developRate"/>
+    <result column="status" property="status"/>
+    <result column="limit_time_type" property="limitTimeType"/>
+    <result column="limit_store_type" property="limitStoreType"/>
+    <result column="limit_spu_type" property="limitSpuType"/>
+    <result column="limit_order_type" property="limitOrderType"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="remark" property="remark"/>
+    <result column="deleted" property="deleted"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`activity_name`,`org_id`,`guide_rate_status`,`guide_rate`,`share_rate_status`,`share_rate`,`develop_rate_status`,`develop_rate`,`status`,`priority`,`limit_time_type`,`limit_store_type`,`limit_spu_type`,`limit_order_type`,`start_time`,`end_time`,`remark`,`deleted`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionCommissionActivityMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_activity
+    where deleted = 0
+    <if test="commissionActivitySearchDTO.activityName != null and commissionActivitySearchDTO.activityName != ''">
+      and trim(replace(activity_name,' ','')) like trim(replace(concat('%',#{commissionActivitySearchDTO.activityName},'%'),' ',''))
+    </if>
+    <if test="commissionActivitySearchDTO.status != null and commissionActivitySearchDTO.status != -1 ">
+      and status = #{commissionActivitySearchDTO.status}
+    </if>
+    <if test="commissionActivitySearchDTO.limitOrderType != null">
+      and limit_order_type = #{commissionActivitySearchDTO.limitOrderType}
+    </if>
+    order by priority desc
+  </select>
+  <select id="getById" resultMap="distributionCommissionActivityMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_activity where id = #{id}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into distribution_commission_activity (`activity_name`,`org_id`,`guide_rate_status`,
+    `guide_rate`,`share_rate_status`,`share_rate`,`develop_rate_status`,
+    `develop_rate`,`status`,`priority`,`limit_time_type`,`limit_store_type`,`limit_spu_type`,`limit_order_type`,`start_time`,`end_time`,`remark`,`deleted`)
+    values (#{distributionCommissionActivity.activityName},#{distributionCommissionActivity.orgId},
+    #{distributionCommissionActivity.guideRateStatus},#{distributionCommissionActivity.guideRate},
+    #{distributionCommissionActivity.shareRateStatus},#{distributionCommissionActivity.shareRate},
+    #{distributionCommissionActivity.developRateStatus},#{distributionCommissionActivity.developRate},
+    #{distributionCommissionActivity.status},#{distributionCommissionActivity.priority},
+    #{distributionCommissionActivity.limitTimeType},#{distributionCommissionActivity.limitStoreType},
+    #{distributionCommissionActivity.limitSpuType},#{distributionCommissionActivity.limitOrderType},
+    #{distributionCommissionActivity.startTime},#{distributionCommissionActivity.endTime},
+    #{distributionCommissionActivity.remark},#{distributionCommissionActivity.deleted});
+  </insert>
+  <update id="update">
+    update distribution_commission_activity
+    <set>
+      <if test="distributionCommissionActivity.activityName != null">
+        `activity_name` = #{distributionCommissionActivity.activityName},
+      </if>
+      <if test="distributionCommissionActivity.orgId != null">
+        `org_id` = #{distributionCommissionActivity.orgId},
+      </if>
+      <if test="distributionCommissionActivity.guideRateStatus != null">
+        `guide_rate_status` = #{distributionCommissionActivity.guideRateStatus},
+      </if>
+      <if test="distributionCommissionActivity.guideRate != null">
+        `guide_rate` = #{distributionCommissionActivity.guideRate},
+      </if>
+      <if test="distributionCommissionActivity.shareRateStatus != null">
+        `share_rate_status` = #{distributionCommissionActivity.shareRateStatus},
+      </if>
+      <if test="distributionCommissionActivity.shareRate != null">
+        `share_rate` = #{distributionCommissionActivity.shareRate},
+      </if>
+      <if test="distributionCommissionActivity.developRateStatus != null">
+        `develop_rate_status` = #{distributionCommissionActivity.developRateStatus},
+      </if>
+      <if test="distributionCommissionActivity.developRate != null">
+        `develop_rate` = #{distributionCommissionActivity.developRate},
+      </if>
+      <if test="distributionCommissionActivity.status != null">
+        `status` = #{distributionCommissionActivity.status},
+      </if>
+      <if test="distributionCommissionActivity.priority != null">
+        `priority` = #{distributionCommissionActivity.priority},
+      </if>
+      <if test="distributionCommissionActivity.limitTimeType != null">
+        `limit_time_type` = #{distributionCommissionActivity.limitTimeType},
+      </if>
+      <if test="distributionCommissionActivity.limitStoreType != null">
+        `limit_store_type` = #{distributionCommissionActivity.limitStoreType},
+      </if>
+      <if test="distributionCommissionActivity.limitSpuType != null">
+        `limit_spu_type` = #{distributionCommissionActivity.limitSpuType},
+      </if>
+      <if test="distributionCommissionActivity.limitOrderType != null">
+        `limit_order_type` = #{distributionCommissionActivity.limitOrderType},
+      </if>
+      <if test="distributionCommissionActivity.startTime != null">
+        `start_time` = #{distributionCommissionActivity.startTime},
+      </if>
+      <if test="distributionCommissionActivity.endTime != null">
+        `end_time` = #{distributionCommissionActivity.endTime},
+      </if>
+      <if test="distributionCommissionActivity.remark != null">
+        `remark` = #{distributionCommissionActivity.remark},
+      </if>
+    </set>
+    where id = #{distributionCommissionActivity.id}
+  </update>
+  <delete id="deleteById">
+    update distribution_commission_activity set deleted = 1 where id = #{id}
+  </delete>
+  <select id="getMaxPriority" resultType="int">
+    select  ifnull(max(priority),0) from distribution_commission_activity
+  </select>
+
+  <update id="updateActivityStatusByTime">
+    update distribution_commission_activity set status = 0  where status = 1 and limit_time_type = 1 and end_time &lt; NOW()
+  </update>
+
+</mapper>

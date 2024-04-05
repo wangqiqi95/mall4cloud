@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinShortlinkMapper">
+    <resultMap id="weixinShortlinkMap" type="com.mall4j.cloud.biz.model.WeixinShortlink">
+        <id column="id" property="id"/>
+        <result column="app_id" property="appId"/>
+        <result column="page_path" property="pagePath"/>
+        <result column="short_key" property="shortKey"/>
+        <result column="long_url" property="longUrl"/>
+        <result column="do_main" property="doMain"/>
+        <result column="scen" property="scen"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="del_flag" property="delFlag"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`
+        ,`app_id`,`page_path`,`short_key`,`long_url`,`do_main`,`scen`,`create_time`,`create_by`,`del_flag`
+    </sql>
+    <select id="list" resultMap="weixinShortlinkMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from weixin_shortlink order by id desc
+    </select>
+    <select id="getById" resultMap="weixinShortlinkMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from weixin_shortlink where id = #{id}
+    </select>
+    <insert id="save">
+        insert into weixin_shortlink (`id`, `app_id`, `page_path`, `short_key`, `long_url`, `do_main`, `scen`,
+                                      `create_time`, `create_by`, `del_flag`)
+        values (#{weixinShortlink.id}, #{weixinShortlink.appId}, #{weixinShortlink.pagePath},
+                #{weixinShortlink.shortKey}, #{weixinShortlink.longUrl}, #{weixinShortlink.doMain},
+                #{weixinShortlink.scen}, #{weixinShortlink.createTime}, #{weixinShortlink.createBy},
+                #{weixinShortlink.delFlag});
+    </insert>
+    <update id="update">
+        update weixin_shortlink
+        <set>
+            <if test="weixinShortlink.appId != null">
+                `app_id` = #{weixinShortlink.appId},
+            </if>
+            <if test="weixinShortlink.pagePath != null">
+                `page_path` = #{weixinShortlink.pagePath},
+            </if>
+            <if test="weixinShortlink.shortKey != null">
+                `short_key` = #{weixinShortlink.shortKey},
+            </if>
+            <if test="weixinShortlink.longUrl != null">
+                `long_url` = #{weixinShortlink.longUrl},
+            </if>
+            <if test="weixinShortlink.doMain != null">
+                `do_main` = #{weixinShortlink.doMain},
+            </if>
+            <if test="weixinShortlink.scen != null">
+                `scen` = #{weixinShortlink.scen},
+            </if>
+            <if test="weixinShortlink.delFlag != null">
+                `del_flag` = #{weixinShortlink.delFlag},
+            </if>
+        </set>
+        where id = #{weixinShortlink.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from weixin_shortlink
+        where id = #{id}
+    </delete>
+
+    <select id="selectShortLinkRecordList" resultType="com.mall4j.cloud.biz.vo.WeixinShortlinkRecordVo">
+        SELECT
+        k.id,
+        k.page_path AS originalLink,
+        k.scen AS scene,
+        k.short_url AS shortLink,
+        k.open_number AS openNumber,
+        k.open_people AS openPeople,
+        k.create_by AS createBy,
+        k.create_time AS createTime
+        FROM mall4cloud_biz.weixin_shortlink k
+        <where>
+            <if test="weixinShortlinkRecordDTO.createTime != null">
+                and DATE_FORMAT(k.create_time, '%Y-%m-%d') = DATE_FORMAT(#{weixinShortlinkRecordDTO.createTime}, '%Y-%m-%d')
+            </if>
+            <if test="weixinShortlinkRecordDTO.shortUrl != null and weixinShortlinkRecordDTO.shortUrl != ''">
+                and k.short_url LIKE CONCAT('%',#{weixinShortlinkRecordDTO.shortUrl},'%')
+            </if>
+            <if test="weixinShortlinkRecordDTO.createBy != null and weixinShortlinkRecordDTO.createBy != ''">
+                and k.create_by LIKE CONCAT('%',#{weixinShortlinkRecordDTO.createBy},'%')
+            </if>
+        </where>
+        ORDER BY k.create_time DESC
+    </select>
+
+    <select id="selectShortLinkRecordItemList" resultType="com.mall4j.cloud.biz.vo.WeixinShortlinkRecordItemVo">
+        SELECT
+            i.id,
+            i.shortlink_record_id AS shortLinkId,
+            s.short_url AS shortLinkUrl,
+            i.uniid AS uniId,
+            i.vipcode AS vipCode,
+            i.nick_name AS nikeName,
+            i.check_time AS checkTime
+        FROM mall4cloud_biz.weixin_shortlink_item i
+        LEFT JOIN mall4cloud_biz.weixin_shortlink s ON i.shortlink_record_id = s.id
+        <where>
+            <if test="weixinShortlinkRecordItemDTO.shortLinkRecordId != null">
+                and i.shortlink_record_id = #{weixinShortlinkRecordItemDTO.shortLinkRecordId}
+            </if>
+            <if test="weixinShortlinkRecordItemDTO.startTime != null">
+                and i.check_time &lt;= #{weixinShortlinkRecordItemDTO.startTime}
+            </if>
+            <if test="weixinShortlinkRecordItemDTO.endTime != null">
+                and i.check_time &gt;= #{weixinShortlinkRecordItemDTO.endTime}
+            </if>
+            <if test="weixinShortlinkRecordItemDTO.vipcode != null and weixinShortlinkRecordItemDTO.vipcode != ''">
+                and i.vipcode LIKE CONCAT('%',#{weixinShortlinkRecordItemDTO.vipcode},'%')
+                OR i.nick_name LIKE CONCAT('%',#{weixinShortlinkRecordItemDTO.vipcode},'%')
+            </if>
+        </where>
+        ORDER BY i.check_time DESC
+    </select>
+
+    <select id="selectShortLinkRecordItemPage" resultType="com.mall4j.cloud.biz.vo.WeixinShortlinkRecordItemVo">
+        SELECT
+        i.id,
+        i.shortlink_record_id AS shortLinkId,
+        s.short_url AS shortLinkUrl,
+        i.uniid AS uniId,
+        i.vipcode AS vipCode,
+        i.nick_name AS nikeName,
+        i.check_time AS checkTime
+        FROM mall4cloud_biz.weixin_shortlink_item i
+        LEFT JOIN mall4cloud_biz.weixin_shortlink s ON i.shortlink_record_id = s.id
+        <where>
+            <if test="weixinShortlinkRecordItemPageDTO.shortLinkRecordId != null">
+                and i.shortlink_record_id = #{weixinShortlinkRecordItemPageDTO.shortLinkRecordId}
+            </if>
+            <if test="weixinShortlinkRecordItemPageDTO.startTime != null">
+                and i.check_time &lt;= #{weixinShortlinkRecordItemPageDTO.startTime}
+            </if>
+            <if test="weixinShortlinkRecordItemPageDTO.endTime != null">
+                and i.check_time &gt;= #{weixinShortlinkRecordItemPageDTO.endTime}
+            </if>
+            <if test="weixinShortlinkRecordItemPageDTO.vipcode != null and weixinShortlinkRecordItemDTO.vipcode != ''">
+                and i.vipcode LIKE CONCAT('%',#{weixinShortlinkRecordItemPageDTO.vipcode},'%')
+                OR i.nick_name LIKE CONCAT('%',#{weixinShortlinkRecordItemPageDTO.vipcode},'%')
+            </if>
+        </where>
+        ORDER BY i.check_time DESC
+    </select>
+
+    <select id="selectShortLinkItemOfUserId" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM mall4cloud_biz.weixin_shortlink_item t1
+        WHERE t1.uniid = #{unionId}
+        AND t1.shortlink_record_id = #{shortLinkRecordId};
+    </select>
+
+</mapper>

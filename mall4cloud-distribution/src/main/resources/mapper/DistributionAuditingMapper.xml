@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionAuditingMapper">
+    <resultMap id="distributionAuditingMap" type="com.mall4j.cloud.distribution.model.DistributionAuditing">
+        <id column="auditing_id" property="auditingId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="parent_distribution_user_id" property="parentDistributionUserId"/>
+        <result column="distribution_user_id" property="distributionUserId"/>
+        <result column="auditing_time" property="auditingTime"/>
+        <result column="remarks" property="remarks"/>
+        <result column="reason" property="reason"/>
+        <result column="state" property="state"/>
+        <result column="modifier" property="modifier"/>
+    </resultMap>
+    <resultMap id="distribution_page_map" type="com.mall4j.cloud.distribution.vo.DistributionAuditingVO" extends="distributionAuditingMap">
+        <result column="user_mobile" property="userMobile"/>
+        <result column="parent_user_mobile" property="inviteeMobile"/>
+        <result column="parent_nick_name" property="invitee"/>
+        <result column="identity_card_number" property="identityCardNumber"/>
+        <result column="identity_card_pic_front" property="identityCardPicFront"/>
+        <result column="identity_card_pic_back" property="identityCardPicBack"/>
+        <result column="identity_card_pic_hold" property="identityCardPicHold"/>
+        <result column="user_id" property="userId"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="real_name" property="realName"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `auditing_id`,`create_time`,`update_time`,`parent_distribution_user_id`,`distribution_user_id`,`auditing_time`,`remarks`,`reason`,`state`,`modifier`
+    </sql>
+    <select id="listDistributionAuditing" resultMap="distribution_page_map">
+        select
+        da.*,
+        -- 申请信息
+        du.user_mobile,
+        du.identity_card_number,
+        du.real_name,
+        du.identity_card_pic_front,
+        du.identity_card_pic_back,
+        du.identity_card_pic_hold,
+        du.user_id,
+        du.nick_name,
+        -- 邀请人信息
+        parent_du.nick_name as parent_nick_name,
+        parent_du.user_mobile as parent_user_mobile
+        from
+        distribution_auditing da
+        -- 获取申请人的信息
+        left join distribution_user du on du.distribution_user_id = da.distribution_user_id
+        -- 获取邀请人信息
+        LEFT JOIN distribution_user parent_du ON parent_du.distribution_user_id = da.parent_distribution_user_id
+        <where>
+            <if test="distributionAuditing.state != null">
+                and da.state = #{distributionAuditing.state}
+            </if>
+            <if test="distributionAuditing.userMobile!= null">
+                and du.user_mobile like concat('%',#{distributionAuditing.userMobile},'%')
+            </if>
+        </where>
+        GROUP BY da.auditing_id
+        <if test="distributionAuditing.sortParam != null and distributionAuditing.sortType != null">
+            ORDER BY
+            <choose>
+                <when test="distributionAuditing.sortParam == 1">
+                    auditing_time
+                </when>
+                <otherwise>
+                    auditing_id
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="distributionAuditing.sortType == 1">
+                    ASC
+                </when>
+                <when test="distributionAuditing.sortType == 2">
+                    DESC
+                </when>
+                <otherwise>
+                    DESC
+                </otherwise>
+            </choose>
+        </if>
+    </select>
+    <select id="getByAuditingId" resultMap="distributionAuditingMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from distribution_auditing where auditing_id = #{auditingId}
+    </select>
+    <insert id="save">
+        insert into distribution_auditing (`parent_distribution_user_id`, `distribution_user_id`, `auditing_time`,
+                                           `remarks`, `reason`, `state`, `modifier`)
+        values (#{distributionAuditing.parentDistributionUserId}, #{distributionAuditing.distributionUserId},
+                #{distributionAuditing.auditingTime}, #{distributionAuditing.remarks}, #{distributionAuditing.reason},
+                #{distributionAuditing.state}, #{distributionAuditing.modifier});
+    </insert>
+    <update id="update">
+        update distribution_auditing
+        <set>
+            <if test="distributionAuditing.parentDistributionUserId != null">
+                `parent_distribution_user_id` = #{distributionAuditing.parentDistributionUserId},
+            </if>
+            <if test="distributionAuditing.distributionUserId != null">
+                `distribution_user_id` = #{distributionAuditing.distributionUserId},
+            </if>
+            <if test="distributionAuditing.auditingTime != null">
+                `auditing_time` = #{distributionAuditing.auditingTime},
+            </if>
+            <if test="distributionAuditing.remarks != null">
+                `remarks` = #{distributionAuditing.remarks},
+            </if>
+            <if test="distributionAuditing.reason != null">
+                `reason` = #{distributionAuditing.reason},
+            </if>
+            <if test="distributionAuditing.state != null">
+                `state` = #{distributionAuditing.state},
+            </if>
+            <if test="distributionAuditing.modifier != null">
+                `modifier` = #{distributionAuditing.modifier},
+            </if>
+        </set>
+        where auditing_id = #{distributionAuditing.auditingId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from distribution_auditing
+        where auditing_id = #{auditingId}
+    </delete>
+
+    <select id="getByDistributionUserId" resultMap="distribution_page_map">
+        select
+        <include refid="Vo_Column_List"/>
+        from distribution_auditing where distribution_user_id = #{distributionUserId}
+    </select>
+</mapper>

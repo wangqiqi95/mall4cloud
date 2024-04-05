@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.TCouponCodeMapper">
+  <resultMap id="tCouponCodeMap" type="com.mall4j.cloud.transfer.model.TCouponCode">
+    <id column="id" property="id" />
+    <result column="coupon_id" property="couponId"/>
+    <result column="coupon_code" property="couponCode"/>
+    <result column="status" property="status"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`coupon_id`,`coupon_code`,`status`
+  </sql>
+  <select id="list" resultMap="tCouponCodeMap">
+    select <include refid="Vo_Column_List"/> from t_coupon_code order by id desc
+  </select>
+  <select id="getById" resultMap="tCouponCodeMap">
+    select <include refid="Vo_Column_List"/> from t_coupon_code where id = #{id}
+  </select>
+  <insert id="save">
+    insert into t_coupon_code (`coupon_id`,`coupon_code`,`status`)
+    values (#{tCouponCode.couponId},#{tCouponCode.couponCode},#{tCouponCode.status});
+  </insert>
+  <update id="update">
+    update t_coupon_code
+    <set>
+      <if test="tCouponCode.couponId != null">
+        `coupon_id` = #{tCouponCode.couponId},
+      </if>
+      <if test="tCouponCode.couponCode != null">
+        `coupon_code` = #{tCouponCode.couponCode},
+      </if>
+      <if test="tCouponCode.status != null">
+        `status` = #{tCouponCode.status},
+      </if>
+    </set>
+    where id = #{tCouponCode.id}
+  </update>
+  <delete id="deleteById">
+    delete from t_coupon_code where id = #{id}
+  </delete>
+
+</mapper>

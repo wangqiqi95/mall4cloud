@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionCommissionLogMapper">
+  <resultMap id="distributionCommissionLogMap" type="com.mall4j.cloud.distribution.model.DistributionCommissionLog">
+    <id column="id" property="id" />
+    <result column="identity_type" property="identityType"/>
+    <result column="user_id" property="userId"/>
+    <result column="change_value" property="changeValue"/>
+    <result column="operation" property="operation"/>
+    <result column="type" property="type"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`identity_type`,`user_id`,`change_value`,`operation`,`type`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionCommissionLogMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_log order by id desc
+  </select>
+  <select id="getById" resultMap="distributionCommissionLogMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_log where id = #{id}
+  </select>
+  <insert id="save">
+    insert into distribution_commission_log (`identity_type`,`user_id`,`change_value`,`operation`,`type`)
+    values (#{distributionCommissionLog.identityType},#{distributionCommissionLog.userId},#{distributionCommissionLog.changeValue},#{distributionCommissionLog.operation},#{distributionCommissionLog.type});
+  </insert>
+  <update id="update">
+    update distribution_commission_log
+    <set>
+      <if test="distributionCommissionLog.identityType != null">
+        `identity_type` = #{distributionCommissionLog.identityType},
+      </if>
+      <if test="distributionCommissionLog.userId != null">
+        `user_id` = #{distributionCommissionLog.userId},
+      </if>
+      <if test="distributionCommissionLog.changeValue != null">
+        `change_value` = #{distributionCommissionLog.changeValue},
+      </if>
+      <if test="distributionCommissionLog.operation != null">
+        `operation` = #{distributionCommissionLog.operation},
+      </if>
+      <if test="distributionCommissionLog.type != null">
+        `type` = #{distributionCommissionLog.type},
+      </if>
+    </set>
+    where id = #{distributionCommissionLog.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_commission_log where id = #{id}
+  </delete>
+
+</mapper>

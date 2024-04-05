@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionWithdrawConfigMapper">
+  <resultMap id="distributionWithdrawConfigMap" type="com.mall4j.cloud.distribution.model.DistributionWithdrawConfig">
+    <id column="id" property="id" />
+    <result column="identity_type" property="identityType"/>
+    <result column="commission_switch" property="commissionSwitch"/>
+    <result column="withdraw_min" property="withdrawMin"/>
+    <result column="withdraw_max" property="withdrawMax"/>
+    <result column="frequency_type" property="frequencyType"/>
+    <result column="scope_type" property="scopeType"/>
+    <result column="scope_count" property="scopeCount"/>
+    <result column="specify_date" property="specifyDate"/>
+    <result column="specify_count" property="specifyCount"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`identity_type`,`commission_switch`,`withdraw_min`,`withdraw_max`,`frequency_type`,`scope_type`,`scope_count`,`specify_date`,`specify_count`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionWithdrawConfigMap">
+    select <include refid="Vo_Column_List"/> from distribution_withdraw_config order by id desc
+  </select>
+  <select id="getById" resultMap="distributionWithdrawConfigMap">
+    select <include refid="Vo_Column_List"/> from distribution_withdraw_config where id = #{id}
+  </select>
+
+  <select id="getByIdentityType" resultMap="distributionWithdrawConfigMap">
+    select <include refid="Vo_Column_List"/> from distribution_withdraw_config where identity_type = #{identityType}
+  </select>
+
+  <insert id="save">
+    insert into distribution_withdraw_config (`identity_type`,`commission_switch`,`withdraw_min`,`withdraw_max`,`frequency_type`,`scope_type`,`scope_count`,`specify_date`,`specify_count`)
+    values (#{distributionWithdrawConfig.identityType},#{distributionWithdrawConfig.commissionSwitch},#{distributionWithdrawConfig.withdrawMin},#{distributionWithdrawConfig.withdrawMax},#{distributionWithdrawConfig.frequencyType},#{distributionWithdrawConfig.scopeType},#{distributionWithdrawConfig.scopeCount},#{distributionWithdrawConfig.specifyDate},#{distributionWithdrawConfig.specifyCount});
+  </insert>
+  <update id="update">
+    update distribution_withdraw_config
+    <set>
+      <if test="distributionWithdrawConfig.identityType != null">
+        `identity_type` = #{distributionWithdrawConfig.identityType},
+      </if>
+      <if test="distributionWithdrawConfig.commissionSwitch != null">
+        `commission_switch` = #{distributionWithdrawConfig.commissionSwitch},
+      </if>
+      <if test="distributionWithdrawConfig.withdrawMin != null">
+        `withdraw_min` = #{distributionWithdrawConfig.withdrawMin},
+      </if>
+      <if test="distributionWithdrawConfig.withdrawMax != null">
+        `withdraw_max` = #{distributionWithdrawConfig.withdrawMax},
+      </if>
+      <if test="distributionWithdrawConfig.frequencyType != null">
+        `frequency_type` = #{distributionWithdrawConfig.frequencyType},
+      </if>
+      <if test="distributionWithdrawConfig.scopeType != null">
+        `scope_type` = #{distributionWithdrawConfig.scopeType},
+      </if>
+      <if test="distributionWithdrawConfig.scopeCount != null">
+        `scope_count` = #{distributionWithdrawConfig.scopeCount},
+      </if>
+      <if test="distributionWithdrawConfig.specifyDate != null">
+        `specify_date` = #{distributionWithdrawConfig.specifyDate},
+      </if>
+      <if test="distributionWithdrawConfig.specifyCount != null">
+        `specify_count` = #{distributionWithdrawConfig.specifyCount},
+      </if>
+    </set>
+    where id = #{distributionWithdrawConfig.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_withdraw_config where id = #{id}
+  </delete>
+
+</mapper>

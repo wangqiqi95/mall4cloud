@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.user.mapper.GroupSonTaskSendRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.user.model.GroupSonTaskSendRecord">
+        <result column="task_finish_record_id" property="taskFinishRecordId" />
+        <result column="push_task_id" property="pushTaskId" />
+        <result column="push_son_task_id" property="pushSonTaskId" />
+        <result column="vip_user_id" property="vipUserId" />
+        <result column="staff_id" property="staffId" />
+        <result column="create_time" property="createTime" />
+        <result column="send_status" property="sendStatus" />
+        <result column="vip_cp_user_id" property="vipCpUserId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        task_finish_record_id, push_task_id, push_son_task_id, vip_user_id, staff_id, create_time, final_send
+    </sql>
+
+    <update id="updateSendStatus">
+        UPDATE `t_group_son_task_send_record`
+        SET send_status = #{sendStatus}
+        <if test="sendStatus != 0 and sendStatus != 1">
+            , send_model = null
+        </if>
+        <if test="sendStatus != null and sendStatus == 1">
+            , finish_time = NOW()
+        </if>
+        WHERE push_son_task_id = #{sonTaskId}
+        AND staff_id = #{staffId}
+        <if test="userId != null">
+            AND vip_user_id = #{userId}
+        </if>
+        <if test="vipCpUserId != null">
+            AND vip_cp_user_id = #{vipCpUserId}
+        </if>
+    </update>
+
+    <select id="selectSendCountBySonTaskIdAndStaffList" resultType="com.mall4j.cloud.user.vo.StaffSonTaskSendCountVO">
+        SELECT
+            count( 1 ) AS sendCount,
+            staff_id
+        FROM
+            t_group_son_task_send_record
+        WHERE
+            push_son_task_id = #{sonTaskId}
+          AND send_status = 1
+          AND staff_id IN
+        <foreach collection="staffIdList" item="item"  index="index" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY
+            staff_id
+    </select>
+
+    <select id="selectSendUserIdsBySonTaskIdAndUserList" resultType="java.lang.Long">
+        SELECT
+        vip_user_id
+        FROM
+        t_group_son_task_send_record
+        WHERE
+        push_son_task_id = #{sonTaskId}
+        AND staff_id = #{staffId}
+        AND vip_user_id IN
+        <foreach collection="userIdList" item="item"  index="index" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectSendCountByStaff" resultType="com.mall4j.cloud.user.vo.StaffSonTaskSendDataVO">
+        SELECT
+        push_task_id AS taskId,
+        push_son_task_id AS sonTaskId,
+        count( 1 ) AS sendCount
+        FROM
+        t_group_son_task_send_record
+        WHERE staff_id = #{staffId}
+        GROUP BY push_son_task_id
+    </select>
+
+    <select id="getTaskRecordStatistic" resultType="com.mall4j.cloud.user.vo.GroupPushTaskRecordStatisticVO">
+        SELECT
+        date_format(finish_time,'%Y-%m-%d') date,
+        count(task_finish_record_id) count
+        FROM
+        t_group_son_task_send_record
+        WHERE
+        finish_time >= #{params.startTime} and finish_time &lt;= #{params.endTime}
+        <if test="params.staffName != null">
+            AND staff_name LIKE CONCAT('%',#{params.staffName},'%')
+        </if>
+        <if test="params.taskMode != null">
+            AND task_mode = #{params.taskMode}
+        </if>
+
+        AND send_status = 1
+        GROUP BY date_format(finish_time,'%Y-%m-%d');
+    </select>
+
+    <select id="selectSendRecordBySonTaskIdAndStaffId" resultType="com.mall4j.cloud.user.vo.StaffSendRecordVO">
+        SELECT
+        son.group_push_son_task_id,
+        son.son_task_name,
+        vip.staff_id,
+        vip.staff_store_id,
+        vip.vip_code,
+        vip.vip_user_id as userId,
+        vip.friend_state,
+        send.send_status,
+        send.send_model,
+        send.finish_time
+<!--        <if test="param.export != null">-->
+<!--            ,cp.user_id-->
+<!--        </if>-->
+
+        FROM
+        t_group_push_task_vip_relation vip
+        LEFT JOIN t_group_push_son_task son ON vip.group_push_task_id = son.group_push_task_id
+        LEFT JOIN t_group_son_task_send_record send ON son.group_push_son_task_id = send.push_son_task_id
+                                                           AND vip.vip_user_id = send.vip_user_id
+                                                           AND vip.staff_id = send.staff_id
+<!--        <if test="param.export != null">-->
+<!--            LEFT JOIN user_staff_cp_relation cp ON vip.staff_id = cp.staff_id-->
+<!--            AND vip.vip_user_id = cp.user_id-->
+<!--        </if>-->
+        WHERE
+        son.group_push_son_task_id = #{param.sonTaskId}
+        <if test="param.staffId != null">
+            AND vip.staff_id = #{param.staffId}
+        </if>
+    </select>
+
+    <insert id="insertBatch">
+        insert into t_group_son_task_send_record (push_task_id, push_son_task_id, vip_user_id, staff_id,
+        send_status, send_model, vip_cp_user_id, finish_time) values
+        <foreach collection="recordList" item="record" separator="," close=";">
+            (#{record.pushTaskId},#{record.pushSonTaskId},#{record.vipUserId},#{record.staffId},#{record.sendStatus},
+             #{record.sendModel},#{record.vipCpUserId},#{record.finishTime})
+        </foreach>
+    </insert>
+
+</mapper>

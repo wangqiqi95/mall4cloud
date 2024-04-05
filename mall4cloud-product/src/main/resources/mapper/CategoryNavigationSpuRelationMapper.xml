@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.product.mapper.CategoryNavigationSpuRelationMapper">
+
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.product.model.CategoryNavigationSpuRelation">
+            <id property="categoryId" column="category_id" jdbcType="BIGINT"/>
+            <id property="spuId" column="spu_id" jdbcType="BIGINT"/>
+            <result property="isEnable" column="is_enable"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        category_id,spu_id,is_enable
+    </sql>
+
+    <insert id="insertBatch">
+        INSERT INTO category_navigation_spu_relation (category_id, spu_id) VALUES 
+        <foreach collection="categoryNavigationSpuRelationList" item="categoryNavigationSpuRelation" separator=",">
+            (#{categoryNavigationSpuRelation.categoryId}, #{categoryNavigationSpuRelation.spuId})
+        </foreach>
+    </insert>
+
+    <select id="selectSpuVOListByCategoryId" resultType="com.mall4j.cloud.product.vo.CategorySpuVO">
+        SELECT
+            cnsr.spu_id,
+            cn.category_id, cn.name, cn.parent_id, cn.`desc`, cn.path, cn.icon, cn.img_url, cn.level, cn.seq, cn.status AS categoryStatus, cn.is_last_level,
+            spu.spu_code, spu.status, spu.iph_status, spu.brand_id, spu.shop_category_id, spu.shop_id, spu.`name` AS spuName, spu.main_img_url,
+            spu.img_urls, spu.video, spu.price_fee, spu.market_price_fee, spu.score_fee
+        FROM category_navigation_spu_relation cnsr
+        LEFT JOIN category_navigation cn ON cn.category_id = cnsr.category_id
+        LEFT JOIN spu ON spu.spu_id = cnsr.spu_id
+        WHERE spu.name is not null
+        <if test="categoryId != null">
+            AND cnsr.category_id = #{categoryId}
+        </if>
+
+    </select>
+
+</mapper>

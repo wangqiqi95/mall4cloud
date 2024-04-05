@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.ScoreTimeDiscountActivityMapper">
+  <resultMap id="scoreTimeDiscountActivityMap" type="com.mall4j.cloud.user.model.ScoreTimeDiscountActivity">
+    <id column="id" property="id" />
+    <result column="title" property="title"/>
+    <result column="time_type" property="timeType"/>
+    <result column="weight" property="weight"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="start_day" property="startDay"/>
+    <result column="end_day" property="endDay"/>
+    <result column="weeks" property="weeks"/>
+    <result column="status" property="status"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`title`,`time_type`,`weight`,`start_time`,`end_time`,`start_day`,`end_day`,`weeks`,`status`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="scoreTimeDiscountActivityMap">
+    select <include refid="Vo_Column_List"/> from score_time_discount_activity order by id desc
+  </select>
+  <select id="getById" resultMap="scoreTimeDiscountActivityMap">
+    select <include refid="Vo_Column_List"/> from score_time_discount_activity where id = #{id}
+  </select>
+  <insert id="saveTo">
+    insert into score_time_discount_activity (`id`,`title`,`time_type`,`weight`,`start_time`,`end_time`,`start_day`,`end_day`,`weeks`,`status`,`create_by`,`create_time`,`del_flag`)
+    values (#{scoreTimeDiscountActivity.id},#{scoreTimeDiscountActivity.title},#{scoreTimeDiscountActivity.timeType},#{scoreTimeDiscountActivity.weight},#{scoreTimeDiscountActivity.startTime},#{scoreTimeDiscountActivity.endTime},#{scoreTimeDiscountActivity.startDay},#{scoreTimeDiscountActivity.endDay},#{scoreTimeDiscountActivity.weeks},#{scoreTimeDiscountActivity.status},#{scoreTimeDiscountActivity.createBy},#{scoreTimeDiscountActivity.createTime},#{scoreTimeDiscountActivity.delFlag});
+  </insert>
+  <update id="update">
+    update score_time_discount_activity
+    <set>
+      <if test="scoreTimeDiscountActivity.title != null">
+        `title` = #{scoreTimeDiscountActivity.title},
+      </if>
+      <if test="scoreTimeDiscountActivity.timeType != null">
+        `time_type` = #{scoreTimeDiscountActivity.timeType},
+      </if>
+      <if test="scoreTimeDiscountActivity.weight != null">
+        `weight` = #{scoreTimeDiscountActivity.weight},
+      </if>
+      <if test="scoreTimeDiscountActivity.startTime != null">
+        `start_time` = #{scoreTimeDiscountActivity.startTime},
+      </if>
+      <if test="scoreTimeDiscountActivity.endTime != null">
+        `end_time` = #{scoreTimeDiscountActivity.endTime},
+      </if>
+      <if test="scoreTimeDiscountActivity.startDay != null">
+        `start_day` = #{scoreTimeDiscountActivity.startDay},
+      </if>
+      <if test="scoreTimeDiscountActivity.endDay != null">
+        `end_day` = #{scoreTimeDiscountActivity.endDay},
+      </if>
+      <if test="scoreTimeDiscountActivity.weeks != null">
+        `weeks` = #{scoreTimeDiscountActivity.weeks},
+      </if>
+      <if test="scoreTimeDiscountActivity.status != null">
+        `status` = #{scoreTimeDiscountActivity.status},
+      </if>
+      <if test="scoreTimeDiscountActivity.updateBy != null">
+        `update_by` = #{scoreTimeDiscountActivity.updateBy},
+      </if>
+      <if test="scoreTimeDiscountActivity.updateTime != null">
+        `update_time` = #{scoreTimeDiscountActivity.updateTime},
+      </if>
+      <if test="scoreTimeDiscountActivity.delFlag != null">
+        `del_flag` = #{scoreTimeDiscountActivity.delFlag},
+      </if>
+    </set>
+    where id = #{scoreTimeDiscountActivity.id}
+  </update>
+  <delete id="deleteToById">
+    <!--delete from score_time_discount_activity where id = #{id}-->
+    update score_time_discount_activity set del_flag=1 where id = #{id}
+  </delete>
+
+  <select id="getDetailById" resultType="com.mall4j.cloud.user.vo.ScoreTimeDiscountActivityVO">
+    SELECT
+    sa.*
+    FROM
+    score_time_discount_activity  sa
+    where sa.del_flag=0
+    and sa.id=#{id}
+  </select>
+
+  <select id="getList" resultType="com.mall4j.cloud.user.vo.ScoreTimeDiscountActivityVO">
+    SELECT
+    sa.*
+    FROM
+    score_time_discount_activity  sa
+    <if test="dto.convertId!=null">
+       join score_time_discount_activity_item sai on sa.id=sai.activity_id and sai.convert_id=#{dto.convertId}
+    </if>
+    where sa.del_flag=0
+    <if test="dto.title!=null and dto.title!=''">
+      and sa.title like concat('%',#{dto.title},'%')
+    </if>
+    <if test="dto.status!=null">
+      and sa.status=#{dto.status}
+    </if>
+    group by sa.id
+    ORDER BY create_time desc
+  </select>
+
+</mapper>

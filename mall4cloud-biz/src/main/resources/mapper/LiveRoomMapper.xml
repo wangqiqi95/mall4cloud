@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.live.LiveRoomMapper">
+
+  <resultMap id="liveRoomMap" type="com.mall4j.cloud.biz.model.live.LiveRoom">
+    <id column="id" property="id" />
+    <result column="room_id" property="roomId"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="name" property="name"/>
+    <result column="anchor_name" property="anchorName"/>
+    <result column="anchor_wechat" property="anchorWechat"/>
+    <result column="cover_img" property="coverImg"/>
+    <result column="share_img" property="shareImg"/>
+    <result column="feeds_img" property="feedsImg"/>
+    <result column="is_feeds_public" property="isFeedsPublic"/>
+    <result column="type" property="type"/>
+    <result column="screen_type" property="screenType"/>
+    <result column="live_status" property="liveStatus"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="apply_time" property="applyTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+
+  <resultMap id="liveRoomDtoMap" type="com.mall4j.cloud.biz.dto.live.LiveRoomDto">
+    <id column="id" property="id" />
+    <result column="room_id" jdbcType="BIGINT" property="roomId"/>
+    <result column="shop_id" jdbcType="BIGINT" property="shopId"/>
+    <result column="name" jdbcType="VARCHAR" property="name"/>
+    <result column="anchor_name"  jdbcType="VARCHAR" property="anchorName"/>
+    <result column="cover_img"  jdbcType="VARCHAR" property="coverImg"/>
+    <result column="share_img"  jdbcType="VARCHAR" property="shareImg"/>
+    <result column="feeds_img"  jdbcType="VARCHAR" property="feedsImg"/>
+    <result column="type" jdbcType="BIGINT" property="type"/>
+    <result column="screen_type" jdbcType="BIGINT" property="screenType"/>
+    <result column="live_status" jdbcType="BIGINT" property="liveStatus"/>
+    <result column="start_time" jdbcType="TIMESTAMP"  property="startTime"/>
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+    <result column="room_top" jdbcType="INTEGER" property="roomTop"/>
+    <collection property="liveProdStores" javaType="list" ofType="com.mall4j.cloud.biz.dto.live.LiveProdStoreDto">
+      <id column="live_prod_store_id" property="liveProdStoreId" />
+      <result column="prod_id" jdbcType="BIGINT" property="prodId"/>
+      <result column="cover_pic"  jdbcType="VARCHAR" property="coverPic"/>
+      <result column="conver_img_url"  jdbcType="VARCHAR" property="converImgUrl"/>
+      <result column="prod_name"  jdbcType="VARCHAR" property="name"/>
+      <result column="price_type" jdbcType="INTEGER" property="priceType"/>
+      <result column="price" jdbcType="DECIMAL"  property="price"/>
+      <result column="price2" jdbcType="DECIMAL" property="price2"/>
+      <result column="url"  jdbcType="VARCHAR" property="url"/>
+      <result column="prod_type"  jdbcType="INTEGER" property="prodType"/>
+      <result column="activity_id" jdbcType="INTEGER" property="activityId"/>
+      <result column="status" jdbcType="INTEGER" property="status"/>
+    </collection>
+  </resultMap>
+
+  <update id="updateBatchByRoomId">
+    <foreach collection="roomInfos" item="roomInfo" separator=";">
+      UPDATE
+      live_room
+      SET
+      <if test="roomInfo.liveStatus != 101 and roomInfo.liveStatus != 102 and roomInfo.liveStatus != 105">
+        room_top = 0,
+      </if>
+      `live_status` = #{roomInfo.liveStatus},name =#{roomInfo.name},anchor_name=#{roomInfo.anchorName}
+      WHERE room_id = #{roomInfo.roomId}
+    </foreach>
+  </update>
+  <select id="getLivingRoomByProdId" resultType="com.mall4j.cloud.biz.dto.live.LiveRoomParam">
+    SELECT lr.* FROM `live_room_prod` rp
+    LEFT JOIN `live_room` lr ON rp.`room_id` = lr.`id`
+    LEFT JOIN `live_prod_store` ps ON ps.`live_prod_store_id` = rp.`prod_store_id`
+    WHERE ps.`prod_id` = #{prodId} and lr.live_status in (102,101) AND end_time >= NOW()
+  </select>
+
+  <select id="getAppLivePage" resultType="com.mall4j.cloud.biz.vo.LiveRoomGuideVO">
+    select
+    r.room_id as roomId,
+    r.feeds_img as feedsImg,
+    r.name as name
+    from live_room r
+    left join live_room_shop p on r.id = p.room_id
+    where 1 = 1
+    <if test="type == 101">
+      and r.start_time &lt;= now() and r.end_time &gt;= now()
+    </if>
+    <if test="type == 102">
+      and r.start_time &gt;= now()
+    </if>
+    <if test="type == 103">
+      and r.end_time &lt;= now()
+    </if>
+    and (r.is_all_shop = 1 or p.shop_id = #{shopId} )
+    group by r.id
+    <if test="type != 103">
+    order by r.start_time asc
+    </if>
+    <if test="type == 103">
+      order by r.start_time desc
+    </if>
+    limit #{page.begin}, #{page.size}
+  </select>
+
+  <select id="getAppLivePageCount" resultType="Long">
+    select count(*) from (
+    select
+    r.room_id
+    from live_room r
+    left join live_room_shop p on r.id = p.room_id
+    where 1 = 1
+    <if test="type == 101">
+      and r.start_time &lt;= now() and r.end_time &gt;= now()
+    </if>
+    <if test="type == 102">
+      and r.start_time &gt;= now()
+    </if>
+    <if test="type == 103">
+      and r.end_time &lt;= now()
+    </if>
+    and (r.is_all_shop = 1 or p.shop_id = #{shopId} )
+    group by r.id
+    ) t
+  </select>
+
+  <select id="getSaleLivePage" resultType="com.mall4j.cloud.biz.vo.LiveRoomGuideVO">
+    select
+    r.room_id as roomId,
+    r.feeds_img as feedsImg,
+    r.share_img as shareImg,
+    r.cover_img as coverImg,
+    r.name as name,
+    r.start_time as startTime,
+    r.end_time as endTime
+    from live_room r
+    left join live_room_shop_sale p on r.id = p.room_id
+    where 1 = 1
+    and (r.is_all_sale_shop = 1 or p.shop_id = #{shopId} )
+    group by r.id
+    order by r.start_time desc
+    limit #{page.begin}, #{page.size}
+  </select>
+
+  <select id="getSaleLivePageCount" resultType="Long">
+    select count(*) from (
+    select
+    r.room_id
+    from live_room r
+    left join live_room_shop_sale p on r.id = p.room_id
+    where 1 = 1
+    and (r.is_all_sale_shop = 1 or p.shop_id = #{shopId} )
+    group by r.id
+    ) t
+  </select>
+
+  <select id="pageRoomAndDetail" resultMap="liveRoomDtoMap">
+    select room.*,ps.name as prod_name,ps.cover_pic,ps.* from (
+    SELECT lr.* FROM `live_room` lr
+    WHERE lr.type = 0 AND lr.live_status in (102,101) AND end_time >= NOW()
+    <if test="liveRoom.name != null and liveRoom.name != ''">
+      <if test="liveRoom.searchType == 1">
+        AND (lr.`anchor_name` LIKE CONCAT('%',#{liveRoom.name},'%')
+        OR lr.`name` LIKE CONCAT('%',#{liveRoom.name},'%'))
+      </if>
+    </if>
+    <if test="liveRoom != null and liveRoom.roomTop != null">
+      AND  room_top = #{liveRoom.roomTop}
+    </if>
+    order by lr.live_status,lr.start_time asc
+    LIMIT #{adapter.begin} , #{adapter.size}
+    )as room
+    LEFT JOIN `live_room_prod` rp ON rp.`room_id` = room.`id`
+    <if test="liveRoom.searchType != 3 and liveRoom.searchType != 2">
+      LEFT
+    </if>
+    JOIN `live_prod_store` ps ON ps.`live_prod_store_id` = rp.`prod_store_id`
+    <where>
+    <if test="liveRoom.searchType == 2">
+      and ps.name LIKE CONCAT('%',#{liveRoom.name},'%')
+    </if>
+    <if test="liveRoom.searchType == 3">
+      and ps.prod_id = #{liveRoom.prodId}
+    </if>
+    </where>
+  </select>
+
+  <select id="countRoomAndDetail" resultType="long">
+    SELECT count(*)  from (SELECT count(*) FROM `live_room` lr
+    LEFT JOIN `live_room_prod` rp ON rp.`room_id` = lr.`id`
+    <if test="liveRoom.searchType == 1">
+      LEFT
+    </if>
+    JOIN `live_prod_store` ps ON ps.`live_prod_store_id` = rp.`prod_store_id`
+    WHERE lr.type = 0 AND (lr.live_status = 102 OR lr.live_status = 101)
+    AND end_time >= NOW()
+    <if test="liveRoom.name != null and liveRoom.name != ''">
+      <if test="liveRoom.searchType == 1">
+        AND (lr.`anchor_name` LIKE CONCAT('%',#{liveRoom.name},'%')
+        OR lr.`name` LIKE CONCAT('%',#{liveRoom.name},'%'))
+      </if>
+    </if>
+    <if test="liveRoom.searchType == 2">
+      and ps.name LIKE CONCAT('%',#{liveRoom.name},'%')
+    </if>
+    <if test="liveRoom.searchType == 3 and liveRoom.prodId != null">
+      and ps.prod_id = #{liveRoom.prodId}
+    </if>
+    <if test="liveRoom != null and liveRoom.roomTop != null">
+      AND room_top = #{liveRoom.roomTop}
+    </if>
+    group by lr.id
+    )as room
+  </select>
+</mapper>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinMaTemplateMapper">
+  <resultMap id="weixinMaTemplateMap" type="com.mall4j.cloud.biz.model.WeixinMaTemplate">
+    <id column="id" property="id" />
+    <result column="ma_app_name" property="maAppName"/>
+    <result column="ma_app_id" property="maAppId"/>
+    <result column="ma_app_path" property="maAppPath"/>
+    <result column="ma_url" property="maUrl"/>
+    <result column="card_title" property="cardTitle"/>
+    <result column="card_img" property="cardImg"/>
+    <result column="show_type" property="showType"/>
+    <result column="mp_app_id" property="mpAppId"/>
+    <result column="head_image" property="headImage"/>
+    <result column="authorization_state" property="authorizationState"/>
+    <result column="ma_url" property="maUrl"/>
+    <result column="thumb_media_id" property="thumbMediaId"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`ma_app_name`,`ma_app_id`,`ma_app_path`,`ma_url`,`card_title`,`card_img`,`show_type`,`mp_app_id`,`head_image`,`authorization_state`,`ma_url`,`thumb_media_id`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinMaTemplateMap">
+    select <include refid="Vo_Column_List"/> from weixin_ma_template order by id desc
+  </select>
+  <select id="getById" resultMap="weixinMaTemplateMap">
+    select <include refid="Vo_Column_List"/> from weixin_ma_template where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_ma_template (`id`,`ma_app_name`,`ma_app_id`,`ma_app_path`,`card_title`,`card_img`,`show_type`,`mp_app_id`,`head_image`,`authorization_state`,`ma_url`,`thumb_media_id`,`create_by`,`create_time`,`del_flag`)
+    values (#{weixinMaTemplate.id},#{weixinMaTemplate.maAppName},#{weixinMaTemplate.maAppId},#{weixinMaTemplate.maAppPath},#{weixinMaTemplate.cardTitle},#{weixinMaTemplate.cardImg},#{weixinMaTemplate.showType},#{weixinMaTemplate.mpAppId},#{weixinMaTemplate.headImage},#{weixinMaTemplate.authorizationState},#{weixinMaTemplate.maUrl},#{weixinMaTemplate.thumbMediaId},#{weixinMaTemplate.createBy},#{weixinMaTemplate.createTime},#{weixinMaTemplate.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_ma_template
+    <set>
+      <if test="weixinMaTemplate.maAppName != null">
+        `ma_app_name` = #{weixinMaTemplate.maAppName},
+      </if>
+      <if test="weixinMaTemplate.maAppId != null">
+        `ma_app_id` = #{weixinMaTemplate.maAppId},
+      </if>
+      <if test="weixinMaTemplate.maAppPath != null">
+        `ma_app_path` = #{weixinMaTemplate.maAppPath},
+      </if>
+      <if test="weixinMaTemplate.maUrl != null">
+        `ma_url` = #{weixinMaTemplate.maUrl},
+      </if>
+      <if test="weixinMaTemplate.cardTitle != null">
+        `card_title` = #{weixinMaTemplate.cardTitle},
+      </if>
+      <if test="weixinMaTemplate.cardImg != null">
+        `card_img` = #{weixinMaTemplate.cardImg},
+      </if>
+      <if test="weixinMaTemplate.showType != null">
+        `show_type` = #{weixinMaTemplate.showType},
+      </if>
+      <if test="weixinMaTemplate.mpAppId != null">
+        `mp_app_id` = #{weixinMaTemplate.mpAppId},
+      </if>
+      <if test="weixinMaTemplate.headImage != null">
+        `head_image` = #{weixinMaTemplate.headImage},
+      </if>
+      <if test="weixinMaTemplate.authorizationState != null">
+        `authorization_state` = #{weixinMaTemplate.authorizationState},
+      </if>
+      <if test="weixinMaTemplate.maUrl != null">
+        `ma_url` = #{weixinMaTemplate.maUrl},
+      </if>
+      <if test="weixinMaTemplate.thumbMediaId != null">
+        `thumb_media_id` = #{weixinMaTemplate.thumbMediaId},
+      </if>
+      <if test="weixinMaTemplate.updateTime != null">
+        `update_time` = #{weixinMaTemplate.updateTime},
+      </if>
+      <if test="weixinMaTemplate.updateBy != null">
+        `update_by` = #{weixinMaTemplate.updateBy},
+      </if>
+      <if test="weixinMaTemplate.delFlag != null">
+        `del_flag` = #{weixinMaTemplate.delFlag},
+      </if>
+    </set>
+    where id = #{weixinMaTemplate.id}
+  </update>
+
+  <update id="updateMediaId">
+    update weixin_ma_template
+    <set>
+      <if test="weixinMaTemplate.thumbMediaId != null">
+        `thumb_media_id` = #{weixinMaTemplate.thumbMediaId},
+      </if>
+      <if test="weixinMaTemplate.updateTime != null">
+        `update_time` = #{weixinMaTemplate.updateTime},
+      </if>
+      <if test="weixinMaTemplate.updateBy != null">
+        `update_by` = #{weixinMaTemplate.updateBy},
+      </if>
+    </set>
+    where id = #{weixinMaTemplate.id}
+  </update>
+
+  <delete id="deleteById">
+    delete from weixin_ma_template where id = #{id}
+  </delete>
+
+  <select id="listAfterThreeDayPicMediaIds" resultType="com.mall4j.cloud.biz.model.WeixinMaTemplate">
+    select * from weixin_ma_template
+    WHERE  update_time <![CDATA[ <= ]]> date_add(now(), interval -70 hour)
+  </select>
+
+</mapper>

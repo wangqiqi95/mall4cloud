@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.delivery.mapper.DeliveryOrderItemMapper">
+    <resultMap id="deliveryOrderItemMap" type="com.mall4j.cloud.delivery.model.DeliveryOrderItem">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="delivery_order_id" property="deliveryOrderId"/>
+        <result column="img_url" property="imgUrl"/>
+        <result column="spu_name" property="spuName"/>
+        <result column="count" property="count"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`,
+        `create_time`,
+        `update_time`,
+        `delivery_order_id`,
+        `img_url`,
+        `spu_name`,
+        `count`
+    </sql>
+    <select id="list" resultType="com.mall4j.cloud.delivery.vo.DeliveryOrderItemVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from delivery_order_item
+        order by id desc
+    </select>
+    <select id="getById" resultType="com.mall4j.cloud.delivery.vo.DeliveryOrderItemVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from delivery_order_item
+        where id = #{id}
+    </select>
+    <insert id="save">
+        insert into delivery_order_item (`delivery_order_id`, `img_url`, `spu_name`, `count`)
+        values (#{deliveryOrderItem.deliveryOrderId}, #{deliveryOrderItem.imgUrl}, #{deliveryOrderItem.spuName},
+                #{deliveryOrderItem.count});
+    </insert>
+    <update id="update">
+        update delivery_order_item
+        <set>
+            <if test="deliveryOrderItem.deliveryOrderId != null">
+                `delivery_order_id` = #{deliveryOrderItem.deliveryOrderId},
+            </if>
+            <if test="deliveryOrderItem.imgUrl != null">
+                `img_url` = #{deliveryOrderItem.imgUrl},
+            </if>
+            <if test="deliveryOrderItem.spuName != null">
+                `spu_name` = #{deliveryOrderItem.spuName},
+            </if>
+            <if test="deliveryOrderItem.count != null">
+                `count` = #{deliveryOrderItem.count},
+            </if>
+        </set>
+        where id = #{deliveryOrderItem.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from delivery_order_item
+        where id = #{id}
+    </delete>
+
+    <insert id="saveBatch">
+        insert into delivery_order_item (`delivery_order_id`, `img_url`, `spu_name`, `count`)
+        values
+        <foreach collection="deliveryOrderItems" item="deliveryOrderItem" separator=",">
+            (#{deliveryOrderItem.deliveryOrderId}, #{deliveryOrderItem.imgUrl}, #{deliveryOrderItem.spuName}, #{deliveryOrderItem.count})
+        </foreach>
+    </insert>
+    <select id="listDetailDelivery" resultType="com.mall4j.cloud.delivery.vo.DeliveryOrderVO">
+        SELECT dc.name delivery_name,de.* FROM delivery_order de
+        LEFT JOIN delivery_company dc ON dc.delivery_company_id =de.delivery_company_id
+        WHERE de.order_id = #{orderId} AND de.status = 1
+
+    </select>
+</mapper>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.TaskSendDetailMapper">
+  <resultMap id="taskSendDetailMap" type="com.mall4j.cloud.biz.model.cp.TaskSendDetail">
+    <id column="ID" property="id" />
+    <result column="STAFF_ID" property="staffId"/>
+    <result column="STAFF_NAME" property="staffName"/>
+    <result column="USER_ID" property="userId"/>
+    <result column="STORE_ID" property="storeId"/>
+    <result column="STORE_NAME" property="storeName"/>
+    <result column="IS_relay" property="isRelay"/>
+    <result column="COMPLETE_TIME" property="completeTime"/>
+    <result column="SEND_STATUS" property="sendStatus"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="UPDATE_TIME" property="updateTime"/>
+    <result column="PUSH_ID" property="pushId"/>
+  </resultMap>
+
+  <resultMap id="taskSendDetailCountVOMap"   type="com.mall4j.cloud.biz.vo.cp.TaskSendDetailCountVO">
+    <result column="unReplayTotal" property="unReplayTotal" />
+    <result column="replayTotal" property="replayTotal" />
+    <result column="Replay_per" property="replayPer" />
+  </resultMap>
+
+
+  <resultMap id="queryTaskListMap" type="com.mall4j.cloud.biz.vo.cp.TaskAttachmentVO">
+    <id column="ID" property="id" />
+    <result column="CONTENT" property="content"/>
+    <result column="USER_ID" property="userId"/>
+    <result column="END_TIME" property="endTime"/>
+    <result column="TYPE" property="type"/>
+    <result column="APP_ID" property="appId"/>
+    <result column="APP_TITLE" property="title"/>
+    <result column="APP_PAGE" property="pagePath"/>
+    <result column="url" property="url"/>
+    <result column="media_id" property="mediaId"/>
+
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `ID`,`STAFF_ID`,`USER_ID`,`STORE_ID`,`STORE_NAME`,`IS_relay`,`COMPLETE_TIME`,`SEND_STATUS`,`CREATE_TIME`,`UPDATE_TIME`,PUSH_ID,STAFF_NAME
+  </sql>
+  <select id="list" resultMap="taskSendDetailMap">
+    select <include refid="Vo_Column_List"/>   from CP_TASK_SEND_DETAIL
+     where PUSH_ID = #{et.pushId}
+    <if test="et.isRelay != null"> AND IS_relay = #{et.isRelay} </if>
+    <if test="et.completeTimeStart != null and et.completeTimeStart !='' "> AND COMPLETE_TIME >=STR_TO_DATE(#{et.completeTimeStart},"%Y-%m-%d")  </if>
+    <if test="et.completeTimeEnd != null and et.completeTimeEnd !='' "> AND COMPLETE_TIME <![CDATA[< ]]>STR_TO_DATE(#{et.completeTimeEnd},"%Y-%m-%d")+1  </if>
+    <if test="et.staffName != null and et.staffName !='' "> AND STAFF_NAME like CONCAT('%', #{et.staffName},'%')  </if>
+    <if test="et.storeIds != null">
+      and STORE_ID in
+      <foreach collection="et.storeIds" item="item"  index="index" open="("  separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    order by ID desc
+  </select>
+  <!-- 根据推送id统计 -->
+  <select id="count" resultMap="taskSendDetailCountVOMap">
+    select  sum(case when IS_relay= 0 then 1 else 0 end)unReplayTotal,
+            sum(case when IS_relay= 1 then 1 else 0 end)replayTotal,
+            concat(ROUND(sum(case when IS_relay= 1 then 1 else 0 end)/count(1),2)*100,'%') Replay_per
+    from CP_TASK_SEND_DETAIL
+    where PUSH_ID = #{pushId}
+  </select>
+
+
+  <select id="getById" resultMap="taskSendDetailMap">
+    select <include refid="Vo_Column_List"/> from CP_TASK_SEND_DETAIL where ID = #{id}
+  </select>
+  <insert id="save">
+    insert into CP_TASK_SEND_DETAIL (PUSH_ID,STAFF_NAME,`STAFF_ID`,`USER_ID`,`STORE_ID`,`STORE_NAME`,`IS_relay`,`COMPLETE_TIME`,`SEND_STATUS`,`CREATE_TIME`,`UPDATE_TIME`)
+    values (#{taskSendDetail.pushId},#{taskSendDetail.staffName},#{taskSendDetail.staffId},#{taskSendDetail.userId},#{taskSendDetail.storeId},#{taskSendDetail.storeName},#{taskSendDetail.isRelay},#{taskSendDetail.completeTime},#{taskSendDetail.sendStatus},#{taskSendDetail.createTime},#{taskSendDetail.updateTime});
+  </insert>
+  <update id="update">
+    update CP_TASK_SEND_DETAIL
+    <set>
+      <if test="taskSendDetail.staffId != null">
+        `STAFF_ID` = #{taskSendDetail.staffId},
+      </if>
+      <if test="taskSendDetail.userId != null">
+        `USER_ID` = #{taskSendDetail.userId},
+      </if>
+      <if test="taskSendDetail.storeId != null">
+        `STORE_ID` = #{taskSendDetail.storeId},
+      </if>
+      <if test="taskSendDetail.storeName != null">
+        `STORE_NAME` = #{taskSendDetail.storeName},
+      </if>
+      <if test="taskSendDetail.isRelay != null">
+        `IS_relay` = #{taskSendDetail.isRelay},
+      </if>
+      <if test="taskSendDetail.completeTime != null">
+        `COMPLETE_TIME` = #{taskSendDetail.completeTime},
+      </if>
+      <if test="taskSendDetail.sendStatus != null">
+        `SEND_STATUS` = #{taskSendDetail.sendStatus},
+      </if>
+      <if test="taskSendDetail.createTime != null">
+        `CREATE_TIME` = #{taskSendDetail.createTime},
+      </if>
+      <if test="taskSendDetail.updateTime != null">
+        `UPDATE_TIME` = #{taskSendDetail.updateTime},
+      </if>
+      <if test="taskSendDetail.pushId != null">
+        `PUSH_ID` = #{taskSendDetail.pushId},
+      </if>
+      <if test="taskSendDetail.staffName != null">
+        `STAFF_NAME` = #{taskSendDetail.staffName},
+      </if>
+    </set>
+    where ID = #{taskSendDetail.id}
+  </update>
+  <delete id="deleteById">
+    delete from CP_TASK_SEND_DETAIL where ID = #{id}
+  </delete>
+
+  <delete id="deleteByPushId">
+    delete from CP_TASK_SEND_DETAIL where PUSH_ID = #{pushId}
+  </delete>
+
+  <!-- 提供给望伟的小程序端 -->
+  <select id="queryTaskList" resultMap="queryTaskListMap">
+    select D.ID,D.USER_ID,T.CONTENT,T.END_TIME, M.TYPE,M.APP_ID,M.APP_PAGE,(CASE WHEN (ISNULL(M.APP_PIC)=1) ||(LENGTH(trim(M.APP_PIC))=0) THEN M.URL ELSE M.APP_PIC END ) url,M.APP_TITLE,M.media_id from CP_TASK_SEND_DETAIL D,CP_TASK_PUSH T,CP_MATERIAL_MSG M
+    WHERE D.PUSH_ID = T.ID
+      AND T.ID = M.MAT_ID
+      AND M.origin = 1
+      AND T.FLAG=0
+      AND T.START_TIME <![CDATA[ <= ]]>curdate()
+      AND T.END_TIME >= now()
+     <if test="status != null"> AND D.IS_relay = #{status}</if>
+     <if test="userId != null and userId !=''  "> AND D.USER_ID = #{userId}</if>
+     <if test="staffId != null"> AND D.STAFF_ID = #{staffId}</if>
+     <if test="id != null"> AND D.ID = #{id}</if>
+  </select>
+
+  <select id="listSendTask" resultMap="taskSendDetailMap">
+    select  d.`ID`,d.`STAFF_ID`,d.`USER_ID`,d.PUSH_ID from CP_TASK_SEND_DETAIL d left join  CP_TASK_PUSH p on d.PUSH_ID = p.ID
+    where d.IS_relay = 0
+      and d.SEND_STATUS =0
+      and p.START_TIME <![CDATA[ <= ]]> now()
+      and p.END_TIME >= now()
+  </select>
+
+
+
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.ScoreCouponLogMapper">
+  <resultMap id="scoreCouponLogMap" type="com.mall4j.cloud.transfer.model.ScoreCouponLog">
+    <id column="log_id" property="logId" />
+    <result column="convert_id" property="convertId"/>
+    <result column="type" property="type"/>
+    <result column="user_id" property="userId"/>
+    <result column="user_card_number" property="userCardNumber"/>
+    <result column="user_phone" property="userPhone"/>
+    <result column="convert_score" property="convertScore"/>
+    <result column="note" property="note"/>
+    <result column="create_user_id" property="createUserId"/>
+    <result column="create_time" property="createTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `log_id`,`convert_id`,`type`,`user_id`,`user_card_number`,`user_phone`,`convert_score`,`note`,`create_user_id`,`create_time`
+  </sql>
+  <select id="list" resultMap="scoreCouponLogMap">
+    select <include refid="Vo_Column_List"/> from score_coupon_log order by log_id desc
+  </select>
+  <select id="getByLogId" resultMap="scoreCouponLogMap">
+    select <include refid="Vo_Column_List"/> from score_coupon_log where log_id = #{logId}
+  </select>
+  <insert id="save">
+    insert into score_coupon_log (`convert_id`,`type`,`user_id`,`user_card_number`,`user_phone`,`convert_score`,`note`,`create_user_id`,create_time)
+    values (#{scoreCouponLog.convertId},#{scoreCouponLog.type},#{scoreCouponLog.userId},#{scoreCouponLog.userCardNumber},
+            #{scoreCouponLog.userPhone},#{scoreCouponLog.convertScore},#{scoreCouponLog.note},#{scoreCouponLog.createUserId},#{scoreCouponLog.createTime});
+  </insert>
+  <update id="update">
+    update score_coupon_log
+    <set>
+      <if test="scoreCouponLog.convertId != null">
+        `convert_id` = #{scoreCouponLog.convertId},
+      </if>
+      <if test="scoreCouponLog.type != null">
+        `type` = #{scoreCouponLog.type},
+      </if>
+      <if test="scoreCouponLog.userId != null">
+        `user_id` = #{scoreCouponLog.userId},
+      </if>
+      <if test="scoreCouponLog.userCardNumber != null">
+        `user_card_number` = #{scoreCouponLog.userCardNumber},
+      </if>
+      <if test="scoreCouponLog.userPhone != null">
+        `user_phone` = #{scoreCouponLog.userPhone},
+      </if>
+      <if test="scoreCouponLog.convertScore != null">
+        `convert_score` = #{scoreCouponLog.convertScore},
+      </if>
+      <if test="scoreCouponLog.note != null">
+        `note` = #{scoreCouponLog.note},
+      </if>
+      <if test="scoreCouponLog.createUserId != null">
+        `create_user_id` = #{scoreCouponLog.createUserId},
+      </if>
+    </set>
+    where log_id = #{scoreCouponLog.logId}
+  </update>
+  <delete id="deleteById">
+    delete from score_coupon_log where log_id = #{logId}
+  </delete>
+
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.SmsLogMapper">
+  <resultMap id="smsLogMap" type="com.mall4j.cloud.biz.model.SmsLog">
+    <id column="id" property="id" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="user_id" property="userId"/>
+    <result column="user_phone" property="userPhone"/>
+    <result column="content" property="content"/>
+    <result column="mobile_code" property="mobileCode"/>
+    <result column="type" property="type"/>
+    <result column="response_code" property="responseCode"/>
+    <result column="status" property="status"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`create_time`,`update_time`,`user_id`,`user_phone`,`content`,`mobile_code`,`type`,`response_code`,`status`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.biz.model.SmsLog">
+    select <include refid="Vo_Column_List"/> from sms_log order by id desc
+  </select>
+
+  <select id="getById" resultType="com.mall4j.cloud.biz.model.SmsLog">
+    select <include refid="Vo_Column_List"/> from sms_log where id = #{id}
+  </select>
+
+  <select id="listByMobileAndTypeAndToday" resultType="com.mall4j.cloud.biz.model.SmsLog">
+    select <include refid="Vo_Column_List"/> from sms_log where user_phone = #{mobile} and sms_log.type = #{sendType}
+    and create_time <![CDATA[>=]]> #{beginOfDay} and create_time <![CDATA[<=]]> #{endOfDay} order by create_time desc
+  </select>
+
+  <select id="getByMobileAndCodeAndType" resultType="com.mall4j.cloud.biz.model.SmsLog">
+    select <include refid="Vo_Column_List"/> from sms_log where mobile_code = #{validCode} and sms_log.type = #{sendType}
+    and user_phone = #{mobile} and status = 1
+  </select>
+
+  <insert id="save">
+    insert into sms_log (`user_id`,`user_phone`,`content`,`mobile_code`,`type`,`response_code`,`status`)
+    values (#{smsLog.userId},#{smsLog.userPhone},#{smsLog.content},#{smsLog.mobileCode},#{smsLog.type},#{smsLog.responseCode},#{smsLog.status});
+  </insert>
+  <update id="update">
+    update sms_log
+    <set>
+      <if test="smsLog.createTime != null">
+        `create_time` = #{smsLog.createTime},
+      </if>
+      <if test="smsLog.updateTime != null">
+        `update_time` = #{smsLog.updateTime},
+      </if>
+      <if test="smsLog.userId != null">
+        `user_id` = #{smsLog.userId},
+      </if>
+      <if test="smsLog.userPhone != null">
+        `user_phone` = #{smsLog.userPhone},
+      </if>
+      <if test="smsLog.content != null">
+        `content` = #{smsLog.content},
+      </if>
+      <if test="smsLog.mobileCode != null">
+        `mobile_code` = #{smsLog.mobileCode},
+      </if>
+      <if test="smsLog.type != null">
+        `type` = #{smsLog.type},
+      </if>
+      <if test="smsLog.responseCode != null">
+        `response_code` = #{smsLog.responseCode},
+      </if>
+      <if test="smsLog.status != null">
+        `status` = #{smsLog.status},
+      </if>
+    </set>
+    where id = #{smsLog.id}
+  </update>
+  <delete id="deleteById">
+    delete from sms_log where id = #{id}
+  </delete>
+
+  <update id="invalidSmsByMobileAndType">
+  	update sms_log set status = 0 where user_phone = #{mobile} and type = #{sendType}
+  </update>
+</mapper>

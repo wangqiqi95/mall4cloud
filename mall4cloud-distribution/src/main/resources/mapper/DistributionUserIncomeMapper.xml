@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionUserIncomeMapper">
+  <resultMap id="distributionUserIncomeMap" type="com.mall4j.cloud.distribution.model.DistributionUserIncome">
+    <id column="income_id" property="incomeId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="wallet_id" property="walletId"/>
+    <result column="income_type" property="incomeType"/>
+    <result column="state" property="state"/>
+    <result column="income_amount" property="incomeAmount"/>
+    <result column="order_id" property="orderId"/>
+    <result column="order_item_id" property="orderItemId"/>
+    <result column="merchant_order_id" property="merchantOrderId"/>
+    <result column="distribution_user_id" property="distributionUserId"/>
+    <result column="modifier" property="modifier"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="spu_id" property="spuId"/>
+  </resultMap>
+
+  <resultMap id="DistributionUserIncome_DistributionUser" type="com.mall4j.cloud.distribution.vo.DistributionUserIncomeVO">
+    <id column="income_id" property="incomeId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="wallet_id" property="walletId"/>
+    <result column="income_type" property="incomeType"/>
+    <result column="state" property="state"/>
+    <result column="income_amount" property="incomeAmount"/>
+    <result column="order_id" property="orderId"/>
+    <result column="order_item_id" property="orderItemId"/>
+    <result column="merchant_order_id" property="merchantOrderId"/>
+    <result column="distribution_user_id" property="distributionUserId"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="shop_id" property="shopId"/>
+    <association property="distributionUser" javaType="com.mall4j.cloud.distribution.vo.DistributionUserVO">
+      <id column="distribution_user_id" jdbcType="BIGINT" property="distributionUserId"/>
+      <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+      <result column="user_mobile" jdbcType="VARCHAR" property="userMobile"/>
+    </association>
+  </resultMap>
+
+  <resultMap id="distributionOrderVOMap" type="com.mall4j.cloud.distribution.vo.DistributionOrderVO">
+    <result column="create_time" property="createTime"/>
+    <result column="state" property="state"/>
+    <result column="income_amount" property="incomeAmount"/>
+    <result column="order_item_id" property="orderItemId"/>
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `income_id`,`create_time`,`update_time`,`wallet_id`,`income_type`,`state`,`income_amount`,`order_id`,`order_item_id`,`merchant_order_id`,`distribution_user_id`,`modifier`,`shop_id`,`spu_id`
+  </sql>
+  <select id="list" resultMap="distributionUserIncomeMap">
+    select <include refid="Vo_Column_List"/> from distribution_user_income order by income_id desc
+  </select>
+  <select id="getDistributionUserIncomeList" resultType="com.mall4j.cloud.distribution.vo.DistributionUserIncomeVO">
+    SELECT dui.`income_amount`,dui.`income_type`,dui.`update_time`,dui.state
+    FROM distribution_user_income dui
+    WHERE dui.`distribution_user_id` = #{distributionUserId}
+    ORDER BY dui.`update_time` DESC
+  </select>
+  <select id="getByIncomeId" resultMap="distributionUserIncomeMap">
+    select <include refid="Vo_Column_List"/> from distribution_user_income where income_id = #{incomeId}
+  </select>
+  <insert id="save">
+    insert into distribution_user_income (`wallet_id`,`income_type`,`state`,`income_amount`,`order_id`,`order_item_id`,`merchant_order_id`,`distribution_user_id`,`modifier`,`shop_id`,`spu_id`)
+    values (#{distributionUserIncome.walletId},#{distributionUserIncome.incomeType},#{distributionUserIncome.state},#{distributionUserIncome.incomeAmount}
+    ,#{distributionUserIncome.orderId},#{distributionUserIncome.orderItemId},#{distributionUserIncome.merchantOrderId},#{distributionUserIncome.distributionUserId}
+    ,#{distributionUserIncome.modifier},#{distributionUserIncome.shopId},#{distributionUserIncome.spuId});
+  </insert>
+  <update id="update">
+    update distribution_user_income
+    <set>
+      <if test="distributionUserIncome.walletId != null">
+        `wallet_id` = #{distributionUserIncome.walletId},
+      </if>
+      <if test="distributionUserIncome.incomeType != null">
+        `income_type` = #{distributionUserIncome.incomeType},
+      </if>
+      <if test="distributionUserIncome.state != null">
+        `state` = #{distributionUserIncome.state},
+      </if>
+      <if test="distributionUserIncome.incomeAmount != null">
+        `income_amount` = #{distributionUserIncome.incomeAmount},
+      </if>
+      <if test="distributionUserIncome.orderId != null">
+        `order_id` = #{distributionUserIncome.orderId},
+      </if>
+      <if test="distributionUserIncome.orderItemId != null">
+        `order_item_id` = #{distributionUserIncome.orderItemId},
+      </if>
+      <if test="distributionUserIncome.merchantOrderId != null">
+        `merchant_order_id` = #{distributionUserIncome.merchantOrderId},
+      </if>
+      <if test="distributionUserIncome.distributionUserId != null">
+        `distribution_user_id` = #{distributionUserIncome.distributionUserId},
+      </if>
+      <if test="distributionUserIncome.modifier != null">
+        `modifier` = #{distributionUserIncome.modifier},
+      </if>
+      <if test="distributionUserIncome.shopId != null">
+        `shop_id` = #{distributionUserIncome.shopId},
+      </if>
+      <if test="distributionUserIncome.spuId != null">
+        `spu_id` = #{distributionUserIncome.spuId},
+      </if>
+    </set>
+    where income_id = #{distributionUserIncome.incomeId}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_user_income where income_id = #{incomeId}
+  </delete>
+
+  <select id="effectPage" resultMap="DistributionUserIncome_DistributionUser">
+    SELECT
+        dui.`income_id`,dui.`create_time`,dui.`update_time`,dui.`wallet_id`,dui.`income_type`,dui.`state`,dui.`income_amount`,dui.`order_id`,
+        dui.`order_item_id`,dui.`merchant_order_id`,dui.`distribution_user_id`,
+        du.nick_name,du.user_mobile
+    FROM
+            distribution_user_income dui
+    LEFT JOIN distribution_user_wallet duw ON duw.wallet_id = dui.wallet_id
+    LEFT JOIN distribution_user du ON du.distribution_user_id=duw.distribution_user_id
+    <where>
+      <if test="distributionUserIncomeDTO.state !=null">
+        and dui.state = #{distributionUserIncomeDTO.state}
+      </if>
+      <if test="userMobile!=null and userMobile!=''">
+        and du.user_mobile like concat('%',#{userMobile},'%')
+      </if>
+      <if test="distributionUserIncomeDTO.orderId != null">
+        and dui.order_id like concat('%',#{distributionUserIncomeDTO.orderId},'%')
+      </if>
+    </where>
+    GROUP BY dui.income_id
+    <if test="distributionUserIncomeDTO.sortParam != 0 and distributionUserIncomeDTO.sortType != 0">
+      ORDER BY
+      <choose>
+        <when test="distributionUserIncomeDTO.sortParam == 1">
+          dui.income_amount
+        </when>
+        <when test="distributionUserIncomeDTO.sortParam == 2">
+          dui.create_time
+        </when>
+        <when test="distributionUserIncomeDTO.sortParam == 3">
+          dui.update_time
+        </when>
+        <otherwise>
+          dui.income_id
+        </otherwise>
+      </choose>
+      <choose>
+        <when test="distributionUserIncomeDTO.sortType == 1">
+          ASC
+        </when>
+        <when test="distributionUserIncomeDTO.sortType == 2">
+          DESC
+        </when>
+      </choose>
+    </if>
+  </select>
+  <select id="listSalesRecord" resultMap="DistributionUserIncome_DistributionUser">
+    SELECT dui.`income_id`,dui.`create_time`,dui.`income_type`,dui.`state`,dui.`income_amount`,dui.`order_id`,dui.`order_item_id`,dui.`distribution_user_id`,dui.spu_id,dui.shop_id,
+           du.distribution_user_id,du.nick_name,du.user_mobile
+    FROM distribution_user_income dui
+    JOIN distribution_user du ON du.distribution_user_id = dui.distribution_user_id
+    <where>
+      <if test="distributionUserIncomeDTO.shopId != null and distributionUserIncomeDTO.shopId != 0">
+        AND dui.shop_id = #{distributionUserIncomeDTO.shopId}
+      </if>
+      <if test="distributionUserIncomeDTO.shopIds != null">
+        AND dui.shop_id in
+            <foreach collection="distributionUserIncomeDTO.shopIds" item="shopId" open="(" close=")" separator=",">
+              #{shopId}
+            </foreach>
+      </if>
+      <if test="distributionUserIncomeDTO.spuIds != null">
+        AND dui.spu_id in
+            <foreach collection="distributionUserIncomeDTO.spuIds" item="spuId" open="(" close=")" separator=",">
+              #{spuId}
+            </foreach>
+      </if>
+      <if test="distributionUserIncomeDTO.nickName != null">
+        AND du.nick_name like concat('%',#{distributionUserIncomeDTO.nickName},'%')
+      </if>
+      <if test="distributionUserIncomeDTO.userMobile != null">
+        AND du.user_mobile like concat('%',#{distributionUserIncomeDTO.userMobile},'%')
+      </if>
+      <if test="distributionUserIncomeDTO.state != null">
+        AND dui.state = #{distributionUserIncomeDTO.state}
+      </if>
+    </where>
+    <if test="distributionUserIncomeDTO.sortParam != 0 and distributionUserIncomeDTO.sortType != 0">
+      ORDER BY
+      <choose>
+        <when test="distributionUserIncomeDTO.sortParam == 1">
+          dui.income_amount
+        </when>
+        <when test="distributionUserIncomeDTO.sortParam == 2">
+          dui.create_time
+        </when>
+        <when test="distributionUserIncomeDTO.sortParam == 3">
+          dui.update_time
+        </when>
+        <otherwise>
+          dui.income_id
+        </otherwise>
+      </choose>
+      <choose>
+        <when test="distributionUserIncomeDTO.sortType == 1">
+          ASC
+        </when>
+        <when test="distributionUserIncomeDTO.sortType == 2">
+          DESC
+        </when>
+      </choose>
+    </if>
+  </select>
+  <update id="updateStateByDistributionUserId">
+    update distribution_user_income
+    set state = #{state}
+    where
+      distribution_user_id = #{distributionUserId}
+  </update>
+  <update id="updateStateByIncomeIds">
+    update distribution_user_income
+    set state = #{state}
+    where income_id IN
+    <foreach collection="incomeIds" item="incomeId" open="(" close=")" separator=",">
+      #{incomeId}
+    </foreach>
+  </update>
+
+  <select id="getDistributionOrderByDistributionUserId" resultMap="distributionOrderVOMap">
+    select
+    dui.income_amount,
+    dui.state,
+    dui.create_time,
+    dui.order_item_id
+    from
+    distribution_user_income dui
+    where dui.distribution_user_id=#{distributionUserId}
+  </select>
+  <select id="statisticsDisUserIncome" resultType="java.lang.Double">
+    SELECT IFNULL(SUM(income_amount),0)
+    FROM distribution_user_income dui
+    WHERE dui.`distribution_user_id`= #{distributionUserId}  AND dui.`state` = 2
+      AND dui.`update_time` BETWEEN #{startTime} AND #{endTime}
+  </select>
+  <select id="getMyPromotionOrderByState" resultType="com.mall4j.cloud.distribution.vo.DistributionUserIncomeOrderVO">
+    SELECT dui.`order_id`, dui.`income_amount`,dui.`state`,dui.`order_item_id`
+    FROM distribution_user_income dui
+    WHERE dui.`income_type` = 1
+    AND dui.`distribution_user_id` = #{distributionUserId}
+    <if test="state != null">
+      AND dui.`state` = #{state}
+    </if>
+    ORDER BY dui.`update_time` DESC
+  </select>
+
+  <select id="countByOrderIdAndOrderItemId" resultType="int">
+    select count(income_id) from distribution_user_income
+    where `order_id` = #{orderId} and `order_item_id` = #{orderItemId}
+    <if test="state != null">
+      and `state` = #{state}
+    </if>
+  </select>
+    <select id="getByOrderId" resultMap="distributionUserIncomeMap">
+      select<include refid="Vo_Column_List"/> from distribution_user_income where `order_id` = #{orderId}
+    </select>
+  <select id="listWaitCommissionSettlement" resultMap="distributionUserIncomeMap">
+    select<include refid="Vo_Column_List"/> from distribution_user_income where `state` = 1
+  </select>
+</mapper>

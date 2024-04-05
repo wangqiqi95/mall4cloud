@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionStoreActivityMapper">
+  <resultMap id="distributionStoreActivityMap" type="com.mall4j.cloud.distribution.model.DistributionStoreActivity">
+    <id column="id" property="id" />
+    <result column="name" property="name"/>
+    <result column="img" property="img"/>
+    <result column="org_id" property="orgId"/>
+    <result column="status" property="status"/>
+    <result column="limit_apply_num" property="limitApplyNum"/>
+    <result column="province_code" property="provinceCode"/>
+    <result column="province_name" property="provinceName"/>
+    <result column="city_code" property="cityCode"/>
+    <result column="city_name" property="cityName"/>
+    <result column="district_code" property="districtCode"/>
+    <result column="district_name" property="districtName"/>
+    <result column="longitude" property="longitude"/>
+    <result column="latitude" property="latitude"/>
+    <result column="address" property="address"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="need_age" property="needAge"/>
+    <result column="need_id_card" property="needIdCard"/>
+    <result column="desc" property="desc"/>
+    <result column="desc_img" property="descImg"/>
+    <result column="start_remind" property="startRemind"/>
+    <result column="end_remind" property="endRemind"/>
+    <result column="end_remind_status" property="endRemindStatus"/>
+    <result column="end_remind_url" property="endRemindUrl"/>
+    <result column="start_remind_time" property="startRemindTime"/>
+    <result column="end_remind_time" property="startRemindTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+
+    <result column="new_notice" property="newNotice"/>
+    <result column="new_reminder" property="newReminder"/>
+    <result column="start_notice" property="startNotice"/>
+    <result column="start_reminder" property="startReminder"/>
+    <result column="end_notice" property="endNotice"/>
+    <result column="end_reminder" property="endReminder"/>
+  </resultMap>
+
+  <resultMap id="distributionStoreActivityProvinceCountVOMap" type="com.mall4j.cloud.distribution.vo.DistributionStoreActivityProvinceCountVO">
+    <result column="province_code" property="provinceCode"/>
+    <result column="province_name" property="provinceName"/>
+    <result column="count(id)" property="count"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`name`,`img`,`org_id`,`status`,`limit_apply_num`,`province_code`,`province_name`,`longitude`,`latitude`,
+    `city_code`,`city_name`,`district_code`,`district_name`,
+    `address`,`start_time`,`end_time`,`need_age`,`need_id_card`,`desc`,`desc_img`,`start_remind`,`end_remind`,`end_remind_status`,`end_remind_url`,
+    `start_remind_time`,`end_remind_time`,`apply_start_time`,`apply_end_time`,`need_clothes`,`need_shoes`,`create_time`,`update_time`,
+    `new_notice`,`new_reminder`,`start_notice`,`start_reminder`,`end_notice`,`end_reminder`
+  </sql>
+
+  <select id="list" resultMap="distributionStoreActivityMap">
+    select <include refid="Vo_Column_List"/> from distribution_store_activity
+    <where>
+      <if test="queryDTO.name != null and queryDTO.name != ''">
+        and trim(replace(name,' ','')) like trim(replace(concat('%',#{queryDTO.name},'%'),' ',''))
+      </if>
+      <if test="queryDTO.activityStatus != null and queryDTO.activityStatus == 0">
+        and now() <![CDATA[<]]> start_time and status = 1
+      </if>
+      <if test="queryDTO.activityStatus != null and queryDTO.activityStatus == 1">
+        and now() <![CDATA[>=]]> start_time and now() <![CDATA[<=]]> end_time and status = 1
+      </if>
+      <if test="queryDTO.activityStatus != null and queryDTO.activityStatus == 2">
+        and now() <![CDATA[>]]> end_time and status = 1
+      </if>
+      <if test="queryDTO.activityStatus != null and queryDTO.activityStatus == 3">
+        and status = 0
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+  <select id="listEffect" resultMap="distributionStoreActivityMap">
+    select <include refid="Vo_Column_List"/> from distribution_store_activity
+    where status = 1
+    <if test="queryDTO.provinceCode != null and queryDTO.provinceCode != '' ">
+      and province_code = #{queryDTO.provinceCode}
+    </if>
+    <if test="queryDTO.cityCode != null and queryDTO.cityCode != '' ">
+      and city_code = #{queryDTO.cityCode}
+    </if>
+    <if test="queryDTO.districtCode != null and queryDTO.districtCode != '' ">
+      and district_code = #{queryDTO.districtCode}
+    </if>
+    <if test="queryDTO.activityStatus != null and queryDTO.activityStatus == 0">
+      and now() <![CDATA[<]]> start_time
+    </if>
+    <if test="queryDTO.activityStatus != null and queryDTO.activityStatus == 1">
+      and now() <![CDATA[>=]]> start_time and now() <![CDATA[<=]]> end_time
+    </if>
+    <if test="queryDTO.activityStatus != null and queryDTO.activityStatus == 2">
+      and now() <![CDATA[>]]> end_time
+    </if>
+    order by create_time desc
+  </select>
+
+
+  <select id="listAppEffect" resultMap="distributionStoreActivityMap">
+    select <include refid="Vo_Column_List"/> from distribution_store_activity
+    where status = 1
+    <if test="queryDTO.name != null and queryDTO.name != ''">
+      and trim(replace(name,' ','')) like trim(replace(concat('%',#{queryDTO.name},'%'),' ',''))
+    </if>
+    <if test="queryDTO.provinceCode != null and queryDTO.provinceCode != '' ">
+      and province_code = #{queryDTO.provinceCode}
+    </if>
+    <if test="queryDTO.cityCode != null and queryDTO.cityCode != '' ">
+      and city_code = #{queryDTO.cityCode}
+    </if>
+    <if test="queryDTO.districtCode != null and queryDTO.districtCode != '' ">
+      and district_code = #{queryDTO.districtCode}
+    </if>
+    <if test="queryDTO.activityStatus != null and queryDTO.activityStatus == 0">
+      and now() <![CDATA[<]]> start_time
+    </if>
+    <if test="queryDTO.activityStatus != null and queryDTO.activityStatus == 1">
+      and now() <![CDATA[>=]]> start_time and now() <![CDATA[<=]]> end_time
+    </if>
+    <if test="queryDTO.activityStatus != null and queryDTO.activityStatus == 2">
+      and now() <![CDATA[>]]> end_time
+    </if>
+    <if test="queryDTO.applyStatus != null and queryDTO.applyStatus == 0">
+      and id not in (
+        select activity_id from distribution_store_activity_user where user_id = #{queryDTO.userId} and status = 0
+      )
+    </if>
+    <if test="queryDTO.applyStatus != null and queryDTO.applyStatus == 1">
+      and id in (
+        select activity_id from distribution_store_activity_user where user_id = #{queryDTO.userId} and status = 0
+      )
+    </if>
+    <if test="queryDTO.applyStatus != null and queryDTO.applyStatus == 2">
+      and id in (
+        select activity_id from distribution_store_activity_user where user_id = #{queryDTO.userId} and status = 1
+      )
+    </if>
+    order by weight desc,start_time desc
+  </select>
+
+
+  <select id="getById" resultMap="distributionStoreActivityMap">
+    select <include refid="Vo_Column_List"/> from distribution_store_activity where id = #{id}
+  </select>
+
+  <select id="groupByProvince" resultMap="distributionStoreActivityProvinceCountVOMap">
+    select province_code, province_name, count(id) from distribution_store_activity where status  = 1 group by province_code
+  </select>
+
+  <select id="remindStoreActivityList" resultMap="distributionStoreActivityMap">
+    select <include refid="Vo_Column_List"/> from distribution_store_activity where status  = 1
+      <if test="remindType == 1">
+        and start_notice = 1 and date_format(now(), '%Y%m%d%H') = date_format(start_remind_time, '%Y%m%d%H')
+      </if>
+      <if test="remindType == 2">
+        and end_notice = 1 and date_format(now(), '%Y%m%d%H') = date_format(end_remind_time, '%Y%m%d%H')
+      </if>
+      <if test="remindType == 3">
+        and new_notice  = 1 and date_format(now(), '%Y%m%d%H') = date_format(apply_start_time, '%Y%m%d%H')
+      </if>
+  </select>
+
+  <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into distribution_store_activity (`name`,`img`,`org_id`,`status`,
+    `limit_apply_num`,`province_code`,`province_name`,`city_code`,`city_name`,`district_code`,`district_name`,
+    `longitude`,`latitude`,`address`,`start_time`,`end_time`,`need_age`,`need_id_card`,`desc`,
+    `start_remind`,`end_remind`,`end_remind_status`,`end_remind_url`,`start_remind_time`,`end_remind_time`,
+    `desc_img`,`apply_start_time`,`apply_end_time`,`need_clothes`,`need_shoes`,
+     `new_notice`,`new_reminder`,
+     `start_notice`,`start_reminder`,
+     `end_notice`,`end_reminder`)
+    values (#{distributionStoreActivity.name},#{distributionStoreActivity.img},#{distributionStoreActivity.orgId},
+    #{distributionStoreActivity.status},#{distributionStoreActivity.limitApplyNum},#{distributionStoreActivity.provinceCode},#{distributionStoreActivity.provinceName},
+    #{distributionStoreActivity.cityCode},#{distributionStoreActivity.cityName},
+    #{distributionStoreActivity.districtCode},#{distributionStoreActivity.districtName},
+    #{distributionStoreActivity.longitude},#{distributionStoreActivity.latitude},#{distributionStoreActivity.address},#{distributionStoreActivity.startTime},#{distributionStoreActivity.endTime},
+    #{distributionStoreActivity.needAge},#{distributionStoreActivity.needIdCard},#{distributionStoreActivity.desc},
+    #{distributionStoreActivity.startRemind},#{distributionStoreActivity.endRemind},#{distributionStoreActivity.endRemindStatus},#{distributionStoreActivity.endRemindUrl},
+    #{distributionStoreActivity.startRemindTime},#{distributionStoreActivity.endRemindTime},#{distributionStoreActivity.descImg},#{distributionStoreActivity.applyStartTime},
+    #{distributionStoreActivity.applyEndTime},#{distributionStoreActivity.needClothes},#{distributionStoreActivity.needShoes},
+    #{distributionStoreActivity.newNotice},#{distributionStoreActivity.newReminder},
+    #{distributionStoreActivity.startNotice},#{distributionStoreActivity.startReminder},
+    #{distributionStoreActivity.endNotice},#{distributionStoreActivity.endReminder});
+  </insert>
+  <update id="update">
+    update distribution_store_activity
+    <set>
+      <if test="distributionStoreActivity.name != null">
+        `name` = #{distributionStoreActivity.name},
+      </if>
+      <if test="distributionStoreActivity.img != null">
+        `img` = #{distributionStoreActivity.img},
+      </if>
+      <if test="distributionStoreActivity.descImg != null">
+        `desc_img` = #{distributionStoreActivity.descImg},
+      </if>
+      <if test="distributionStoreActivity.orgId != null">
+        `org_id` = #{distributionStoreActivity.orgId},
+      </if>
+      <if test="distributionStoreActivity.status != null">
+        `status` = #{distributionStoreActivity.status},
+      </if>
+      <if test="distributionStoreActivity.limitApplyNum != null">
+        `limit_apply_num` = #{distributionStoreActivity.limitApplyNum},
+      </if>
+      <if test="distributionStoreActivity.provinceCode != null">
+        `province_code` = #{distributionStoreActivity.provinceCode},
+      </if>
+      <if test="distributionStoreActivity.provinceName != null">
+        `province_name` = #{distributionStoreActivity.provinceName},
+      </if>
+      <if test="distributionStoreActivity.cityCode != null">
+        `city_code` = #{distributionStoreActivity.cityCode},
+      </if>
+      <if test="distributionStoreActivity.cityName != null">
+        `city_name` = #{distributionStoreActivity.cityName},
+      </if>
+      <if test="distributionStoreActivity.districtCode != null">
+        `district_code` = #{distributionStoreActivity.districtCode},
+      </if>
+      <if test="distributionStoreActivity.districtName != null">
+        `district_name` = #{distributionStoreActivity.districtName},
+      </if>
+      <if test="distributionStoreActivity.longitude != null">
+        `longitude` = #{distributionStoreActivity.longitude},
+      </if>
+      <if test="distributionStoreActivity.latitude != null">
+        `latitude` = #{distributionStoreActivity.latitude},
+      </if>
+      <if test="distributionStoreActivity.address != null">
+        `address` = #{distributionStoreActivity.address},
+      </if>
+      <if test="distributionStoreActivity.startTime != null">
+        `start_time` = #{distributionStoreActivity.startTime},
+      </if>
+      <if test="distributionStoreActivity.endTime != null">
+        `end_time` = #{distributionStoreActivity.endTime},
+      </if>
+      <if test="distributionStoreActivity.needAge != null">
+        `need_age` = #{distributionStoreActivity.needAge},
+      </if>
+      <if test="distributionStoreActivity.needIdCard != null">
+        `need_id_card` = #{distributionStoreActivity.needIdCard},
+      </if>
+      <if test="distributionStoreActivity.desc != null">
+        `desc` = #{distributionStoreActivity.desc},
+      </if>
+      <if test="distributionStoreActivity.startRemind != null">
+        `start_remind` = #{distributionStoreActivity.startRemind},
+      </if>
+      <if test="distributionStoreActivity.endRemind != null">
+        `end_remind` = #{distributionStoreActivity.endRemind},
+      </if>
+      <if test="distributionStoreActivity.endRemindStatus != null">
+        `end_remind_status` = #{distributionStoreActivity.endRemindStatus},
+      </if>
+      <if test="distributionStoreActivity.endRemindUrl != null">
+        `end_remind_url` = #{distributionStoreActivity.endRemindUrl},
+      </if>
+      <if test="distributionStoreActivity.startRemindTime != null">
+        `start_remind_time` = #{distributionStoreActivity.startRemindTime},
+      </if>
+      <if test="distributionStoreActivity.endRemindTime != null">
+        `end_remind_time` = #{distributionStoreActivity.endRemindTime},
+      </if>
+      <if test="distributionStoreActivity.applyStartTime != null">
+        `apply_start_time` = #{distributionStoreActivity.applyStartTime},
+      </if>
+      <if test="distributionStoreActivity.applyEndTime != null">
+        `apply_end_time` = #{distributionStoreActivity.applyEndTime},
+      </if>
+      <if test="distributionStoreActivity.needClothes != null">
+        `need_clothes` = #{distributionStoreActivity.needClothes},
+      </if>
+      <if test="distributionStoreActivity.needShoes != null">
+        `need_shoes` = #{distributionStoreActivity.needShoes},
+      </if>
+
+      <if test="distributionStoreActivity.newNotice != null">
+        `new_notice` = #{distributionStoreActivity.newNotice},
+      </if>
+      <if test="distributionStoreActivity.newReminder != null">
+        `new_reminder` = #{distributionStoreActivity.newReminder},
+      </if>
+      <if test="distributionStoreActivity.startNotice != null">
+        `start_notice` = #{distributionStoreActivity.startNotice},
+      </if>
+      <if test="distributionStoreActivity.startReminder != null">
+        `start_reminder` = #{distributionStoreActivity.startReminder},
+      </if>
+      <if test="distributionStoreActivity.endNotice != null">
+        `end_notice` = #{distributionStoreActivity.endNotice},
+      </if>
+      <if test="distributionStoreActivity.endReminder != null">
+        `end_reminder` = #{distributionStoreActivity.endReminder},
+      </if>
+    </set>
+    where id = #{distributionStoreActivity.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_store_activity where id = #{id}
+  </delete>
+
+  <update id="updateStatusBatch">
+    update distribution_store_activity set status = #{distributionStoreActivityUpdateDTO.status}
+    where id in
+    <foreach collection="distributionStoreActivityUpdateDTO.idList" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </update>
+
+  <update id="activityBeginUpdateWeight">
+    update distribution_store_activity set weight  = 999 where NOW() BETWEEN start_time and end_time;
+  </update>
+
+  <update id="activityToBeginUpdateWeight">
+    update distribution_store_activity set weight  = 99 where NOW() <![CDATA[ <= ]]> start_time;
+  </update>
+
+  <update id="activityEndUpdateWeight">
+    update distribution_store_activity set weight  = 1 where NOW() > end_time;
+  </update>
+
+</mapper>

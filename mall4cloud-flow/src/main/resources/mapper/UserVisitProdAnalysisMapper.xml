@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.flow.mapper.UserVisitProdAnalysisMapper">
+  <resultMap id="userVisitProdAnalysisMap" type="com.mall4j.cloud.flow.model.UserVisitProdAnalysis">
+    <id column="user_visit_prod_analysis_id" property="userVisitProdAnalysisId" />
+    <result column="user_analysis_id" property="userAnalysisId" />
+    <result column="create_date" property="createDate"/>
+    <result column="spu_id" property="spuId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `user_visit_prod_analysis_id`,`user_analysis_id`,`create_date`,`spu_id`
+  </sql>
+  <select id="list" resultMap="userVisitProdAnalysisMap">
+    select <include refid="Vo_Column_List"/> from user_visit_prod_analysis order by user_analysis_id desc
+  </select>
+  <select id="getByUserAnalysisId" resultMap="userVisitProdAnalysisMap">
+    select <include refid="Vo_Column_List"/> from user_visit_prod_analysis where user_analysis_id = #{userAnalysisId}
+  </select>
+  <insert id="save">
+    insert into user_visit_prod_analysis (`user_analysis_id`,`create_date`,`spu_id`)
+    values (#{userVisitProdAnalysis.userAnalysisId},#{userVisitProdAnalysis.createDate},#{userVisitProdAnalysis.spuId});
+  </insert>
+  <update id="update">
+    update user_visit_prod_analysis
+    <set>
+      <if test="userVisitProdAnalysis.userAnalysisId != null">
+        `user_analysis_id` = #{userVisitProdAnalysis.userAnalysisId},
+      </if>
+      <if test="userVisitProdAnalysis.createDate != null">
+        `create_date` = #{userVisitProdAnalysis.createDate},
+      </if>
+      <if test="userVisitProdAnalysis.spuId != null">
+        `spu_id` = #{userVisitProdAnalysis.spuId},
+      </if>
+    </set>
+    where user_visit_prod_analysis_id = #{userVisitProdAnalysis.userVisitProdAnalysisId}
+  </update>
+  <delete id="deleteById">
+    delete from user_visit_prod_analysis where user_visit_prod_analysis_id = #{userVisitProdAnalysisId}
+  </delete>
+
+  <insert id="saveBatch">
+    insert into user_visit_prod_analysis (`user_analysis_id`,`create_date`,`spu_id`)
+    values
+    <foreach collection="list" item="userVisitProdAnalysis" separator=",">
+      (#{userVisitProdAnalysis.userAnalysisId},#{userVisitProdAnalysis.createDate},#{userVisitProdAnalysis.spuId})
+    </foreach>
+  </insert>
+
+  <update id="updateBatch">
+    <foreach collection="list" item="userVisitProdAnalysis">
+      update user_visit_prod_analysis
+      <set>
+        <if test="userVisitProdAnalysis.userAnalysisId != null">
+          `user_analysis_id` = #{userVisitProdAnalysis.userAnalysisId},
+        </if>
+      </set>
+      where user_visit_prod_analysis_id = #{userVisitProdAnalysis.userVisitProdAnalysisId};
+    </foreach>
+  </update>
+
+  <delete id="deleteBatch">
+    delete from user_visit_prod_analysis where user_analysis_id in
+    <foreach collection="userAnalysisIds" item="userAnalysisId" open="(" close=")" separator=",">
+      #{userAnalysisId}
+    </foreach>
+  </delete>
+
+  <select id="listByUserAnalysisId" resultMap="userVisitProdAnalysisMap">
+    select <include refid="Vo_Column_List"/> from user_visit_prod_analysis
+    where user_analysis_id in
+    <foreach collection="userAnalysisIds" item="userAnalysisId" open="(" close=")" separator=",">
+      #{userAnalysisId}
+    </foreach>
+  </select>
+</mapper>

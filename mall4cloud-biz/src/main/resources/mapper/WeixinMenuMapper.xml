@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinMenuMapper">
+  <resultMap id="weixinMenuMap" type="com.mall4j.cloud.biz.model.WeixinMenu">
+    <id column="id" property="id" />
+    <result column="father_id" property="fatherId"/>
+    <result column="menu_key" property="menuKey"/>
+    <result column="menu_type" property="menuType"/>
+    <result column="menu_name" property="menuName"/>
+    <result column="url" property="url"/>
+    <result column="msgtype" property="msgtype"/>
+    <result column="orders" property="orders"/>
+    <result column="template_id" property="templateId"/>
+    <result column="app_id" property="appId"/>
+    <result column="miniprogram_appid" property="miniprogramAppid"/>
+    <result column="miniprogram_pagepath" property="miniprogramPagepath"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`father_id`,`menu_key`,`menu_type`,`menu_name`,`url`,`msgtype`,`orders`,`template_id`,`app_id`,`miniprogram_appid`,`miniprogram_pagepath`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinMenuMap">
+    select <include refid="Vo_Column_List"/> from weixin_menu order by id desc
+  </select>
+  <select id="getById" resultMap="weixinMenuMap">
+    select <include refid="Vo_Column_List"/> from weixin_menu where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_menu (`id`,`father_id`,`menu_key`,`menu_type`,`menu_name`,`url`,`msgtype`,`orders`,`template_id`,`app_id`,`miniprogram_appid`,`miniprogram_pagepath`,`create_by`,`create_time`,`del_flag`)
+    values (#{weixinMenu.id},#{weixinMenu.fatherId},#{weixinMenu.menuKey},#{weixinMenu.menuType},#{weixinMenu.menuName},#{weixinMenu.url},#{weixinMenu.msgtype},#{weixinMenu.orders},#{weixinMenu.templateId},#{weixinMenu.appId},#{weixinMenu.miniprogramAppid},#{weixinMenu.miniprogramPagepath},#{weixinMenu.createBy},#{weixinMenu.createTime},#{weixinMenu.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_menu
+    <set>
+      <if test="weixinMenu.fatherId != null">
+        `father_id` = #{weixinMenu.fatherId},
+      </if>
+      <if test="weixinMenu.menuKey != null">
+        `menu_key` = #{weixinMenu.menuKey},
+      </if>
+      <if test="weixinMenu.menuType != null">
+        `menu_type` = #{weixinMenu.menuType},
+      </if>
+      <if test="weixinMenu.menuName != null">
+        `menu_name` = #{weixinMenu.menuName},
+      </if>
+      <if test="weixinMenu.url != null">
+        `url` = #{weixinMenu.url},
+      </if>
+      <if test="weixinMenu.msgtype != null">
+        `msgtype` = #{weixinMenu.msgtype},
+      </if>
+      <if test="weixinMenu.orders != null">
+        `orders` = #{weixinMenu.orders},
+      </if>
+      <if test="weixinMenu.templateId != null">
+        `template_id` = #{weixinMenu.templateId},
+      </if>
+      <if test="weixinMenu.appId != null">
+        `app_id` = #{weixinMenu.appId},
+      </if>
+      <if test="weixinMenu.miniprogramAppid != null">
+        `miniprogram_appid` = #{weixinMenu.miniprogramAppid},
+      </if>
+      <if test="weixinMenu.miniprogramPagepath != null">
+        `miniprogram_pagepath` = #{weixinMenu.miniprogramPagepath},
+      </if>
+      <if test="weixinMenu.updateBy != null">
+        `update_by` = #{weixinMenu.updateBy},
+      </if>
+      <if test="weixinMenu.updateTime != null">
+        `update_time` = #{weixinMenu.updateTime},
+      </if>
+      <if test="weixinMenu.delFlag != null">
+        `del_flag` = #{weixinMenu.delFlag},
+      </if>
+    </set>
+    where id = #{weixinMenu.id}
+  </update>
+  <delete id="deleteById">
+    update weixin_menu set del_flag=1,update_time=now() where id = #{id}
+  </delete>
+
+  <delete id="deleteChildByFatherId">
+    update weixin_menu set del_flag=1,update_time=now() where father_id = #{fatherId}
+  </delete>
+
+  <!-- 根据orders查询菜单信息 -->
+  <select id="queryByOrders" resultType="com.mall4j.cloud.biz.model.WeixinMenu">
+    SELECT *
+    FROM weixin_menu
+    WHERE orders=#{orders} AND app_id =#{appId}
+  </select>
+
+  <select id="queryMaxOrders" resultType="int">
+    SELECT max(orders)
+    FROM weixin_menu
+    WHERE del_flag=0 and app_id =#{appId} and father_id is null
+  </select>
+
+  <select id="queryMaxOrdersByFatherId" resultType="int">
+    SELECT max(orders)
+    FROM weixin_menu
+    WHERE del_flag=0 and father_id=#{fatherId}
+  </select>
+
+  <select id="queryByFatherId" resultType="com.mall4j.cloud.biz.model.WeixinMenu">
+    SELECT *
+    FROM weixin_menu
+    WHERE father_id=#{fatherId} AND app_id =#{appId}
+  </select>
+
+  <select id="quryMenuTreeList" resultType="com.mall4j.cloud.biz.vo.WeixinMenuTreeVO">
+    SELECT *
+    FROM weixin_menu
+    WHERE del_flag=0
+      AND father_id is null
+      AND app_id =#{appId}
+    order by orders asc,create_time desc
+  </select>
+
+  <select id="quryMenuTreeChildList" resultType="com.mall4j.cloud.biz.vo.WeixinMenuTreeChildVO">
+    SELECT *
+    FROM weixin_menu
+    WHERE del_flag=0 AND father_id=#{fatherId} AND app_id =#{appId}
+    order by orders asc,create_time desc
+  </select>
+
+</mapper>

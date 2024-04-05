@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionGuideShareRecordMapper">
+  <resultMap id="distributionGuideShareRecordMap" type="com.mall4j.cloud.distribution.model.DistributionGuideShareRecord">
+    <id column="id" property="id" />
+    <result column="guide_id" property="guideId"/>
+    <result column="guide_name" property="guideName"/>
+    <result column="guide_no" property="guideNo"/>
+    <result column="store_id" property="storeId"/>
+    <result column="store_name" property="storeName"/>
+    <result column="store_code" property="storeCode"/>
+    <result column="activity_type" property="activityType"/>
+    <result column="data_time" property="dataTime"/>
+    <result column="share_num" property="shareNum"/>
+    <result column="browse_num" property="browseNum"/>
+    <result column="browse_user_num" property="browseUserNum"/>
+    <result column="purchase_user_num" property="purchaseUserNum"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`guide_id`,`guide_name`,`guide_no`,`store_id`,`store_name`,`store_code`,`activity_type`,`data_time`,`share_num`,`browse_num`,`browse_user_num`,`purchase_user_num`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionGuideShareRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_guide_share_record
+    <where>
+      <if test="distributionGuideShareRecord.storeId != null">
+        and store_id = #{distributionGuideShareRecord.storeId}
+      </if>
+      <if test="distributionGuideShareRecord.queryStartDate != null and distributionGuideShareRecord.queryEndDate != null">
+        and data_time between #{distributionGuideShareRecord.queryStartDate} and #{distributionGuideShareRecord.queryEndDate}
+      </if>
+      <if test="distributionGuideShareRecord.guideName != null and distributionGuideShareRecord.guideName != ''">
+        and guide_name = #{distributionGuideShareRecord.guideName}
+      </if>
+      <if test="distributionGuideShareRecord.guideNo != null and distributionGuideShareRecord.guideNo != ''">
+        and guide_no = #{distributionGuideShareRecord.guideNo}
+      </if>
+      <if test="distributionGuideShareRecord.activityType != null">
+        and activity_type = #{distributionGuideShareRecord.activityType}
+      </if>
+    </where>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="distributionGuideShareRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_guide_share_record where id = #{id}
+  </select>
+    <select id="getByGuideAndActivityAndDate" resultMap="distributionGuideShareRecordMap">
+      select <include refid="Vo_Column_List"/> from distribution_guide_share_record
+      where guide_id = #{guideId}
+      and activity_type = #{activityType}
+      and data_time = #{date}
+    </select>
+  <select id="countStaffNum" resultType="java.lang.Integer">
+    select count(g.id)
+    from (
+    select id from distribution_guide_share_record
+    <where>
+      <if test="distributionGuideShareRecord.storeId != null">
+        and store_id = #{distributionGuideShareRecord.storeId}
+      </if>
+      <if test="distributionGuideShareRecord.queryStartDate != null and distributionGuideShareRecord.queryEndDate != null">
+        and data_time between #{distributionGuideShareRecord.queryStartDate} and #{distributionGuideShareRecord.queryEndDate}
+      </if>
+      <if test="distributionGuideShareRecord.guideName != null and distributionGuideShareRecord.guideName != ''">
+        and guide_name = #{distributionGuideShareRecord.guideName}
+      </if>
+      <if test="distributionGuideShareRecord.guideNo != null and distributionGuideShareRecord.guideNo != ''">
+        and guide_no = #{distributionGuideShareRecord.guideNo}
+      </if>
+      <if test="distributionGuideShareRecord.activityType != null">
+        and activity_type = #{distributionGuideShareRecord.activityType}
+      </if>
+    </where>
+    group by guide_id
+    ) as g
+  </select>
+  <insert id="save">
+    insert into distribution_guide_share_record (`guide_id`,`guide_name`,`guide_no`,`store_id`,`store_name`,`store_code`,`activity_type`,`data_time`,`share_num`,`browse_num`,`browse_user_num`,`purchase_user_num`)
+    values (#{distributionGuideShareRecord.guideId},#{distributionGuideShareRecord.guideName},#{distributionGuideShareRecord.guideNo},#{distributionGuideShareRecord.storeId},#{distributionGuideShareRecord.storeName},#{distributionGuideShareRecord.storeCode},#{distributionGuideShareRecord.activityType},#{distributionGuideShareRecord.dataTime},#{distributionGuideShareRecord.shareNum},#{distributionGuideShareRecord.browseNum},#{distributionGuideShareRecord.browseUserNum},#{distributionGuideShareRecord.purchaseUserNum});
+  </insert>
+  <update id="update">
+    update distribution_guide_share_record
+    <set>
+      <if test="distributionGuideShareRecord.guideId != null">
+        `guide_id` = #{distributionGuideShareRecord.guideId},
+      </if>
+      <if test="distributionGuideShareRecord.guideName != null">
+        `guide_name` = #{distributionGuideShareRecord.guideName},
+      </if>
+      <if test="distributionGuideShareRecord.guideNo != null">
+        `guide_no` = #{distributionGuideShareRecord.guideNo},
+      </if>
+      <if test="distributionGuideShareRecord.storeId != null">
+        `store_id` = #{distributionGuideShareRecord.storeId},
+      </if>
+      <if test="distributionGuideShareRecord.storeName != null">
+        `store_name` = #{distributionGuideShareRecord.storeName},
+      </if>
+      <if test="distributionGuideShareRecord.activityType != null">
+        `activity_type` = #{distributionGuideShareRecord.activityType},
+      </if>
+      <if test="distributionGuideShareRecord.dataTime != null">
+        `data_time` = #{distributionGuideShareRecord.dataTime},
+      </if>
+      <if test="distributionGuideShareRecord.shareNum != null">
+        `share_num` = #{distributionGuideShareRecord.shareNum},
+      </if>
+      <if test="distributionGuideShareRecord.browseNum != null">
+        `browse_num` = #{distributionGuideShareRecord.browseNum},
+      </if>
+      <if test="distributionGuideShareRecord.browseUserNum != null">
+        `browse_user_num` = #{distributionGuideShareRecord.browseUserNum},
+      </if>
+      <if test="distributionGuideShareRecord.purchaseUserNum != null">
+        `purchase_user_num` = #{distributionGuideShareRecord.purchaseUserNum},
+      </if>
+    </set>
+    where id = #{distributionGuideShareRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_guide_share_record where id = #{id}
+  </delete>
+
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.discount.mapper.DiscountShopMapper">
+    <resultMap id="discountShopMap" type="com.mall4j.cloud.discount.model.DiscountShop">
+        <id column="id" property="id"/>
+        <result column="activity_id" property="activityId"/>
+        <result column="shop_id" property="shopId"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`
+        ,
+        `activity_id`,
+        `shop_id`
+    </sql>
+    <select id="list" resultMap="discountShopMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from discount_shop order by id desc
+    </select>
+    <select id="selectByDiscountId" resultType="com.mall4j.cloud.discount.vo.DiscountShopVO">
+        select
+        *
+        from discount_shop where activity_id = #{discountId}
+    </select>
+    <select id="getById" resultMap="discountShopMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from discount_shop where id = #{id}
+    </select>
+    <insert id="save">
+        insert into discount_shop (`activity_id`, `shop_id`)
+        values (#{discountShop.activityId}, #{discountShop.shopId});
+    </insert>
+    <update id="update">
+        update discount_shop
+        <set>
+            <if test="discountShop.activityId != null">
+                `activity_id` = #{discountShop.activityId},
+            </if>
+            <if test="discountShop.shopId != null">
+                `shop_id` = #{discountShop.shopId},
+            </if>
+        </set>
+        where id = #{discountShop.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from discount_shop
+        where id = #{id}
+    </delete>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into discount_shop (`activity_id`,`shop_id`)
+        values
+        <foreach collection="list" item="entity" separator=",">
+            (#{entity.activityId},#{entity.shopId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByDiscountId">
+        delete
+        from discount_shop
+        where activity_id = #{discountId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.TCouponCommodityMapper">
+
+    <insert id="insertBatch">
+        insert into t_coupon_commodity
+        (coupon_id,commodity_id,spu_code)
+        values
+        <foreach collection ="list" item="item" index= "index" separator =",">
+            (#{item.couponId},#{item.commodityId},#{item.spuCode})
+        </foreach >
+    </insert>
+
+    <select id="getListByCouponIds" resultType="com.mall4j.cloud.coupon.model.TCouponCommodity">
+        select * from t_coupon_commodity where coupon_id in(
+        <foreach collection ="couponIds" item="couponId" index= "index" separator =",">
+            (#{couponId})
+        </foreach >
+        )
+    </select>
+
+    <select id="getListByCouponIdsAndSpuIds" resultType="com.mall4j.cloud.coupon.model.TCouponCommodity">
+        select * from t_coupon_commodity where coupon_id in(
+        <foreach collection ="couponIds" item="couponId" index= "index" separator =",">
+            (#{couponId})
+        </foreach >
+        )
+        and commodity_id in
+        (
+            <foreach collection ="spuIds" item="spuId" index= "index" separator =",">
+                (#{spuIds})
+            </foreach >
+        )
+    </select>
+</mapper>

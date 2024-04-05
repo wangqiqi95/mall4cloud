@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionMsgMapper">
+  <resultMap id="distributionMsgMap" type="com.mall4j.cloud.distribution.model.DistributionMsg">
+    <id column="msg_id" property="msgId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="msg_title" property="msgTitle"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="is_top" property="isTop"/>
+    <result column="content" property="content"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `msg_id`,`create_time`,`update_time`,`msg_title`,`start_time`,`end_time`,`is_top`,`content`
+  </sql>
+  <select id="list" resultMap="distributionMsgMap">
+    select <include refid="Vo_Column_List"/> from distribution_msg
+    <where>
+      <if test="msgTitle != null">
+        msg_title LIKE CONCAT('%',#{msgTitle},'%')
+      </if>
+    </where>
+    order by msg_id desc
+  </select>
+  <select id="listApp" resultMap="distributionMsgMap">
+    select `msg_id`,`msg_title`,`start_time`,`is_top`,`content`
+    from distribution_msg
+    where
+      start_time &lt; now() and end_time &gt; now()
+    <if test="isTop != null">
+      and is_top = #{isTop}
+    </if>
+    order by is_top DESC,start_time desc
+  </select>
+  <select id="getByMsgId" resultMap="distributionMsgMap">
+    select `msg_id`,`msg_title`,`start_time`,`end_time`,`is_top`,`content` from distribution_msg where msg_id = #{msgId}
+  </select>
+  <insert id="save">
+    insert into distribution_msg (`msg_title`,`start_time`,`end_time`,`is_top`,`content`)
+    values (#{distributionMsg.msgTitle},#{distributionMsg.startTime},#{distributionMsg.endTime},#{distributionMsg.isTop},#{distributionMsg.content});
+  </insert>
+  <update id="update">
+    update distribution_msg
+    <set>
+      <if test="distributionMsg.msgTitle != null">
+        `msg_title` = #{distributionMsg.msgTitle},
+      </if>
+      <if test="distributionMsg.startTime != null">
+        `start_time` = #{distributionMsg.startTime},
+      </if>
+      <if test="distributionMsg.endTime != null">
+        `end_time` = #{distributionMsg.endTime},
+      </if>
+      <if test="distributionMsg.isTop != null">
+        `is_top` = #{distributionMsg.isTop},
+      </if>
+      <if test="distributionMsg.content != null">
+        `content` = #{distributionMsg.content},
+      </if>
+    </set>
+    where msg_id = #{distributionMsg.msgId}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_msg where msg_id = #{msgId}
+  </delete>
+  <delete id="deleteBatch">
+    delete from distribution_msg where msg_id in
+    <foreach collection="msgIds" item="msgId" open="(" close=")" separator=",">
+      #{msgId}
+    </foreach>
+  </delete>
+</mapper>

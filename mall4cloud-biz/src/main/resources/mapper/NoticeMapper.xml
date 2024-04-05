@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.NoticeMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.mall4j.cloud.biz.model.cp.Notice" id="NoticeMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="status" column="status"/>
+        <result property="content" column="content"/>
+        <result property="pushTime" column="push_time"/>
+        <result property="pushObj" column="push_obj"/>
+        <result property="msgUrl" column="msg_url"/>
+        <result property="msgType" column="msg_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id,name,status,content,push_time,push_obj,msg_url,msg_type,create_time,update_time
+    </sql>
+    
+    <select id="list" resultType="com.mall4j.cloud.biz.vo.cp.NoticeVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+            `cp_notice`
+        order by create_time desc
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="notice.id">
+        insert into cp_notice (`name`,`status`,`content`,`push_time`,`push_obj`,`msg_url`,`msg_type`)
+        values (#{notice.name},#{notice.status},#{notice.content},#{notice.pushTime},#{notice.pushObj},#{notice.msgUrl},#{notice.msgType})
+    </insert>
+
+    <update id="update">
+        update cp_notice
+        <set>
+            <if test="notice.name != null">
+                `name` = #{notice.name},
+            </if>
+            <if test="notice.status != null">
+                `status` = #{notice.status},
+            </if>
+            <if test="notice.content != null">
+                `content` = #{notice.content},
+            </if>
+            <if test="notice.pushTime != null">
+                `push_time` = #{notice.pushTime},
+            </if>
+            <if test="notice.pushObj != null">
+                `push_obj` = #{notice.pushObj},
+            </if>
+            <if test="notice.msgUrl != null">
+                `msg_url` = #{notice.msgUrl},
+            </if>
+            <if test="notice.msgType != null">
+                `msg_type` = #{notice.msgType},
+            </if>
+            update_time = NOW(),
+        </set>
+        where id = #{notice.id}
+    </update>
+
+    <delete id="deleteById">
+        delete from cp_notice where id = #{id}
+    </delete>
+
+    <select id="getById" resultType="com.mall4j.cloud.biz.vo.cp.NoticeVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        `cp_notice` where id = #{id}
+    </select>
+
+    <select id="getByMsgType" resultType="com.mall4j.cloud.biz.vo.cp.NoticeVO">
+        select
+        <include refid="Base_Column_List"/>
+        FROM
+        `cp_notice` where status = 1 and msg_type = #{msgType}
+    </select>
+
+</mapper>

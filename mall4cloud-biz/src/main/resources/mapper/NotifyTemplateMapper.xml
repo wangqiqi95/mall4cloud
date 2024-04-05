@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.NotifyTemplateMapper">
+  <resultMap id="notifyTemplateMap" type="com.mall4j.cloud.biz.model.NotifyTemplate">
+    <id column="template_id" property="templateId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="send_type" property="sendType"/>
+    <result column="message" property="message"/>
+    <result column="notify_types" property="notifyTypes"/>
+    <result column="template_code" property="templateCode"/>
+    <result column="mp_code" property="mpCode"/>
+    <result column="msg_type" property="msgType"/>
+    <result column="status" property="status"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `template_id`,`create_time`,`update_time`,`send_type`,`message`,`notify_types`,`template_code`,`mp_code`,`msg_type`,`status`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.biz.vo.NotifyTemplateVO">
+    select <include refid="Vo_Column_List"/> from notify_template
+    where send_type <![CDATA[<>]]> 0
+    order by template_id desc
+  </select>
+  <select id="getByTemplateId" resultType="com.mall4j.cloud.biz.vo.NotifyTemplateVO">
+    select <include refid="Vo_Column_List"/> from notify_template where template_id = #{templateId}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="templateId">
+    insert into notify_template (`send_type`,`message`,`notify_types`,`template_code`,`mp_code`,`msg_type`,`status`)
+    values (#{notifyTemplate.sendType},#{notifyTemplate.message},#{notifyTemplate.notifyTypes},#{notifyTemplate.templateCode},#{notifyTemplate.mpCode},#{notifyTemplate.msgType},#{notifyTemplate.status});
+  </insert>
+  <update id="update">
+    update notify_template
+    <set>
+      <if test="notifyTemplate.sendType != null">
+        `send_type` = #{notifyTemplate.sendType},
+      </if>
+      <if test="notifyTemplate.message != null">
+        `message` = #{notifyTemplate.message},
+      </if>
+      <if test="notifyTemplate.notifyTypes != null">
+        `notify_types` = #{notifyTemplate.notifyTypes},
+      </if>
+      <if test="notifyTemplate.templateCode != null">
+        `template_code` = #{notifyTemplate.templateCode},
+      </if>
+      <if test="notifyTemplate.mpCode != null">
+        `mp_code` = #{notifyTemplate.mpCode},
+      </if>
+      <if test="notifyTemplate.msgType != null">
+        `msg_type` = #{notifyTemplate.msgType},
+      </if>
+      <if test="notifyTemplate.status != null">
+        `status` = #{notifyTemplate.status},
+      </if>
+    </set>
+    where template_id = #{notifyTemplate.templateId}
+  </update>
+  <delete id="deleteById">
+    delete from notify_template where template_id = #{templateId}
+  </delete>
+
+  <select id="getBySendType" resultType="com.mall4j.cloud.biz.vo.NotifyTemplateVO">
+    select nt.* from notify_template nt
+    where nt.send_type = #{sendType}
+  </select>
+
+  <select id="getSmsCodeTemplateBySendType" resultType="com.mall4j.cloud.biz.vo.SmsCodeTemplateVO">
+    select message, template_code from notify_template where send_type = #{sendType}
+  </select>
+
+
+  <select id="countBySendType" resultType="int">
+    SELECT ifnull(count(*),0) FROM `notify_template`
+    WHERE send_type = #{sendType}
+    <if test="templateId != null">
+      and `template_id` <![CDATA[<>]]> #{templateId}
+    </if>
+  </select>
+</mapper>

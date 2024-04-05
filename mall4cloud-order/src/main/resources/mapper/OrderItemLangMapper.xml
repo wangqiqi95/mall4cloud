@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.order.mapper.OrderItemLangMapper">
+  <resultMap id="orderItemLangMap" type="com.mall4j.cloud.order.model.OrderItemLang">
+    <id column="order_item_id" property="orderItemId" />
+    <result column="lang" property="lang"/>
+    <result column="spu_name" property="spuName"/>
+    <result column="sku_name" property="skuName"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `order_item_id`,`lang`,`spu_name`,`sku_name`
+  </sql>
+  <select id="list" resultMap="orderItemLangMap">
+    select <include refid="Vo_Column_List"/> from order_item_lang order by order_item_id desc
+  </select>
+  <select id="getByOrderItemId" resultMap="orderItemLangMap">
+    select <include refid="Vo_Column_List"/> from order_item_lang where order_item_id = #{orderItemId}
+  </select>
+  <insert id="save">
+    insert into order_item_lang (`lang`,`spu_name`,`sku_name`)
+    values (#{orderItemLang.lang},#{orderItemLang.spuName},#{orderItemLang.skuName});
+  </insert>
+  <update id="update">
+    update order_item_lang
+    <set>
+      <if test="orderItemLang.lang != null">
+        `lang` = #{orderItemLang.lang},
+      </if>
+      <if test="orderItemLang.spuName != null">
+        `spu_name` = #{orderItemLang.spuName},
+      </if>
+      <if test="orderItemLang.skuName != null">
+        `sku_name` = #{orderItemLang.skuName},
+      </if>
+    </set>
+    where order_item_id = #{orderItemLang.orderItemId}
+  </update>
+  <delete id="deleteById">
+    delete from order_item_lang where order_item_id = #{orderItemId}
+  </delete>
+
+  <insert id="saveBatch">
+    insert into order_item_lang (`order_item_id`,`lang`,`spu_name`,`sku_name`) values
+    <foreach collection="orderItemLangList" item="orderItemLang" separator=",">
+      (#{orderItemLang.orderItemId},#{orderItemLang.lang},#{orderItemLang.spuName},#{orderItemLang.skuName})
+    </foreach>
+  </insert>
+
+  <select id="getLangListByOrderIds" resultType="com.mall4j.cloud.common.order.vo.OrderItemLangVO">
+    SELECT `order_item_id`,`lang`,`spu_name` FROM order_item_lang
+    WHERE order_item_id IN (
+      SELECT order_item_id FROM order_item WHERE order_id IN
+      <foreach collection="orderIdList" item="orderId" open="(" close=")" separator=",">
+        #{orderId}
+      </foreach>
+    )
+  </select>
+  <select id="listOrderItemLangByIds" resultType="com.mall4j.cloud.common.order.vo.OrderItemLangVO">
+    SELECT <include refid="Vo_Column_List"/> FROM order_item_lang
+    WHERE lang = #{lang}
+        AND order_item_id IN
+      <foreach collection="orderItemIds" item="orderItemId" open="(" close=")" separator=",">
+        #{orderItemId}
+      </foreach>
+  </select>
+</mapper>

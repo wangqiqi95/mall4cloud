@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionWithdrawRecordMapper">
+  <resultMap id="distributionWithdrawRecordMap" type="com.mall4j.cloud.distribution.model.DistributionWithdrawRecord">
+    <id column="id" property="id" />
+    <result column="identity_type" property="identityType"/>
+    <result column="user_id" property="userId"/>
+    <result column="username" property="username"/>
+    <result column="user_number" property="userNumber"/>
+    <result column="mobile" property="mobile"/>
+    <result column="store_id" property="storeId"/>
+    <result column="withdraw_order_no" property="withdrawOrderNo"/>
+    <result column="history_order" property="historyOrder"/>
+    <result column="withdraw_amount" property="withdrawAmount"/>
+    <result column="withdraw_need_refund_amount" property="withdrawNeedRefundAmount"/>
+    <result column="transfer_type" property="transferType"/>
+    <result column="apply_id" property="applyId"/>
+    <result column="apply_time" property="applyTime"/>
+    <result column="process_time" property="processTime"/>
+    <result column="withdraw_status" property="withdrawStatus"/>
+    <result column="reject_reason" property="rejectReason"/>
+    <result column="transfer_fail_reason" property="transferFailReason"/>
+    <result column="reviewer_id" property="reviewerId"/>
+    <result column="reviewer_name" property="reviewerName"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`
+    ,`identity_type`,`user_id`,`username`,`user_number`,`mobile`,`store_id`,`withdraw_order_no`,`history_order`,`withdraw_amount`,`withdraw_need_refund_amount`,`transfer_type`,`apply_id`,`apply_time`,`process_time`,`withdraw_status`,`reject_reason`,`transfer_fail_reason`,`reviewer_id`,`reviewer_name`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.distribution.vo.DistributionWithdrawRecordVO">
+    select <include refid="Vo_Column_List"/> from distribution_withdraw_record
+    where identity_type = #{distributionWithdrawRecordDTO.identityType}
+    <if test="distributionWithdrawRecordDTO.userId != null">
+      and user_id = #{distributionWithdrawRecordDTO.userId}
+    </if>
+    <if test="distributionWithdrawRecordDTO.username != null and distributionWithdrawRecordDTO.username != ''">
+      and username = #{distributionWithdrawRecordDTO.username}
+    </if>
+    <if test="distributionWithdrawRecordDTO.userNumber != null and distributionWithdrawRecordDTO.userNumber != ''">
+      and user_number = #{distributionWithdrawRecordDTO.userNumber}
+    </if>
+    <if test="distributionWithdrawRecordDTO.mobile != null and distributionWithdrawRecordDTO.mobile != ''">
+      and mobile = #{distributionWithdrawRecordDTO.mobile}
+    </if>
+    <if test="distributionWithdrawRecordDTO.storeId != null">
+      and store_id = #{distributionWithdrawRecordDTO.storeId}
+    </if>
+    <if test="distributionWithdrawRecordDTO.withdrawOrderNo != null and distributionWithdrawRecordDTO.withdrawOrderNo != ''">
+      and withdraw_order_no = #{distributionWithdrawRecordDTO.withdrawOrderNo}
+    </if>
+    <if test="distributionWithdrawRecordDTO.historyOrder != null">
+      and history_order = #{distributionWithdrawRecordDTO.historyOrder}
+    </if>
+    <if test="distributionWithdrawRecordDTO.withdrawStatus != null">
+      and withdraw_status = #{distributionWithdrawRecordDTO.withdrawStatus}
+    </if>
+    <if test="distributionWithdrawRecordDTO.applyStartTime != null">
+      and apply_time >= #{distributionWithdrawRecordDTO.applyStartTime}
+    </if>
+    <if test="distributionWithdrawRecordDTO.applyEndTime != null">
+      and #{distributionWithdrawRecordDTO.applyEndTime} >= apply_time
+    </if>
+    <if test="distributionWithdrawRecordDTO.processStartTime != null">
+      and process_time >= #{distributionWithdrawRecordDTO.processStartTime}
+    </if>
+    <if test="distributionWithdrawRecordDTO.processEndTime != null">
+      and #{distributionWithdrawRecordDTO.processEndTime} >= process_time
+    </if>
+    order by id desc
+  </select>
+
+  <select id="getById" resultMap="distributionWithdrawRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_withdraw_record where id = #{id}
+  </select>
+
+  <select id="listWithdrawRecordByTime" resultMap="distributionWithdrawRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_withdraw_record
+    where identity_type = #{identityType}
+    and user_id = #{userId}
+    and apply_time between #{startTime} and #{endTime}
+  </select>
+
+    <select id="getRecordByNo" resultMap="distributionWithdrawRecordMap">
+      select <include refid="Vo_Column_List"/> from distribution_withdraw_record
+      where withdraw_order_no = #{withdrawOrderNo}
+    </select>
+  <select id="listWithdrawRecordByStatus" resultMap="distributionWithdrawRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_withdraw_record
+    where withdraw_status = #{status}
+  </select>
+  <select id="getByApplyId" resultType="com.mall4j.cloud.distribution.model.DistributionWithdrawRecord">
+    select <include refid="Vo_Column_List"/> from distribution_withdraw_record
+    where apply_id = #{applyId}
+  </select>
+    <select id="isExistWithdrawFailRecord" resultType="java.lang.Boolean">
+      select count(*) from distribution_withdraw_record
+        where user_id = #{userId} and identity_type = #{identityType} and withdraw_status = 3
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into distribution_withdraw_record (`identity_type`, `user_id`, `username`, `user_number`, `mobile`,
+                                              `store_id`, `withdraw_order_no`, `history_order`, `withdraw_amount`,
+                                              `withdraw_need_refund_amount`, `transfer_type`, `apply_id`, `apply_time`,
+                                              `process_time`, `withdraw_status`, `reviewer_id`, `reviewer_name`)
+    values (#{distributionWithdrawRecord.identityType}, #{distributionWithdrawRecord.userId},
+            #{distributionWithdrawRecord.username}, #{distributionWithdrawRecord.userNumber},
+            #{distributionWithdrawRecord.mobile}, #{distributionWithdrawRecord.storeId},
+            #{distributionWithdrawRecord.withdrawOrderNo}, #{distributionWithdrawRecord.historyOrder},
+            #{distributionWithdrawRecord.withdrawAmount}, #{distributionWithdrawRecord.withdrawNeedRefundAmount},
+            #{distributionWithdrawRecord.transferType}, #{distributionWithdrawRecord.applyId},
+            #{distributionWithdrawRecord.applyTime}, #{distributionWithdrawRecord.processTime},
+            #{distributionWithdrawRecord.withdrawStatus}, #{distributionWithdrawRecord.reviewerId},
+            #{distributionWithdrawRecord.reviewerName});
+  </insert>
+  <update id="update">
+    update distribution_withdraw_record
+    <set>
+      <if test="distributionWithdrawRecord.identityType != null">
+        `identity_type` = #{distributionWithdrawRecord.identityType},
+      </if>
+      <if test="distributionWithdrawRecord.userId != null">
+        `user_id` = #{distributionWithdrawRecord.userId},
+      </if>
+      <if test="distributionWithdrawRecord.username != null">
+        `username` = #{distributionWithdrawRecord.username},
+      </if>
+      <if test="distributionWithdrawRecord.userNumber != null">
+        `user_number` = #{distributionWithdrawRecord.userNumber},
+      </if>
+      <if test="distributionWithdrawRecord.mobile != null">
+        `mobile` = #{distributionWithdrawRecord.mobile},
+      </if>
+      <if test="distributionWithdrawRecord.storeId != null">
+        `store_id` = #{distributionWithdrawRecord.storeId},
+      </if>
+      <if test="distributionWithdrawRecord.withdrawOrderNo != null">
+        `withdraw_order_no` = #{distributionWithdrawRecord.withdrawOrderNo},
+      </if>
+      <if test="distributionWithdrawRecord.historyOrder != null">
+        `history_order` = #{distributionWithdrawRecord.historyOrder},
+      </if>
+      <if test="distributionWithdrawRecord.withdrawAmount != null">
+        `withdraw_amount` = #{distributionWithdrawRecord.withdrawAmount},
+      </if>
+      <if test="distributionWithdrawRecord.withdrawNeedRefundAmount != null">
+        `withdraw_need_refund_amount` = #{distributionWithdrawRecord.withdrawNeedRefundAmount},
+      </if>
+      <if test="distributionWithdrawRecord.transferType != null">
+        `transfer_type` = #{distributionWithdrawRecord.transferType},
+      </if>
+      <if test="distributionWithdrawRecord.applyId != null">
+        `apply_id` = #{distributionWithdrawRecord.applyId},
+      </if>
+      <if test="distributionWithdrawRecord.applyTime != null">
+        `apply_time` = #{distributionWithdrawRecord.applyTime},
+      </if>
+      <if test="distributionWithdrawRecord.processTime != null">
+        `process_time` = #{distributionWithdrawRecord.processTime},
+      </if>
+      <if test="distributionWithdrawRecord.withdrawStatus != null">
+        `withdraw_status` = #{distributionWithdrawRecord.withdrawStatus},
+      </if>
+      <if test="distributionWithdrawRecord.transferFailReason != null">
+        `transfer_fail_reason` = #{distributionWithdrawRecord.transferFailReason},
+      </if>
+      <if test="distributionWithdrawRecord.rejectReason != null">
+        `reject_reason` = #{distributionWithdrawRecord.rejectReason},
+      </if>
+      <if test="distributionWithdrawRecord.reviewerId != null">
+        `reviewer_id` = #{distributionWithdrawRecord.reviewerId},
+      </if>
+      <if test="distributionWithdrawRecord.reviewerName != null">
+        `reviewer_name` = #{distributionWithdrawRecord.reviewerName},
+      </if>
+    </set>
+    where id = #{distributionWithdrawRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_withdraw_record where id = #{id}
+  </delete>
+
+</mapper>

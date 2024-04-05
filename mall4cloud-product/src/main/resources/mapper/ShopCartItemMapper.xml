@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.ShopCartItemMapper">
+    <resultMap id="shopCartItemMap" type="com.mall4j.cloud.product.model.ShopCartItem">
+        <id column="cart_item_id" property="cartItemId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="spu_id" property="spuId"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="user_id" property="userId"/>
+        <result column="count" property="count"/>
+        <result column="discount_id" property="discountId"/>
+        <result column="price_fee" property="priceFee"/>
+        <result column="distribution_user_id" property="distributionUserId"/>
+        <result column="is_checked" property="isChecked"/>
+        <result column="is_closed" property="isClosed"/>
+    </resultMap>
+
+    <resultMap id="shopCartItemVOMap" type="com.mall4j.cloud.common.order.vo.ShopCartItemVO">
+        <id column="cart_item_id" property="cartItemId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="spu_id" property="spuId"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="spu_code" property="spuCode"/>
+        <result column="price_code" property="priceCode"/>
+        <result column="channel_name" property="channelName"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="user_id" property="userId"/>
+        <result column="count" property="count"/>
+        <result column="discount_id" property="discountId"/>
+        <result column="price_fee" property="priceFee"/>
+        <result column="distribution_user_id" property="distributionUserId"/>
+        <result column="is_checked" property="isChecked"/>
+        <result column="delivery_mode" property="deliveryMode"/>
+        <result column="is_compose" property="isCompose"/>
+        <result column="delivery_template_id" property="deliveryTemplateId"/>
+        <result column="sku_price_fee" property="skuPriceFee"/>
+        <result column="score_price" property="scorePrice"/>
+        <result column="is_collection" property="isCollection"/>
+        <result column="img_url" property="imgUrl"/>
+        <result column="spuName" property="spuName"/>
+        <result column="skuName" property="skuName"/>
+        <result column="market_price_fee" property="marketPriceFee"/>
+        <result column="sku_protect_price" property="skuProtectPrice"/>
+        <result column="store_sku_stock" property="storeSkuStock"/>
+        <result column="store_protect_price" property="storeProtectPrice"/>
+        <result column="style_code" property="styleCode"/>
+        <result column="category" property="category"/>
+    </resultMap>
+
+    <sql id="Vo_Column_List">
+        `cart_item_id`
+        ,
+        `create_time`,
+        `update_time`,
+        `shop_id`,
+        `spu_id`,
+        `sku_id`,
+        `user_id`,
+        `count`,
+        `discount_id`,
+        `price_fee`,
+        `distribution_user_id`,
+        is_checked
+    </sql>
+    <select id="list" resultType="com.mall4j.cloud.common.order.vo.ShopCartItemVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from shop_cart_item
+        order by cart_item_id desc
+    </select>
+    <select id="getByCartId" resultType="com.mall4j.cloud.common.order.vo.ShopCartItemVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from shop_cart_item
+        where cart_item_id = #{cartItemId}
+    </select>
+    <insert id="save">
+        insert into shop_cart_item (`shop_id`, `spu_id`, `sku_id`, `user_id`, `category_id`, `count`, `discount_id`,
+                                    `price_fee`,
+                                    `distribution_user_id`, is_checked)
+        values (#{shopCartItem.shopId}, #{shopCartItem.spuId}, #{shopCartItem.skuId}, #{shopCartItem.userId},
+                #{shopCartItem.categoryId}, #{shopCartItem.count}, #{shopCartItem.discountId}, #{shopCartItem.priceFee},
+                #{shopCartItem.distributionUserId}, #{shopCartItem.isChecked});
+    </insert>
+    <update id="update">
+        update shop_cart_item
+        <set>
+            <if test="shopCartItem.shopId != null">
+                `shop_id` = #{shopCartItem.shopId},
+            </if>
+            <if test="shopCartItem.spuId != null">
+                `spu_id` = #{shopCartItem.spuId},
+            </if>
+            <if test="shopCartItem.skuId != null">
+                `sku_id` = #{shopCartItem.skuId},
+            </if>
+            <if test="shopCartItem.userId != null">
+                `user_id` = #{shopCartItem.userId},
+            </if>
+            <if test="shopCartItem.count != null">
+                `count` = #{shopCartItem.count},
+            </if>
+            <if test="shopCartItem.discountId != null">
+                `discount_id` = #{shopCartItem.discountId},
+            </if>
+            <if test="shopCartItem.priceFee != null">
+                `price_fee` = #{shopCartItem.priceFee},
+            </if>
+            <if test="shopCartItem.discountId != null">
+                `discount_id` = #{shopCartItem.discountId},
+            </if>
+            <if test="shopCartItem.distributionUserId != null">
+                `distribution_user_id` = #{shopCartItem.distributionUserId},
+            </if>
+            <if test="shopCartItem.isChecked != null">
+                `is_checked` = #{shopCartItem.isChecked},
+            </if>
+        </set>
+        where cart_item_id = #{shopCartItem.cartItemId} and user_id =#{shopCartItem.userId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from shop_cart_item
+        where cart_item_id = #{cartItemId}
+    </delete>
+
+    <select id="getShopCartItems" resultMap="shopCartItemVOMap">
+        SELECT
+        sci.*,
+        spu.delivery_mode,
+        spu.NAME AS spuName,
+        spu.category_id,
+        spu.spu_code,
+        spu.is_compose,
+        spu.delivery_template_id,
+        spu.style_code,
+        spu.style_code as category,
+        CASE
+            WHEN  temp.stock > 0 THEN
+            temp.stock
+            ELSE 0
+            END   AS store_sku_stock,
+        CASE
+            WHEN  temp.stock > 0 THEN
+            temp.protect_price
+            ELSE sku.protect_price
+            END   AS store_protect_price,
+        IFNULL( sku.img_url, spu.main_img_url ) AS img_url,
+        CASE
+
+        WHEN temp.stock > 0 THEN
+        temp.price_fee ELSE sku.price_fee
+        END AS sku_price_fee,
+        sku.NAME AS skuName,
+        sku.score_fee score_price,
+        IF
+        ( sc.id, TRUE, FALSE ) AS is_collection,
+        sku.market_price_fee,
+        sku.protect_price as sku_protect_price,
+        sku.price_code,
+        sku.channel_name
+        FROM
+        shop_cart_item sci
+        JOIN spu ON spu.spu_id = sci.spu_id
+        JOIN sku ON sku.sku_id = sci.sku_id
+        LEFT JOIN spu_collection sc ON sc.spu_id = spu.spu_id
+        AND sci.user_id = sc.user_id
+        LEFT JOIN (
+        SELECT
+        ss.sku_id,
+        ss.price_code,
+        sum( ss.stock ) AS stock,
+        ss.price_fee,
+        ss.market_price_fee,
+        ss.protect_price
+        FROM
+        shop_cart_item sci
+        left join sku on sci.sku_id=sku.sku_id and sku.status=1
+        LEFT JOIN sku_store ss ON sku.price_code = ss.price_code and ss.store_id = #{storeId} and ss.status=1
+        WHERE
+        sci.user_id = #{userId}
+        AND ss.`status` = 1
+        GROUP BY ss.price_code
+        ) AS temp ON temp.price_code = sku.price_code
+        WHERE sci.user_id = #{userId} and sci.count &gt; 0
+
+        <if test="!isExpiry">
+            AND spu.status = 1
+            AND sku.status = 1
+            AND sci.is_closed = 1
+        </if>
+        <if test="isExpiry">
+            AND (spu.status != 1 or sku.status != 1 or sci.is_closed = 0)
+        </if>
+        <if test="isChecked != null and isChecked">
+            AND sci.is_checked = 1
+        </if>
+        ORDER BY sci.cart_item_id DESC
+    </select>
+
+<!--    <select id="getShopCartItems" resultMap="shopCartItemVOMap">-->
+<!--        SELECT-->
+<!--        sci.*,-->
+<!--        spu.delivery_mode,-->
+<!--        spu.NAME AS spuName,-->
+<!--        spu.category_id,-->
+<!--        spu.is_compose,-->
+<!--        spu.delivery_template_id,-->
+<!--        IFNULL( sku.img_url, spu.main_img_url ) AS img_url,-->
+<!--        CASE-->
+
+<!--        WHEN temp.stock > 0 THEN-->
+<!--        temp.price_fee ELSE sku.price_fee-->
+<!--        END AS sku_price_fee,-->
+<!--        sku.NAME AS skuName,-->
+<!--        sku.score_fee score_price,-->
+<!--        IF-->
+<!--        ( sc.id, TRUE, FALSE ) AS is_collection,-->
+<!--        spu.market_price_fee,-->
+<!--        sku.price_code-->
+<!--        FROM-->
+<!--        shop_cart_item sci-->
+<!--        JOIN spu ON spu.spu_id = sci.spu_id-->
+<!--        JOIN sku ON sku.sku_id = sci.sku_id-->
+<!--        LEFT JOIN spu_collection sc ON sc.spu_id = spu.spu_id-->
+<!--        AND sci.user_id = sc.user_id-->
+<!--        LEFT JOIN (-->
+<!--        SELECT-->
+<!--        ss.sku_id,-->
+<!--        ss.price_code,-->
+<!--        sum( ss.stock ) AS stock,-->
+<!--        ss.price_fee,-->
+<!--        ss.market_price_fee-->
+<!--        FROM-->
+<!--        shop_cart_item sci-->
+<!--        LEFT JOIN sku_store ss ON sci.sku_id = ss.sku_id-->
+<!--        AND sci.user_id = #{userId}-->
+<!--        WHERE-->
+<!--        ss.store_id = #{storeId}-->
+<!--        AND ss.`status` = 1-->
+<!--        GROUP BY-->
+<!--        ss.price_code-->
+<!--        ) AS temp ON temp.price_code = sku.price_code-->
+<!--        WHERE sci.user_id = #{userId}-->
+
+<!--        <if test="!isExpiry">-->
+<!--            AND spu.status = 1-->
+<!--            AND sku.status = 1-->
+<!--            AND sci.is_closed = 1-->
+<!--        </if>-->
+<!--        <if test="isExpiry">-->
+<!--            AND (spu.status != 1 or sku.status != 1 or sci.is_closed = 0)-->
+<!--        </if>-->
+<!--        <if test="isChecked != null and isChecked">-->
+<!--            AND sci.is_checked = 1-->
+<!--        </if>-->
+<!--        ORDER BY sci.cart_item_id DESC-->
+<!--    </select>-->
+
+<!--    <select id="getShopCartItems" resultMap="shopCartItemVOMap">-->
+<!--        SELECT sci.*,-->
+<!--        spu.delivery_mode,-->
+<!--        spu.name as spuName,-->
+<!--        spu.category_id,-->
+<!--        spu.is_compose,-->
+<!--        spu.delivery_template_id,-->
+<!--        IFNULL(sku.img_url,spu.main_img_url) AS img_url,-->
+<!--        CASE-->
+
+<!--        WHEN ss.price_fee IS NOT NULL and ss.stock > 0 THEN-->
+<!--        ss.price_fee-->
+<!--        ELSE sku.price_fee-->
+<!--        END AS sku_price_fee,-->
+<!--        sku.name as skuName,-->
+<!--        sku.score_fee score_price,-->
+<!--        IF(sc.id, TRUE, FALSE) AS is_collection,-->
+<!--        spu.market_price_fee-->
+<!--        FROM shop_cart_item sci-->
+<!--        JOIN spu ON spu.spu_id = sci.spu_id-->
+<!--        JOIN sku ON sku.sku_id = sci.sku_id-->
+<!--        LEFT JOIN spu_collection sc ON sc.spu_id = spu.spu_id AND sci.user_id = sc.user_id-->
+<!--        left join sku_store ss on sku.sku_id = ss.sku_id and ss.store_id = #{storeId} and ss.status=1 and ss.stock>0-->
+<!--        WHERE sci.user_id = #{userId}-->
+
+<!--        <if test="!isExpiry">-->
+<!--            AND spu.status = 1-->
+<!--            AND sku.status = 1-->
+<!--            AND sci.is_closed = 1-->
+<!--        </if>-->
+<!--        <if test="isExpiry">-->
+<!--            AND (spu.status != 1 or sku.status != 1 or sci.is_closed = 0)-->
+<!--        </if>-->
+<!--        <if test="isChecked != null and isChecked">-->
+<!--            AND sci.is_checked = 1-->
+<!--        </if>-->
+<!--        ORDER BY sci.cart_item_id DESC-->
+<!--    </select>-->
+
+<!--    <select id="getShopCartItems" resultMap="shopCartItemVOMap">-->
+<!--        SELECT sci.*,-->
+<!--        spu.delivery_mode,-->
+<!--        spu.name as spuName,-->
+<!--        spu.category_id,-->
+<!--        spu.is_compose,-->
+<!--        spu.delivery_template_id,-->
+<!--        IFNULL(sku.img_url,spu.main_img_url) AS img_url,-->
+<!--        CASE-->
+
+<!--        WHEN ss.price_fee IS NOT NULL and (ss.stock is not null or ss.stock != 0) THEN-->
+<!--        ss.price_fee-->
+<!--        ELSE sku.price_fee-->
+<!--        END AS sku_price_fee,-->
+<!--        sku.name as skuName,-->
+<!--        sku.score_fee score_price,-->
+<!--        IF(sc.id, TRUE, FALSE) AS is_collection,-->
+<!--        spu.market_price_fee-->
+<!--        FROM shop_cart_item sci-->
+<!--        JOIN spu ON spu.spu_id = sci.spu_id-->
+<!--        JOIN sku ON sku.sku_id = sci.sku_id-->
+<!--        LEFT JOIN spu_collection sc ON sc.spu_id = spu.spu_id AND sci.user_id = sc.user_id-->
+<!--        left join sku_store ss on sku.sku_id = ss.sku_id and ss.store_id = #{storeId} and ss.status=1-->
+<!--        WHERE sci.user_id = #{userId}-->
+
+<!--        <if test="!isExpiry">-->
+<!--            AND spu.status = 1-->
+<!--            AND sku.status = 1-->
+<!--            AND sci.is_closed = 1-->
+<!--        </if>-->
+<!--        <if test="isExpiry">-->
+<!--            AND (spu.status != 1 or sku.status != 1 or sci.is_closed = 0)-->
+<!--        </if>-->
+<!--        <if test="isChecked != null and isChecked">-->
+<!--            AND sci.is_checked = 1-->
+<!--        </if>-->
+<!--        ORDER BY sci.cart_item_id DESC-->
+<!--    </select>-->
+
+
+    <delete id="deleteShopCartItemsByShopCartItemIds">
+        delete
+        from shop_cart_item where user_id = #{userId}
+        and cart_item_id in
+        <foreach collection="shopCartItemIds" item="shopCartItemId" open="(" separator="," close=")">
+            #{shopCartItemId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAllShopCartItems">
+        delete
+        from shop_cart_item
+        where user_id = #{userId}
+    </delete>
+
+    <select id="listUserIdBySpuId" resultType="java.lang.String">
+        select user_id
+        from shop_cart_item
+        where spu_id = #{spuId}
+    </select>
+
+    <select id="getShopCartItemCount" resultType="java.lang.Integer">
+        select sum(`count`)
+        from shop_cart_item sci
+                 JOIN spu ON spu.spu_id = sci.spu_id
+                 JOIN sku ON sku.sku_id = sci.sku_id
+        where user_id = #{userId}
+          AND (spu.status = 1 and sku.status = 1)
+    </select>
+
+    <update id="checkShopCartItems">
+        <foreach collection="checkShopCartItems" separator=";" item="item">
+            update shop_cart_item set is_checked = #{item.isChecked} where cart_item_id = #{item.shopCartItemId} and
+            user_id = #{userId}
+        </foreach>
+    </update>
+    <update id="updateIsCloseByShopIds">
+        update shop_cart_item set is_closed = #{isClosed}
+        where shop_id in
+        <foreach collection="shopIds" item="shopId" open="(" separator="," close=")">
+            #{shopId}
+        </foreach>
+    </update>
+</mapper>

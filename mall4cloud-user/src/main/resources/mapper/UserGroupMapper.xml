@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserGroupMapper">
+  <resultMap id="userGroupMap" type="com.mall4j.cloud.user.model.UserGroup">
+    <id column="id" property="id" />
+    <result column="create_by" property="createBy"/>
+    <result column="is_delete" property="isDelete"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="group_name" property="groupName"/>
+    <result column="weight" property="weight"/>
+    <result column="parent_id" property="parentId"/>
+    <result column="type" property="type"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`create_by`,`is_delete`,`create_time`,`update_by`,`update_time`,`group_name`,`weight`,`parent_id`,`type`
+  </sql>
+  <select id="list" resultMap="userGroupMap">
+    select
+    <include refid="Vo_Column_List"/>
+    from user_group
+    where is_delete=0
+    <if test="dto.groupName!=null and dto.groupName!=''">
+      AND group_name like CONCAT('%', #{dto.groupName},'%')
+    </if>
+    <if test="dto.parentId!=null">
+      AND parent_id=#{dto.parentId}
+    </if>
+    <if test="dto.type!=null">
+      AND type=#{dto.type}
+    </if>
+    <if test="dto.weight!=null">
+      AND weight=#{dto.weight}
+    </if>
+    order by weight asc,create_time desc
+  </select>
+  <select id="getById" resultMap="userGroupMap">
+    select <include refid="Vo_Column_List"/> from user_group where id = #{id}
+  </select>
+</mapper>

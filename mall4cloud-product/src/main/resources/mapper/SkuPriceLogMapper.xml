@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SkuPriceLogMapper">
+  <resultMap id="skuPriceLogMap" type="com.mall4j.cloud.product.model.SkuPriceLog">
+    <id column="id" property="id" />
+    <result column="spu_code" property="spuCode"/>
+    <result column="price_code" property="priceCode"/>
+    <result column="sku_code" property="skuCode"/>
+    <result column="store_id" property="storeId"/>
+    <result column="store_code" property="storeCode"/>
+    <result column="log_type" property="logType"/>
+    <result column="price" property="price"/>
+    <result column="stock" property="stock"/>
+    <result column="stock_type" property="stockType"/>
+    <result column="business_id" property="businessId"/>
+    <result column="business_type" property="businessType"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="update_by" property="updateBy"/>
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `id`,`spu_code`,`price_code`,`sku_code`,`store_id`,`store_code`,`log_type`,`price`,`stock`,`stock_type`,`business_id`,`business_type`,`update_time`,`update_by`
+  </sql>
+
+  <select id="list" resultType="com.mall4j.cloud.product.vo.SkuPriceLogVO">
+    select
+    *
+    from
+    sku_price_log
+    where
+    1=1
+    <if test="dto.searchKey!=null and dto.searchKey!=''">
+      and (spu_code=#{dto.searchKey} or price_code=#{dto.searchKey} or sku_code=#{dto.searchKey})
+    </if>
+    <if test="dto.storeCode!=null and dto.storeCode!=''">
+      and store_code=#{dto.storeCode}
+    </if>
+    <if test="dto.storeId!=null">
+      and store_id=#{dto.storeId}
+    </if>
+    <if test="dto.logType!=null">
+      and log_type=#{dto.logType}
+    </if>
+    <if test="dto.startTime!=null and dto.endTime!=null">
+      and update_time between #{dto.startTime} and #{dto.endTime}
+    </if>
+    order by update_time desc
+  </select>
+
+
+  <select id="soldExcelList" resultType="com.mall4j.cloud.api.product.vo.SoldSkuPriceLogExcelVO">
+    select
+    *
+    from
+    sku_price_log
+    where
+    1=1
+    <if test="dto.searchKey!=null and dto.searchKey!=''">
+      and (spu_code=#{dto.searchKey} or price_code=#{dto.searchKey} or sku_code=#{dto.searchKey})
+    </if>
+    <if test="dto.storeCode!=null and dto.storeCode!=''">
+      and store_code=#{dto.storeCode}
+    </if>
+    <if test="dto.storeId!=null">
+      and store_id=#{dto.storeId}
+    </if>
+    <if test="dto.logType!=null">
+      and log_type=#{dto.logType}
+    </if>
+    <if test="dto.startTime!=null and dto.endTime!=null">
+      and update_time between #{dto.startTime} and #{dto.endTime}
+    </if>
+    order by update_time desc
+    <if test="pageAdapter!=null">
+      LIMIT #{pageAdapter.begin} , #{pageAdapter.size}
+    </if>
+  </select>
+
+
+  <select id="soldCount" resultType="int">
+    select
+    count(1)
+    from
+    sku_price_log
+    where
+    1=1
+    <if test="dto.searchKey!=null and dto.searchKey!=''">
+      and (spu_code=#{dto.searchKey} or price_code=#{dto.searchKey} or sku_code=#{dto.searchKey})
+    </if>
+    <if test="dto.storeCode!=null and dto.storeCode!=''">
+      and store_code=#{dto.storeCode}
+    </if>
+    <if test="dto.storeId!=null">
+      and store_id=#{dto.storeId}
+    </if>
+    <if test="dto.logType!=null">
+      and log_type=#{dto.logType}
+    </if>
+    <if test="dto.startTime!=null and dto.endTime!=null">
+      and update_time between #{dto.startTime} and #{dto.endTime}
+    </if>
+  </select>
+
+</mapper>

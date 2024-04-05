@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.GroupOrderMapper">
+    <resultMap id="groupOrderMap" type="com.mall4j.cloud.group.model.GroupOrder">
+        <id column="group_order_id" property="groupOrderId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="group_team_id" property="groupTeamId"/>
+        <result column="user_id" property="userId"/>
+        <result column="identity_type" property="identityType"/>
+        <result column="activity_prod_price" property="activityProdPrice"/>
+        <result column="pay_price" property="payPrice"/>
+        <result column="order_id" property="orderId"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `group_order_id`,
+        group_activity_id,
+        `create_time`,
+        `update_time`,
+        `shop_id`,
+        `group_team_id`,
+        `user_id`,
+        `identity_type`,
+        `activity_prod_price`,
+        `pay_price`,
+        `order_id`,
+        `status`,
+        `count`
+    </sql>
+    <select id="list" resultMap="groupOrderMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from group_order
+        order by group_order_id desc
+    </select>
+    <select id="getByGroupOrderId" resultMap="groupOrderMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from group_order
+        where group_order_id = #{groupOrderId}
+    </select>
+    <insert id="save">
+        insert into group_order (group_activity_id, `shop_id`, `group_team_id`, `user_id`, `identity_type`,
+                                 `activity_prod_price`, `pay_price`, `order_id`, `status`, `count`)
+        values (#{groupOrder.groupActivityId}, #{groupOrder.shopId}, #{groupOrder.groupTeamId}, #{groupOrder.userId},
+                #{groupOrder.identityType}, #{groupOrder.activityProdPrice}, #{groupOrder.payPrice},
+                #{groupOrder.orderId}, #{groupOrder.status}, #{groupOrder.count});
+    </insert>
+    <update id="update">
+        update group_order
+        <set>
+            <if test="groupOrder.shopId != null">
+                `shop_id` = #{groupOrder.shopId},
+            </if>
+            <if test="groupOrder.groupActivityId != null">
+                `group_activity_id` = #{groupOrder.groupActivityId},
+            </if>
+            <if test="groupOrder.groupTeamId != null">
+                `group_team_id` = #{groupOrder.groupTeamId},
+            </if>
+            <if test="groupOrder.userId != null">
+                `user_id` = #{groupOrder.userId},
+            </if>
+            <if test="groupOrder.identityType != null">
+                `identity_type` = #{groupOrder.identityType},
+            </if>
+            <if test="groupOrder.activityProdPrice != null">
+                `activity_prod_price` = #{groupOrder.activityProdPrice},
+            </if>
+            <if test="groupOrder.payPrice != null">
+                `pay_price` = #{groupOrder.payPrice},
+            </if>
+            <if test="groupOrder.orderId != null">
+                `order_id` = #{groupOrder.orderId},
+            </if>
+            <if test="groupOrder.status != null">
+                `status` = #{groupOrder.status},
+            </if>
+            <if test="groupOrder.count != null">
+                `count` = #{groupOrder.count},
+            </if>
+        </set>
+        where group_order_id = #{groupOrder.groupOrderId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from group_order
+        where group_order_id = #{groupOrderId}
+    </delete>
+
+    <select id="getByOrderId" resultType="com.mall4j.cloud.group.vo.GroupOrderVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from group_order
+        where order_id = #{orderId}
+    </select>
+
+    <select id="listApiGroupUserDto" resultType="com.mall4j.cloud.group.vo.app.AppGroupUserVO">
+        SELECT user_id       AS user_id,
+               identity_type AS identity_type,
+               create_time   AS create_time
+        FROM group_order
+        WHERE group_team_id = #{groupTeamId}
+          AND `status` = 1
+    </select>
+
+    <select id="getUserGroupOrderByGroupTeamId" resultType="com.mall4j.cloud.group.vo.GroupOrderVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from group_order
+        where status = 1
+          and group_team_id = #{groupTeamId}
+          and user_id = #{userId}
+    </select>
+
+    <select id="getUserHadSpuCountByGroupActivityId" resultType="java.lang.Long">
+        select order_id
+        from group_order
+        where group_activity_id = #{groupActivityId}
+          and user_id = #{userId}
+          and status &lt;&gt; -1
+    </select>
+
+    <update id="cancelGroupOrder">
+        update group_order
+        set status = -1 where order_id in
+        <foreach collection="orderIds" item="orderId" open="(" close=")" separator=",">
+            #{orderId}
+        </foreach>
+        and status = 0
+    </update>
+
+    <update id="updateToPaySuccess">
+        update group_order
+        set status = 1
+        <if test="groupTeamId != null">
+            ,group_team_id = #{groupTeamId}
+        </if>
+        <if test="identityType != null">
+            ,identity_type = #{identityType}
+        </if>
+        where order_id = #{orderId} and status &lt;&gt; 1
+    </update>
+
+    <select id="listSuccessOrderIdByTeamId" resultType="java.lang.Long">
+        SELECT order_id FROM group_order where group_team_id = #{groupTeamId} and status = 1
+    </select>
+
+    <insert id="saveBatch">
+        insert into group_order (group_activity_id, `shop_id`, `group_team_id`, `user_id`, `identity_type`,
+        `activity_prod_price`, `pay_price`, `order_id`, `status`, `count`)
+        values
+        <foreach collection="groupOrders" item="groupOrder" separator=",">
+            (#{groupOrder.groupActivityId}, #{groupOrder.shopId}, #{groupOrder.groupTeamId}, #{groupOrder.userId},
+            #{groupOrder.identityType}, #{groupOrder.activityProdPrice}, #{groupOrder.payPrice},
+            #{groupOrder.orderId}, #{groupOrder.status}, #{groupOrder.count})
+        </foreach>
+    </insert>
+
+    <select id="getOrderBySpuIdAndUserId" resultType="java.lang.Integer">
+        SELECT COUNT(go.group_activity_id) FROM group_order go
+        JOIN group_team gt ON go.group_team_id = gt.group_team_id
+        WHERE gt.status in (0,1) AND gt.group_spu_id = #{spuId} AND go.user_id = #{userId} AND go.group_activity_id = #{groupActivityId}
+    </select>
+</mapper>

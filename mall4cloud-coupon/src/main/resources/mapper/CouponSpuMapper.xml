@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.CouponSpuMapper">
+  <resultMap id="couponProdMap" type="com.mall4j.cloud.coupon.model.CouponSpu">
+    <id column="coupon_spu_id" property="couponSpuId" />
+    <result column="coupon_id" property="couponId"/>
+    <result column="spu_id" property="spuId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `coupon_spu_id`,`coupon_id`,`spu_id`
+  </sql>
+  <insert id="saveBatch">
+    <foreach collection="couponSpus" item="couponSpu">
+      insert into coupon_spu (`coupon_id`,`spu_id`) values (#{couponSpu.couponId},#{couponSpu.spuId});
+    </foreach>
+  </insert>
+  <delete id="deleteByCouponIdAndSpuIds">
+    delete from coupon_spu where coupon_id = #{couponId}
+    <if test="spuIds != null">
+        and spu_id in
+        <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+            #{spuId}
+        </foreach>
+    </if>
+  </delete>
+
+  <delete id="deleteBySpuIds">
+    delete from coupon_spu where  spu_id in
+      <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+        #{spuId}
+      </foreach>
+  </delete>
+</mapper>

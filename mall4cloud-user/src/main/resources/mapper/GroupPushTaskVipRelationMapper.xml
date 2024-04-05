@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.user.mapper.GroupPushTaskVipRelationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.user.model.GroupPushTaskVipRelation">
+        <id column="group_push_task_vip_relation_id" property="groupPushTaskVipRelationId" />
+        <result column="group_push_task_id" property="groupPushTaskId" />
+        <result column="vip_user_id" property="vipUserId" />
+        <result column="vip_code" property="vipCode" />
+        <result column="staff_id" property="staffId" />
+        <result column="create_user_id" property="createUserId" />
+        <result column="create_time" property="createTime" />
+        <result column="friend_state" property="friendState" />
+        <result column="staff_cp_user_id" property="staffCpUserId" />
+        <result column="vip_cp_user_id" property="vipCpUserId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        group_push_task_vip_relation_id, group_push_task_id, vip_user_id, vip_code, staff_id, create_user_id, create_time, finish_state, finish_time
+    </sql>
+
+    <insert id="insertBatch">
+        insert into t_group_push_task_vip_relation (group_push_task_id,vip_user_id,vip_code,staff_id,create_user_id, staff_store_id, staff_cp_user_id,
+                                                    friend_state, vip_cp_user_id) values
+        <foreach collection="relationList" item="relation" separator="," close=";">
+            (#{relation.groupPushTaskId},#{relation.vipUserId},#{relation.vipCode},#{relation.staffId},#{relation.createUserId}, #{relation.staffStoreId}, #{relation.staffCpUserId},
+            #{relation.friendState}, #{relation.vipCpUserId})
+        </foreach>
+    </insert>
+
+
+    <select id="selectIssueCount" resultType="com.mall4j.cloud.user.vo.StaffPushTaskIssueCountVO">
+        SELECT
+            count( 1 ) AS issueCount,
+            staff_id
+        FROM
+            t_group_push_task_vip_relation
+        WHERE
+            group_push_task_id = #{pushTaskId}
+          AND staff_id IN
+        <foreach collection="staffIdList" item="item"  index="index" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY
+        staff_id
+    </select>
+
+
+    <select id="selectTheAddFriendCountByPushTaskId" resultType="java.lang.Integer">
+        SELECT
+            COUNT( 1 )
+        FROM
+            t_group_push_task_vip_relation vip
+                INNER JOIN user_staff_cp_relation cp ON vip.staff_id = cp.staff_id
+                AND vip.vip_user_id = cp.user_id
+        WHERE
+            vip.group_push_task_id = #{pushTaskId}
+    </select>
+
+    <select id="selectGroupByAddFriendCountByPushTaskId" resultType="com.mall4j.cloud.user.vo.StaffPushTaskAddFriendCountVO">
+        SELECT
+            COUNT( 1 ) as addCount,
+            staff_id
+        FROM
+            t_group_push_task_vip_relation vip
+                INNER JOIN user_staff_cp_relation cp ON vip.staff_id = cp.staff_id
+                AND vip.vip_user_id = cp.user_id
+        WHERE
+            vip.group_push_task_id = #{pushTaskId}
+        AND cp.staff_id IN
+        <foreach collection="staffIdList" item="item"  index="index" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY
+            cp.staff_id
+    </select>
+
+    <update id="updateStaffAndUserTaskRelation">
+        UPDATE t_group_push_task_vip_relation SET friend_state = 0
+        WHERE group_push_task_id = #{taskId}
+        AND staff_id = #{staffId}
+        AND vip_user_id = #{userId}
+    </update>
+
+    <select id="getTaskVipRelationListByFriendState" resultType="com.mall4j.cloud.user.vo.GroupPushTaskVipRelationByFriendStateVO">
+        SELECT
+            relation.group_push_task_id AS pushTaskId,
+            relation.staff_id,
+            relation.vip_user_id AS userId,
+            relation.staff_cp_user_id,
+            relation.vip_cp_user_id,
+            cp.user_id AS cpUserId,
+            cp.qi_wei_user_id AS qiWeiUserId,
+            cp.qi_wei_staff_id AS qiWeiStaffId
+        FROM `t_group_push_task_vip_relation` relation
+        LEFT JOIN t_group_push_task task ON relation.group_push_task_id = task.group_push_task_id
+        LEFT JOIN user_staff_cp_relation cp ON relation.staff_id = cp.staff_id AND relation.vip_user_id = cp.user_id
+        WHERE task.delete_flag = 0
+        AND task.operate_status = 1
+        AND relation.group_push_task_id IN
+        <foreach collection="notFinishedGroupPushTaskList" item="item"  index="index" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <update id="updateTaskVipRelationFriendState">
+        UPDATE t_group_push_task_vip_relation SET friend_state = #{friendState}
+        WHERE group_push_task_id = #{taskId}
+        AND staff_cp_user_id = #{staffCpUserId}
+        AND vip_cp_user_id = #{vipCpUserId}
+    </update>
+
+    <update id="updateTaskVipRelationFriendStateByStaffIdAndUserId">
+        UPDATE t_group_push_task_vip_relation
+        SET
+            friend_state = #{friendState},
+            vip_cp_user_id = #{vipCpUserId}
+        WHERE group_push_task_id = #{taskId}
+          AND staff_id = #{staffId}
+          AND vip_user_id = #{userId}
+    </update>
+
+    <update id="updateBatchTaskVipRelationFriendStateByStaffIdAndUserId">
+        <foreach collection="vipRelationList" item="vipRelation" separator=";">
+            UPDATE t_group_push_task_vip_relation
+            <set>
+                friend_state = #{friendState},
+                vip_cp_user_id = #{vipRelation.qiWeiUserId}
+            </set>
+            WHERE group_push_task_id = #{vipRelation.pushTaskId}
+            AND staff_id = #{vipRelation.staffId}
+            AND vip_user_id = #{vipRelation.userId}
+        </foreach>
+    </update>
+
+    <update id="updateBatchTaskVipRelationFriendStateByTaskIds">
+        UPDATE `t_group_push_task_vip_relation` relation
+            LEFT JOIN user_staff_cp_relation cp ON relation.staff_id = cp.staff_id
+            AND relation.vip_user_id = cp.user_id
+            SET relation.friend_state = ( CASE WHEN cp.qi_wei_user_id IS NULL THEN 0 ELSE 1 END ),
+                relation.vip_cp_user_id = cp.qi_wei_user_id
+        WHERE relation.group_push_task_id IN
+        <foreach collection="pushTaskIds" item="item"  index="index" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="selectUnfailedPushSonTaskVipByStaffIdAndUserId" resultType="com.mall4j.cloud.api.user.vo.GroupPushTaskVipRelationVO">
+        SELECT
+            vip.*
+        FROM
+            t_group_push_son_task son
+        LEFT JOIN t_group_push_task_vip_relation vip ON son.group_push_task_id = vip.group_push_task_id
+        WHERE
+            vip.staff_id = #{staffId}
+            and vip.vip_user_id = #{vipUserId}
+            and son.end_time > NOW()
+            and son.delete_flag = 0
+    </select>
+
+    <select id="selectTaskIdByStaffIdAndVipCpUserId" resultType="java.lang.Long">
+        SELECT
+            son.group_push_task_id
+        FROM
+            t_group_push_son_task son
+        LEFT JOIN t_group_push_task_vip_relation vip ON son.group_push_task_id = vip.group_push_task_id
+        WHERE
+            vip.staff_id = #{staffId}
+          and vip.vip_cp_user_id = #{vipCpUserId}
+          and son.end_time > NOW()
+          and son.delete_flag = 0
+    </select>
+
+
+
+    <select id="selectUsableGroupPushVipUserList" resultType="com.mall4j.cloud.user.vo.UsableGroupPushVipVO">
+        SELECT
+            vip.vip_user_id,
+            vip.friend_state,
+            vip.staff_id,
+            vip.staff_cp_user_id,
+            vip.vip_cp_user_id,
+            send.send_status,
+            son.group_push_task_id,
+            son.group_push_son_task_id
+        FROM
+            t_group_push_task_vip_relation vip
+                LEFT JOIN t_group_push_son_task son ON son.group_push_task_id = vip.group_push_task_id
+                LEFT JOIN t_group_son_task_send_record send ON vip.staff_id = send.staff_id
+                AND vip.vip_user_id = send.vip_user_id
+                AND send.push_son_task_id = son.group_push_son_task_id
+        WHERE
+            son.group_push_son_task_id = #{sonTaskId}
+          AND vip.staff_id = #{staffId}
+          AND vip.friend_state = 1
+          and (send.send_status IS NULL or send.send_status != 1)
+    </select>
+
+
+    <select id="notAddFriendCountBySonTaskId" resultType="com.mall4j.cloud.user.vo.StaffPushTaskNotAddFriendCountVO">
+        SELECT
+        COUNT( 1 ) AS notAddCount,
+        staff_id
+        FROM
+        (
+        SELECT
+        vip.staff_id AS staff_id,
+        IFNULL( send.send_status, 10 ) AS send_status
+        FROM
+        t_group_push_task_vip_relation vip
+        LEFT JOIN t_group_push_son_task son ON son.group_push_task_id = vip.group_push_task_id
+        LEFT JOIN t_group_son_task_send_record send ON vip.staff_id = send.staff_id
+        AND vip.vip_user_id = send.vip_user_id
+        AND send.push_son_task_id = son.group_push_son_task_id
+        WHERE
+        son.group_push_son_task_id = #{sonTaskId}
+        AND ( vip.friend_state = 0 OR send.send_status = 2 )
+        AND vip.staff_id IN
+        <foreach collection="staffIdList" item="item"  index="index" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+        ) t
+        WHERE send_status != 1
+        GROUP BY staff_id
+    </select>
+
+</mapper>

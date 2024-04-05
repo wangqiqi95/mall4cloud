@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.live.LiveRoomBackMapper">
+
+  <resultMap id="liveRoomBackMap" type="com.mall4j.cloud.biz.model.live.LiveRoomBack">
+    <id column="back_id" property="backId" />
+    <result column="room_id" property="roomId"/>
+    <result column="media_url" property="mediaUrl"/>
+    <result column="create_time" property="createTime"/>
+    <result column="expire_time" property="expireTime"/>
+  </resultMap>
+</mapper>

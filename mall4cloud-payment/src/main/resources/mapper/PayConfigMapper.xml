@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.payment.mapper.PayConfigMapper">
+
+    <resultMap type="com.mall4j.cloud.payment.model.PayConfig" id="payConfigMap">
+        <result property="id" column="id"/>
+        <result property="selectedAmountLimit" column="selected_amount_limit"/>
+        <result property="amountLimitType" column="amount_limit_type"/>
+        <result property="amountLimitNum" column="amount_limit_num"/>
+        <result property="selectedMemberLimit" column="selected_member_limit"/>
+        <result property="memberLimitType" column="member_limit_type"/>
+        <result property="createName" column="create_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+
+</mapper>

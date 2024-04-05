@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserLabelUserMapper">
+  <resultMap id="userLabelUserMap" type="com.mall4j.cloud.user.model.UserLabelUser">
+    <id column="id" property="id" />
+    <result column="label_id" property="labelId"/>
+    <result column="user_id" property="userId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`label_id`,`user_id`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="userLabelUserMap">
+    select <include refid="Vo_Column_List"/> from user_label_user order by id desc
+  </select>
+  <select id="getById" resultMap="userLabelUserMap">
+    select <include refid="Vo_Column_List"/> from user_label_user where id = #{id}
+  </select>
+  <insert id="save">
+    insert into user_label_user (`label_id`,`user_id`)
+    values (#{userLabelUser.labelId},#{userLabelUser.userId});
+  </insert>
+  <update id="update">
+    update user_label_user
+    <set>
+      <if test="userLabelUser.labelId != null">
+        `label_id` = #{userLabelUser.labelId},
+      </if>
+      <if test="userLabelUser.userId != null">
+        `user_id` = #{userLabelUser.userId},
+      </if>
+    </set>
+    where id = #{userLabelUser.id}
+  </update>
+  <delete id="deleteById">
+    delete from user_label_user where id = #{id}
+  </delete>
+
+</mapper>

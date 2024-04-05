@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserStaffCpRelationMapper">
+  <resultMap id="userStaffCpRelationMap" type="com.mall4j.cloud.user.model.UserStaffCpRelation">
+    <id column="id" property="id" />
+    <result column="user_id" property="userId"/>
+    <result column="user_union_id" property="userUnionId"/>
+    <result column="qi_wei_user_id" property="qiWeiUserId"/>
+    <result column="staff_id" property="staffId"/>
+    <result column="qi_wei_staff_id" property="qiWeiStaffId"/>
+    <result column="status" property="status"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="qi_wei_nick_name" property="qiWeiNickName"/>
+    <result column="code_channel_id" property="codeChannelId"/>
+    <result column="contact_change" property="contactChange"/>
+    <result column="contact_change_type" property="contactChangeType"/>
+    <result column="avatar" property="avatar"/>
+    <result column="type" property="type"/>
+    <result column="auto_type" property="autoType"/>
+    <result column="cp_remark" property="cpRemark"/>
+    <result column="cp_create_time" property="cpCreateTime"/>
+    <result column="cp_remark_mobiles" property="cpRemarkMobiles"/>
+    <result column="cp_add_way" property="cpAddWay"/>
+    <result column="cp_state" property="cpState"/>
+    <result column="code_group_id" property="codeGroupId"/>
+    <result column="corp_name" property="corpName"/>
+    <result column="corp_full_name" property="corpFullName"/>
+    <result column="cp_remark_corp_name" property="cpRemarkCorpName"/>
+    <result column="cp_description" property="cpDescription"/>
+  </resultMap>
+
+  <resultMap id="userStaffCpRelationListMap" type="com.mall4j.cloud.api.user.vo.UserStaffCpRelationListVO">
+    <id column="id" property="id" />
+    <result column="user_id" property="userId"/>
+    <result column="user_union_id" property="userUnionId"/>
+    <result column="qi_wei_user_id" property="qiWeiUserId"/>
+    <result column="staff_id" property="staffId"/>
+    <result column="qi_wei_staff_id" property="qiWeiStaffId"/>
+    <result column="status" property="status"/>
+    <result column="qi_wei_nick_name" property="qiWeiNickName"/>
+    <result column="code_channel_id" property="codeChannelId"/>
+    <result column="contact_change" property="contactChange"/>
+    <result column="contact_change_type" property="contactChangeType"/>
+    <result column="corp_name" property="corpName"/>
+    <result column="corp_full_name" property="corpFullName"/>
+    <result column="cp_remark_corp_name" property="cpRemarkCorpName"/>
+    <result column="avatar" property="avatar"/>
+    <result column="type" property="type"/>
+    <result column="auto_type" property="autoType"/>
+    <result column="cp_remark" property="cpRemark"/>
+    <result column="cp_create_time" property="cpCreateTime"/>
+    <result column="cp_remark_mobiles" property="cpRemarkMobiles"/>
+    <result column="cp_add_way" property="cpAddWay"/>
+    <result column="cp_state" property="cpState"/>
+    <result column="stage_id" property="stageId"/>
+    <result column="group_name" property="groupName"/>
+    <result column="tagId" property="tagId"/>
+    <result column="tagName" property="tagName"/>
+    <result column="cp_description" property="cpDescription"/>
+  </resultMap>
+
+
+  <resultMap id="countNotMemberUsersMap" type="com.mall4j.cloud.api.user.vo.CountNotMemberUsersVO">
+    <result column="staff_id" property="staffId"/>
+    <result column="nums" property="nums"/>
+  </resultMap>
+
+
+
+  <sql id="Vo_Column_List">
+     `id`,`user_id`,`user_union_id`,`qi_wei_user_id`,`staff_id`,`qi_wei_staff_id`,`status`,`create_time`,
+     `update_time`,`qi_wei_nick_name`,`code_channel_id`,`contact_change`,`contact_change_type`,`avatar`,`type`,
+     `auto_type`,`cp_remark`,`cp_create_time`,`cp_remark_mobiles`,`cp_add_way`,`cp_state`,`stage_id`,`code_group_id`,`corp_name`,`corp_full_name`,`cp_description`
+  </sql>
+
+  <select id="pageWithStaff" resultMap="userStaffCpRelationListMap">
+    select
+    uscr.*,
+    uscr.staff_id as service_staff_id,
+    ugp.group_name
+    from user_staff_cp_relation uscr
+    left join user_group ugp on uscr.stage_id = ugp.id and ugp.is_delete=0
+    <if test="searchDTO.tagId != null and searchDTO.tagId.size>0">
+      left join (select distinct unionId,tagId,tagName from crm_user_tag_relation) cutr on uscr.user_union_id = cutr.unionId
+    </if>
+    <!--根据客户最近添加员工时间去重复-->
+    <if test="searchDTO.duplicateType != null and searchDTO.duplicateType==1">
+      JOIN (
+      SELECT qi_wei_user_id, MAX(cp_create_time) as latest_time
+      FROM user_staff_cp_relation
+      GROUP BY qi_wei_user_id
+      ) e2 ON uscr.qi_wei_user_id = e2.qi_wei_user_id AND uscr.cp_create_time = e2.latest_time
+    </if>
+    where 1=1
+    <if test="searchDTO.unSetStage != null">
+      and uscr.stage_id is null
+    </if>
+    <if test="searchDTO.staffId != null">
+      and uscr.staff_id = #{searchDTO.staffId}
+    </if>
+    <!-- 可能还没注册会员 and uscr.user_id is not null -->
+    <if test="searchDTO.userName != null and searchDTO.userName != ''">
+      and uscr.cp_remark LIKE CONCAT("%",#{searchDTO.userName},"%")
+    </if>
+    <if test="searchDTO.qiWeiNickName != null and searchDTO.qiWeiNickName != ''">
+      and uscr.qi_wei_nick_name LIKE CONCAT("%",#{searchDTO.qiWeiNickName},"%")
+    </if>
+    <if test="searchDTO.nameKeyWrod != null and searchDTO.nameKeyWrod != ''">
+      and ( uscr.cp_remark LIKE CONCAT("%",#{searchDTO.nameKeyWrod},"%")
+      or
+      uscr.qi_wei_nick_name LIKE CONCAT("%",#{searchDTO.nameKeyWrod},"%")
+      )
+    </if>
+    <if test="searchDTO.cpRemark != null and searchDTO.cpRemark != ''">
+      and uscr.cp_remark LIKE CONCAT("%",#{searchDTO.cpRemark},"%")
+    </if>
+    <if test="searchDTO.userPhone != null and searchDTO.userPhone != ''">
+      and uscr.cp_remark_mobiles LIKE CONCAT("%",#{searchDTO.userPhone},"%")
+    </if>
+    <if test="searchDTO.status != null">
+      and uscr.status = #{searchDTO.status}
+    </if>
+    <if test="searchDTO.staffIds != null and searchDTO.staffIds.size>0">
+      and uscr.staff_id IN
+      <foreach collection="searchDTO.staffIds" item="staffId" separator="," open="(" close=")">
+        #{staffId}
+      </foreach>
+    </if>
+    <if test="searchDTO.unionIds != null and searchDTO.unionIds.size>0">
+      and uscr.user_union_id IN
+      <foreach collection="searchDTO.unionIds" item="unionId" separator="," open="(" close=")">
+        #{unionId}
+      </foreach>
+    </if>
+    <if test="searchDTO.tagId != null and searchDTO.tagId.size>0">
+      and cutr.tagId IN
+      <foreach collection="searchDTO.tagId" item="tag" separator="," open="(" close=")">
+        #{tag}
+      </foreach>
+    </if>
+    <if test="searchDTO.unionId != null and searchDTO.unionId.size>0">
+      and uscr.user_union_id = #{searchDTO.unionId}
+    </if>
+    <if test="searchDTO.qiWeiUserIds != null and searchDTO.qiWeiUserIds.size>0">
+      and uscr.qi_wei_user_id IN
+      <foreach collection="searchDTO.qiWeiUserIds" item="qiWeiUserId" separator="," open="(" close=")">
+        #{qiWeiUserId}
+      </foreach>
+    </if>
+    <if test="searchDTO.stageId != null">
+      and uscr.stage_id = #{searchDTO.stageId}
+    </if>
+    <if test="searchDTO.stageIds != null and searchDTO.stageIds.size>0">
+      and uscr.stage_id IN
+      <foreach collection="searchDTO.stageIds" item="sid" separator="," open="(" close=")">
+        #{sid}
+      </foreach>
+    </if>
+    <if test="searchDTO.contactChangeTypes != null and searchDTO.contactChangeTypes.size>0">
+      and uscr.contact_change_type IN
+      <foreach collection="searchDTO.contactChangeTypes" item="contactChangeType" separator="," open="(" close=")">
+        #{contactChangeType}
+      </foreach>
+    </if>
+    <if test="searchDTO.cpCreateTimeStart != null and searchDTO.cpCreateTimeStart != '' and searchDTO.cpCreateTimeEnd != null and searchDTO.cpCreateTimeEnd != ''">
+      and uscr.cp_create_time between #{searchDTO.cpCreateTimeStart} and #{searchDTO.cpCreateTimeEnd}
+    </if>
+    order by cp_create_time desc
+  </select>
+
+  <select id="listByUserIdList" resultMap="userStaffCpRelationMap">
+    select <include refid="Vo_Column_List"/> from user_staff_cp_relation
+    where user_id IN
+      <foreach collection="userIdList" item="userId" separator="," open="(" close=")">
+        #{userId}
+      </foreach>
+  </select>
+  <select id="getById" resultMap="userStaffCpRelationMap">
+    select <include refid="Vo_Column_List"/> from user_staff_cp_relation where id = #{id}
+  </select>
+  <select id="getByStaffAndUser" resultType="com.mall4j.cloud.user.model.UserStaffCpRelation">
+    select <include refid="Vo_Column_List"/> from user_staff_cp_relation where user_id = #{userId} and staff_id = #{staffId}
+  </select>
+  <select id="getByQiWeiStaffIdAndQiWeiUserId" resultType="com.mall4j.cloud.user.model.UserStaffCpRelation">
+    select <include refid="Vo_Column_List"/> from user_staff_cp_relation where qi_wei_staff_id = #{qiWeiStaffId} and qi_wei_user_id = #{qiWeiUserId}
+  </select>
+
+
+  <update id="bindUserId">
+    update user_staff_cp_relation set user_id = #{userId} where user_union_id = #{userUnionId}
+  </update>
+
+  <update id="bindStaffId">
+    update user_staff_cp_relation set staff_id = #{staffId} where qi_wei_staff_id = #{qiWeiStaffId}
+  </update>
+
+  <select id="getByQiWeiUserId" resultType="com.mall4j.cloud.user.model.UserStaffCpRelation">
+    select <include refid="Vo_Column_List"/> from user_staff_cp_relation where qi_wei_user_id = #{qiWeiUserId} and staff_id=#{staffId}
+    limit 1
+  </select>
+
+
+
+
+  <delete id="deleteById">
+    delete from user_staff_cp_relation where id = #{id}
+  </delete>
+
+  <select id="getUserInfoByQiWeiUserId" resultMap="userStaffCpRelationListMap">
+    select uscr.*,u.nick_name,u.phone,u.staff_id as service_staff_id,u.sex
+        from user_staff_cp_relation uscr
+        left join `user` u on uscr.user_id = u.user_id
+    where uscr.qi_wei_staff_id = #{qiWeiStaffId}
+      and uscr.qi_wei_user_id= #{qiWeiUserId}
+  </select>
+
+  <select id="countNotMemberUsers" resultMap="countNotMemberUsersMap">
+     select staff_id,count(1) nums from user_staff_cp_relation  where user_id is null and staff_id is not null  group by staff_id
+  </select>
+
+  <select id="selectCountByStates" resultType="com.mall4j.cloud.api.user.vo.cp.CountStaffRelByStatesVO">
+     select cp_state,
+     ifnull(count(1),0) userCount
+     from user_staff_cp_relation
+     where status=1
+    and cp_state in
+    <foreach collection="states" item="state" separator="," open="(" close=")">
+      #{state}
+    </foreach>
+     group by cp_state
+  </select>
+
+  <select id="countNotQiWeiUsers" resultMap="countNotMemberUsersMap">
+    select  u.staff_id,count(1) from `user` u LEFT JOIN user_staff_cp_relation c on c.user_id=u.user_id and c.staff_id = u.staff_id  where c.id is null and  ifnull(u.staff_id,0)>0 group by u.staff_id
+  </select>
+
+  <select id="lastOneListByUserIdList" resultType="com.mall4j.cloud.api.user.vo.UserStaffCpRelationListVO">
+    SELECT <include refid="Vo_Column_List"/> FROM user_staff_cp_relation where id in
+    (
+    SELECT
+    MAX(id)
+    FROM
+    user_staff_cp_relation
+    WHERE
+    user_id IN
+    <foreach collection="userIdList" item="userId" separator="," open="(" close=")">
+      #{userId}
+    </foreach>
+    GROUP BY
+    user_id
+    )
+  </select>
+
+  <select id="getCpRelationDataByStaffCpUserIdAndVipCpUserId" resultType="com.mall4j.cloud.user.bo.GroupPushTaskCpRelationBO">
+    SELECT
+        qi_wei_user_id AS vipCpUserId
+    FROM user_staff_cp_relation
+    WHERE staff_id = #{staffId}
+    AND user_id = #{userId}
+  </select>
+
+  <update id="setStage">
+    update user_staff_cp_relation
+        set stage_id = #{stageId}
+    where id = #{id}
+  </update>
+
+  <update id="removeUserStage">
+    update user_staff_cp_relation
+        set stage_id = null
+    where
+    id in
+    <foreach collection="ids" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </update>
+  <select id="getUserCount" resultType="com.mall4j.cloud.api.user.vo.SelectUserCountVO">
+    select
+    count(1) as count,
+    staff_id
+    from user_staff_cp_relation
+    <where>
+      1=1
+      <if test="dto.staffId != null">
+        and staff_id  = #{dto.staffId}
+      </if>
+      <if test="dto.staffIds!=null and dto.staffIds.size>0">
+        and staff_id in
+        <foreach collection="dto.staffIds" item="staffId" separator="," open="(" close=")">
+          #{staffId}
+        </foreach>
+      </if>
+      <if test="dto.status != null">
+        and status  = #{dto.status}
+      </if>
+      <if test="dto.statusList != null and dto.statusList.size>0">
+        and status in
+        <foreach collection="dto.statusList" item="status" separator="," open="(" close=")">
+          #{status}
+        </foreach>
+      </if>
+      <if test="dto.startTime != null and dto.endTime != null">
+        <if test="dto.status ==1">
+          and ( cp_create_time between #{dto.startTime} and #{dto.endTime} )
+        </if>
+        <if test="dto.status ==3">
+          and ( update_time between #{dto.startTime} and #{dto.endTime} )
+        </if>
+      </if>
+      <if test="dto.codeGroupIds!=null and dto.codeGroupIds.size>0">
+        and code_group_id in
+        <foreach collection="dto.codeGroupIds" item="codeGroupId" separator="," open="(" close=")">
+          #{codeGroupId}
+        </foreach>
+      </if>
+    </where>
+    group by staff_id
+  </select>
+  <select id="getUserAndChangeType" resultType="com.mall4j.cloud.api.user.vo.SelectUserCountVO">
+    select
+    count(1) as count,
+    staff_id
+    from user_staff_cp_relation
+    <where>
+      1=1
+      <if test="dto.staffId != null">
+        and staff_id  = #{dto.staffId}
+      </if>
+      <if test="dto.staffIds!=null and dto.staffIds.size>0">
+        and staff_id in
+        <foreach collection="dto.staffIds" item="staffId" separator="," open="(" close=")">
+          #{staffId}
+        </foreach>
+      </if>
+      <if test="dto.contactChangeType != null">
+        and contact_change_type  = #{dto.contactChangeType}
+      </if>
+      <if test="dto.startTime != null and dto.endTime != null">
+        and ( update_time between #{dto.startTime} and #{dto.endTime} )
+      </if>
+      <if test="dto.codeGroupIds!=null and dto.codeGroupIds.size>0">
+        and code_group_id in
+        <foreach collection="dto.codeGroupIds" item="codeGroupId" separator="," open="(" close=")">
+          #{codeGroupId}
+        </foreach>
+      </if>
+    </where>
+    group by staff_id
+  </select>
+
+  <select id="getUserSexCount" resultType="com.mall4j.cloud.api.user.vo.UserCountVO">
+    select
+    count(1) sexCount,
+    gender as sex
+    from user_staff_cp_relation
+    where status=1
+    <if test="dto.startTime!=null and dto.endTime!=null and dto.startTime!='' and dto.endTime!=''">
+      and cp_create_time between #{dto.startTime} and #{dto.endTime}
+    </if>
+    <if test="dto.staffIds!=null and dto.staffIds.size>0">
+      and staff_id in
+      <foreach collection="dto.staffIds" item="staffId" separator="," open="(" close=")">
+        #{staffId}
+      </foreach>
+    </if>
+    group by gender
+  </select>
+
+  <select id="getChartCount" resultType="com.mall4j.cloud.api.user.vo.UserCountVO">
+    select DATE_FORMAT(uscr.cp_create_time,'%Y-%m-%d') mon,count(1) monthCount
+    from  user_staff_cp_relation uscr
+    where
+     uscr.status = 1
+      <if test="dto.staffId != null">
+         and uscr.staff_id  = #{dto.staffId}
+      </if>
+    <if test="dto.staffIds!=null and dto.staffIds.size>0">
+      and uscr.staff_id in
+      <foreach collection="dto.staffIds" item="staffId" separator="," open="(" close=")">
+        #{staffId}
+      </foreach>
+    </if>
+    <if test="dto.startTime!=null and dto.endTime!=null and dto.startTime!='' and dto.endTime!=''">
+      and cp_create_time between #{dto.startTime} and #{dto.endTime}
+    </if>
+    <if test="dto.codeGroupIds!=null and dto.codeGroupIds.size>0">
+      and code_group_id in
+      <foreach collection="dto.codeGroupIds" item="codeGroupId" separator="," open="(" close=")">
+        #{codeGroupId}
+      </foreach>
+    </if>
+    group by mon
+  </select>
+
+  <select id="selectUserRelactionAddWays" resultType="com.mall4j.cloud.api.user.vo.UserRelactionAddWayVO">
+    select
+        count(1) as count,
+        cp_add_way
+    from user_staff_cp_relation
+    where status=1
+    <if test="dto.startTime!=null and dto.endTime!=null and dto.startTime!='' and dto.endTime!=''">
+      and cp_create_time between #{dto.startTime} and #{dto.endTime}
+    </if>
+    <if test="dto.staffIds!=null and dto.staffIds.size>0">
+      and staff_id in
+      <foreach collection="dto.staffIds" item="staffId" separator="," open="(" close=")">
+        #{staffId}
+      </foreach>
+    </if>
+    <if test="dto.codeGroupIds!=null and dto.codeGroupIds.size>0">
+      and code_group_id in
+      <foreach collection="dto.codeGroupIds" item="codeGroupId" separator="," open="(" close=")">
+        #{codeGroupId}
+      </foreach>
+    </if>
+    group by cp_add_way
+  </select>
+  
+  
+  <select id="selectUserRelCountDataVO" resultType="com.mall4j.cloud.user.vo.UserRelCountDataVO">
+    select
+        count(IF(status=1,0,null)) as addNewCount,
+        count(IF(status=2,0,null)) as lossNewCount,
+        count(IF(status=3,0,null)) as delNewCount
+    from user_staff_cp_relation
+    where 1=1
+    <if test="dto.startTime!=null and dto.endTime!=null and dto.startTime!='' and dto.endTime!=''">
+      and cp_create_time between #{dto.startTime} and #{dto.endTime}
+    </if>
+    <if test="dto.staffIds!=null and dto.staffIds.size>0">
+      and staff_id in
+      <foreach collection="dto.staffIds" item="staffId" separator="," open="(" close=")">
+        #{staffId}
+      </foreach>
+    </if>
+    <if test="dto.codeChannelIds!=null and dto.codeChannelIds.size>0">
+      AND code_channel_id IN
+      <foreach collection="dto.codeChannelIds" item="codeChannelId" separator="," open="(" close=")">
+        #{codeChannelId}
+      </foreach>
+    </if>
+    <if test="dto.codeGroupIds!=null and dto.codeGroupIds.size>0">
+      and code_group_id in
+      <foreach collection="dto.codeGroupIds" item="codeGroupId" separator="," open="(" close=")">
+        #{codeGroupId}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="getByUserUnionId" resultType="com.mall4j.cloud.user.vo.UserStaffCpRelationVO">
+    select
+        id, staff_id as staffId,cp_create_time as createTime,cp_add_way as cpAddWay,avatar,gender,qi_wei_user_id,qi_wei_staff_id
+    from user_staff_cp_relation uscr
+    where user_union_id = #{userUnionId} and status =1
+        group by staff_id
+  </select>
+
+  <select id="getCountByUserUnionId" resultType="java.lang.Integer">
+  select count(1) from (
+      select
+        id
+    from user_staff_cp_relation uscr
+    where user_union_id = #{userUnionId} and status =1
+    group by staff_id
+   )a
+  </select>
+
+</mapper>

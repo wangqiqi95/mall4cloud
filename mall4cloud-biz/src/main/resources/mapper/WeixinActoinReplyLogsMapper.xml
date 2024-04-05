@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinActoinReplyLogsMapper">
+  <resultMap id="weixinActoinReplyLogsMap" type="com.mall4j.cloud.biz.model.WeixinActoinReplyLogs">
+    <id column="id" property="id" />
+    <result column="action_log" property="actionLog"/>
+    <result column="to_user_name" property="toUserName"/>
+    <result column="from_user_name" property="fromUserName"/>
+    <result column="msg_type" property="msgType"/>
+    <result column="content" property="content"/>
+    <result column="msg_id" property="msgId"/>
+    <result column="pic_url" property="picUrl"/>
+    <result column="media_id" property="mediaId"/>
+    <result column="thumbMediaId" property="thumbmediaid"/>
+    <result column="format" property="format"/>
+    <result column="locatioin_x" property="locatioinX"/>
+    <result column="locatioin_y" property="locatioinY"/>
+    <result column="precision" property="precision"/>
+    <result column="scale" property="scale"/>
+    <result column="label" property="label"/>
+    <result column="title" property="title"/>
+    <result column="recognition" property="recognition"/>
+    <result column="description" property="description"/>
+    <result column="url" property="url"/>
+    <result column="event" property="event"/>
+    <result column="event_key" property="eventKey"/>
+    <result column="ticket" property="ticket"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`action_log`,`to_user_name`,`from_user_name`,`msg_type`,`content`,`msg_id`,`pic_url`,`media_id`,`thumbMediaId`,`format`,`locatioin_x`,`locatioin_y`,`precision`,`scale`,`label`,`title`,`recognition`,`description`,`url`,`event`,`event_key`,`ticket`,`create_time`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinActoinReplyLogsMap">
+    select <include refid="Vo_Column_List"/> from weixin_actoin_reply_logs order by id desc
+  </select>
+  <select id="getById" resultMap="weixinActoinReplyLogsMap">
+    select <include refid="Vo_Column_List"/> from weixin_actoin_reply_logs where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_actoin_reply_logs (`id`,`action_log`,`to_user_name`,`from_user_name`,`msg_type`,`content`,`msg_id`,`pic_url`,`media_id`,`thumbMediaId`,`format`,`locatioin_x`,`locatioin_y`,`precision`,`scale`,`label`,`title`,`recognition`,`description`,`url`,`event`,`event_key`,`ticket`,`create_time`,`del_flag`)
+    values (#{weixinActoinReplyLogs.id},#{weixinActoinReplyLogs.actionLog},#{weixinActoinReplyLogs.toUserName},#{weixinActoinReplyLogs.fromUserName},#{weixinActoinReplyLogs.msgType},#{weixinActoinReplyLogs.content},#{weixinActoinReplyLogs.msgId},#{weixinActoinReplyLogs.picUrl},#{weixinActoinReplyLogs.mediaId},#{weixinActoinReplyLogs.thumbmediaid},#{weixinActoinReplyLogs.format},#{weixinActoinReplyLogs.locatioinX},#{weixinActoinReplyLogs.locatioinY},#{weixinActoinReplyLogs.precision},#{weixinActoinReplyLogs.scale},#{weixinActoinReplyLogs.label},#{weixinActoinReplyLogs.title},#{weixinActoinReplyLogs.recognition},#{weixinActoinReplyLogs.description},#{weixinActoinReplyLogs.url},#{weixinActoinReplyLogs.event},#{weixinActoinReplyLogs.eventKey},#{weixinActoinReplyLogs.ticket},#{weixinActoinReplyLogs.createTime},#{weixinActoinReplyLogs.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_actoin_reply_logs
+    <set>
+      <if test="weixinActoinReplyLogs.actionLog != null">
+        `action_log` = #{weixinActoinReplyLogs.actionLog},
+      </if>
+      <if test="weixinActoinReplyLogs.toUserName != null">
+        `to_user_name` = #{weixinActoinReplyLogs.toUserName},
+      </if>
+      <if test="weixinActoinReplyLogs.fromUserName != null">
+        `from_user_name` = #{weixinActoinReplyLogs.fromUserName},
+      </if>
+      <if test="weixinActoinReplyLogs.msgType != null">
+        `msg_type` = #{weixinActoinReplyLogs.msgType},
+      </if>
+      <if test="weixinActoinReplyLogs.content != null">
+        `content` = #{weixinActoinReplyLogs.content},
+      </if>
+      <if test="weixinActoinReplyLogs.msgId != null">
+        `msg_id` = #{weixinActoinReplyLogs.msgId},
+      </if>
+      <if test="weixinActoinReplyLogs.picUrl != null">
+        `pic_url` = #{weixinActoinReplyLogs.picUrl},
+      </if>
+      <if test="weixinActoinReplyLogs.mediaId != null">
+        `media_id` = #{weixinActoinReplyLogs.mediaId},
+      </if>
+      <if test="weixinActoinReplyLogs.thumbmediaid != null">
+        `thumbMediaId` = #{weixinActoinReplyLogs.thumbmediaid},
+      </if>
+      <if test="weixinActoinReplyLogs.format != null">
+        `format` = #{weixinActoinReplyLogs.format},
+      </if>
+      <if test="weixinActoinReplyLogs.locatioinX != null">
+        `locatioin_x` = #{weixinActoinReplyLogs.locatioinX},
+      </if>
+      <if test="weixinActoinReplyLogs.locatioinY != null">
+        `locatioin_y` = #{weixinActoinReplyLogs.locatioinY},
+      </if>
+      <if test="weixinActoinReplyLogs.precision != null">
+        `precision` = #{weixinActoinReplyLogs.precision},
+      </if>
+      <if test="weixinActoinReplyLogs.scale != null">
+        `scale` = #{weixinActoinReplyLogs.scale},
+      </if>
+      <if test="weixinActoinReplyLogs.label != null">
+        `label` = #{weixinActoinReplyLogs.label},
+      </if>
+      <if test="weixinActoinReplyLogs.title != null">
+        `title` = #{weixinActoinReplyLogs.title},
+      </if>
+      <if test="weixinActoinReplyLogs.recognition != null">
+        `recognition` = #{weixinActoinReplyLogs.recognition},
+      </if>
+      <if test="weixinActoinReplyLogs.description != null">
+        `description` = #{weixinActoinReplyLogs.description},
+      </if>
+      <if test="weixinActoinReplyLogs.url != null">
+        `url` = #{weixinActoinReplyLogs.url},
+      </if>
+      <if test="weixinActoinReplyLogs.event != null">
+        `event` = #{weixinActoinReplyLogs.event},
+      </if>
+      <if test="weixinActoinReplyLogs.eventKey != null">
+        `event_key` = #{weixinActoinReplyLogs.eventKey},
+      </if>
+      <if test="weixinActoinReplyLogs.ticket != null">
+        `ticket` = #{weixinActoinReplyLogs.ticket},
+      </if>
+      <if test="weixinActoinReplyLogs.updateTime != null">
+        `update_time` = #{weixinActoinReplyLogs.updateTime},
+      </if>
+      <if test="weixinActoinReplyLogs.delFlag != null">
+        `del_flag` = #{weixinActoinReplyLogs.delFlag},
+      </if>
+    </set>
+    where id = #{weixinActoinReplyLogs.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_actoin_reply_logs where id = #{id}
+  </delete>
+
+</mapper>

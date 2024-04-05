@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.FollowWechatActivityMapper">
+
+    <select id="followWechatList" resultType="com.mall4j.cloud.group.vo.FollowWechatListVO">
+        select
+        DISTINCT
+        fwa.id as id,
+        fwa.activity_name as activityName,
+        fwa.activity_begin_time as activityBeginTime,
+        fwa.activity_end_time as activityEndTime,
+        fwa.is_all_shop as isAllShop,
+        (select count(1) from user_reward_record c where c.activity_id = fwa.id and c.activity_type =3) as awardNum,
+        (select count(1) from follow_wechat_activity_shop d where d.activity_id = fwa.id) as applyShopNum,
+        fwa.activity_point_switch as activityPointSwitch,
+        fwa.activity_point_number as activityPointNumber,
+        fwa.activity_coupon_switch as activityCouponSwitch,
+        fwa.activity_coupon_ids as activityCouponIds,
+        fwa.weight as weight,
+        fwa.status as status,
+        fwa.create_time as createTime,
+        fwa.create_user_name as createUserName
+        from follow_wechat_activity fwa left join follow_wechat_activity_shop fwas on fwa.id = fwas.activity_id
+        where fwa.deleted = 0
+        <if test="shopIds != null">
+            and (fwas.shop_id in (#{shopIds}) or fwa.is_all_shop = 1)
+        </if>
+        <if test="activityStatus == 0">
+            and fwa.status = 0
+        </if>
+        <if test="activityStatus == 2">
+            and fwa.activity_begin_time &lt;= now() and fwa.activity_end_time &gt; now() and fwa.status = 1
+        </if>
+        <if test="activityStatus == 3">
+            and fwa.activity_begin_time &gt; now() and fwa.status = 1
+        </if>
+        <if test="activityStatus == 4">
+            and fwa.activity_end_time &lt; now() and fwa.status = 1
+        </if>
+        <if test="activityName != null">
+            and fwa.activity_name like concat('%',#{activityName},'%')
+        </if>
+        order by fwa.create_time desc
+    </select>
+    <select id="selectFirstActivity" resultType="com.mall4j.cloud.group.model.FollowWechatActivity">
+        select
+        fwa.id as id,
+        fwa.activity_name as activityName,
+        fwa.activity_begin_time as activityBeginTime,
+        fwa.activity_end_time as activityEndTime,
+        fwa.is_all_shop as isAllShop,
+        fwa.activity_point_switch as activityPointSwitch,
+        fwa.activity_point_number as activityPointNumber,
+        fwa.activity_coupon_switch as activityCouponSwitch,
+        fwa.activity_coupon_ids as activityCouponIds,
+        fwa.receive_condition as receiveCondition,
+        fwa.wechat_ids as wechatIds,
+        fwa.weight as weight,
+        fwa.status as status,
+        fwa.create_time as createTime,
+        fwa.create_user_name as createUserName
+        from follow_wechat_activity fwa left join follow_wechat_activity_shop fwas on fwa.id = fwas.activity_id
+        where fwa.deleted = 0
+          <!--Fix by EricJeppesen 参数是shopId，报错的是shopIds-->
+            and (fwas.shop_id = #{shopId} or fwa.is_all_shop = 1)
+            and fwa.activity_begin_time &lt;= now() and fwa.activity_end_time &gt; now() and fwa.status = 1
+        order by fwa.weight asc,fwa.create_time desc limit 1
+    </select>
+</mapper>

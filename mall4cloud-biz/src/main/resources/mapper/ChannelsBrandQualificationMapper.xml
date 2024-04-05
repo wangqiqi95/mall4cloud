@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.channels.ChannelsBrandQualificationMapper">
+
+    <resultMap type="com.mall4j.cloud.biz.model.channels.ChannelsBrandQualification" id="wechatLiveBrandQualificationMap">
+        <result property="id" column="id"/>
+        <result property="brandId" column="brand_id"/>
+        <!--<result property="chName" column="ch_name"/>-->
+        <!--<result property="enName" column="en_name"/>-->
+        <result property="brandName" column="brand_name"/>
+        <result property="classificationNo" column="classification_no"/>
+        <result property="tradeMarkSymbol" column="trade_mark_symbol"/>
+        <result property="registrant" column="registrant"/>
+        <result property="registerNo" column="register_no"/>
+        <result property="registerStartTime" column="register_start_time"/>
+        <result property="registerEndTime" column="register_end_time"/>
+        <result property="registerIsPermanent" column="register_is_permanent"/>
+        <result property="registerCertifications" column="register_certifications"/>
+        <result property="registerCertificationPics" column="register_certification_pics"/>
+        <result property="renewCertifications" column="renew_certifications"/>
+        <result property="renewCertificationPics" column="renew_certification_pics"/>
+        <result property="acceptanceTime" column="acceptance_time"/>
+        <result property="acceptanceCertification" column="acceptance_certification"/>
+        <result property="acceptanceCertificationPic" column="acceptance_certification_pic"/>
+        <result property="acceptanceNo" column="acceptance_no"/>
+        <result property="grantType" column="grant_type"/>
+        <result property="grantCertifications" column="grant_certifications"/>
+        <result property="grantCertificationPics" column="grant_certification_pics"/>
+        <result property="grantLevel" column="grant_level"/>
+        <result property="grantStartTime" column="grant_start_time"/>
+        <result property="grantEndTime" column="grant_end_time"/>
+        <result property="grantIsPermanent" column="grant_is_permanent"/>
+        <result property="brandOwnerIdPhotos" column="brand_owner_id_photos"/>
+        <result property="brandOwnerIdPhotoPics" column="brand_owner_id_photo_pics"/>
+        <result property="auditId" column="audit_id"/>
+        <result property="status" column="status"/>
+        <result property="reason" column="reason"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id,brand_id,brand_name,classification_no,trade_mark_symbol,registrant,register_no,register_start_time,
+        register_end_time,register_is_permanent,register_certifications,register_certification_pics,
+        renew_certifications,renew_certification_pics,acceptance_time,acceptance_certification,acceptance_certification_pic,
+        acceptance_no,grant_type,grant_certifications,grant_certification_pics,grant_level,grant_start_time,grant_end_time,grant_is_permanent,
+        brand_owner_id_photos,audit_id,brand_owner_id_photo_pics,status,reason,create_by,create_time,update_by,update_time,is_deleted
+    </sql>
+    
+    <update id="updateBrandEvent">
+        update channels_brand_qualification
+        set status = #{param.status},
+            reason = #{param.reason},
+            audit_id = #{param.auditId}
+        where brand_id = #{param.brandId}
+    </update>
+</mapper>

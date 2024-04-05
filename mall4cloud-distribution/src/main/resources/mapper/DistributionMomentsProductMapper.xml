@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionMomentsProductMapper">
+  <resultMap id="distributionMomentsProductMap" type="com.mall4j.cloud.distribution.model.DistributionMomentsProduct">
+    <id column="id" property="id" />
+    <result column="moments_id" property="momentsId"/>
+    <result column="product_id" property="productId"/>
+    <result column="product_name" property="productName"/>
+    <result column="material_type" property="materialType"/>
+    <result column="material_img_url" property="materialImgUrl"/>
+    <result column="show_sort" property="showSort"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`moments_id`,`product_id`,`product_name`,`material_type`,`material_img_url`,`show_sort`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionMomentsProductMap">
+    select <include refid="Vo_Column_List"/> from distribution_moments_product order by id desc
+  </select>
+  <select id="getById" resultMap="distributionMomentsProductMap">
+    select <include refid="Vo_Column_List"/> from distribution_moments_product where id = #{id}
+  </select>
+    <select id="listByMomentsId" resultMap="distributionMomentsProductMap">
+      select <include refid="Vo_Column_List"/> from distribution_moments_product where moments_id = #{momentsId} order by show_sort
+    </select>
+
+  <select id="listByMomentsIdList" resultMap="distributionMomentsProductMap">
+    select <include refid="Vo_Column_List"/> from distribution_moments_product where moments_id in
+    <foreach collection="momentsIdList" item="momentsId" open="(" close=")" separator=",">
+      #{momentsId}
+    </foreach>
+  </select>
+
+    <insert id="save">
+    insert into distribution_moments_product (`moments_id`,`product_id`,`product_name`,`material_type`,`material_img_url`,`show_sort`)
+    values (#{distributionMomentsProduct.momentsId},#{distributionMomentsProduct.productId},#{distributionMomentsProduct.productName},#{distributionMomentsProduct.materialType},#{distributionMomentsProduct.materialImgUrl},#{distributionMomentsProduct.showSort});
+  </insert>
+  <update id="update">
+    update distribution_moments_product
+    <set>
+      <if test="distributionMomentsProduct.momentsId != null">
+        `moments_id` = #{distributionMomentsProduct.momentsId},
+      </if>
+      <if test="distributionMomentsProduct.productId != null">
+        `product_id` = #{distributionMomentsProduct.productId},
+      </if>
+    </set>
+    where id = #{distributionMomentsProduct.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_moments_product where id = #{id}
+  </delete>
+  <delete id="deleteByMomentsIdNotInProductIds">
+    delete from distribution_moments_product
+    where moments_id = #{momentsId}
+    and product_id not in
+    <foreach collection="productIds" item="productId" open="(" close=")" separator=",">
+      #{productId}
+    </foreach>
+  </delete>
+  <delete id="deleteByMomentsId">
+    delete from distribution_moments_product
+    where moments_id = #{momentsId}
+  </delete>
+
+</mapper>

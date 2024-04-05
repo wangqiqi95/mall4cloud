@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.BuyActivityCouponMapper">
+
+
+    <insert id="insertBatch">
+        insert into buy_coupon_activity_coupon
+        (activity_id,coupon_id,stocks,limit_num,price,is_stocks_limit,is_person_limit,is_daily_limit,daily_limit_num)
+        values
+        <foreach collection ="list" item="item" index= "index" separator =",">
+            (#{item.activityId},
+             #{item.couponId},
+             #{item.stocks},
+             #{item.limitNum},
+             #{item.price},
+             #{item.isStocksLimit},
+             #{item.isPersonLimit},
+             #{item.isDailyLimit},
+             #{item.dailyLimitNum})
+        </foreach >
+    </insert>
+
+
+    <select id="couponList" resultType="com.mall4j.cloud.coupon.vo.BuyActivityCouponVO">
+        select c.id as couponId,
+               c.name as name,
+               c.kind as kind,
+               c.type as type,
+               c.reduce_amount as reduceAmount,
+               c.coupon_discount as couponDiscount,
+               c.status as status,
+               c.time_type as timeType,
+               c.after_receive_days as afterReceiveDays,
+               c.start_time as startTime,
+               c.end_time as endTime,
+               bcac.id as id,
+               bcac.limit_num as limitNum,
+               bcac.daily_limit_num as dailyLimitNum,
+               bcac.stocks,
+               bcac.price as price
+        from buy_coupon_activity_coupon bcac
+                 left join t_coupon c on bcac.coupon_id = c.id
+        where bcac.activity_id = #{activityId}
+    </select>
+    <select id="appCouponList" resultType="com.mall4j.cloud.coupon.vo.AppBuyCouponVO">
+        select cac.activity_id as activityId,
+               cac.id as id,
+               cac.coupon_id as couponId,
+               cac.price as price,
+               cac.stocks as stocks,
+               c.name as name,
+               c.cover_url as coverUrl,
+               c.time_type as timeType,
+               c.after_receive_days as afterReceiveDays,
+               c.start_time as startTime,
+               c.end_time as endTime
+        from buy_coupon_activity_coupon cac
+                 LEFT JOIN t_coupon c on c.id = cac.coupon_id
+        where cac.activity_id = #{id}
+    </select>
+
+    <select id="appCouponDetail" resultType="com.mall4j.cloud.coupon.vo.AppBuyCouponDetailVO">
+        select cac.activity_id as activityId,
+               cac.coupon_id as couponId,
+               cac.price as price,
+               cac.stocks as stocks,
+               c.name as name,
+               c.cover_url as coverUrl,
+               c.time_type as timeType,
+               c.after_receive_days as afterReceiveDays,
+               c.start_time as startTime,
+               c.end_time as endTime
+        from buy_coupon_activity_coupon cac
+                 LEFT JOIN t_coupon c on c.id = cac.coupon_id
+        where cac.id = #{id}
+    </select>
+
+    <update id="updateCouponStocks">
+        update buy_coupon_activity_coupon set `version` = `version` + 1, `stocks` = `stocks` - 1
+        where coupon_id = #{couponId} and activity_id = #{activityId} and version = #{version} and `stocks` > 0
+    </update>
+
+</mapper>

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SpuCommMapper">
+  <resultMap id="spuCommMap" type="com.mall4j.cloud.product.model.SpuComm">
+    <id column="spu_comm_id" property="spuCommId" />
+    <result column="spu_id" property="spuId"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="order_item_id" property="orderItemId"/>
+    <result column="user_id" property="userId"/>
+    <result column="content" property="content"/>
+    <result column="reply_content" property="replyContent"/>
+    <result column="reply_time" property="replyTime"/>
+    <result column="reply_sts" property="replySts"/>
+    <result column="postip" property="postip"/>
+    <result column="score" property="score"/>
+    <result column="store_score" property="storeScore"/>
+    <result column="logistics_score" property="logisticsScore"/>
+    <result column="useful_counts" property="usefulCounts"/>
+    <result column="pics" property="pics"/>
+    <result column="is_anonymous" property="isAnonymous"/>
+    <result column="status" property="status"/>
+    <result column="evaluate" property="evaluate"/>
+
+    <result column="ADDIT_CONTENT" property="additContent"/>
+    <result column="ADDIT_REPLY_CONTENT" property="additReplyContent"/>
+    <result column="ADDIT_REPLY_TIME" property="additReplyTime"/>
+    <result column="ADDIT_CREATE_TIME" property="additCreateTime"/>
+    <result column="HAS_IMAGES" property="hasImages"/>
+    <result column="USER_NAME" property="userName"/>
+    <result column="ADDIT_PICS" property="additPics"/>
+    <result column="ADDIT_REPLYSTS" property="additReplySts"/>
+    <result column="MOBILE" property="mobile"/>
+    <result column="ORDER_ID" property="orderId"/>
+    <result column="REPLAY_STAFF_NAME" property="replyStaffName"/>
+    <result column="ADDIT_REPLAY_STAFF_NAME" property="additReplyStaffName"/>
+  </resultMap>
+
+
+  <sql id="Vo_Column_List">
+    `spu_comm_id`,`spu_id`,`shop_id`,`order_item_id`,`user_id`,`content`,`reply_content`,`reply_time`,`reply_sts`,`postip`,`score`,`store_score`,`logistics_score`,`useful_counts`,`pics`,`is_anonymous`,`status`,`evaluate`,ADDIT_CONTENT,ADDIT_REPLY_CONTENT,ADDIT_REPLY_TIME,ADDIT_CREATE_TIME,HAS_IMAGES,USER_NAME,ADDIT_PICS,ADDIT_REPLYSTS,MOBILE,ORDER_ID,REPLAY_STAFF_NAME,ADDIT_REPLAY_STAFF_NAME
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.product.vo.SpuCommVO">
+    select <include refid="Vo_Column_List"/> from spu_comm
+    <where>
+        <if test="shopId != null">
+            shop_id = #{shopId}
+        </if>
+    </where>
+    order by spu_comm_id desc
+  </select>
+  <select id="getBySpuCommId" resultType="com.mall4j.cloud.product.vo.SpuCommVO">
+    select <include refid="Vo_Column_List"/> from spu_comm where spu_comm_id = #{spuCommId}
+  </select>
+  <insert id="save">
+    insert into spu_comm (`shop_id`,`spu_id`,`order_item_id`,`user_id`,`content`,`reply_content`,`reply_time`,`reply_sts`,`postip`,`score`,`store_score`,`logistics_score`,`useful_counts`,`pics`,`is_anonymous`,`status`,
+                          `evaluate`,ADDIT_CONTENT,ADDIT_REPLY_CONTENT,ADDIT_REPLY_TIME,ADDIT_CREATE_TIME,HAS_IMAGES,USER_NAME,ADDIT_PICS,ADDIT_REPLYSTS,MOBILE,ORDER_ID,order_number,
+                          REPLAY_STAFF_NAME,ADDIT_REPLAY_STAFF_NAME)
+    values (#{spuComm.shopId},#{spuComm.spuId},#{spuComm.orderItemId},#{spuComm.userId},#{spuComm.content},#{spuComm.replyContent},#{spuComm.replyTime},#{spuComm.replySts},
+            #{spuComm.postip},#{spuComm.score},#{spuComm.storeScore},#{spuComm.logisticsScore},#{spuComm.usefulCounts},#{spuComm.pics},#{spuComm.isAnonymous},#{spuComm.status},
+            #{spuComm.evaluate},#{spuComm.additContent},#{spuComm.additReplyContent},#{spuComm.additReplyTime},#{spuComm.additCreateTime},#{spuComm.hasImages},#{spuComm.userName},
+            #{spuComm.additPics},#{spuComm.additReplySts},#{spuComm.mobile},#{spuComm.orderId},#{spuComm.orderNumber},
+            #{spuComm.replyStaffName},#{spuComm.additReplyStaffName});
+  </insert>
+  <update id="update">
+    update spu_comm
+    <set>
+      <if test="spuComm.spuId != null">
+        `spu_id` = #{spuComm.spuId},
+      </if>
+      <if test="spuComm.orderItemId != null">
+        `order_item_id` = #{spuComm.orderItemId},
+      </if>
+      <if test="spuComm.userId != null">
+        `user_id` = #{spuComm.userId},
+      </if>
+      <if test="spuComm.content != null">
+        `content` = #{spuComm.content},
+      </if>
+      <if test="spuComm.replyContent != null">
+        `reply_content` = #{spuComm.replyContent},
+      </if>
+      <if test="spuComm.replyTime != null">
+        `reply_time` = #{spuComm.replyTime},
+      </if>
+      <if test="spuComm.replySts != null">
+        `reply_sts` = #{spuComm.replySts},
+      </if>
+      <if test="spuComm.postip != null">
+        `postip` = #{spuComm.postip},
+      </if>
+      <if test="spuComm.score != null">
+        `score` = #{spuComm.score},
+      </if>
+      <if test="spuComm.storeScore != null">
+        `store_score` = #{spuComm.storeScore},
+      </if>
+      <if test="spuComm.logisticsScore != null">
+        `logistics_score` = #{spuComm.logisticsScore},
+      </if>
+      <if test="spuComm.usefulCounts != null">
+        `useful_counts` = #{spuComm.usefulCounts},
+      </if>
+      <if test="spuComm.pics != null">
+        `pics` = #{spuComm.pics},
+      </if>
+      <if test="spuComm.isAnonymous != null">
+        `is_anonymous` = #{spuComm.isAnonymous},
+      </if>
+      <if test="spuComm.status != null">
+        `status` = #{spuComm.status},
+      </if>
+      <if test="spuComm.evaluate != null">
+        `evaluate` = #{spuComm.evaluate},
+      </if>
+      <if test="spuComm.additContent != null">
+        `ADDIT_CONTENT` = #{spuComm.additContent},
+      </if>
+      <if test="spuComm.additReplyContent != null">
+            `ADDIT_REPLY_CONTENT` = #{spuComm.additReplyContent},
+        </if>
+        <if test="spuComm.additReplyTime != null">
+            `ADDIT_REPLY_TIME` = #{spuComm.additReplyTime},
+        </if>
+        <if test="spuComm.additCreateTime != null">
+            `ADDIT_CREATE_TIME` = #{spuComm.additCreateTime},
+        </if>
+        <if test="spuComm.hasImages != null">
+            `HAS_IMAGES` = #{spuComm.hasImages},
+        </if>
+        <if test="spuComm.userName != null">
+            `USER_NAME` = #{spuComm.userName},
+        </if>
+        <if test="spuComm.additPics != null">
+            `ADDIT_PICS` = #{spuComm.additPics},
+        </if>
+        <if test="spuComm.additReplySts != null">
+            `ADDIT_REPLYSTS` = #{spuComm.additReplySts},
+        </if>
+        <if test="spuComm.mobile != null">
+            `MOBILE` = #{spuComm.mobile},
+        </if>
+        <if test="spuComm.orderId != null">
+            `ORDER_ID` = #{spuComm.orderId},
+        </if>
+        <if test="spuComm.replyStaffName != null">
+            `REPLAY_STAFF_NAME` = #{spuComm.replyStaffName},
+        </if>
+        <if test="spuComm.additReplyStaffName != null">
+            `ADDIT_REPLAY_STAFF_NAME` = #{spuComm.additReplyStaffName},
+        </if>
+    </set>
+    where spu_comm_id = #{spuComm.spuCommId}
+  </update>
+  <delete id="deleteById">
+    delete from spu_comm where spu_comm_id = #{spuCommId}
+  </delete>
+  <select id="spuCommPage" resultType="com.mall4j.cloud.product.vo.SpuCommVO">
+        select order_item_id,spu_comm_id,reply_content,score,is_anonymous,pics,user_id,reply_sts,evaluate,content,create_time
+        from spu_comm
+        where spu_id = #{spuId} and (status = 1)
+        <if test="evaluate != 0 and evaluate != 4">
+            and evaluate = #{evaluate}
+        </if>
+        <if test="evaluate == 4">
+            and pics is not null and LENGTH(trim(pics))!=0
+        </if>
+        order by create_time desc
+  </select>
+  <select id="getProdCommDataBySpuId" resultType="com.mall4j.cloud.product.vo.SpuCommStatisticsVO">
+    SELECT COUNT(1)                                               AS number,
+        COUNT(IF(evaluate = 1, 1, NULL))   AS praise_number,
+        COUNT(IF(evaluate = 2, 1, NULL))      AS secondary_number,
+        COUNT(IF(evaluate = 3, 1, NULL))      AS negative_number,
+        COUNT(IF(pics is NOT NULL , 1, NULL)) AS pic_number
+    FROM spu_comm
+    WHERE spu_id = #{spuId} and (status = 1)
+  </select>
+  <select id="getProdCommDataByStar" resultType="com.mall4j.cloud.product.vo.SpuCommStatisticsStarVO">
+    SELECT COUNT(IF(score = 5, 1, NULL)) AS five_stars_number,
+           COUNT(IF(score = 4, 1, NULL)) AS four_stars_number,
+           COUNT(IF(score = 3, 1, NULL)) AS three_stars_number,
+           COUNT(IF(score = 2, 1, NULL)) AS two_stars_number,
+           COUNT(IF(score = 1, 1, NULL)) AS one_stars_number
+    FROM spu_comm
+    WHERE spu_id = #{spuId} AND (status = 1)
+  </select>
+  <select id="spuCommListByUserId" resultType="com.mall4j.cloud.product.vo.SpuCommVO">
+        select spu_comm_id,reply_content,score,is_anonymous,pics,user_id,reply_sts,evaluate,content
+        from spu_comm
+        where user_id = #{userId} and status = 1
+  </select>
+  <select id="getSpuCommByOrderItemId" resultType="com.mall4j.cloud.product.vo.SpuCommVO">
+    select  sc.spu_comm_id, sc.reply_content, sc.score, sc.is_anonymous, sc.pics, sc.user_id,
+            sc.reply_sts, sc.evaluate, sc.content, sc.order_item_id, s.main_img_url AS spuImg
+    from spu_comm sc
+    left join spu s on sc.spu_id = s.spu_id
+    <where>
+        <if test="userId != null">
+          and sc.user_id = #{userId}
+        </if>
+        <if test="orderItemId != null">
+          and sc.order_item_id = #{orderItemId}
+        </if>
+        and sc.status = 1
+    </where>
+    limit 1
+  </select>
+
+  <select id="countGoodReview" resultType="int">
+    select count(*) from spu_comm where `status` = 1 and spu_id = #{spuId} and evaluate = 1
+  </select>
+
+  <!-- 商城后台评价列表 -->
+  <select id="pageList" resultType="com.mall4j.cloud.product.vo.SpuCommVO">
+    select  c.spu_comm_id,c.content,c.reply_content,c.reply_time,c.pics,c.is_anonymous,c.status,c.evaluate,c.ADDIT_CONTENT,c.ADDIT_REPLY_CONTENT,c.ADDIT_REPLY_TIME,c.ADDIT_CREATE_TIME,c.USER_NAME,
+            c.ADDIT_PICS,c.MOBILE,c.ORDER_ID,c.order_number,s.name as prodName,s.main_img_url as prodImage,c.REPLAY_STAFF_NAME,c.ADDIT_REPLAY_STAFF_NAME,
+            c.`spu_id`,c.`shop_id`,c.`order_item_id`,c.`user_id`,c.`reply_sts`,c.ADDIT_REPLYSTS,c.HAS_IMAGES,c.create_time,c.score
+           from spu_comm c left join spu s on s.spu_id = c.spu_id
+    <where>
+        <if test="et.prodName != null and et.prodName !='' "> AND s.name like CONCAT('%', #{et.prodName},'%')  </if>
+        <if test="et.userInfo != null and et.userInfo !='' "> AND (c.USER_NAME like CONCAT('%', #{et.userInfo},'%') OR c.MOBILE like CONCAT('%', #{et.userInfo},'%') ) </if>
+        <if test="et.content != null and et.content !='' "> AND (c.content like CONCAT('%', #{et.content},'%') OR c.ADDIT_CONTENT like CONCAT('%', #{et.content},'%') ) </if>
+        <if test="et.orderId != null and et.orderId !='' "> AND c.ORDER_ID =#{et.orderId}  </if>
+        <if test="et.orderNumber != null and et.orderNumber !='' "> AND c.order_number =#{et.orderNumber}  </if>
+        <if test="et.score != null "> AND c.score =#{et.score}  </if>
+        <if test="et.evaluate != null  "> AND c.evaluate =#{et.evaluate}  </if>
+        <if test="et.status != null  "> AND c.status =#{et.status}  </if>
+        <if test="et.createTimeStart != null and et.createTimeStart !='' "> AND c.create_time >=STR_TO_DATE(CONCAT(#{et.createTimeStart},'-01'),"%Y-%m-%d")  </if>
+        <if test="et.createTimeEnd != null and et.createTimeEnd !='' "> AND c.create_time <![CDATA[< ]]> DATE_ADD(last_day(STR_TO_DATE(CONCAT(#{et.createTimeEnd},'-01'),"%Y-%m-%d")) ,INTERVAL 1 DAY)   </if>
+        <if test="et.type !=null  "> and
+            <foreach collection="et.type" item="item" open="(" close=")" separator=" or ">
+                <if test="item ==1  ">  c.HAS_IMAGES =1  </if>
+                <if test="item ==2  ">  c.ADDIT_CREATE_TIME <![CDATA[< ]]> now()  </if>
+                <if test="item ==3  ">  c.reply_sts =0   </if>
+                <if test="item ==4  ">  c.ADDIT_REPLYSTS =0 AND  c.ADDIT_CREATE_TIME <![CDATA[< ]]> now()  </if>
+            </foreach>
+        </if>
+    </where>
+    order by spu_comm_id desc
+  </select>
+
+</mapper>

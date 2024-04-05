@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.StaffCodeMapper">
+  <resultMap id="staffCodeMap" type="com.mall4j.cloud.biz.model.cp.StaffCode">
+    <id column="id" property="id" />
+    <result column="CODE_NAME" property="codeName"/>
+    <result column="CODE_TYPE" property="codeType"/>
+    <result column="AUTH_TYPE" property="authType"/>
+    <result column="TAGS" property="tags"/>
+    <result column="SLOGAN" property="slogan"/>
+    <result column="CREATE_BY" property="createBy"/>
+    <result column="create_name" property="createName"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="UPDATE_TIME" property="updateTime"/>
+    <result column="STATUS" property="status"/>
+    <result column="STATE" property="state"/>
+    <result column="CONFIG_ID" property="configId"/>
+    <result column="QR_CODE" property="qrCode"/>
+    <result column="origin" property="origin"/>
+    <result column="FLAG" property="flag"/>
+
+
+  </resultMap>
+
+  <resultMap id="staffCodeVoMap" extends="staffCodeMap" type="com.mall4j.cloud.biz.vo.cp.StaffCodeVO">
+    <result column="staff_name" property="staffName"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`CODE_NAME`,`CODE_TYPE`,AUTH_TYPE,TAGS,`SLOGAN`,`STATUS`,`FLAG`,create_name,`CREATE_BY`,`CREATE_TIME`,UPDATE_TIME,STATE,CONFIG_ID,QR_CODE,origin
+  </sql>
+  <select id="list" resultMap="staffCodeVoMap">
+    select  M.id,M.CODE_NAME,M.CODE_TYPE,M.AUTH_TYPE,M.TAGS,M.SLOGAN,M.STATUS,M.create_name,M.CREATE_BY,M.CREATE_TIME,M.UPDATE_TIME,M.QR_CODE,
+           (select group_concat(r.staff_name) from CP_STAFF_CODE_REF r where r.CODE_ID = M.id ) staff_name,origin
+    from CP_STAFF_CODE M
+      where M.FLAG = 0
+        <if test="et.createName != null  "> AND M.create_name like CONCAT('%', #{et.createName},'%')   </if>
+        <if test="et.createTimeStart != null and et.createTimeStart !='' "> AND M.CREATE_TIME >=STR_TO_DATE(#{et.createTimeStart},"%Y-%m-%d")  </if>
+        <if test="et.createTimeEnd != null and et.createTimeEnd !='' "> AND M.CREATE_TIME <![CDATA[< ]]>STR_TO_DATE(#{et.createTimeEnd},"%Y-%m-%d")+1  </if>
+        <if test="et.staffIdList != null">
+          AND M.id IN (select f.CODE_ID from CP_STAFF_CODE_REF f where f.STAFF_ID  in
+            <foreach collection="et.staffIdList" item="staffId" open="(" close=")" separator=",">
+              #{staffId}
+            </foreach>
+          )
+        </if>
+      order by id desc
+  </select>
+
+  <select id="selectByStaffIdAndState" resultMap="staffCodeMap">
+    select cc.`id`,cc.`CODE_NAME`,cc.`CODE_TYPE`,cc.AUTH_TYPE,TAGS,cc.`SLOGAN`
+        from  CP_STAFF_CODE cc
+        JOIN CP_STAFF_CODE_REF cf on cc.ID = cf.CODE_ID
+    where cf.STAFF_ID =#{staffId}
+      and cc.`STATUS`=1
+      and cc.flag=0
+      and cc.state= #{state}
+  </select>
+
+
+  <select id="getById" resultMap="staffCodeMap">
+    select <include refid="Vo_Column_List"/> from CP_STAFF_CODE where id = #{id}
+  </select>
+  <insert id="save"  useGeneratedKeys="true" keyProperty="id" keyColumn="ID" >
+    insert into CP_STAFF_CODE (`CODE_NAME`,`CODE_TYPE`,AUTH_TYPE,TAGS,`SLOGAN`,`STATUS`,`CREATE_BY`,create_name,`CREATE_TIME`,UPDATE_TIME,`FLAG`,CONFIG_ID,STATE,QR_CODE,origin)
+    values (#{et.codeName},#{et.codeType},#{et.authType},#{et.tags},#{et.slogan},#{et.status},#{et.createBy},#{et.createName},#{et.createTime},#{et.updateTime},#{et.flag},#{et.configId},#{et.state},#{et.qrCode},#{et.origin});
+  </insert>
+  <update id="update">
+    update CP_STAFF_CODE
+    <set>
+      <if test="et.codeName != null">
+        `CODE_NAME` = #{et.codeName},
+      </if>
+      <if test="et.codeType != null">
+        `CODE_TYPE` = #{et.codeType},
+      </if>
+      <if test="et.authType != null">
+        `AUTH_TYPE` = #{et.authType},
+      </if>
+      <if test="et.slogan!= null">
+        `SLOGAN` = #{et.slogan},
+      </if>
+      <if test="et.configId != null">
+        `CONFIG_ID` = #{et.configId},
+      </if>
+      <if test="et.state != null">
+        `STATE` = #{et.state},
+      </if>
+      <if test="et.qrCode != null">
+        `QR_CODE` = #{et.qrCode},
+      </if>
+      <if test="et.tags != null">
+        `TAGS` = #{et.tags},
+      </if>
+      <if test="et.updateTime != null">
+        `UPDATE_TIME` = #{et.updateTime},
+      </if>
+      <if test="et.status != null">
+        `STATUS` = #{et.status},
+      </if>
+      <if test="et.flag != null">
+        `FLAG` = #{et.flag},
+      </if>
+      <if test="et.origin != null">
+        `origin` = #{et.origin},
+      </if>
+    </set>
+    where id = #{et.id}
+  </update>
+  <delete id="deleteById">
+    delete from CP_STAFF_CODE where id = #{id}
+  </delete>
+
+
+  <select id="selectByStaffId" resultMap="staffCodeMap">
+    select cc.`id`,cc.`CODE_NAME`,cc.`CODE_TYPE`,cc.AUTH_TYPE,TAGS,cc.`SLOGAN`,cc.QR_CODE
+    from  CP_STAFF_CODE cc
+            JOIN CP_STAFF_CODE_REF cf on cc.ID = cf.CODE_ID
+    where cf.STAFF_ID =#{staffId}
+      and cc.`STATUS`=1
+      and cc.`CODE_TYPE` in (0,1)
+      and cc.flag=0
+  </select>
+
+
+
+</mapper>

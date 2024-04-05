@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.delivery.mapper.DeliveryCompanyMapper">
+  <resultMap id="deliveryCompanyMap" type="com.mall4j.cloud.delivery.model.DeliveryCompany">
+    <id column="delivery_company_id" property="deliveryCompanyId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="name" property="name"/>
+    <result column="home_url" property="homeUrl"/>
+    <result column="ali_no" property="aliNo"/>
+    <result column="bird_no" property="birdNo"/>
+    <result column="hundred_no" property="hundredNo"/>
+    <result column="other_no" property="otherNo"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `delivery_company_id`,`create_time`,`update_time`,`name`,`home_url`,`ali_no`,`bird_no`,`hundred_no`,`other_no`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.api.delivery.vo.DeliveryCompanyVO">
+    select <include refid="Vo_Column_List"/> from delivery_company order by delivery_company_id desc
+  </select>
+  <select id="getByDeliveryCompanyId" resultType="com.mall4j.cloud.api.delivery.vo.DeliveryCompanyVO">
+    select <include refid="Vo_Column_List"/> from delivery_company where delivery_company_id = #{deliveryCompanyId}
+  </select>
+  <select id="getByDeliveryCompanyName" resultType="com.mall4j.cloud.api.delivery.vo.DeliveryCompanyVO">
+    select <include refid="Vo_Column_List"/> from delivery_company where `name` = #{name}
+  </select>
+  <select id="listBySearch" resultType="com.mall4j.cloud.api.delivery.vo.DeliveryCompanyVO">
+    select <include refid="Vo_Column_List"/>
+    from delivery_company
+    <where>
+      <if test="deliveryCompany.name != null">
+        and name like concat('%', #{deliveryCompany.name}, '%')
+      </if>
+      <if test="deliveryCompany.aliNo != null">
+        and ali_no like concat('%', #{deliveryCompany.aliNo}, '%')
+      </if>
+      <if test="deliveryCompany.birdNo != null">
+        and bird_no like concat('%', #{deliveryCompany.birdNo}, '%')
+      </if>
+      <if test="deliveryCompany.hundredNo != null">
+        and hundred_no like concat('%', #{deliveryCompany.hundredNo}, '%')
+      </if>
+    </where>
+    order by delivery_company_id desc
+  </select>
+  <select id="count" resultType="java.lang.Long">
+
+  </select>
+  <insert id="save">
+    insert into delivery_company (`name`,`home_url`,`ali_no`,`bird_no`,`hundred_no`,`other_no`)
+    values (#{deliveryCompany.name},#{deliveryCompany.homeUrl},#{deliveryCompany.aliNo},#{deliveryCompany.birdNo},#{deliveryCompany.hundredNo},#{deliveryCompany.otherNo});
+  </insert>
+  <update id="update">
+    update delivery_company
+    <set>
+      <if test="deliveryCompany.name != null">
+        `name` = #{deliveryCompany.name},
+      </if>
+      <if test="deliveryCompany.homeUrl != null">
+        `home_url` = #{deliveryCompany.homeUrl},
+      </if>
+      <if test="deliveryCompany.aliNo != null">
+        `ali_no` = #{deliveryCompany.aliNo},
+      </if>
+      <if test="deliveryCompany.birdNo != null">
+        `bird_no` = #{deliveryCompany.birdNo},
+      </if>
+      <if test="deliveryCompany.hundredNo != null">
+        `hundred_no` = #{deliveryCompany.hundredNo},
+      </if>
+      <if test="deliveryCompany.otherNo != null">
+        `other_no` = #{deliveryCompany.otherNo},
+      </if>
+    </set>
+    where delivery_company_id = #{deliveryCompany.deliveryCompanyId}
+  </update>
+  <delete id="deleteById">
+    delete from delivery_company where delivery_company_id = #{deliveryCompanyId}
+  </delete>
+
+  <select id="countName" resultType="java.lang.Integer">
+    SELECT COUNT(NAME) FROM `delivery_company` WHERE `name` = #{name}
+    <if test="deliveryCompanyId != null">
+      AND delivery_company_id != #{deliveryCompanyId}
+    </if>
+  </select>
+</mapper>

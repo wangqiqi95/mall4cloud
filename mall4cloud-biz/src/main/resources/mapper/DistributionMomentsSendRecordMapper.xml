@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.DistributionMomentsSendRecordMapper">
+  <resultMap id="distributionMomentsSendRecordMap" type="com.mall4j.cloud.biz.model.cp.DistributionMomentsSendRecord">
+    <id column="id" property="id" />
+    <result column="moments_id" property="momentsId"/>
+    <result column="staff_id" property="staffId"/>
+    <result column="status" property="status"/>
+    <result column="qw_job_id" property="qwJobId"/>
+    <result column="qw_moments_id" property="qwMomentsId"/>
+    <result column="qw_publish_status" property="qwPublishStatus"/>
+    <result column="qw_comment_num" property="qwCommentNum"/>
+    <result column="qw_like_num" property="qwLikeNum"/>
+    <result column="send_time" property="sendTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="qiwei_user_id" property="qiweiUserId"/>
+  </resultMap>
+
+  <resultMap id="distributionMomentsSendRecordVOMap" extends="distributionMomentsSendRecordMap" type="com.mall4j.cloud.biz.vo.cp.DistributionMomentsSendRecordVO">
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `id`,`moments_id`,`staff_id`,`status`,`qw_job_id`,`qw_moments_id`,`qw_publish_status`,`qw_comment_num`,`qw_like_num`,`send_time`,
+    `create_time`,`update_time`,qiwei_user_id
+  </sql>
+  <select id="list" resultMap="distributionMomentsSendRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_moments_send_record order by id desc
+  </select>
+  <select id="page" resultMap="distributionMomentsSendRecordVOMap">
+    select
+        <include refid="Vo_Column_List"/>
+    from
+        distribution_moments_send_record
+    where 1=1 and moments_id = #{request.momentsId}
+    <if test="request.staffIds != null and request.staffIds.size() > 0">
+      AND ( staff_id IN
+            <foreach collection="request.staffIds" item="item" index="index" open="(" separator="," close=")">
+              #{item}
+            </foreach>
+        )
+    </if>
+    <if test="request.status != null">
+      and `qw_publish_status` = #{request.status}
+    </if>
+    <if test="request.sendTimeBegin != null and request.sendTimeEnd !=  null ">
+      AND (send_time between #{request.sendTimeBegin} and #{request.sendTimeEnd})
+    </if>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="distributionMomentsSendRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_moments_send_record where id = #{id}
+  </select>
+  <insert id="save">
+    insert into distribution_moments_send_record (`moments_id`,`staff_id`,`status`,`qw_job_id`,`qw_moments_id`,`qw_publish_status`,
+                                                  `qw_comment_num`,`qw_like_num`,`send_time`,`qiwei_user_id`)
+    values (#{distributionMomentsSendRecord.momentsId},#{distributionMomentsSendRecord.staffId},#{distributionMomentsSendRecord.status},#{distributionMomentsSendRecord.qwJobId},
+            #{distributionMomentsSendRecord.qwMomentsId},#{distributionMomentsSendRecord.qwPublishStatus},#{distributionMomentsSendRecord.qwCommentNum},
+            #{distributionMomentsSendRecord.qwLikeNum},#{distributionMomentsSendRecord.sendTime},#{distributionMomentsSendRecord.qiweiUserId});
+  </insert>
+  <update id="update">
+    update distribution_moments_send_record
+    <set>
+      <if test="distributionMomentsSendRecord.momentsId != null">
+        `moments_id` = #{distributionMomentsSendRecord.momentsId},
+      </if>
+      <if test="distributionMomentsSendRecord.staffId != null">
+        `staff_id` = #{distributionMomentsSendRecord.staffId},
+      </if>
+      <if test="distributionMomentsSendRecord.status != null">
+        `status` = #{distributionMomentsSendRecord.status},
+      </if>
+      <if test="distributionMomentsSendRecord.qwJobId != null">
+        `qw_job_id` = #{distributionMomentsSendRecord.qwJobId},
+      </if>
+      <if test="distributionMomentsSendRecord.qwMomentsId != null">
+        `qw_moments_id` = #{distributionMomentsSendRecord.qwMomentsId},
+      </if>
+      <if test="distributionMomentsSendRecord.qwPublishStatus != null">
+        `qw_publish_status` = #{distributionMomentsSendRecord.qwPublishStatus},
+      </if>
+      <if test="distributionMomentsSendRecord.qwCommentNum != null">
+        `qw_comment_num` = #{distributionMomentsSendRecord.qwCommentNum},
+      </if>
+      <if test="distributionMomentsSendRecord.qwLikeNum != null">
+        `qw_like_num` = #{distributionMomentsSendRecord.qwLikeNum},
+      </if>
+      <if test="distributionMomentsSendRecord.sendTime != null">
+        `send_time` = #{distributionMomentsSendRecord.sendTime},
+      </if>
+    </set>
+    where id = #{distributionMomentsSendRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_moments_send_record where id = #{id}
+  </delete>
+
+  <delete id="deleteByMomentId">
+    delete from distribution_moments_send_record where moments_id = #{momentId}
+  </delete>
+
+
+  <select id="getByMomentIdAndStaffId" resultMap="distributionMomentsSendRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_moments_send_record where moments_id = #{momentsId} and staff_id = #{staffId}
+  </select>
+
+  <update id="doSend">
+    update distribution_moments_send_record
+      set status = 1,
+          qw_job_id = #{jobId},
+          send_time = now()
+    where id = #{id}
+  </update>
+
+  <select id="getMomentTaskResult" resultMap="distributionMomentsSendRecordMap">
+    select
+      *
+    from
+      distribution_moments_send_record
+    where qw_job_id is not null
+        and qw_moments_id is null
+  </select>
+
+  <update id="publish">
+    update distribution_moments_send_record
+    set qw_publish_status = 1, send_time = now()
+    where moments_id = #{momentsId} and qiwei_user_id = #{qiwei_user_id}
+  </update>
+
+  <select id="getMomentCommentsList" resultMap="distributionMomentsSendRecordMap">
+    select
+      *
+    from
+      distribution_moments_send_record
+    where qw_publish_status = 1
+    and send_time >= DATE_SUB(CURDATE(), INTERVAL 14 DAY);
+  </select>
+
+  <update id="updateMomentComment">
+    update distribution_moments_send_record
+      set qw_comment_num = #{commentNum},
+          qw_like_num = #{likeNum}
+    where id = #{id}
+  </update>
+
+  <select id="getByMomentId" resultMap="distributionMomentsSendRecordMap">
+    select
+      *
+    from
+      distribution_moments_send_record
+    where moments_id = #{momentsId}
+  </select>
+
+  <update id="sendSccess">
+    update distribution_moments_send_record
+    set status = 1
+    where id in
+    <foreach collection="sendSccessIds" item="item" index="index" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </update>
+
+</mapper>

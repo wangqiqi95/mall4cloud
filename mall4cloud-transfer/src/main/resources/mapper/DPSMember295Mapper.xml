@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.DPSMember295Mapper">
+  <resultMap id="dPSMember295Map" type="com.mall4j.cloud.transfer.model.DPSMember295">
+    <id column="id" property="id" />
+    <result column="memberType" property="membertype"/>
+    <result column="memberId" property="memberid"/>
+    <result column="memberName" property="membername"/>
+    <result column="unionId" property="unionid"/>
+    <result column="headImgUrl" property="headimgurl"/>
+    <result column="wechatNick" property="wechatnick"/>
+    <result column="gender" property="gender"/>
+    <result column="mobile" property="mobile"/>
+    <result column="phone" property="phone"/>
+    <result column="cardNo" property="cardno"/>
+    <result column="email" property="email"/>
+    <result column="identityCard" property="identitycard"/>
+    <result column="marriageStatus" property="marriagestatus"/>
+    <result column="dateOfBirth" property="dateofbirth"/>
+    <result column="country" property="country"/>
+    <result column="provinceCode" property="provincecode"/>
+    <result column="provinceName" property="provincename"/>
+    <result column="cityCode" property="citycode"/>
+    <result column="cityName" property="cityname"/>
+    <result column="districtCode" property="districtcode"/>
+    <result column="districtName" property="districtname"/>
+    <result column="address" property="address"/>
+    <result column="job" property="job"/>
+    <result column="shopCode" property="shopcode"/>
+    <result column="shopName" property="shopname"/>
+    <result column="shopTypeCode" property="shoptypecode"/>
+    <result column="registerTime" property="registertime"/>
+    <result column="createTime" property="createtime"/>
+    <result column="updateTime" property="updatetime"/>
+    <result column="lastSync" property="lastsync"/>
+    <result column="firstRegisterChannelType" property="firstregisterchanneltype"/>
+    <result column="contactTel" property="contacttel"/>
+    <result column="annualConsumeAmount" property="annualconsumeamount"/>
+    <result column="annualConsumeFrequency" property="annualconsumefrequency"/>
+    <result column="nick" property="nick"/>
+    <result column="interests" property="interests"/>
+    <result column="serviceUser" property="serviceuser"/>
+    <result column="serviceShop" property="serviceshop"/>
+    <result column="regSaler" property="regsaler"/>
+    <result column="mobileCity" property="mobilecity"/>
+    <result column="developClerk" property="developclerk"/>
+    <result column="followWechat" property="followwechat"/>
+    <result column="wechatMall" property="wechatmall"/>
+    <result column="followSport" property="followsport"/>
+    <result column="boundWechat" property="boundwechat"/>
+    <result column="followKidWechat" property="followkidwechat"/>
+    <result column="haveBaby" property="havebaby"/>
+    <result column="followLifestyle" property="followlifestyle"/>
+    <result column="hobby" property="hobby"/>
+    <result column="activityId" property="activityid"/>
+    <result column="code" property="code"/>
+    <result column="wxCode" property="wxcode"/>
+    <result column="inviteVipCode" property="invitevipcode"/>
+    <result column="inviteVipOldCode" property="invitevipoldcode"/>
+    <result column="inviteVipMobileNo" property="invitevipmobileno"/>
+    <result column="ezrBirthday" property="ezrbirthday"/>
+    <result column="refereePhone" property="refereephone"/>
+    <result column="zipCode" property="zipcode"/>
+    <result column="regBrand" property="regbrand"/>
+    <result column="mobileToProvince" property="mobiletoprovince"/>
+    <result column="mobileToService" property="mobiletoservice"/>
+    <result column="birthdayLimit" property="birthdaylimit"/>
+    <result column="haveRegCoupon" property="haveregcoupon"/>
+    <result column="haveInfoPoint" property="haveinfopoint"/>
+    <result column="regType" property="regtype"/>
+    <result column="vipType" property="viptype"/>
+    <result column="firstBabyGender" property="firstbabygender"/>
+    <result column="secondBabyGender" property="secondbabygender"/>
+    <result column="thirdBabyGender" property="thirdbabygender"/>
+    <result column="firstBabyBirth" property="firstbabybirth"/>
+    <result column="thirdBabyBirth" property="thirdbabybirth"/>
+    <result column="secondBabyBirth" property="secondbabybirth"/>
+    <result column="jdPin" property="jdpin"/>
+    <result column="douYin" property="douyin"/>
+    <result column="registerOfficialAccount" property="registerofficialaccount"/>
+    <result column="shopNature" property="shopnature"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`memberType`,`memberId`,`memberName`,`unionId`,`headImgUrl`,`wechatNick`,`gender`,`mobile`,`phone`,`cardNo`,`email`,`identityCard`,`marriageStatus`,`dateOfBirth`,`country`,`provinceCode`,`provinceName`,`cityCode`,`cityName`,`districtCode`,`districtName`,`address`,`job`,`shopCode`,`shopName`,`shopTypeCode`,`registerTime`,`createTime`,`updateTime`,`lastSync`,`firstRegisterChannelType`,`contactTel`,`annualConsumeAmount`,`annualConsumeFrequency`,`nick`,`interests`,`serviceUser`,`serviceShop`,`regSaler`,`mobileCity`,`developClerk`,`followWechat`,`wechatMall`,`followSport`,`boundWechat`,`followKidWechat`,`haveBaby`,`followLifestyle`,`hobby`,`activityId`,`code`,`wxCode`,`inviteVipCode`,`inviteVipOldCode`,`inviteVipMobileNo`,`ezrBirthday`,`refereePhone`,`zipCode`,`regBrand`,`mobileToProvince`,`mobileToService`,`birthdayLimit`,`haveRegCoupon`,`haveInfoPoint`,`regType`,`vipType`,`firstBabyGender`,`secondBabyGender`,`thirdBabyGender`,`firstBabyBirth`,`thirdBabyBirth`,`secondBabyBirth`,`jdPin`,`douYin`,`registerOfficialAccount`,`shopNature`
+  </sql>
+  <select id="list" resultMap="dPSMember295Map">
+    select <include refid="Vo_Column_List"/> from kylineskechers_datamodel.d_p_s_member_295 where unionId is not null
+    order by id desc
+  </select>
+  <select id="getById" resultMap="dPSMember295Map">
+    select <include refid="Vo_Column_List"/> from kylineskechers_datamodel.d_p_s_member_295 where id = #{id}
+  </select>
+  <insert id="save">
+    insert into kylineskechers_datamodel.d_p_s_member_295 (`memberType`,`memberId`,`memberName`,`unionId`,`headImgUrl`,`wechatNick`,`gender`,`mobile`,`phone`,`cardNo`,`email`,`identityCard`,`marriageStatus`,`dateOfBirth`,`country`,`provinceCode`,`provinceName`,`cityCode`,`cityName`,`districtCode`,`districtName`,`address`,`job`,`shopCode`,`shopName`,`shopTypeCode`,`registerTime`,`createTime`,`updateTime`,`lastSync`,`firstRegisterChannelType`,`contactTel`,`annualConsumeAmount`,`annualConsumeFrequency`,`nick`,`interests`,`serviceUser`,`serviceShop`,`regSaler`,`mobileCity`,`developClerk`,`followWechat`,`wechatMall`,`followSport`,`boundWechat`,`followKidWechat`,`haveBaby`,`followLifestyle`,`hobby`,`activityId`,`code`,`wxCode`,`inviteVipCode`,`inviteVipOldCode`,`inviteVipMobileNo`,`ezrBirthday`,`refereePhone`,`zipCode`,`regBrand`,`mobileToProvince`,`mobileToService`,`birthdayLimit`,`haveRegCoupon`,`haveInfoPoint`,`regType`,`vipType`,`firstBabyGender`,`secondBabyGender`,`thirdBabyGender`,`firstBabyBirth`,`thirdBabyBirth`,`secondBabyBirth`,`jdPin`,`douYin`,`registerOfficialAccount`,`shopNature`)
+    values (#{dPSMember295.membertype},#{dPSMember295.memberid},#{dPSMember295.membername},#{dPSMember295.unionid},#{dPSMember295.headimgurl},#{dPSMember295.wechatnick},#{dPSMember295.gender},#{dPSMember295.mobile},#{dPSMember295.phone},#{dPSMember295.cardno},#{dPSMember295.email},#{dPSMember295.identitycard},#{dPSMember295.marriagestatus},#{dPSMember295.dateofbirth},#{dPSMember295.country},#{dPSMember295.provincecode},#{dPSMember295.provincename},#{dPSMember295.citycode},#{dPSMember295.cityname},#{dPSMember295.districtcode},#{dPSMember295.districtname},#{dPSMember295.address},#{dPSMember295.job},#{dPSMember295.shopcode},#{dPSMember295.shopname},#{dPSMember295.shoptypecode},#{dPSMember295.registertime},#{dPSMember295.createtime},#{dPSMember295.updatetime},#{dPSMember295.lastsync},#{dPSMember295.firstregisterchanneltype},#{dPSMember295.contacttel},#{dPSMember295.annualconsumeamount},#{dPSMember295.annualconsumefrequency},#{dPSMember295.nick},#{dPSMember295.interests},#{dPSMember295.serviceuser},#{dPSMember295.serviceshop},#{dPSMember295.regsaler},#{dPSMember295.mobilecity},#{dPSMember295.developclerk},#{dPSMember295.followwechat},#{dPSMember295.wechatmall},#{dPSMember295.followsport},#{dPSMember295.boundwechat},#{dPSMember295.followkidwechat},#{dPSMember295.havebaby},#{dPSMember295.followlifestyle},#{dPSMember295.hobby},#{dPSMember295.activityid},#{dPSMember295.code},#{dPSMember295.wxcode},#{dPSMember295.invitevipcode},#{dPSMember295.invitevipoldcode},#{dPSMember295.invitevipmobileno},#{dPSMember295.ezrbirthday},#{dPSMember295.refereephone},#{dPSMember295.zipcode},#{dPSMember295.regbrand},#{dPSMember295.mobiletoprovince},#{dPSMember295.mobiletoservice},#{dPSMember295.birthdaylimit},#{dPSMember295.haveregcoupon},#{dPSMember295.haveinfopoint},#{dPSMember295.regtype},#{dPSMember295.viptype},#{dPSMember295.firstbabygender},#{dPSMember295.secondbabygender},#{dPSMember295.thirdbabygender},#{dPSMember295.firstbabybirth},#{dPSMember295.thirdbabybirth},#{dPSMember295.secondbabybirth},#{dPSMember295.jdpin},#{dPSMember295.douyin},#{dPSMember295.registerofficialaccount},#{dPSMember295.shopnature});
+  </insert>
+  <update id="update">
+    update kylineskechers_datamodel.d_p_s_member_295
+    <set>
+      <if test="dPSMember295.membertype != null">
+        `memberType` = #{dPSMember295.membertype},
+      </if>
+      <if test="dPSMember295.memberid != null">
+        `memberId` = #{dPSMember295.memberid},
+      </if>
+      <if test="dPSMember295.membername != null">
+        `memberName` = #{dPSMember295.membername},
+      </if>
+      <if test="dPSMember295.unionid != null">
+        `unionId` = #{dPSMember295.unionid},
+      </if>
+      <if test="dPSMember295.headimgurl != null">
+        `headImgUrl` = #{dPSMember295.headimgurl},
+      </if>
+      <if test="dPSMember295.wechatnick != null">
+        `wechatNick` = #{dPSMember295.wechatnick},
+      </if>
+      <if test="dPSMember295.gender != null">
+        `gender` = #{dPSMember295.gender},
+      </if>
+      <if test="dPSMember295.mobile != null">
+        `mobile` = #{dPSMember295.mobile},
+      </if>
+      <if test="dPSMember295.phone != null">
+        `phone` = #{dPSMember295.phone},
+      </if>
+      <if test="dPSMember295.cardno != null">
+        `cardNo` = #{dPSMember295.cardno},
+      </if>
+      <if test="dPSMember295.email != null">
+        `email` = #{dPSMember295.email},
+      </if>
+      <if test="dPSMember295.identitycard != null">
+        `identityCard` = #{dPSMember295.identitycard},
+      </if>
+      <if test="dPSMember295.marriagestatus != null">
+        `marriageStatus` = #{dPSMember295.marriagestatus},
+      </if>
+      <if test="dPSMember295.dateofbirth != null">
+        `dateOfBirth` = #{dPSMember295.dateofbirth},
+      </if>
+      <if test="dPSMember295.country != null">
+        `country` = #{dPSMember295.country},
+      </if>
+      <if test="dPSMember295.provincecode != null">
+        `provinceCode` = #{dPSMember295.provincecode},
+      </if>
+      <if test="dPSMember295.provincename != null">
+        `provinceName` = #{dPSMember295.provincename},
+      </if>
+      <if test="dPSMember295.citycode != null">
+        `cityCode` = #{dPSMember295.citycode},
+      </if>
+      <if test="dPSMember295.cityname != null">
+        `cityName` = #{dPSMember295.cityname},
+      </if>
+      <if test="dPSMember295.districtcode != null">
+        `districtCode` = #{dPSMember295.districtcode},
+      </if>
+      <if test="dPSMember295.districtname != null">
+        `districtName` = #{dPSMember295.districtname},
+      </if>
+      <if test="dPSMember295.address != null">
+        `address` = #{dPSMember295.address},
+      </if>
+      <if test="dPSMember295.job != null">
+        `job` = #{dPSMember295.job},
+      </if>
+      <if test="dPSMember295.shopcode != null">
+        `shopCode` = #{dPSMember295.shopcode},
+      </if>
+      <if test="dPSMember295.shopname != null">
+        `shopName` = #{dPSMember295.shopname},
+      </if>
+      <if test="dPSMember295.shoptypecode != null">
+        `shopTypeCode` = #{dPSMember295.shoptypecode},
+      </if>
+      <if test="dPSMember295.registertime != null">
+        `registerTime` = #{dPSMember295.registertime},
+      </if>
+      <if test="dPSMember295.createtime != null">
+        `createTime` = #{dPSMember295.createtime},
+      </if>
+      <if test="dPSMember295.updatetime != null">
+        `updateTime` = #{dPSMember295.updatetime},
+      </if>
+      <if test="dPSMember295.lastsync != null">
+        `lastSync` = #{dPSMember295.lastsync},
+      </if>
+      <if test="dPSMember295.firstregisterchanneltype != null">
+        `firstRegisterChannelType` = #{dPSMember295.firstregisterchanneltype},
+      </if>
+      <if test="dPSMember295.contacttel != null">
+        `contactTel` = #{dPSMember295.contacttel},
+      </if>
+      <if test="dPSMember295.annualconsumeamount != null">
+        `annualConsumeAmount` = #{dPSMember295.annualconsumeamount},
+      </if>
+      <if test="dPSMember295.annualconsumefrequency != null">
+        `annualConsumeFrequency` = #{dPSMember295.annualconsumefrequency},
+      </if>
+      <if test="dPSMember295.nick != null">
+        `nick` = #{dPSMember295.nick},
+      </if>
+      <if test="dPSMember295.interests != null">
+        `interests` = #{dPSMember295.interests},
+      </if>
+      <if test="dPSMember295.serviceuser != null">
+        `serviceUser` = #{dPSMember295.serviceuser},
+      </if>
+      <if test="dPSMember295.serviceshop != null">
+        `serviceShop` = #{dPSMember295.serviceshop},
+      </if>
+      <if test="dPSMember295.regsaler != null">
+        `regSaler` = #{dPSMember295.regsaler},
+      </if>
+      <if test="dPSMember295.mobilecity != null">
+        `mobileCity` = #{dPSMember295.mobilecity},
+      </if>
+      <if test="dPSMember295.developclerk != null">
+        `developClerk` = #{dPSMember295.developclerk},
+      </if>
+      <if test="dPSMember295.followwechat != null">
+        `followWechat` = #{dPSMember295.followwechat},
+      </if>
+      <if test="dPSMember295.wechatmall != null">
+        `wechatMall` = #{dPSMember295.wechatmall},
+      </if>
+      <if test="dPSMember295.followsport != null">
+        `followSport` = #{dPSMember295.followsport},
+      </if>
+      <if test="dPSMember295.boundwechat != null">
+        `boundWechat` = #{dPSMember295.boundwechat},
+      </if>
+      <if test="dPSMember295.followkidwechat != null">
+        `followKidWechat` = #{dPSMember295.followkidwechat},
+      </if>
+      <if test="dPSMember295.havebaby != null">
+        `haveBaby` = #{dPSMember295.havebaby},
+      </if>
+      <if test="dPSMember295.followlifestyle != null">
+        `followLifestyle` = #{dPSMember295.followlifestyle},
+      </if>
+      <if test="dPSMember295.hobby != null">
+        `hobby` = #{dPSMember295.hobby},
+      </if>
+      <if test="dPSMember295.activityid != null">
+        `activityId` = #{dPSMember295.activityid},
+      </if>
+      <if test="dPSMember295.code != null">
+        `code` = #{dPSMember295.code},
+      </if>
+      <if test="dPSMember295.wxcode != null">
+        `wxCode` = #{dPSMember295.wxcode},
+      </if>
+      <if test="dPSMember295.invitevipcode != null">
+        `inviteVipCode` = #{dPSMember295.invitevipcode},
+      </if>
+      <if test="dPSMember295.invitevipoldcode != null">
+        `inviteVipOldCode` = #{dPSMember295.invitevipoldcode},
+      </if>
+      <if test="dPSMember295.invitevipmobileno != null">
+        `inviteVipMobileNo` = #{dPSMember295.invitevipmobileno},
+      </if>
+      <if test="dPSMember295.ezrbirthday != null">
+        `ezrBirthday` = #{dPSMember295.ezrbirthday},
+      </if>
+      <if test="dPSMember295.refereephone != null">
+        `refereePhone` = #{dPSMember295.refereephone},
+      </if>
+      <if test="dPSMember295.zipcode != null">
+        `zipCode` = #{dPSMember295.zipcode},
+      </if>
+      <if test="dPSMember295.regbrand != null">
+        `regBrand` = #{dPSMember295.regbrand},
+      </if>
+      <if test="dPSMember295.mobiletoprovince != null">
+        `mobileToProvince` = #{dPSMember295.mobiletoprovince},
+      </if>
+      <if test="dPSMember295.mobiletoservice != null">
+        `mobileToService` = #{dPSMember295.mobiletoservice},
+      </if>
+      <if test="dPSMember295.birthdaylimit != null">
+        `birthdayLimit` = #{dPSMember295.birthdaylimit},
+      </if>
+      <if test="dPSMember295.haveregcoupon != null">
+        `haveRegCoupon` = #{dPSMember295.haveregcoupon},
+      </if>
+      <if test="dPSMember295.haveinfopoint != null">
+        `haveInfoPoint` = #{dPSMember295.haveinfopoint},
+      </if>
+      <if test="dPSMember295.regtype != null">
+        `regType` = #{dPSMember295.regtype},
+      </if>
+      <if test="dPSMember295.viptype != null">
+        `vipType` = #{dPSMember295.viptype},
+      </if>
+      <if test="dPSMember295.firstbabygender != null">
+        `firstBabyGender` = #{dPSMember295.firstbabygender},
+      </if>
+      <if test="dPSMember295.secondbabygender != null">
+        `secondBabyGender` = #{dPSMember295.secondbabygender},
+      </if>
+      <if test="dPSMember295.thirdbabygender != null">
+        `thirdBabyGender` = #{dPSMember295.thirdbabygender},
+      </if>
+      <if test="dPSMember295.firstbabybirth != null">
+        `firstBabyBirth` = #{dPSMember295.firstbabybirth},
+      </if>
+      <if test="dPSMember295.thirdbabybirth != null">
+        `thirdBabyBirth` = #{dPSMember295.thirdbabybirth},
+      </if>
+      <if test="dPSMember295.secondbabybirth != null">
+        `secondBabyBirth` = #{dPSMember295.secondbabybirth},
+      </if>
+      <if test="dPSMember295.jdpin != null">
+        `jdPin` = #{dPSMember295.jdpin},
+      </if>
+      <if test="dPSMember295.douyin != null">
+        `douYin` = #{dPSMember295.douyin},
+      </if>
+      <if test="dPSMember295.registerofficialaccount != null">
+        `registerOfficialAccount` = #{dPSMember295.registerofficialaccount},
+      </if>
+      <if test="dPSMember295.shopnature != null">
+        `shopNature` = #{dPSMember295.shopnature},
+      </if>
+    </set>
+    where id = #{dPSMember295.id}
+  </update>
+  <delete id="deleteById">
+    delete from kylineskechers_datamodel.d_p_s_member_295 where id = #{id}
+  </delete>
+
+</mapper>

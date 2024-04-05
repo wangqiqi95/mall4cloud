@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.PushActivityCouponMapper">
+
+
+    <insert id="insertBatch">
+        insert into push_coupon_activity_coupon
+        (activity_id,coupon_id,stocks,limit_num,is_stocks_limit,is_person_limit,is_daily_limit,daily_limit_num)
+        values
+        <foreach collection ="list" item="item" index= "index" separator =",">
+            (#{item.activityId},
+             #{item.couponId},
+             #{item.stocks},
+             #{item.limitNum},
+             #{item.isStocksLimit},
+             #{item.isPersonLimit},
+             #{item.isDailyLimit},
+             #{item.dailyLimitNum})
+        </foreach >
+    </insert>
+
+
+    <select id="couponList" resultType="com.mall4j.cloud.coupon.vo.ActivityCouponVO">
+        select c.id as couponId,
+               c.name as name,
+               c.kind as kind,
+               c.type as type,
+               c.reduce_amount as reduceAmount,
+               c.coupon_discount as couponDiscount,
+               c.status as status,
+               c.time_type as timeType,
+               c.after_receive_days as afterReceiveDays,
+               c.start_time as startTime,
+               c.end_time as endTime,
+               pcac.id as id,
+               pcac.limit_num as limitNum,
+               pcac.daily_limit_num as dailyLimitNum,
+               pcac.stocks
+        from push_coupon_activity_coupon pcac
+                 left join t_coupon c on pcac.coupon_id = c.id
+        where pcac.activity_id = #{activityId}
+    </select>
+
+    <select id="couponDetail" resultType="com.mall4j.cloud.coupon.vo.CouponDetailForShoppersVO">
+        select pcac.id as id,
+               c.id as couponId,
+               c.name as name,
+               c.type as type,
+               c.reduce_amount as reduceAmount,
+               c.coupon_discount as couponDiscount,
+               c.time_type as timeType,
+               c.after_receive_days as afterReceiveDays,
+               c.start_time as startTime,
+               c.end_time as endTime,
+               c.amount_limit_type as amountLimitType,
+               c.amount_limit_num as amountLimitNum,
+               c.commodity_limit_type as commodityLimitType,
+               c.commodity_limit_num as commodityLimitNum,
+               c.commodity_scope_type as commodityScopeType,
+               c.apply_scope_type as applyScopeType,
+               c.description as description,
+               pcac.activity_id as activityId,
+               pcac.limit_num as limitNum,
+               pcac.stocks
+        from push_coupon_activity_coupon pcac
+                 left join t_coupon c on pcac.coupon_id = c.id
+        where pcac.id = #{id}
+    </select>
+
+<!--    update push_coupon_activity_coupon set `version` = `version` + 1, `stocks` = `stocks` - 1-->
+<!--    where coupon_id = #{couponId} and activity_id = #{activityId} and version = #{version} and `stocks` > 0-->
+    <update id="updateCouponStocks">
+        update push_coupon_activity_coupon set `version` = `version` + 1, `stocks` = `stocks` - 1
+        where coupon_id = #{couponId} and activity_id = #{activityId} and `stocks` > 0
+    </update>
+</mapper>

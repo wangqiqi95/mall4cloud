@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.TCouponCodeMapper">
+
+    <insert id="insertBatch">
+        insert into t_coupon_code
+        (coupon_id,coupon_code)
+        values
+        <foreach collection ="list" item="item" index= "index" separator =",">
+            (#{item.couponId},#{item.couponCode})
+        </foreach >
+    </insert>
+
+    <select id="list" resultType="com.mall4j.cloud.coupon.model.TCouponCode">
+        select * from t_coupon_code
+        <where>
+            <if test="couponId != null">
+                and coupon_id = #{couponId}
+            </if>
+            <if test="couponCode != null">
+                and coupon_code = #{couponCode}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <update id="receive">
+        update t_coupon_code set status = 1 where id = #{id} and status = 0
+    </update>
+
+    <select id="getLimitOne" resultType="com.mall4j.cloud.coupon.model.TCouponCode">
+        select * from t_coupon_code
+        where
+                 coupon_id = #{couponId}
+                and status = #{status}
+        limit 1
+    </select>
+</mapper>

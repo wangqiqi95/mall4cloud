@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.chat.KeyWordLabelMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.mall4j.cloud.biz.model.chat.KeyWordLabel" id="KeyWordLabelMap">
+        <result property="id" column="id"/>
+        <result property="tagName" column="tag_name"/>
+        <result property="tagValue" column="tag_value"/>
+        <result property="tagId" column="tag_id"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id,tag_name,tag_value,tag_id
+    </sql>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="param.id">
+        insert into key_word_label (`tag_name`,`tag_value`,`tag_id`
+        values (#{param.tagName},#{param.tagValue},#{param.tagId})
+    </insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="param.id" parameterType="com.mall4j.cloud.biz.model.chat.KeyWordLabel">
+        insert into key_word_label
+        (`tag_name`,
+        `tag_value`,
+        `tag_id`)
+        values
+        <foreach collection="param" item="item" separator=",">
+            (#{item.tagName},
+            #{item.tagValue},
+            #{item.tagId})
+        </foreach>
+    </insert>
+
+    <select id="getBySessionId" resultType="com.mall4j.cloud.biz.model.chat.EndStatement">
+        select id,
+        name,
+        mate,
+        session_id
+        from end_statement where session_id in
+        <foreach collection="sessionId" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+    <delete id="deleteById">
+        delete from end_statement where session_id = #{id}
+    </delete>
+
+    <select id="getByName" resultType="com.mall4j.cloud.biz.model.chat.KeyWordLabel">
+        select * from key_word_label where tag_id = #{param.tagId} and tag_name = #{param.tagName}
+    </select>
+
+    <select id="getByTagId" resultType="com.mall4j.cloud.biz.model.chat.KeyWordLabel">
+        select id,
+        tag_name,
+        tag_value,
+        tag_id
+        from key_word_label where tag_id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

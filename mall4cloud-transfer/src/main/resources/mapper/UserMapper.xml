@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.UserMapper">
+    <resultMap id="userMap" type="com.mall4j.cloud.transfer.model.User">
+        <id column="user_id" property="userId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="sex" property="sex"/>
+        <result column="birth_date" property="birthDate"/>
+        <result column="pic" property="pic"/>
+        <result column="status" property="status"/>
+        <result column="level" property="level"/>
+        <result column="vip_end_time" property="vipEndTime"/>
+        <result column="level_type" property="levelType"/>
+        <result column="phone" property="phone"/>
+        <result column="vip_level" property="vipLevel"/>
+        <result column="org_id" property="orgId"/>
+        <result column="store_id" property="storeId"/>
+        <result column="vipcode" property="vipcode"/>
+        <result column="staff_id" property="staffId"/>
+        <result column="veeker_status" property="veekerStatus"/>
+        <result column="veeker_audit_status" property="veekerAuditStatus"/>
+        <result column="add_wechat" property="addWechat"/>
+        <result column="veeker_apply_time" property="veekerApplyTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="union_id" property="unionId"/>
+        <result column="open_id" property="openId"/>
+        <result column="referee_phone" property="refereePhone"/>
+        <result column="customer_name" property="customerName"/>
+        <result column="email" property="email"/>
+        <result column="job" property="job"/>
+        <result column="have_baby" property="haveBaby"/>
+        <result column="baby_birthday" property="babyBirthday"/>
+        <result column="interests" property="interests"/>
+        <result column="hobby" property="hobby"/>
+        <result column="second_baby_sex" property="secondBabySex"/>
+        <result column="second_baby_birth" property="secondBabyBirth"/>
+        <result column="third_baby_sex" property="thirdBabySex"/>
+        <result column="third_baby_birth" property="thirdBabyBirth"/>
+        <result column="province_id" property="provinceId"/>
+        <result column="province" property="province"/>
+        <result column="city_id" property="cityId"/>
+        <result column="city" property="city"/>
+        <result column="area_id" property="areaId"/>
+        <result column="area" property="area"/>
+        <result column="name" property="name"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `user_id`
+        ,
+        `create_time`,
+        `update_time`,
+        `nick_name`,
+        `sex`,
+        `birth_date`,
+        `pic`,
+        `status`,
+        `level`,
+        `vip_end_time`,
+        `level_type`,
+        `phone`,
+        `vip_level`,
+        `org_id`,
+        `store_id`,
+        `vipcode`,
+        `staff_id`,
+        `veeker_status`,
+        `veeker_audit_status`,
+        `add_wechat`,
+        `veeker_apply_time`,
+        `create_by`,
+        `update_by`,
+        `union_id`,
+        `open_id`,
+        `referee_phone`,
+        `customer_name`,
+        `email`,
+        `job`,
+        `have_baby`,
+        `baby_birthday`,
+        `interests`,
+        `hobby`,
+        `second_baby_sex`,
+        `second_baby_birth`,
+        `third_baby_sex`,
+        `third_baby_birth`,
+        `province_id`,
+        `province`,
+        `city_id`,
+        `city`,
+        `area_id`,
+        `area`,
+        `name`
+    </sql>
+    <select id="list" resultMap="userMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from user order by user_id desc
+    </select>
+    <select id="getByUserId" resultMap="userMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from user where user_id = #{userId}
+    </select>
+    <select id="getByVipCode" resultMap="userMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from user where vipcode = #{vipCode}
+    </select>
+    <select id="getByVipCode2" resultMap="userMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall4cloud_user.user where vipcode = #{vipCode}
+    </select>
+    <select id="getByVipCode3" resultMap="userMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from user3 where vipcode = #{vipCode}
+    </select>
+
+    <select id="getByunionId2" resultMap="userMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall4cloud_user.user where union_id = #{unionId}
+    </select>
+
+    <select id="getByunionIdAll" resultMap="userMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall4cloud_user.user where union_id = #{unionId} limit 1
+    </select>
+
+    <update id="updateVipCodeById">
+        update user2
+        set
+            vipcode = #{vipCode}
+        where user_id = #{userId}
+    </update>
+    <insert id="save">
+        insert into user (user_id,`nick_name`, `sex`, `birth_date`, `pic`, `status`, `level`, `vip_end_time`, `level_type`,
+                          `phone`, `vip_level`, `org_id`, `store_id`, `vipcode`, `staff_id`, `veeker_status`,
+                          `veeker_audit_status`, `add_wechat`, `veeker_apply_time`, `create_by`, `update_by`,
+                          `union_id`, `open_id`, `referee_phone`, `customer_name`, `email`, `job`, `have_baby`,
+                          `baby_birthday`, `interests`, `hobby`, `second_baby_sex`, `second_baby_birth`,
+                          `third_baby_sex`, `third_baby_birth`, `province_id`, `province`, `city_id`, `city`, `area_id`,
+                          `area`, `name`)
+        values (#{user.userId},#{user.nickName}, #{user.sex}, #{user.birthDate}, #{user.pic}, #{user.status}, #{user.level},
+                #{user.vipEndTime}, #{user.levelType}, #{user.phone}, #{user.vipLevel}, #{user.orgId}, #{user.storeId},
+                #{user.vipcode}, #{user.staffId}, #{user.veekerStatus}, #{user.veekerAuditStatus}, #{user.addWechat},
+                #{user.veekerApplyTime}, #{user.createBy}, #{user.updateBy}, #{user.unionId}, #{user.openId},
+                #{user.refereePhone}, #{user.customerName}, #{user.email}, #{user.job}, #{user.haveBaby},
+                #{user.babyBirthday}, #{user.interests}, #{user.hobby}, #{user.secondBabySex}, #{user.secondBabyBirth},
+                #{user.thirdBabySex}, #{user.thirdBabyBirth}, #{user.provinceId}, #{user.province}, #{user.cityId},
+                #{user.city}, #{user.areaId}, #{user.area}, #{user.name});
+    </insert>
+    <insert id="batchSave">
+        insert into user
+        (user_id,`nick_name`,`sex`,`birth_date`,`pic`,`status`,`level`,`vip_end_time`,`level_type`,`phone`,`vip_level`,
+        `org_id`,`store_id`,`vipcode`,`staff_id`,`veeker_status`,`veeker_audit_status`,`add_wechat`,`veeker_apply_time`,
+        `create_by`,`update_by`,`union_id`,`open_id`,`referee_phone`,`customer_name`,`email`,`job`,`have_baby`,`baby_birthday`,
+        `interests`,`hobby`,`second_baby_sex`,`second_baby_birth`,`third_baby_sex`,`third_baby_birth`,
+        `province_id`,`province`,`city_id`,`city`,`area_id`,`area`,`name`,create_time,update_time)
+        values
+        <foreach collection="users" item="user" separator=",">
+            (#{user.userId},#{user.nickName},#{user.sex},#{user.birthDate},#{user.pic},#{user.status},#{user.level},#{user.vipEndTime},
+            #{user.levelType},#{user.phone},#{user.vipLevel},#{user.orgId},#{user.storeId},#{user.vipcode},#{user.staffId},
+            #{user.veekerStatus},#{user.veekerAuditStatus},#{user.addWechat},#{user.veekerApplyTime},
+            #{user.createBy},#{user.updateBy},#{user.unionId},#{user.openId},#{user.refereePhone},
+            #{user.customerName},#{user.email},#{user.job},#{user.haveBaby},#{user.babyBirthday},
+            #{user.interests},#{user.hobby},#{user.secondBabySex},#{user.secondBabyBirth},#{user.thirdBabySex},
+            #{user.thirdBabyBirth},#{user.provinceId},#{user.province},#{user.cityId},#{user.city},#{user.areaId},
+            #{user.area},#{user.name},#{user.createTime},#{user.updateTime})
+        </foreach>
+    </insert>
+
+    <insert id="batchSave2">
+        insert into user_add
+        (user_id,`nick_name`,`sex`,`birth_date`,`pic`,`status`,`level`,`vip_end_time`,`level_type`,`phone`,`vip_level`,
+        `org_id`,`store_id`,`vipcode`,`staff_id`,`veeker_status`,`veeker_audit_status`,`add_wechat`,`veeker_apply_time`,
+        `create_by`,`update_by`,`union_id`,`open_id`,`referee_phone`,`customer_name`,`email`,`job`,`have_baby`,`baby_birthday`,
+        `interests`,`hobby`,`second_baby_sex`,`second_baby_birth`,`third_baby_sex`,`third_baby_birth`,
+        `province_id`,`province`,`city_id`,`city`,`area_id`,`area`,`name`,create_time,update_time)
+        values
+        <foreach collection="users" item="user" separator=",">
+            (#{user.userId},#{user.nickName},#{user.sex},#{user.birthDate},#{user.pic},#{user.status},#{user.level},#{user.vipEndTime},
+            #{user.levelType},#{user.phone},#{user.vipLevel},#{user.orgId},#{user.storeId},#{user.vipcode},#{user.staffId},
+            #{user.veekerStatus},#{user.veekerAuditStatus},#{user.addWechat},#{user.veekerApplyTime},
+            #{user.createBy},#{user.updateBy},#{user.unionId},#{user.openId},#{user.refereePhone},
+            #{user.customerName},#{user.email},#{user.job},#{user.haveBaby},#{user.babyBirthday},
+            #{user.interests},#{user.hobby},#{user.secondBabySex},#{user.secondBabyBirth},#{user.thirdBabySex},
+            #{user.thirdBabyBirth},#{user.provinceId},#{user.province},#{user.cityId},#{user.city},#{user.areaId},
+            #{user.area},#{user.name},#{user.createTime},#{user.updateTime})
+        </foreach>
+    </insert>
+
+    <insert id="batchSave3">
+        insert into eto_user_add
+        (user_id,`nick_name`,`sex`,`birth_date`,`pic`,`status`,`level`,`vip_end_time`,`level_type`,`phone`,`vip_level`,
+        `org_id`,`store_id`,`vipcode`,`staff_id`,`veeker_status`,`veeker_audit_status`,`add_wechat`,`veeker_apply_time`,
+        `create_by`,`update_by`,`union_id`,`open_id`,`referee_phone`,`customer_name`,`email`,`job`,`have_baby`,`baby_birthday`,
+        `interests`,`hobby`,`second_baby_sex`,`second_baby_birth`,`third_baby_sex`,`third_baby_birth`,
+        `province_id`,`province`,`city_id`,`city`,`area_id`,`area`,`name`,create_time,update_time)
+        values
+        <foreach collection="users" item="user" separator=",">
+            (#{user.userId},#{user.nickName},#{user.sex},#{user.birthDate},#{user.pic},#{user.status},#{user.level},#{user.vipEndTime},
+            #{user.levelType},#{user.phone},#{user.vipLevel},#{user.orgId},#{user.storeId},#{user.vipcode},#{user.staffId},
+            #{user.veekerStatus},#{user.veekerAuditStatus},#{user.addWechat},#{user.veekerApplyTime},
+            #{user.createBy},#{user.updateBy},#{user.unionId},#{user.openId},#{user.refereePhone},
+            #{user.customerName},#{user.email},#{user.job},#{user.haveBaby},#{user.babyBirthday},
+            #{user.interests},#{user.hobby},#{user.secondBabySex},#{user.secondBabyBirth},#{user.thirdBabySex},
+            #{user.thirdBabyBirth},#{user.provinceId},#{user.province},#{user.cityId},#{user.city},#{user.areaId},
+            #{user.area},#{user.name},#{user.createTime},#{user.updateTime})
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        update user
+        <set>
+            <if test="user.nickName != null">
+                `nick_name` = #{user.nickName},
+            </if>
+            <if test="user.sex != null">
+                `sex` = #{user.sex},
+            </if>
+            <if test="user.birthDate != null">
+                `birth_date` = #{user.birthDate},
+            </if>
+            <if test="user.pic != null">
+                `pic` = #{user.pic},
+            </if>
+            <if test="user.status != null">
+                `status` = #{user.status},
+            </if>
+            <if test="user.level != null">
+                `level` = #{user.level},
+            </if>
+            <if test="user.vipEndTime != null">
+                `vip_end_time` = #{user.vipEndTime},
+            </if>
+            <if test="user.levelType != null">
+                `level_type` = #{user.levelType},
+            </if>
+            <if test="user.phone != null">
+                `phone` = #{user.phone},
+            </if>
+            <if test="user.vipLevel != null">
+                `vip_level` = #{user.vipLevel},
+            </if>
+            <if test="user.orgId != null">
+                `org_id` = #{user.orgId},
+            </if>
+            <if test="user.storeId != null">
+                `store_id` = #{user.storeId},
+            </if>
+            <if test="user.vipcode != null">
+                `vipcode` = #{user.vipcode},
+            </if>
+            <if test="user.staffId != null">
+                `staff_id` = #{user.staffId},
+            </if>
+            <if test="user.veekerStatus != null">
+                `veeker_status` = #{user.veekerStatus},
+            </if>
+            <if test="user.veekerAuditStatus != null">
+                `veeker_audit_status` = #{user.veekerAuditStatus},
+            </if>
+            <if test="user.addWechat != null">
+                `add_wechat` = #{user.addWechat},
+            </if>
+            <if test="user.veekerApplyTime != null">
+                `veeker_apply_time` = #{user.veekerApplyTime},
+            </if>
+            <if test="user.createBy != null">
+                `create_by` = #{user.createBy},
+            </if>
+            <if test="user.updateBy != null">
+                `update_by` = #{user.updateBy},
+            </if>
+            <if test="user.unionId != null">
+                `union_id` = #{user.unionId},
+            </if>
+            <if test="user.openId != null">
+                `open_id` = #{user.openId},
+            </if>
+            <if test="user.refereePhone != null">
+                `referee_phone` = #{user.refereePhone},
+            </if>
+            <if test="user.customerName != null">
+                `customer_name` = #{user.customerName},
+            </if>
+            <if test="user.email != null">
+                `email` = #{user.email},
+            </if>
+            <if test="user.job != null">
+                `job` = #{user.job},
+            </if>
+            <if test="user.haveBaby != null">
+                `have_baby` = #{user.haveBaby},
+            </if>
+            <if test="user.babyBirthday != null">
+                `baby_birthday` = #{user.babyBirthday},
+            </if>
+            <if test="user.interests != null">
+                `interests` = #{user.interests},
+            </if>
+            <if test="user.hobby != null">
+                `hobby` = #{user.hobby},
+            </if>
+            <if test="user.secondBabySex != null">
+                `second_baby_sex` = #{user.secondBabySex},
+            </if>
+            <if test="user.secondBabyBirth != null">
+                `second_baby_birth` = #{user.secondBabyBirth},
+            </if>
+            <if test="user.thirdBabySex != null">
+                `third_baby_sex` = #{user.thirdBabySex},
+            </if>
+            <if test="user.thirdBabyBirth != null">
+                `third_baby_birth` = #{user.thirdBabyBirth},
+            </if>
+            <if test="user.provinceId != null">
+                `province_id` = #{user.provinceId},
+            </if>
+            <if test="user.province != null">
+                `province` = #{user.province},
+            </if>
+            <if test="user.cityId != null">
+                `city_id` = #{user.cityId},
+            </if>
+            <if test="user.city != null">
+                `city` = #{user.city},
+            </if>
+            <if test="user.areaId != null">
+                `area_id` = #{user.areaId},
+            </if>
+            <if test="user.area != null">
+                `area` = #{user.area},
+            </if>
+            <if test="user.name != null">
+                `name` = #{user.name},
+            </if>
+        </set>
+        where user_id = #{user.userId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from user
+        where user_id = #{userId}
+    </delete>
+
+</mapper>

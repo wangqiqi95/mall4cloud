@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CustGroupAssignDetailMapper">
+  <resultMap id="custGroupAssignDetailMap" type="com.mall4j.cloud.biz.model.cp.CustGroupAssignDetail">
+    <id column="ID" property="id" />
+    <result column="CUST_GROUP_ID" property="custGroupId"/>
+    <result column="NUMS" property="nums"/>
+    <result column="RESIGN_ID" property="resignId"/>
+    <result column="ADD_BY" property="addBy"/>
+    <result column="ADD_BY_NAME" property="addByName"/>
+    <result column="REPLACE_BY" property="replaceBy"/>
+    <result column="REPLACE_BY_NAME" property="replaceByName"/>
+    <result column="NAME" property="name"/>
+    <result column="MOBILE" property="mobile"/>
+    <result column="LEVEL" property="level"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="UPDATE_TIME" property="updateTime"/>
+    <result column="ASSIGN_TYPE" property="assignType"/>
+    <result column="STORE_ID" property="storeId"/>
+    <result column="STORE_NAME" property="storeName"/>
+    <result column="TYPE" property="type"/>
+    <result column="CREATE_BY" property="createBy"/>
+    <result column="CREATE_NAME" property="createName"/>
+    <result column="ASSIGN_TIME" property="assignTime"/>
+    <result column="REMARK" property="remark"/>
+    <result column="ADD_BY_USER_ID" property="addByUserId"/>
+    <result column="REPLACE_BY_USER_ID" property="replaceByUserId"/>
+    <result column="STATUS" property="status"/>
+    <result column="FLAG" property="flag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `ID`,`CUST_GROUP_ID`,`NUMS`,`RESIGN_ID`,`ADD_BY`,`ADD_BY_NAME`,`REPLACE_BY`,`REPLACE_BY_NAME`,`NAME`,`MOBILE`,`LEVEL`,`CREATE_TIME`,`UPDATE_TIME`,`ASSIGN_TYPE`,`STORE_ID`,`STORE_NAME`,`TYPE`,`STATUS`,`FLAG`,CREATE_BY,CREATE_NAME,ASSIGN_TIME,ADD_BY_USER_ID,REPLACE_BY_USER_ID
+  </sql>
+  <select id="list" resultMap="custGroupAssignDetailMap">
+    select <include refid="Vo_Column_List"/> from cp_cust_group_assign_detail
+    WHERE 1=1
+    <if test="et.name != null and et.name !='' "> AND ( NAME like CONCAT('%', #{et.name},'%') or MOBILE =#{et.name} ) </if>
+    <if test="et.status != null  "> AND STATUS =#{et.status}  </if>
+    <if test="et.resignId != null  "> AND RESIGN_ID =#{et.resignId}  </if>
+    <if test="et.custGroupId != null  "> AND CUST_GROUP_ID =#{et.custGroupId}  </if>
+    <if test="et.type != null  "> AND TYPE =#{et.type}  </if>
+    <if test="et.replaceByName != null and et.replaceByName !='' "> AND REPLACE_BY_NAME like CONCAT('%', #{et.replaceByName},'%')  </if>
+    <if test="et.storeIds != null "> and STORE_ID in
+      <foreach collection="et.storeIds" index="index" item="storeId" open="(" separator="," close=")"> #{storeId} </foreach>
+    </if>
+    order by ID desc
+  </select>
+  <select id="getById" resultMap="custGroupAssignDetailMap">
+    select <include refid="Vo_Column_List"/> from cp_cust_group_assign_detail where ID = #{id}
+  </select>
+  <insert id="save">
+    insert into cp_cust_group_assign_detail (`CUST_GROUP_ID`,`NUMS`,`RESIGN_ID`,`ADD_BY`,`ADD_BY_NAME`,`REPLACE_BY`,`REPLACE_BY_NAME`,`NAME`,`MOBILE`,`LEVEL`,`CREATE_TIME`,`UPDATE_TIME`,`ASSIGN_TYPE`,`STORE_ID`,`STORE_NAME`,`TYPE`,`STATUS`,`FLAG`,CREATE_BY,CREATE_NAME,ASSIGN_TIME,REMARK,ADD_BY_USER_ID,REPLACE_BY_USER_ID)
+    values (#{et.custGroupId},#{et.nums},#{et.resignId},#{et.addBy},#{et.addByName},#{et.replaceBy},#{et.replaceByName},#{et.name},#{et.mobile},#{et.level},#{et.createTime},#{et.updateTime},#{et.assignType},#{et.storeId},#{et.storeName},#{et.type},#{et.status},#{et.flag},#{et.createBy},#{et.createName},
+            #{et.assignTime},#{et.remark},#{et.addByUserId},#{et.replaceByUserId});
+  </insert>
+  <update id="update">
+    update cp_cust_group_assign_detail
+    <set>
+      <if test="custGroupAssignDetail.custGroupId != null">
+        `CUST_GROUP_ID` = #{custGroupAssignDetail.custGroupId},
+      </if>
+      <if test="custGroupAssignDetail.nums != null">
+        `NUMS` = #{custGroupAssignDetail.nums},
+      </if>
+      <if test="custGroupAssignDetail.resignId != null">
+        `RESIGN_ID` = #{custGroupAssignDetail.resignId},
+      </if>
+      <if test="custGroupAssignDetail.addBy != null">
+        `ADD_BY` = #{custGroupAssignDetail.addBy},
+      </if>
+      <if test="custGroupAssignDetail.addByName != null">
+        `ADD_BY_NAME` = #{custGroupAssignDetail.addByName},
+      </if>
+      <if test="custGroupAssignDetail.replaceBy != null">
+        `REPLACE_BY` = #{custGroupAssignDetail.replaceBy},
+      </if>
+      <if test="custGroupAssignDetail.replaceByName != null">
+        `REPLACE_BY_NAME` = #{custGroupAssignDetail.replaceByName},
+      </if>
+      <if test="custGroupAssignDetail.name != null">
+        `NAME` = #{custGroupAssignDetail.name},
+      </if>
+      <if test="custGroupAssignDetail.mobile != null">
+        `MOBILE` = #{custGroupAssignDetail.mobile},
+      </if>
+      <if test="custGroupAssignDetail.level != null">
+        `LEVEL` = #{custGroupAssignDetail.level},
+      </if>
+      <if test="custGroupAssignDetail.createTime != null">
+        `CREATE_TIME` = #{custGroupAssignDetail.createTime},
+      </if>
+      <if test="custGroupAssignDetail.updateTime != null">
+        `UPDATE_TIME` = #{custGroupAssignDetail.updateTime},
+      </if>
+      <if test="custGroupAssignDetail.assignType != null">
+        `ASSIGN_TYPE` = #{custGroupAssignDetail.assignType},
+      </if>
+      <if test="custGroupAssignDetail.storeId != null">
+        `STORE_ID` = #{custGroupAssignDetail.storeId},
+      </if>
+      <if test="custGroupAssignDetail.storeName != null">
+        `STORE_NAME` = #{custGroupAssignDetail.storeName},
+      </if>
+      <if test="custGroupAssignDetail.type != null">
+        `TYPE` = #{custGroupAssignDetail.type},
+      </if>
+      <if test="custGroupAssignDetail.status != null">
+        `STATUS` = #{custGroupAssignDetail.status},
+      </if>
+      <if test="custGroupAssignDetail.flag != null">
+        `FLAG` = #{custGroupAssignDetail.flag},
+      </if>
+      <if test="custGroupAssignDetail.createBy != null">
+        `CREATE_BY` = #{custGroupAssignDetail.createBy},
+      </if>
+      <if test="custGroupAssignDetail.createName != null">
+        `CREATE_NAME` = #{custGroupAssignDetail.createName},
+      </if>
+      <if test="custGroupAssignDetail.assignTime != null">
+        `ASSIGN_TIME` = #{custGroupAssignDetail.assignTime},
+      </if>
+      <if test="custGroupAssignDetail.remark != null">
+        `REMARK` = #{custGroupAssignDetail.remark},
+      </if>
+      <if test="custGroupAssignDetail.addByUserId != null">
+        `ADD_BY_USER_ID` = #{custGroupAssignDetail.addByUserId},
+      </if>
+      <if test="custGroupAssignDetail.replaceByUserId != null">
+        `REPLACE_BY_USER_ID` = #{custGroupAssignDetail.replaceByUserId},
+      </if>
+    </set>
+    where ID = #{custGroupAssignDetail.id}
+  </update>
+  <delete id="deleteById">
+    delete from cp_cust_group_assign_detail where ID = #{id}
+  </delete>
+  <!-- 将待分配的群同步到微信 -->
+  <select id="getGroupSycnList" resultMap="custGroupAssignDetailMap">
+    select `ID`,`CUST_GROUP_ID`,`RESIGN_ID`,`ADD_BY`,`REPLACE_BY`,`TYPE`,`STATUS`,ADD_BY_USER_ID,REPLACE_BY_USER_ID from cp_cust_group_assign_detail
+    WHERE  TYPE =1
+      AND STATUS = 0
+    order by UPDATE_TIME ASC
+    LIMIT 0,1000
+  </select>
+
+</mapper>

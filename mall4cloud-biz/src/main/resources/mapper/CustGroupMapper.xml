@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CustGroupMapper">
+  <resultMap id="custGroupMap" type="com.mall4j.cloud.biz.model.cp.CpCustGroup">
+    <id column="ID" property="id" />
+    <result column="GROUP_NAME" property="groupName"/>
+    <result column="OWNER_ID" property="ownerId"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="UPDATE_TIME" property="updateTime"/>
+    <result column="STATUS" property="status"/>
+    <result column="FLAG" property="flag"/>
+    <result column="STORE_ID" property="storeId"/>
+    <result column="QR_CODE" property="qrCode"/>
+    <result column="TOTAL_CUST" property="totalCust"/>
+    <result column="TOTAL" property="total"/>
+    <result column="TOTAL_STAFF_CUST" property="totalStaffCust"/>
+    <result column="OWNER_NAME" property="ownerName"/>
+    <result column="USER_ID" property="userId"/>
+    <result column="notice" property="notice"/>
+    <result column="EXPIRE_DATE" property="expireDate"/>
+    <result column="TOTAL_LIMIT" property="totalLimit"/>
+    <result column="STORE_NAME" property="storeName"/>
+    <result column="group_type" property="groupType"/>
+    <result column="admin_status" property="adminStatus"/>
+  </resultMap>
+
+  <resultMap id="custGroupCountVOMap" type="com.mall4j.cloud.biz.vo.cp.CustGroupCountVO">
+    <result column="GROUP_TOTAL" property="groupTotal"/>
+    <result column="CUST_TOTAL" property="custTotal"/>
+  </resultMap>
+
+  <resultMap id="custGroupVOMap" extends="custGroupMap" type="com.mall4j.cloud.biz.vo.cp.CustGroupVO">
+    <collection property="tagList" ofType="com.mall4j.cloud.biz.model.cp.Tag" column="ID" select="com.mall4j.cloud.biz.mapper.cp.TagMapper.listSelectedByGroupId" />
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `ID`,`GROUP_NAME`,`OWNER_ID`,`CREATE_TIME`,`UPDATE_TIME`,`STATUS`,`FLAG`,`STORE_ID`,`QR_CODE`,`TOTAL_CUST`,`TOTAL`,`TOTAL_STAFF_CUST`,`OWNER_NAME`,`USER_ID`,`notice`,`EXPIRE_DATE`,`TOTAL_LIMIT`,`STORE_NAME`,`group_type`,`admin_status`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.biz.vo.cp.CustGroupVO">
+    select <include refid="Vo_Column_List"/> from cp_cust_group WHERE FLAG = 0
+    <if test="et.groupName != null and et.groupName !='' "> AND GROUP_NAME like CONCAT('%', #{et.groupName},'%')  </if>
+    <if test="et.ownerName != null and et.ownerName !='' "> AND OWNER_NAME like CONCAT('%', #{et.ownerName},'%')  </if>
+    <if test="et.createTimeStart != null and et.createTimeStart !='' "> AND CREATE_TIME >=STR_TO_DATE(#{et.createTimeStart},"%Y-%m-%d")  </if>
+    <if test="et.createTimeEnd != null and et.createTimeEnd !='' "> AND CREATE_TIME <![CDATA[< ]]>STR_TO_DATE(#{et.createTimeEnd},"%Y-%m-%d")+1  </if>
+    <if test="et.staffId != null">AND OWNER_ID=#{et.staffId}</if>
+    <if test="et.adminStatus != null">AND admin_status=#{et.adminStatus}</if>
+    <if test="et.tags != null">
+      and ID  in (SELECT GROUP_ID FROM CP_GROUP_TAG_REF WHERE TAG_ID IN
+        <foreach collection="et.tags" item="tagId" index="index" open="(" separator="," close=")">#{tagId}
+        </foreach>
+      )
+    </if>
+    order by
+    <if test="et.orderBy == 'createTime'">
+       CREATE_TIME
+    </if>
+    <if test="et.orderBy == 'total'">
+      TOTAL
+    </if>
+    <if test="et.orderBy == 'totalCust'">
+      TOTAL_CUST
+    </if>
+    <if test="et.orders == 'asc'">
+      ASC
+    </if>
+    <if test="et.orders == 'desc'">
+      DESC
+    </if>
+
+
+
+  </select>
+
+  <!-- 根据群主查询关联的群列表-->
+  <select id="getCustGroupListByOwnerId" resultMap="custGroupMap">
+      select <include refid="Vo_Column_List"/> from cp_cust_group WHERE FLAG = 0   and STATUS = 1 AND OWNER_ID = #{ownerId}
+  </select>
+
+  <select id="getListByChatIds" resultType="com.mall4j.cloud.biz.model.cp.CpCustGroup">
+    select *
+    from cp_cust_group
+    where FLAG = 0
+    and ID in
+    <foreach collection="chatIds" item="chatId"  index="index" open="("  separator="," close=")">
+      #{chatId}
+    </foreach>
+  </select>
+
+  <!-- 统计群数及客户数  -->
+  <select id="count" resultMap="custGroupCountVOMap">
+    select count(1) GROUP_TOTAL,sum(TOTAL_CUST) CUST_TOTAL  from cp_cust_group WHERE FLAG = 0
+    <if test="et.groupName != null and et.groupName !='' "> AND GROUP_NAME like CONCAT('%', #{et.groupName},'%')  </if>
+    <if test="et.ownerName != null and et.ownerName !='' "> AND OWNER_NAME like CONCAT('%', #{et.ownerName},'%')  </if>
+    <if test="et.createTimeStart != null and et.createTimeStart !='' "> AND CREATE_TIME >=STR_TO_DATE(#{et.createTimeStart},"%Y-%m-%d")  </if>
+    <if test="et.createTimeEnd != null and et.createTimeEnd !='' "> AND CREATE_TIME <![CDATA[< ]]>STR_TO_DATE(#{et.createTimeEnd},"%Y-%m-%d")+1  </if>
+    <if test="et.storeIds != null">
+      and STORE_ID in
+      <foreach collection="et.storeIds" item="item"  index="index" open="("  separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="et.tags != null">
+      and ID  in (SELECT GROUP_ID FROM CP_GROUP_TAG_REF WHERE TAG_ID IN
+      <foreach collection="et.tags" item="tagId"  index="index" open="("  separator="," close=")">
+        #{tagId}
+      </foreach>
+      )
+    </if>
+  </select>
+
+  <select id="getSelectGroupList" resultMap="custGroupMap">
+    select <include refid="Vo_Column_List"/> from cp_cust_group
+    WHERE FLAG = 0
+     AND TOTAL <![CDATA[< ]]> 200
+    <if test="et.groupName != null and et.groupName !='' "> AND GROUP_NAME like CONCAT('%', #{et.groupName},'%')  </if>
+    <if test="et.createName != null and et.createName !='' "> AND OWNER_NAME like CONCAT('%', #{et.createName},'%')  </if>
+    <if test="et.type ==1 ">
+      AND  ID IN ( SELECT F.GROUP_ID FROM cp_group_code_ref F WHERE  F.ID = #{et.id} )
+    </if>
+    <if test="et.type ==0 ">
+      AND  ID NOT IN ( SELECT F.GROUP_ID FROM cp_group_code_ref F WHERE  F.ID = #{et.id} )
+    </if>
+    order by ID desc
+  </select>
+
+  <select id="getCustGroupList" resultMap="custGroupMap">
+    select <include refid="Vo_Column_List"/> from cp_cust_group
+    WHERE ID IN ( SELECT F.ID FROM cp_group_code_ref F WHERE F.GROUP_ID = ID AND F.ID = #{id} )
+  </select>
+
+
+  <select id="getById" resultMap="custGroupMap">
+    select <include refid="Vo_Column_List"/> from cp_cust_group where ID = #{id}
+  </select>
+
+  <delete id="deleteById">
+    delete from cp_cust_group where ID = #{id}
+  </delete>
+  <!-- 将所有离职的修改为接替中 -->
+  <update id="updateBatchStatusToAssigning">
+    update cp_cust_group SET  `STATUS` =  2
+    where ID  in
+      <foreach collection="ids" item="item"  index="index" open="("  separator="," close=")">
+        #{item}
+      </foreach>
+  </update>
+
+  <select id="selectCountByStaff" resultType="com.mall4j.cloud.api.user.vo.SelectUserCountVO">
+    select
+        count(OWNER_ID) as count,
+        OWNER_ID as staff_id
+    from cp_cust_group
+    where 1=1
+    and FLAG=0
+    and STATUS=1
+    <if test="staffIds!=null and staffIds.size>0">
+      and OWNER_ID in
+      <foreach collection="staffIds" item="staffId"  index="index" open="("  separator="," close=")">
+        #{staffId}
+      </foreach>
+    </if>
+    <if test="startTime!=null and endTime!=null">
+      and ( CREATE_TIME between #{startTime} and #{endTime} )
+    </if>
+    group by OWNER_ID
+  </select>
+
+  <select id="selectCountUserByStaff" resultType="com.mall4j.cloud.api.user.vo.SelectUserCountVO">
+    select
+    count(distinct info.user_id) as count,
+    g.OWNER_ID as staff_id
+    from cp_group_cust_info info
+    left join cp_cust_group g on g.ID=info.group_id
+    where 1=1
+    and info.join_status=1
+    and info.flag=0
+    and info.type=2
+    and g.FLAG=0
+    and g.STATUS=1
+    <if test="staffIds!=null and staffIds.size>0">
+      and g.OWNER_ID in
+      <foreach collection="staffIds" item="staffId"  index="index" open="("  separator="," close=")">
+        #{staffId}
+      </foreach>
+    </if>
+    <if test="startTime!=null and endTime!=null">
+      and ( info.CREATE_TIME between #{startTime} and #{endTime} )
+    </if>
+    group by g.OWNER_ID
+  </select>
+
+  <select id="getByIds" resultMap="custGroupMap">
+    select <include refid="Vo_Column_List"/> from cp_cust_group where 1=1
+    <if test="ids!=null and ids.size>0">
+      and ID in
+      <foreach collection="ids" item="id"  index="index" open="("  separator="," close=")">
+        #{id}
+      </foreach>
+    </if>
+  </select>
+
+
+</mapper>

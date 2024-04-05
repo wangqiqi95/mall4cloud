@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.channels.LeagueItemFinderMapper">
+
+    <select id="queryListByProductIds" parameterType="long" resultType="com.mall4j.cloud.biz.dto.channels.league.ItemListFinderRespDto">
+        SELECT
+            b.id,
+            a.product_id,
+            b.finder_id,
+            b.finder_name
+        FROM
+            channels_league_item_finder a
+                JOIN channels_league_promoter b ON a.finder_id = b.id
+        <where>
+            and a.product_id in
+            <foreach collection="productIds" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+</mapper>

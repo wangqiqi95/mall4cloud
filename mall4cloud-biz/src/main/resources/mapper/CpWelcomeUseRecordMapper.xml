@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpWelcomeUseRecordMapper">
+  <resultMap id="cpWelcomeUseRecordMap" type="com.mall4j.cloud.biz.model.cp.CpWelcomeUseRecord">
+    <id column="id" property="id" />
+    <result column="wel_id" property="welId"/>
+    <result column="staff_id" property="staffId"/>
+    <result column="staff_name" property="staffName"/>
+    <result column="user_id" property="userId"/>
+    <result column="nick_name" property="nickName"/>
+    <result column="phone" property="phone"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="user_staff_cp_relation_id" property="userStaffCpRelationId"/>
+    <result column="user_union_id" property="userUnionId"/>
+  </resultMap>
+
+  <resultMap id="cpWelcomeUseRecordVOMap" extends="cpWelcomeUseRecordMap" type="com.mall4j.cloud.biz.vo.cp.CpWelcomeUseRecordVO">
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`wel_id`,`staff_id`,`staff_name`,`user_id`,`nick_name`,`phone`,`create_time`,`update_time`,`user_staff_cp_relation_id`,`user_union_id`
+  </sql>
+  <select id="list" resultMap="cpWelcomeUseRecordMap">
+    select <include refid="Vo_Column_List"/> from cp_welcome_use_record order by id desc
+  </select>
+  <select id="getById" resultMap="cpWelcomeUseRecordMap">
+    select <include refid="Vo_Column_List"/> from cp_welcome_use_record where id = #{id}
+  </select>
+  <insert id="save">
+    insert into cp_welcome_use_record (`wel_id`,`staff_id`,`staff_name`,`user_id`,`nick_name`,`phone`,user_staff_cp_relation_id,user_union_id)
+    values (#{cpWelcomeUseRecord.welId},#{cpWelcomeUseRecord.staffId},#{cpWelcomeUseRecord.staffName},#{cpWelcomeUseRecord.userId},
+            #{cpWelcomeUseRecord.nickName},#{cpWelcomeUseRecord.phone},#{cpWelcomeUseRecord.userStaffCpRelationId},#{cpWelcomeUseRecord.userUnionId});
+  </insert>
+  <update id="update">
+    update cp_welcome_use_record
+    <set>
+      <if test="cpWelcomeUseRecord.welId != null">
+        `wel_id` = #{cpWelcomeUseRecord.welId},
+      </if>
+      <if test="cpWelcomeUseRecord.staffId != null">
+        `staff_id` = #{cpWelcomeUseRecord.staffId},
+      </if>
+      <if test="cpWelcomeUseRecord.staffName != null">
+        `staff_name` = #{cpWelcomeUseRecord.staffName},
+      </if>
+      <if test="cpWelcomeUseRecord.userId != null">
+        `user_id` = #{cpWelcomeUseRecord.userId},
+      </if>
+      <if test="cpWelcomeUseRecord.nickName != null">
+        `nick_name` = #{cpWelcomeUseRecord.nickName},
+      </if>
+      <if test="cpWelcomeUseRecord.phone != null">
+        `phone` = #{cpWelcomeUseRecord.phone},
+      </if>
+      <if test="cpWelcomeUseRecord.userStaffCpRelationId != null">
+        `user_staff_cp_relation_id` = #{cpWelcomeUseRecord.userStaffCpRelationId},
+      </if>
+      <if test="cpWelcomeUseRecord.userUnionId != null">
+        `user_union_id` = #{cpWelcomeUseRecord.userUnionId},
+      </if>
+    </set>
+    where id = #{cpWelcomeUseRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from cp_welcome_use_record where id = #{id}
+  </delete>
+
+  <select id="page" resultMap="cpWelcomeUseRecordVOMap">
+    select
+        <include refid="Vo_Column_List"/>
+    from cp_welcome_use_record
+    where 1=1 and wel_id = #{request.matId}
+    <if test="request.createTimeStart != null and request.createTimeStart !='' and request.createTimeEnd != null and request.createTimeEnd !='' ">
+      and CREATE_TIME between #{request.createTimeStart} and #{request.createTimeEnd}
+    </if>
+    order by id desc
+  </select>
+
+  <select id="useStatistics" resultType="com.mall4j.cloud.biz.vo.cp.MaterialBrowseRecordByDayVO">
+    select
+      date(create_time) as day1,count(1) as num
+    from cp_welcome_use_record
+    where wel_id = #{request.matId}
+      and create_time between #{request.createTimeStart} and #{request.createTimeEnd}
+    group by date(create_time)
+  </select>
+
+</mapper>

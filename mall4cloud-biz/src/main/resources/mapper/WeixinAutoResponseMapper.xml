@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinAutoResponseMapper">
+  <resultMap id="weixinAutoResponseMap" type="com.mall4j.cloud.biz.model.WeixinAutoResponse">
+    <id column="id" property="id" />
+    <result column="data_id" property="dataId"/>
+    <result column="data_src" property="dataSrc"/>
+    <result column="msg_type" property="msgType"/>
+    <result column="template_id" property="templateId"/>
+    <result column="template_name" property="templateName"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`data_id`,`data_src`,`msg_type`,`template_id`,`template_name`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinAutoResponseMap">
+    select <include refid="Vo_Column_List"/> from weixin_auto_response order by id desc
+  </select>
+  <select id="getById" resultMap="weixinAutoResponseMap">
+    select <include refid="Vo_Column_List"/> from weixin_auto_response where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_auto_response (`id`,`data_id`,`data_src`,`msg_type`,`template_id`,`template_name`,`create_by`,`create_time`,`del_flag`)
+    values (#{weixinAutoResponse.id},#{weixinAutoResponse.dataId},#{weixinAutoResponse.dataSrc},#{weixinAutoResponse.msgType},#{weixinAutoResponse.templateId},#{weixinAutoResponse.templateName},#{weixinAutoResponse.createBy},#{weixinAutoResponse.createTime},#{weixinAutoResponse.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_auto_response
+    <set>
+      <if test="weixinAutoResponse.dataId != null">
+        `data_id` = #{weixinAutoResponse.dataId},
+      </if>
+      <if test="weixinAutoResponse.dataSrc != null">
+        `data_src` = #{weixinAutoResponse.dataSrc},
+      </if>
+      <if test="weixinAutoResponse.msgType != null">
+        `msg_type` = #{weixinAutoResponse.msgType},
+      </if>
+      <if test="weixinAutoResponse.templateId != null">
+        `template_id` = #{weixinAutoResponse.templateId},
+      </if>
+      <if test="weixinAutoResponse.templateName != null">
+        `template_name` = #{weixinAutoResponse.templateName},
+      </if>
+      <if test="weixinAutoResponse.createBy != null">
+        `create_by` = #{weixinAutoResponse.createBy},
+      </if>
+      <if test="weixinAutoResponse.updateBy != null">
+        `update_by` = #{weixinAutoResponse.updateBy},
+      </if>
+      <if test="weixinAutoResponse.updateTime != null">
+        `update_time` = #{weixinAutoResponse.updateTime},
+      </if>
+      <if test="weixinAutoResponse.createTime != null">
+        `create_time` = #{weixinAutoResponse.createTime},
+      </if>
+      <if test="weixinAutoResponse.delFlag != null">
+        `del_flag` = #{weixinAutoResponse.delFlag},
+      </if>
+    </set>
+    where id = #{weixinAutoResponse.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_auto_response where id = #{id}
+  </delete>
+
+  <delete id="deleteByDataId">
+    update weixin_auto_response set del_flag=1,update_time=now() where data_id = #{dataId}
+  </delete>
+
+  <select id="getWeixinAuto" resultType="com.mall4j.cloud.biz.model.WeixinAutoResponse">
+    select
+        *
+      from weixin_auto_response
+      where del_flag=0
+            and data_id=#{dataId}
+            and data_src=#{dataSrc}
+            and msg_type=#{msgType}
+  </select>
+
+  <select id="getWeixinAutoByTemplateId" resultType="com.mall4j.cloud.biz.model.WeixinAutoResponse">
+    select
+      *
+    from weixin_auto_response
+    where del_flag=0
+      and data_id=#{dataId}
+      and data_src=#{dataSrc}
+      and msg_type=#{msgType}
+      and template_id=#{templateId}
+  </select>
+
+  <select id="getWeixinAutos" resultType="com.mall4j.cloud.biz.model.WeixinAutoResponse">
+    select
+      *
+    from weixin_auto_response
+    where del_flag=0
+      and data_id=#{dataId}
+      and data_src=#{dataSrc}
+  </select>
+
+</mapper>

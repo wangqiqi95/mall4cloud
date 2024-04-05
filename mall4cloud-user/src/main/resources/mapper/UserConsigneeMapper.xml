@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserConsigneeMapper">
+  <resultMap id="userConsigneeMap" type="com.mall4j.cloud.user.model.UserConsignee">
+    <id column="user_consignee_id" property="userConsigneeId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="user_id" property="userId"/>
+    <result column="name" property="name"/>
+    <result column="mobile" property="mobile"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `user_consignee_id`,`create_time`,`update_time`,`name`,`mobile`,`user_id`
+  </sql>
+  <select id="getByUserId" resultMap="userConsigneeMap">
+    select <include refid="Vo_Column_List"/> from user_consignee where user_id = #{userId}
+  </select>
+  <insert id="save">
+    insert into user_consignee (user_id,`name`,`mobile`)
+    values (#{userConsignee.name},#{userConsignee.name},#{userConsignee.mobile});
+  </insert>
+  <update id="update">
+    update user_consignee
+    <set>
+      <if test="userConsignee.name != null">
+        `name` = #{userConsignee.name},
+      </if>
+      <if test="userConsignee.mobile != null">
+        `mobile` = #{userConsignee.mobile},
+      </if>
+    </set>
+    where user_id = #{userConsignee.userId}
+  </update>
+
+
+</mapper>

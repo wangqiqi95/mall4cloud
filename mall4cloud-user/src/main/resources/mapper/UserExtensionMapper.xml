@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserExtensionMapper">
+    <resultMap id="userExtensionMap" type="com.mall4j.cloud.user.model.UserExtension">
+        <id column="user_extension_id" property="userExtensionId"/>
+        <result column="user_id" property="userId"/>
+        <result column="level" property="level"/>
+        <result column="level_type" property="levelType"/>
+        <result column="growth" property="growth"/>
+        <result column="score" property="score"/>
+        <result column="balance" property="balance"/>
+        <result column="actual_balance" property="actualBalance"/>
+        <result column="version" property="version"/>
+        <result column="sign_day" property="signDay"/>
+        <result column="recent_consumer_time" property="recentConsumerTime"/>
+        <result column="recent_visit_time" property="recentVisitTime"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `user_extension_id`,
+        `create_time`,
+        `update_time`,
+        `user_id`,
+        `level`,
+        `level_type`,
+        `growth`,
+        `score`,
+        `balance`,
+        `actual_balance`,
+        `version`,
+        `sign_day`,
+        `recent_consumer_time`,
+        `recent_visit_time`
+    </sql>
+
+    <select id="list" resultType="com.mall4j.cloud.user.vo.UserExtensionVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_extension
+        order by user_extension_id desc
+    </select>
+    <select id="getByUserExtensionId" resultType="com.mall4j.cloud.user.model.UserExtension">
+        select
+        <include refid="Vo_Column_List"/>
+        from user_extension
+        where user_extension_id = #{userExtensionId}
+    </select>
+    <insert id="save"  useGeneratedKeys="true" keyProperty="userExtensionId">
+        insert into user_extension (`user_id`, `level`, `level_type`, `growth`, `score`, `balance`, `actual_balance`,
+                                    `version`, `sign_day`)
+        values (#{userExtension.userId}, #{userExtension.level}, #{userExtension.levelType}, #{userExtension.growth},
+                #{userExtension.score}, #{userExtension.balance}, #{userExtension.actualBalance},
+                #{userExtension.version}, #{userExtension.signDay});
+    </insert>
+    <insert id="saveBatch" parameterType="java.util.List">
+        insert into user_extension (`user_id`, `level`, `level_type`, `growth`, `score`, `balance`, `actual_balance`,
+                                    `version`, `sign_day`,`vip_level`)
+        select * from (
+        <foreach collection="userExtensions" item="userExtension" separator="UNION ALL">
+            SELECT #{userExtension.userId} `user_id`, #{userExtension.level} `level`, #{userExtension.levelType} `level_type`, #{userExtension.growth} `growth`,
+            #{userExtension.score} `score`, #{userExtension.balance} `balance`, #{userExtension.actualBalance} `actual_balance`,
+            #{userExtension.version} `version`, #{userExtension.signDay} `sign_day`,#{userExtension.vipLevel} `vip_level`
+            FROM DUAL
+        </foreach>
+        ) a WHERE NOT EXISTS (SELECT `user_id` FROM `user_extension` b WHERE a.`user_id` = b.`user_id`)
+    </insert>
+    <update id="update">
+        update user_extension
+        <set>
+            <if test="userExtension.level != null">
+                `level` = #{userExtension.level},
+            </if>
+            <if test="userExtension.levelType != null">
+                `level_type` = #{userExtension.levelType},
+            </if>
+            <if test="userExtension.growth != null">
+                `growth` = #{userExtension.growth},
+            </if>
+            <if test="userExtension.score != null">
+                `score` = #{userExtension.score},
+            </if>
+            <if test="userExtension.balance != null">
+                `balance` = #{userExtension.balance},
+            </if>
+            <if test="userExtension.actualBalance != null">
+                `actual_balance` = #{userExtension.actualBalance},
+            </if>
+            <if test="userExtension.version != null">
+                `version` = #{userExtension.version} + 1,
+            </if>
+            <if test="userExtension.signDay != null">
+                `sign_day` = #{userExtension.signDay},
+            </if>
+            <if test="userExtension.recentConsumerTime != null">
+                `recent_consumer_time` = #{userExtension.recentConsumerTime},
+            </if>
+            <if test="userExtension.recentVisitTime != null">
+                `recent_visit_time` = #{userExtension.recentVisitTime},
+            </if>
+        </set>
+        where user_extension_id = #{userExtension.userExtensionId}
+          and `version` = #{userExtension.version}
+    </update>
+    <delete id="deleteById">
+        delete
+        from user_extension
+        where user_extension_id = #{userExtensionId}
+    </delete>
+
+    <update id="updateUserLevel">
+        UPDATE
+                user_extension
+        SET `level` = #{level}
+                WHERE level_type = 1
+                  AND growth &gt; #{minGrowth}
+        <if test="maxGrowth != null">
+            AND growth &lt; #{maxGrowth}
+        </if>
+    </update>
+
+    <update id="updateUserScoreOrGrowth">
+        UPDATE user_extension SET `version`   = `version` + 1
+                                , update_time = NOW()
+        <if test="score != null">
+            , score = case when score + #{score} &lt; 0 then 0 ELSE score + #{score} end
+        </if>
+        <if test="growth != null">
+            , growth = case when growth + #{growth} &lt; 0 then 0 ELSE growth + #{growth} end
+        </if>
+        WHERE user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+    </update>
+
+    <update id="reduceScore">
+        UPDATE user_extension SET `version`   = `version` + 1
+        , update_time = NOW()
+        <if test="score != null">
+            , score = case when score - #{score} &lt; 0 then 0 ELSE score - #{score} end
+        </if>
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="batchUpdateLevelByUserIds" parameterType="java.util.List">
+        UPDATE `user_extension` ue
+        SET ue.level = (
+                SELECT IFNULL( (SELECT `level` FROM `user_level` WHERE level_type = #{levelType} AND need_growth &lt;= ue.growth  ORDER BY `level` DESC LIMIT 1),
+                                (SELECT MIN(`level`) FROM `user_level` WHERE level_type = 0)
+                ) AS `level`)
+                WHERE ue.user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+    </update>
+    <update id="updateBatchUserBalanceByUserIds">
+        <!-- 用户总余额(balance)是不会减少的 -->
+        UPDATE user_extension SET `version`      = `version` + 1
+                                , actual_balance = case
+                when actual_balance + #{balance} &lt; 0 then 0
+                ELSE actual_balance + #{balance} end
+        <if test="balance > 0">
+            , balance = balance + #{balance}
+        </if>
+        <if test="now != null">
+            , update_time = #{now}
+        </if>
+        WHERE user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+    </update>
+
+    <select id="getByUserIdsAndLevelType" resultMap="userExtensionMap">
+        SELECT <include refid="Vo_Column_List"/>
+        FROM user_extension WHERE user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+    </select>
+
+    <select id="getByUserId" resultMap="userExtensionMap">
+        SELECT <include refid="Vo_Column_List"/>
+        FROM user_extension
+        WHERE user_id = #{userId}
+        order by create_time desc limit 1
+    </select>
+
+    <update id="updateByUserRecharge">
+        update user_extension
+        set growth  = #{userRechargeVO.presGrowth} + growth,
+            score   = #{userRechargeVO.presScore} + score,
+            balance = #{userRechargeVO.presAmount} + balance + #{userBalanceLog.changeBalance},
+            actual_balance = #{userRechargeVO.presAmount} + actual_balance + #{userBalanceLog.changeBalance}
+        where user_id = #{userBalanceLog.userId}
+    </update>
+
+    <update id="addByUserBalanceLog">
+        update user_extension
+        set
+        <!-- 退款增加的余额不需要加到总余额中 -->
+        <if test="userBalanceLog.type != 4">
+            balance =  balance + #{userBalanceLog.changeBalance},
+        </if>
+        actual_balance = actual_balance + #{userBalanceLog.changeBalance}
+        where user_id = #{userBalanceLog.userId}
+    </update>
+
+    <update id="deductionUserBalance">
+        update user_extension
+        set actual_balance =  actual_balance - #{changeBalance}
+        where user_id = #{userId} and actual_balance &gt;= #{changeBalance}
+    </update>
+
+    <update id="updateUserLevelByBuyVip">
+        update user_extension set vip_level = #{afterLevel},level_type = 1 where user_id = #{userId}
+    </update>
+    <update id="batchUpdateScore" parameterType="java.util.List">
+        UPDATE user_extension SET `version`   = `version` + 1
+        ,update_time = NOW(),
+        <trim prefix="score = case" suffix="else `score` end">
+            <foreach collection="userExtensions" item="userExtension" index="index">
+                when user_id = #{userExtension.userId} and #{userExtension.score} is not null
+                then (case when `score` + #{userExtension.score} &lt; 0 then 0 ELSE `score` + #{userExtension.score} end)
+            </foreach>
+        </trim>
+        WHERE user_id IN
+        <foreach collection="userExtensions" item="userExtension" open="(" close=")" separator=",">
+            #{userExtension.userId}
+        </foreach>
+    </update>
+
+    <update id="lockScoreBySubmitOrder">
+        UPDATE user_extension set score = score - #{useScore} where user_id = #{userId} and score &gt;= #{useScore}
+    </update>
+
+    <update id="updateScoreByUserId">
+        UPDATE user_extension
+        set score = score + #{useScore}
+        where user_id = #{userId}
+    </update>
+
+    <update id="updateBalanceByVersion">
+        update user_extension
+        set `level`       = #{userExtension.level},
+            level_type    = #{userExtension.levelType},
+            growth        = #{userExtension.growth},
+            score         = #{userExtension.score},
+            balance       = #{userExtension.balance},
+            actual_balance = #{userExtension.actualBalance},
+            update_time   = #{userExtension.updateTime},
+            version       = version + 1
+        where user_id = #{userExtension.userId}
+          AND version = #{userExtension.version}
+    </update>
+    <update id="batchChangeLevelByUserIdsAndLevel">
+        UPDATE user_extension
+        SET `version` = `version` + 1, update_time = NOW()
+        , `level` =  `level` + #{level}
+        WHERE user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+    </update>
+    <update id="batchUpdateTypeAndLevelByUserIds">
+        UPDATE `user_extension` ue
+        SET ue.level_type = #{afterLevelType},ue.vip_level = NULL
+        WHERE ue.level_type = #{currentLevelType}
+        AND ue.user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+    </update>
+
+    <select id="countMemberByParam" resultType="java.lang.Integer">
+        SELECT ifnull(COUNT(*),0) FROM `user` u
+        <where>
+            <if test="param.dateTime != null">
+                AND u.create_time &lt;= #{param.dateTime}
+            </if>
+            <if test="param.dateTime == null and param.startTime != null and param.endTime != null">
+                AND ( u.create_time  &gt;= #{param.startTime} AND u.create_time  &lt;= #{param.endTime})
+            </if>
+            <choose>
+                <when test="param.memberType == 1">
+                    AND u.level_type = 0
+                </when>
+                <when test="param.memberType == 2">
+                    AND u.level_type = 1
+                </when>
+            </choose>
+        </where>
+    </select>
+
+    <select id="countMemberDataByParam" resultType="com.mall4j.cloud.api.user.vo.MemberOverviewVO">
+        SELECT ou.*,nu.new_member
+        FROM (SELECT COUNT(*) AS total_member,1 AS data_type FROM user
+        WHERE create_time <![CDATA[ < ]]> #{param.endTime}
+        <if test="param.memberType == 1">
+            AND level_type = 0
+        </if>
+        <if test="param.memberType == 2">
+            AND level_type = 1
+        </if>
+        ) AS ou
+        LEFT JOIN (SELECT COUNT(*) AS new_member,1 AS data_type FROM user
+        WHERE create_time  <![CDATA[ >= ]]> #{param.startTime} AND create_time   <![CDATA[ <= ]]>  #{param.endTime}
+        <if test="param.memberType == 1">
+            AND level_type = 0
+        </if>
+        <if test="param.memberType == 2">
+            AND level_type = 1
+        </if>
+        ) AS nu  ON ou.data_type = nu.data_type
+    </select>
+
+    <select id="countPayMemberByParam" resultType="java.lang.Integer"
+            parameterType="com.mall4j.cloud.api.user.dto.CustomerReqDTO">
+        SELECT COUNT(ue.user_id) FROM `user_extension` ue
+        <where>
+            ue.level_type = 1
+            <if test="param.dateTime != null">
+                AND ue.update_time <![CDATA[ <= ]]> #{param.dateTime}
+            </if>
+            <if test="param.dateTime == null and param.startTime != null and param.endTime != null">
+                AND ( ue.update_time  <![CDATA[ >= ]]> #{param.startTime} AND ue.update_time  <![CDATA[ <= ]]> #{param.endTime})
+            </if>
+        </where>
+    </select>
+    <select id="countAllPersonNum" resultType="java.lang.Integer">
+        SELECT COUNT(ue.user_id) FROM `user_extension` ue
+        <where>
+            <if test="date != null">
+                ue.update_time &lt;= #{date}
+            </if>
+            <if test="isMember != null">
+                ue.level_type = #{isMember}
+            </if>
+            <if test="date == null and startTime != null">
+                ( ue.update_time &gt;= #{startTime} AND  ue.update_time &lt;= #{endTime})
+            </if>
+        </where>
+    </select>
+    <select id="countVisitMemberNum" resultType="java.lang.Integer">
+        SELECT COUNT(ue.user_id) FROM `user_extension` ue
+        WHERE ue.level_type &gt;= 0 AND ue.user_id IN (
+        SELECT fau.user_id AS user_id FROM `flow_user_analysis` fau
+        <where>
+            <if test="dateTime != null">
+                AND fau.create_date &lt;= #{dateTime}
+            </if>
+            <if test="dateTime == null and startTime != null ">
+                AND (fau.create_date &gt;= #{startTime} AND fau.create_date &lt;= #{endTime})
+            </if>
+        </where>
+        )
+    </select>
+    <select id="countAddCartMemberNum" resultType="java.lang.Integer">
+        SELECT COUNT(ue.user_id) FROM `user_extension` ue
+        WHERE ue.level_type >= 0 AND ue.user_id IN (
+        SELECT fua.user_id FROM `flow_user_analysis` fua
+        <where>
+            <if test="dateTime != null">
+                AND fua.create_date &lt;= #{dateTime}
+            </if>
+            <if test="dateTime == null and startTime != null ">
+                AND (fua.create_date &gt;= #{startTime} AND fua.create_date &lt;= #{endTime})
+            </if>
+        </where>
+        )
+    </select>
+
+    <select id="countByMemberTypeConditions" resultType="com.mall4j.cloud.user.vo.UserExtensionVO">
+        SELECT ue.user_id,ue.level_type FROM `user_extension` ue
+        <where>
+        and ue.user_id in
+            <foreach collection="param.userIds" item="userId" separator="," open="(" close=")">
+                #{userId}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="getGrowthLevelMismatchUserByLevelType" resultType="java.lang.Long">
+        SELECT ue.user_id FROM `user_extension` ue
+        WHERE ue.level !=
+        (
+            SELECT IFNULL( (SELECT `level` FROM `user_level` WHERE level_type = #{levelType} AND need_growth &lt;= ue.growth  ORDER BY `level` DESC LIMIT 1),
+                           (SELECT MIN(`level`) FROM `user_level` WHERE level_type = #{levelType})
+            ) AS `level`
+        )
+    </select>
+    <select id="getLevelAndLevelType" resultType="com.mall4j.cloud.user.model.UserExtension">
+        SELECT * FROM `user_extension` ue
+        WHERE `level` = #{level}
+        <if test="levelType != null">
+            AND level_type = #{levelType}
+        </if>
+    </select>
+
+    <!--    <select id="countVisitMemberNumByFlowLog" resultType="java.lang.Integer">-->
+<!--        SELECT COUNT(ue.user_id) FROM `user_extension` ue-->
+<!--        WHERE ue.level_type &gt;= 0 AND ue.user_id IN (-->
+<!--        SELECT fl.user_id AS user_id FROM `flow_log` fl-->
+<!--        <where>-->
+<!--            <if test="dateTime != null">-->
+<!--                AND fl.create_time &lt;= #{dateTime}-->
+<!--            </if>-->
+<!--            <if test="dateTime == null and startTime != null ">-->
+<!--                AND (fl.create_time  <![CDATA[ >= ]]> #{startTime} AND fl.create_time  <![CDATA[ <= ]]> #{endTime})-->
+<!--            </if>-->
+<!--        </where>-->
+<!--        )-->
+<!--    </select>-->
+</mapper>

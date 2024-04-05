@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.PushCouponActivityMapper">
+
+    <select id="list" resultType="com.mall4j.cloud.coupon.vo.ActivityListVO">
+        select ca.id as id,
+        ca.title as title,
+        ca.status as status,
+        ca.is_all_shop as isAllShop,
+        ca.weight as weight,
+        ca.start_time as startTime,
+        ca.end_time as endTime,
+        ca.create_name as createName,
+        ca.create_time as createTime
+        from push_coupon_activity ca
+        <if test="CouponName != null ">
+            left join push_coupon_activity_coupon cac on ca.id = cac.activity_id
+            left join t_coupon c on c.id = cac.coupon_id
+        </if>
+        <if test="shops != null ">
+            left join push_coupon_activity_shop cas on ca.id = cas.activity_id
+        </if>
+        <where>
+            ca.del = 0
+            <if test="activityName != null">
+                and ca.title like concat('%',#{activityName},'%')
+            </if>
+            <if test="CouponName != null">
+                and c.name like concat('%',#{CouponName},'%')
+            </if>
+            <if test="status == 0 or status == 1">
+                and ca.status = #{status}
+            </if>
+            <if test="status == 2">
+                and (ca.start_time &gt; now()) and ca.status = 0
+            </if>
+            <if test="status == 3">
+                and (ca.start_time &lt;= now() and ca.end_time &gt;= now()) and ca.status = 0
+            </if>
+            <if test="status == 4">
+                and (ca.end_time &lt; now()) and ca.status = 0
+            </if>
+            <if test="shops != null">
+                and ( cas.shop_id in
+                <foreach collection="shops" item="item"  index="index" open="("  separator="," close=")">
+                    #{item}
+                </foreach>
+                or ca.is_all_shop=1 )
+            </if>
+        </where>
+        group by ca.id
+        order by ca.create_time desc
+    </select>
+
+
+    <select id="shoppersActivity" resultType="java.lang.Long">
+        select p.id
+        from push_coupon_activity p  left join push_coupon_activity_shop ps  on p.id = ps.activity_id
+        where p.del = 0
+        and p.status = 0
+        and  (p.is_all_shop = 1 or (p.is_all_shop = 0 and ps.shop_id = #{shopId}))
+        and NOW() between p.start_time and p.end_time
+        order by p.weight asc, p.create_time desc
+    </select>
+
+    <select id="listForShoppers" resultType="com.mall4j.cloud.coupon.vo.CouponForShoppersVO">
+        SELECT pcac.id,pcac.coupon_id,pcac.activity_id,c.name,c.type,c.description,c.cover_url,c.reduce_amount,c.coupon_discount
+        FROM push_coupon_activity_coupon pcac
+                 LEFT JOIN t_coupon c on c.id = pcac.coupon_id
+        WHERE pcac.activity_id in
+        <foreach collection="activityIds" item="item" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+        and c.type = #{type}
+    </select>
+
+    <select id="activityReportDetail" resultType="com.mall4j.cloud.coupon.vo.ActivityReportDetailVO">
+        SELECT
+            c.id AS id,
+            c.NAME AS NAME,
+            c.source_type as couponSourceType,
+            ( SELECT count( 0 ) FROM t_coupon_user WHERE activity_source = #{activitySource} AND activity_id = #{activityId} AND coupon_id = c.id ) AS receiveNum,
+            ( SELECT count( 0 ) FROM t_coupon_user WHERE STATUS = 1 AND NOW() > user_end_time  AND activity_source = #{activitySource} AND activity_id = #{activityId} AND coupon_id = c.id ) AS overdueNum,
+            ( SELECT count( 0 ) FROM t_coupon_user WHERE STATUS = 2 AND activity_source = #{activitySource} AND activity_id = #{activityId} AND coupon_id = c.id  ) AS writeOffNum,
+            ( SELECT ifnull(sum(order_amount),0)/100 FROM t_coupon_user WHERE STATUS = 2 AND activity_source = #{activitySource} AND activity_id = #{activityId} AND coupon_id = c.id  ) AS activityIncome
+        FROM t_coupon c LEFT JOIN push_coupon_activity_coupon p ON p.coupon_id = c.id
+        <where>
+            p.activity_id = #{activityId}
+            <if test="couponInfo != null and couponInfo != ''">
+                and (c.id = #{couponInfo} or c.name = #{couponInfo})
+            </if>
+        </where>
+    </select>
+</mapper>

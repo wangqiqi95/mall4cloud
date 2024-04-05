@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.platform.mapper.RenoApplyMapper">
+  <resultMap id="renoApplyMap" type="com.mall4j.cloud.platform.model.RenoApply">
+    <id column="id" property="id" />
+    <result column="reno_id" property="renoId"/>
+    <result column="store_id" property="storeId"/>
+    <result column="is_deleted" property="isDeleted"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`reno_id`,`store_id`,`is_deleted`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="renoApplyMap">
+    select <include refid="Vo_Column_List"/> from reno_apply order by id desc
+  </select>
+  <select id="getById" resultMap="renoApplyMap">
+    select <include refid="Vo_Column_List"/> from reno_apply where id = #{id}
+  </select>
+  <insert id="save">
+    insert into reno_apply (`reno_id`,`store_id`,`is_deleted`,`create_time`)
+    values (#{renoApply.renoId},#{renoApply.storeId},#{renoApply.isDeleted},#{renoApply.createTime});
+  </insert>
+  <update id="update">
+    update reno_apply
+    <set>
+      <if test="renoApply.renoId != null">
+        `reno_id` = #{renoApply.renoId},
+      </if>
+      <if test="renoApply.storeId != null">
+        `store_id` = #{renoApply.storeId},
+      </if>
+      <if test="renoApply.isDeleted != null">
+        `is_deleted` = #{renoApply.isDeleted},
+      </if>
+    </set>
+    where id = #{renoApply.id}
+  </update>
+  <delete id="deleteById">
+    delete from reno_apply where id = #{id}
+  </delete>
+  <delete id="deleteByRenoId">
+    update reno_apply set is_deleted=1,update_time=now()  where reno_id = #{renoId}
+  </delete>
+  <delete id="deleteByRenoIdAndStroreId">
+    update reno_apply set is_deleted=1,update_time=now()  where reno_id = #{renoId} and store_id = #{storeId}
+  </delete>
+  <select id="listByRenoId" resultType="java.lang.Long">
+    select store_id from reno_apply where reno_id = #{renovationId} and  is_deleted = 0
+  </select>
+
+</mapper>

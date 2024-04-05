@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpWelcomeTimeStateMapper">
+  <resultMap id="cpWelcomeTimeStateMap" type="com.mall4j.cloud.biz.model.cp.CpWelcomeTimeState">
+    <id column="id" property="id" />
+    <result column="weight" property="weight"/>
+    <result column="wel_id" property="welId"/>
+    <result column="slogan" property="slogan"/>
+    <result column="time_cycle" property="timeCycle"/>
+    <result column="time_start" property="timeStart"/>
+    <result column="time_end" property="timeEnd"/>
+    <result column="create_time" property="createTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`weight`,`wel_id`,`slogan`,`time_cycle`,`time_start`,`time_end`,`create_time`
+  </sql>
+  <select id="list" resultMap="cpWelcomeTimeStateMap">
+    select <include refid="Vo_Column_List"/> from cp_welcome_time_state order by id desc
+  </select>
+  <select id="getById" resultMap="cpWelcomeTimeStateMap">
+    select <include refid="Vo_Column_List"/> from cp_welcome_time_state where id = #{id}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+    insert into cp_welcome_time_state (`weight`,`wel_id`,`slogan`,`time_cycle`,`time_start`,`time_end`)
+    values (#{cpWelcomeTimeState.weight},#{cpWelcomeTimeState.welId},#{cpWelcomeTimeState.slogan},#{cpWelcomeTimeState.timeCycle},#{cpWelcomeTimeState.timeStart},#{cpWelcomeTimeState.timeEnd});
+  </insert>
+  <update id="update">
+    update cp_welcome_time_state
+    <set>
+      <if test="cpWelcomeTimeState.weight != null">
+        `weight` = #{cpWelcomeTimeState.weight},
+      </if>
+      <if test="cpWelcomeTimeState.welId != null">
+        `wel_id` = #{cpWelcomeTimeState.welId},
+      </if>
+      <if test="cpWelcomeTimeState.slogan != null">
+        `slogan` = #{cpWelcomeTimeState.slogan},
+      </if>
+      <if test="cpWelcomeTimeState.timeCycle != null">
+        `time_cycle` = #{cpWelcomeTimeState.timeCycle},
+      </if>
+      <if test="cpWelcomeTimeState.timeStart != null">
+        `time_start` = #{cpWelcomeTimeState.timeStart},
+      </if>
+      <if test="cpWelcomeTimeState.timeEnd != null">
+        `time_end` = #{cpWelcomeTimeState.timeEnd},
+      </if>
+    </set>
+    where id = #{cpWelcomeTimeState.id}
+  </update>
+  <delete id="deleteById">
+    delete from cp_welcome_time_state where id = #{id}
+  </delete>
+
+  <select id="listByWellId" resultType="com.mall4j.cloud.biz.vo.cp.CpWelcomeTimeStateVO">
+    select <include refid="Vo_Column_List"/> from cp_welcome_time_state where wel_id = #{wellId}
+  </select>
+
+  <delete id="deleteByWelId">
+    delete from cp_welcome_time_state where wel_id = #{wellId}
+  </delete>
+
+</mapper>

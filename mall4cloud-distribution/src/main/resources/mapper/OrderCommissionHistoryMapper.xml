@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.OrderCommissionHistoryMapper">
+  <resultMap id="orderCommissionHistoryMap" type="com.mall4j.cloud.distribution.model.OrderCommissionHistory">
+    <id column="id" property="id" />
+    <result column="identity_type" property="identityType"/>
+    <result column="user_id" property="userId"/>
+    <result column="commission" property="commission"/>
+    <result column="status" property="status"/>
+    <result column="remark" property="remark"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`identity_type`,`user_id`,`commission`,`status`,`remark`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="orderCommissionHistoryMap">
+    select <include refid="Vo_Column_List"/> from order_commission_history
+    <where>
+      <if test="orderCommissionHistoryDTO.identityType != null">
+        and identity_type = #{orderCommissionHistoryDTO.identityType}
+      </if>
+      <if test="orderCommissionHistoryDTO.userId != null">
+        and user_id = #{orderCommissionHistoryDTO.userId}
+      </if>
+      <if test="orderCommissionHistoryDTO.status != null">
+        and status = #{orderCommissionHistoryDTO.status}
+      </if>
+    </where>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="orderCommissionHistoryMap">
+    select <include refid="Vo_Column_List"/> from order_commission_history where id = #{id}
+  </select>
+
+  <select id="listOrderInIds" resultMap="orderCommissionHistoryMap">
+    select <include refid="Vo_Column_List"/> from order_commission_history
+    where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </select>
+
+  <insert id="save">
+    insert into order_commission_history (`identity_type`,`user_id`,`commission`,`status`,`remark`)
+    values (#{orderCommissionHistory.identityType},#{orderCommissionHistory.userId},#{orderCommissionHistory.commission},#{orderCommissionHistory.status},#{orderCommissionHistory.remark});
+  </insert>
+
+  <update id="update">
+    update order_commission_history
+    <set>
+      <if test="orderCommissionHistory.identityType != null">
+        `identity_type` = #{orderCommissionHistory.identityType},
+      </if>
+      <if test="orderCommissionHistory.userId != null">
+        `user_id` = #{orderCommissionHistory.userId},
+      </if>
+      <if test="orderCommissionHistory.commission != null">
+        `commission` = #{orderCommissionHistory.commission},
+      </if>
+      <if test="orderCommissionHistory.status != null">
+        `status` = #{orderCommissionHistory.status},
+      </if>
+      <if test="orderCommissionHistory.remark != null">
+        `remark` = #{orderCommissionHistory.remark},
+      </if>
+    </set>
+    where id = #{orderCommissionHistory.id}
+  </update>
+  <delete id="deleteById">
+    delete from order_commission_history where id = #{id}
+  </delete>
+
+</mapper>

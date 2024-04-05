@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.MallSalesOrderDtlMapper">
+    <resultMap id="mallSalesOrderDtlMap" type="com.mall4j.cloud.transfer.model.MallSalesOrderDtl">
+        <id column="Id" property="id"/>
+        <result column="CopId" property="copid"/>
+        <result column="BrandId" property="brandid"/>
+        <result column="OrderId" property="orderid"/>
+        <result column="ItemId" property="itemid"/>
+        <result column="BarId" property="barid"/>
+        <result column="BarCode" property="barcode"/>
+        <result column="PriceOriginal" property="priceoriginal"/>
+        <result column="PriceSell" property="pricesell"/>
+        <result column="PurchasePrice" property="purchaseprice"/>
+        <result column="Quantity" property="quantity"/>
+        <result column="Amount" property="amount"/>
+        <result column="AvgAmount" property="avgamount"/>
+        <result column="ProductBrandId" property="productbrandid"/>
+        <result column="SkuOriginId" property="skuoriginid"/>
+        <result column="ItemOriginId" property="itemoriginid"/>
+        <result column="SkuSizeId" property="skusizeid"/>
+        <result column="DiscountMoney" property="discountmoney"/>
+        <result column="DiscountAmount" property="discountamount"/>
+        <result column="ProCouponAmount" property="procouponamount"/>
+        <result column="OrderCouponAmount" property="ordercouponamount"/>
+        <result column="DisCount" property="discount"/>
+        <result column="SalerRewardFeeRate" property="salerrewardfeerate"/>
+        <result column="SalerRewardFee" property="salerrewardfee"/>
+        <result column="LinkRewardFeeRate" property="linkrewardfeerate"/>
+        <result column="LinkRewardFee" property="linkrewardfee"/>
+        <result column="RetLinkRewardFee" property="retlinkrewardfee"/>
+        <result column="RetSalerRewardFee" property="retsalerrewardfee"/>
+        <result column="IsGift" property="isgift"/>
+        <result column="GiftType" property="gifttype"/>
+        <result column="IsGroupBuy" property="isgroupbuy"/>
+        <result column="GroupBuyId" property="groupbuyid"/>
+        <result column="DisCountActId" property="discountactid"/>
+        <result column="IsOutStock" property="isoutstock"/>
+        <result column="ReturnQuantity" property="returnquantity"/>
+        <result column="ReturnPrice" property="returnprice"/>
+        <result column="ReturnMoney" property="returnmoney"/>
+        <result column="ReturnId" property="returnid"/>
+        <result column="ReturnRewardFee" property="returnrewardfee"/>
+        <result column="RewardFee" property="rewardfee"/>
+        <result column="RewardRuleId" property="rewardruleid"/>
+        <result column="UseBonus" property="usebonus"/>
+        <result column="UseCouponId" property="usecouponid"/>
+        <result column="CalcBonus" property="calcbonus"/>
+        <result column="CommentId" property="commentid"/>
+        <result column="CreateDate" property="createdate"/>
+        <result column="LastModifiedDate" property="lastmodifieddate"/>
+        <result column="ExpressOrgId" property="expressorgid"/>
+        <result column="ExpressCode" property="expresscode"/>
+        <result column="RefundId" property="refundid"/>
+        <result column="HasSendTime" property="hassendtime"/>
+        <result column="ShipType" property="shiptype"/>
+        <result column="RetailPrice" property="retailprice"/>
+        <result column="SharePersonId" property="sharepersonid"/>
+        <result column="SharePersonType" property="sharepersontype"/>
+        <result column="OutOrderCode" property="outordercode"/>
+        <result column="OutOrderCodeExt1" property="outordercodeext1"/>
+        <result column="WxProCouponAmount" property="wxprocouponamount"/>
+        <result column="WxOrderCouponAmount" property="wxordercouponamount"/>
+        <result column="PrepaidCardAmount" property="prepaidcardamount"/>
+        <result column="AllowRefundAmount" property="allowrefundamount"/>
+        <result column="ExpressQty" property="expressqty"/>
+        <result column="GiftActId" property="giftactid"/>
+        <result column="OrderWipeZeroAmount" property="orderwipezeroamount"/>
+        <result column="PromotionSource" property="promotionsource"/>
+        <result column="PSId" property="psid"/>
+        <result column="ItemNo" property="itemno"/>
+        <result column="ItemName" property="itemname"/>
+        <result column="VipId" property="vipid"/>
+        <result column="SkuAttrValsEx" property="skuattrvalsex"/>
+        <result column="PictureUrl" property="pictureurl"/>
+        <result column="VipDaiGouRewardFee" property="vipdaigourewardfee"/>
+        <result column="ActId" property="actid"/>
+        <result column="ActType" property="acttype"/>
+        <result column="VipDiscountAmount" property="vipdiscountamount"/>
+        <result column="VipDiscountAmountBalance" property="vipdiscountamountbalance"/>
+        <result column="AlipayPushShareCoupon" property="alipaypushsharecoupon"/>
+        <result column="AlipayCouponAmount" property="alipaycouponamount"/>
+        <result column="TimelimitedDiscountAmount" property="timelimiteddiscountamount"/>
+        <result column="UseIntegral" property="useintegral"/>
+        <result column="UseIntegralMoney" property="useintegralmoney"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `Id`
+        ,
+        `CopId`,
+        `BrandId`,
+        `OrderId`,
+        `ItemId`,
+        `BarId`,
+        `BarCode`,
+        `PriceOriginal`,
+        `PriceSell`,
+        `PurchasePrice`,
+        `Quantity`,
+        `Amount`,
+        `AvgAmount`,
+        `ProductBrandId`,
+        `SkuOriginId`,
+        `ItemOriginId`,
+        `SkuSizeId`,
+        `DiscountMoney`,
+        `DiscountAmount`,
+        `ProCouponAmount`,
+        `OrderCouponAmount`,
+        `DisCount`,
+        `SalerRewardFeeRate`,
+        `SalerRewardFee`,
+        `LinkRewardFeeRate`,
+        `LinkRewardFee`,
+        `RetLinkRewardFee`,
+        `RetSalerRewardFee`,
+        `IsGift`,
+        `GiftType`,
+        `IsGroupBuy`,
+        `GroupBuyId`,
+        `DisCountActId`,
+        `IsOutStock`,
+        `ReturnQuantity`,
+        `ReturnPrice`,
+        `ReturnMoney`,
+        `ReturnId`,
+        `ReturnRewardFee`,
+        `RewardFee`,
+        `RewardRuleId`,
+        `UseBonus`,
+        `UseCouponId`,
+        `CalcBonus`,
+        `CommentId`,
+        `CreateDate`,
+        `LastModifiedDate`,
+        `ExpressOrgId`,
+        `ExpressCode`,
+        `RefundId`,
+        `HasSendTime`,
+        `ShipType`,
+        `RetailPrice`,
+        `SharePersonId`,
+        `SharePersonType`,
+        `OutOrderCode`,
+        `OutOrderCodeExt1`,
+        `WxProCouponAmount`,
+        `WxOrderCouponAmount`,
+        `PrepaidCardAmount`,
+        `AllowRefundAmount`,
+        `ExpressQty`,
+        `GiftActId`,
+        `OrderWipeZeroAmount`,
+        `PromotionSource`,
+        `PSId`,
+        `ItemNo`,
+        `ItemName`,
+        `VipId`,
+        `SkuAttrValsEx`,
+        `PictureUrl`,
+        `VipDaiGouRewardFee`,
+        `ActId`,
+        `ActType`,
+        `VipDiscountAmount`,
+        `VipDiscountAmountBalance`,
+        `AlipayPushShareCoupon`,
+        `AlipayCouponAmount`,
+        `TimelimitedDiscountAmount`,
+        `UseIntegral`,
+        `UseIntegralMoney`
+    </sql>
+    <select id="list" resultMap="mallSalesOrderDtlMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall_sales_order_dtl order by Id desc
+    </select>
+    <select id="getById" resultMap="mallSalesOrderDtlMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall_sales_order_dtl where Id = #{id}
+    </select>
+    <select id="getById2" resultMap="mallSalesOrderDtlMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall_sales_order_dtl where Id = #{id}
+    </select>
+
+    <select id="getByOrderId" resultMap="mallSalesOrderDtlMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall_sales_order_dtl where BrandId = 665 and  OrderId = #{orderId}
+    </select>
+    <select id="getByCouponId" resultMap="mallSalesOrderDtlMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall_sales_order_dtl where BrandId = 665 and UseCouponId = #{couponId}
+    </select>
+    <insert id="save">
+        insert into mall_sales_order_dtl (`CopId`, `BrandId`, `OrderId`, `ItemId`, `BarId`, `BarCode`, `PriceOriginal`,
+                                          `PriceSell`, `PurchasePrice`, `Quantity`, `Amount`, `AvgAmount`,
+                                          `ProductBrandId`, `SkuOriginId`, `ItemOriginId`, `SkuSizeId`, `DiscountMoney`,
+                                          `DiscountAmount`, `ProCouponAmount`, `OrderCouponAmount`, `DisCount`,
+                                          `SalerRewardFeeRate`, `SalerRewardFee`, `LinkRewardFeeRate`, `LinkRewardFee`,
+                                          `RetLinkRewardFee`, `RetSalerRewardFee`, `IsGift`, `GiftType`, `IsGroupBuy`,
+                                          `GroupBuyId`, `DisCountActId`, `IsOutStock`, `ReturnQuantity`, `ReturnPrice`,
+                                          `ReturnMoney`, `ReturnId`, `ReturnRewardFee`, `RewardFee`, `RewardRuleId`,
+                                          `UseBonus`, `UseCouponId`, `CalcBonus`, `CommentId`, `CreateDate`,
+                                          `LastModifiedDate`, `ExpressOrgId`, `ExpressCode`, `RefundId`, `HasSendTime`,
+                                          `ShipType`, `RetailPrice`, `SharePersonId`, `SharePersonType`, `OutOrderCode`,
+                                          `OutOrderCodeExt1`, `WxProCouponAmount`, `WxOrderCouponAmount`,
+                                          `PrepaidCardAmount`, `AllowRefundAmount`, `ExpressQty`, `GiftActId`,
+                                          `OrderWipeZeroAmount`, `PromotionSource`, `PSId`, `ItemNo`, `ItemName`,
+                                          `VipId`, `SkuAttrValsEx`, `PictureUrl`, `VipDaiGouRewardFee`, `ActId`,
+                                          `ActType`, `VipDiscountAmount`, `VipDiscountAmountBalance`,
+                                          `AlipayPushShareCoupon`, `AlipayCouponAmount`, `TimelimitedDiscountAmount`,
+                                          `UseIntegral`, `UseIntegralMoney`)
+        values (#{mallSalesOrderDtl.copid}, #{mallSalesOrderDtl.brandid}, #{mallSalesOrderDtl.orderid},
+                #{mallSalesOrderDtl.itemid}, #{mallSalesOrderDtl.barid}, #{mallSalesOrderDtl.barcode},
+                #{mallSalesOrderDtl.priceoriginal}, #{mallSalesOrderDtl.pricesell}, #{mallSalesOrderDtl.purchaseprice},
+                #{mallSalesOrderDtl.quantity}, #{mallSalesOrderDtl.amount}, #{mallSalesOrderDtl.avgamount},
+                #{mallSalesOrderDtl.productbrandid}, #{mallSalesOrderDtl.skuoriginid},
+                #{mallSalesOrderDtl.itemoriginid}, #{mallSalesOrderDtl.skusizeid}, #{mallSalesOrderDtl.discountmoney},
+                #{mallSalesOrderDtl.discountamount}, #{mallSalesOrderDtl.procouponamount},
+                #{mallSalesOrderDtl.ordercouponamount}, #{mallSalesOrderDtl.discount},
+                #{mallSalesOrderDtl.salerrewardfeerate}, #{mallSalesOrderDtl.salerrewardfee},
+                #{mallSalesOrderDtl.linkrewardfeerate}, #{mallSalesOrderDtl.linkrewardfee},
+                #{mallSalesOrderDtl.retlinkrewardfee}, #{mallSalesOrderDtl.retsalerrewardfee},
+                #{mallSalesOrderDtl.isgift}, #{mallSalesOrderDtl.gifttype}, #{mallSalesOrderDtl.isgroupbuy},
+                #{mallSalesOrderDtl.groupbuyid}, #{mallSalesOrderDtl.discountactid}, #{mallSalesOrderDtl.isoutstock},
+                #{mallSalesOrderDtl.returnquantity}, #{mallSalesOrderDtl.returnprice}, #{mallSalesOrderDtl.returnmoney},
+                #{mallSalesOrderDtl.returnid}, #{mallSalesOrderDtl.returnrewardfee}, #{mallSalesOrderDtl.rewardfee},
+                #{mallSalesOrderDtl.rewardruleid}, #{mallSalesOrderDtl.usebonus}, #{mallSalesOrderDtl.usecouponid},
+                #{mallSalesOrderDtl.calcbonus}, #{mallSalesOrderDtl.commentid}, #{mallSalesOrderDtl.createdate},
+                #{mallSalesOrderDtl.lastmodifieddate}, #{mallSalesOrderDtl.expressorgid},
+                #{mallSalesOrderDtl.expresscode}, #{mallSalesOrderDtl.refundid}, #{mallSalesOrderDtl.hassendtime},
+                #{mallSalesOrderDtl.shiptype}, #{mallSalesOrderDtl.retailprice}, #{mallSalesOrderDtl.sharepersonid},
+                #{mallSalesOrderDtl.sharepersontype}, #{mallSalesOrderDtl.outordercode},
+                #{mallSalesOrderDtl.outordercodeext1}, #{mallSalesOrderDtl.wxprocouponamount},
+                #{mallSalesOrderDtl.wxordercouponamount}, #{mallSalesOrderDtl.prepaidcardamount},
+                #{mallSalesOrderDtl.allowrefundamount}, #{mallSalesOrderDtl.expressqty}, #{mallSalesOrderDtl.giftactid},
+                #{mallSalesOrderDtl.orderwipezeroamount}, #{mallSalesOrderDtl.promotionsource},
+                #{mallSalesOrderDtl.psid}, #{mallSalesOrderDtl.itemno}, #{mallSalesOrderDtl.itemname},
+                #{mallSalesOrderDtl.vipid}, #{mallSalesOrderDtl.skuattrvalsex}, #{mallSalesOrderDtl.pictureurl},
+                #{mallSalesOrderDtl.vipdaigourewardfee}, #{mallSalesOrderDtl.actid}, #{mallSalesOrderDtl.acttype},
+                #{mallSalesOrderDtl.vipdiscountamount}, #{mallSalesOrderDtl.vipdiscountamountbalance},
+                #{mallSalesOrderDtl.alipaypushsharecoupon}, #{mallSalesOrderDtl.alipaycouponamount},
+                #{mallSalesOrderDtl.timelimiteddiscountamount}, #{mallSalesOrderDtl.useintegral},
+                #{mallSalesOrderDtl.useintegralmoney});
+    </insert>
+    <update id="update">
+        update mall_sales_order_dtl
+        <set>
+            <if test="mallSalesOrderDtl.copid != null">
+                `CopId` = #{mallSalesOrderDtl.copid},
+            </if>
+            <if test="mallSalesOrderDtl.brandid != null">
+                `BrandId` = #{mallSalesOrderDtl.brandid},
+            </if>
+            <if test="mallSalesOrderDtl.orderid != null">
+                `OrderId` = #{mallSalesOrderDtl.orderid},
+            </if>
+            <if test="mallSalesOrderDtl.itemid != null">
+                `ItemId` = #{mallSalesOrderDtl.itemid},
+            </if>
+            <if test="mallSalesOrderDtl.barid != null">
+                `BarId` = #{mallSalesOrderDtl.barid},
+            </if>
+            <if test="mallSalesOrderDtl.barcode != null">
+                `BarCode` = #{mallSalesOrderDtl.barcode},
+            </if>
+            <if test="mallSalesOrderDtl.priceoriginal != null">
+                `PriceOriginal` = #{mallSalesOrderDtl.priceoriginal},
+            </if>
+            <if test="mallSalesOrderDtl.pricesell != null">
+                `PriceSell` = #{mallSalesOrderDtl.pricesell},
+            </if>
+            <if test="mallSalesOrderDtl.purchaseprice != null">
+                `PurchasePrice` = #{mallSalesOrderDtl.purchaseprice},
+            </if>
+            <if test="mallSalesOrderDtl.quantity != null">
+                `Quantity` = #{mallSalesOrderDtl.quantity},
+            </if>
+            <if test="mallSalesOrderDtl.amount != null">
+                `Amount` = #{mallSalesOrderDtl.amount},
+            </if>
+            <if test="mallSalesOrderDtl.avgamount != null">
+                `AvgAmount` = #{mallSalesOrderDtl.avgamount},
+            </if>
+            <if test="mallSalesOrderDtl.productbrandid != null">
+                `ProductBrandId` = #{mallSalesOrderDtl.productbrandid},
+            </if>
+            <if test="mallSalesOrderDtl.skuoriginid != null">
+                `SkuOriginId` = #{mallSalesOrderDtl.skuoriginid},
+            </if>
+            <if test="mallSalesOrderDtl.itemoriginid != null">
+                `ItemOriginId` = #{mallSalesOrderDtl.itemoriginid},
+            </if>
+            <if test="mallSalesOrderDtl.skusizeid != null">
+                `SkuSizeId` = #{mallSalesOrderDtl.skusizeid},
+            </if>
+            <if test="mallSalesOrderDtl.discountmoney != null">
+                `DiscountMoney` = #{mallSalesOrderDtl.discountmoney},
+            </if>
+            <if test="mallSalesOrderDtl.discountamount != null">
+                `DiscountAmount` = #{mallSalesOrderDtl.discountamount},
+            </if>
+            <if test="mallSalesOrderDtl.procouponamount != null">
+                `ProCouponAmount` = #{mallSalesOrderDtl.procouponamount},
+            </if>
+            <if test="mallSalesOrderDtl.ordercouponamount != null">
+                `OrderCouponAmount` = #{mallSalesOrderDtl.ordercouponamount},
+            </if>
+            <if test="mallSalesOrderDtl.discount != null">
+                `DisCount` = #{mallSalesOrderDtl.discount},
+            </if>
+            <if test="mallSalesOrderDtl.salerrewardfeerate != null">
+                `SalerRewardFeeRate` = #{mallSalesOrderDtl.salerrewardfeerate},
+            </if>
+            <if test="mallSalesOrderDtl.salerrewardfee != null">
+                `SalerRewardFee` = #{mallSalesOrderDtl.salerrewardfee},
+            </if>
+            <if test="mallSalesOrderDtl.linkrewardfeerate != null">
+                `LinkRewardFeeRate` = #{mallSalesOrderDtl.linkrewardfeerate},
+            </if>
+            <if test="mallSalesOrderDtl.linkrewardfee != null">
+                `LinkRewardFee` = #{mallSalesOrderDtl.linkrewardfee},
+            </if>
+            <if test="mallSalesOrderDtl.retlinkrewardfee != null">
+                `RetLinkRewardFee` = #{mallSalesOrderDtl.retlinkrewardfee},
+            </if>
+            <if test="mallSalesOrderDtl.retsalerrewardfee != null">
+                `RetSalerRewardFee` = #{mallSalesOrderDtl.retsalerrewardfee},
+            </if>
+            <if test="mallSalesOrderDtl.isgift != null">
+                `IsGift` = #{mallSalesOrderDtl.isgift},
+            </if>
+            <if test="mallSalesOrderDtl.gifttype != null">
+                `GiftType` = #{mallSalesOrderDtl.gifttype},
+            </if>
+            <if test="mallSalesOrderDtl.isgroupbuy != null">
+                `IsGroupBuy` = #{mallSalesOrderDtl.isgroupbuy},
+            </if>
+            <if test="mallSalesOrderDtl.groupbuyid != null">
+                `GroupBuyId` = #{mallSalesOrderDtl.groupbuyid},
+            </if>
+            <if test="mallSalesOrderDtl.discountactid != null">
+                `DisCountActId` = #{mallSalesOrderDtl.discountactid},
+            </if>
+            <if test="mallSalesOrderDtl.isoutstock != null">
+                `IsOutStock` = #{mallSalesOrderDtl.isoutstock},
+            </if>
+            <if test="mallSalesOrderDtl.returnquantity != null">
+                `ReturnQuantity` = #{mallSalesOrderDtl.returnquantity},
+            </if>
+            <if test="mallSalesOrderDtl.returnprice != null">
+                `ReturnPrice` = #{mallSalesOrderDtl.returnprice},
+            </if>
+            <if test="mallSalesOrderDtl.returnmoney != null">
+                `ReturnMoney` = #{mallSalesOrderDtl.returnmoney},
+            </if>
+            <if test="mallSalesOrderDtl.returnid != null">
+                `ReturnId` = #{mallSalesOrderDtl.returnid},
+            </if>
+            <if test="mallSalesOrderDtl.returnrewardfee != null">
+                `ReturnRewardFee` = #{mallSalesOrderDtl.returnrewardfee},
+            </if>
+            <if test="mallSalesOrderDtl.rewardfee != null">
+                `RewardFee` = #{mallSalesOrderDtl.rewardfee},
+            </if>
+            <if test="mallSalesOrderDtl.rewardruleid != null">
+                `RewardRuleId` = #{mallSalesOrderDtl.rewardruleid},
+            </if>
+            <if test="mallSalesOrderDtl.usebonus != null">
+                `UseBonus` = #{mallSalesOrderDtl.usebonus},
+            </if>
+            <if test="mallSalesOrderDtl.usecouponid != null">
+                `UseCouponId` = #{mallSalesOrderDtl.usecouponid},
+            </if>
+            <if test="mallSalesOrderDtl.calcbonus != null">
+                `CalcBonus` = #{mallSalesOrderDtl.calcbonus},
+            </if>
+            <if test="mallSalesOrderDtl.commentid != null">
+                `CommentId` = #{mallSalesOrderDtl.commentid},
+            </if>
+            <if test="mallSalesOrderDtl.createdate != null">
+                `CreateDate` = #{mallSalesOrderDtl.createdate},
+            </if>
+            <if test="mallSalesOrderDtl.lastmodifieddate != null">
+                `LastModifiedDate` = #{mallSalesOrderDtl.lastmodifieddate},
+            </if>
+            <if test="mallSalesOrderDtl.expressorgid != null">
+                `ExpressOrgId` = #{mallSalesOrderDtl.expressorgid},
+            </if>
+            <if test="mallSalesOrderDtl.expresscode != null">
+                `ExpressCode` = #{mallSalesOrderDtl.expresscode},
+            </if>
+            <if test="mallSalesOrderDtl.refundid != null">
+                `RefundId` = #{mallSalesOrderDtl.refundid},
+            </if>
+            <if test="mallSalesOrderDtl.hassendtime != null">
+                `HasSendTime` = #{mallSalesOrderDtl.hassendtime},
+            </if>
+            <if test="mallSalesOrderDtl.shiptype != null">
+                `ShipType` = #{mallSalesOrderDtl.shiptype},
+            </if>
+            <if test="mallSalesOrderDtl.retailprice != null">
+                `RetailPrice` = #{mallSalesOrderDtl.retailprice},
+            </if>
+            <if test="mallSalesOrderDtl.sharepersonid != null">
+                `SharePersonId` = #{mallSalesOrderDtl.sharepersonid},
+            </if>
+            <if test="mallSalesOrderDtl.sharepersontype != null">
+                `SharePersonType` = #{mallSalesOrderDtl.sharepersontype},
+            </if>
+            <if test="mallSalesOrderDtl.outordercode != null">
+                `OutOrderCode` = #{mallSalesOrderDtl.outordercode},
+            </if>
+            <if test="mallSalesOrderDtl.outordercodeext1 != null">
+                `OutOrderCodeExt1` = #{mallSalesOrderDtl.outordercodeext1},
+            </if>
+            <if test="mallSalesOrderDtl.wxprocouponamount != null">
+                `WxProCouponAmount` = #{mallSalesOrderDtl.wxprocouponamount},
+            </if>
+            <if test="mallSalesOrderDtl.wxordercouponamount != null">
+                `WxOrderCouponAmount` = #{mallSalesOrderDtl.wxordercouponamount},
+            </if>
+            <if test="mallSalesOrderDtl.prepaidcardamount != null">
+                `PrepaidCardAmount` = #{mallSalesOrderDtl.prepaidcardamount},
+            </if>
+            <if test="mallSalesOrderDtl.allowrefundamount != null">
+                `AllowRefundAmount` = #{mallSalesOrderDtl.allowrefundamount},
+            </if>
+            <if test="mallSalesOrderDtl.expressqty != null">
+                `ExpressQty` = #{mallSalesOrderDtl.expressqty},
+            </if>
+            <if test="mallSalesOrderDtl.giftactid != null">
+                `GiftActId` = #{mallSalesOrderDtl.giftactid},
+            </if>
+            <if test="mallSalesOrderDtl.orderwipezeroamount != null">
+                `OrderWipeZeroAmount` = #{mallSalesOrderDtl.orderwipezeroamount},
+            </if>
+            <if test="mallSalesOrderDtl.promotionsource != null">
+                `PromotionSource` = #{mallSalesOrderDtl.promotionsource},
+            </if>
+            <if test="mallSalesOrderDtl.psid != null">
+                `PSId` = #{mallSalesOrderDtl.psid},
+            </if>
+            <if test="mallSalesOrderDtl.itemno != null">
+                `ItemNo` = #{mallSalesOrderDtl.itemno},
+            </if>
+            <if test="mallSalesOrderDtl.itemname != null">
+                `ItemName` = #{mallSalesOrderDtl.itemname},
+            </if>
+            <if test="mallSalesOrderDtl.vipid != null">
+                `VipId` = #{mallSalesOrderDtl.vipid},
+            </if>
+            <if test="mallSalesOrderDtl.skuattrvalsex != null">
+                `SkuAttrValsEx` = #{mallSalesOrderDtl.skuattrvalsex},
+            </if>
+            <if test="mallSalesOrderDtl.pictureurl != null">
+                `PictureUrl` = #{mallSalesOrderDtl.pictureurl},
+            </if>
+            <if test="mallSalesOrderDtl.vipdaigourewardfee != null">
+                `VipDaiGouRewardFee` = #{mallSalesOrderDtl.vipdaigourewardfee},
+            </if>
+            <if test="mallSalesOrderDtl.actid != null">
+                `ActId` = #{mallSalesOrderDtl.actid},
+            </if>
+            <if test="mallSalesOrderDtl.acttype != null">
+                `ActType` = #{mallSalesOrderDtl.acttype},
+            </if>
+            <if test="mallSalesOrderDtl.vipdiscountamount != null">
+                `VipDiscountAmount` = #{mallSalesOrderDtl.vipdiscountamount},
+            </if>
+            <if test="mallSalesOrderDtl.vipdiscountamountbalance != null">
+                `VipDiscountAmountBalance` = #{mallSalesOrderDtl.vipdiscountamountbalance},
+            </if>
+            <if test="mallSalesOrderDtl.alipaypushsharecoupon != null">
+                `AlipayPushShareCoupon` = #{mallSalesOrderDtl.alipaypushsharecoupon},
+            </if>
+            <if test="mallSalesOrderDtl.alipaycouponamount != null">
+                `AlipayCouponAmount` = #{mallSalesOrderDtl.alipaycouponamount},
+            </if>
+            <if test="mallSalesOrderDtl.timelimiteddiscountamount != null">
+                `TimelimitedDiscountAmount` = #{mallSalesOrderDtl.timelimiteddiscountamount},
+            </if>
+            <if test="mallSalesOrderDtl.useintegral != null">
+                `UseIntegral` = #{mallSalesOrderDtl.useintegral},
+            </if>
+            <if test="mallSalesOrderDtl.useintegralmoney != null">
+                `UseIntegralMoney` = #{mallSalesOrderDtl.useintegralmoney},
+            </if>
+        </set>
+        where Id = #{mallSalesOrderDtl.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from mall_sales_order_dtl
+        where Id = #{id}
+    </delete>
+
+</mapper>

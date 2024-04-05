@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.NotifyTemplateTagMapper">
+  <resultMap id="notifyTemplateTagMap" type="com.mall4j.cloud.biz.model.NotifyTemplateTag">
+    <id column="notify_tag_id" property="notifyTagId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="user_tag_id" property="userTagId"/>
+    <result column="template_id" property="templateId"/>
+  </resultMap>
+  <resultMap id="pageTagNotifyMap" type="com.mall4j.cloud.biz.vo.NotifyTemplateVO">
+    <id column="template_id" property="templateId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="send_type" property="sendType"/>
+    <result column="message" property="message"/>
+    <result column="notify_types" property="notifyTypes"/>
+    <result column="template_code" property="templateCode"/>
+    <result column="mp_code" property="mpCode"/>
+    <result column="msg_type" property="msgType"/>
+    <result column="status" property="status"/>
+    <collection property="tagIds" javaType="list" ofType="java.lang.Long">
+      <result column="user_tag_id"/>
+    </collection>
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `notify_tag_id`,`create_time`,`update_time`,`user_tag_id`,`template_id`
+  </sql>
+  <select id="list" resultMap="notifyTemplateTagMap">
+    select <include refid="Vo_Column_List"/> from notify_template_tag order by notify_tag_id desc
+  </select>
+  <select id="getByNotifyTagId" resultMap="notifyTemplateTagMap">
+    select <include refid="Vo_Column_List"/> from notify_template_tag where notify_tag_id = #{notifyTagId}
+  </select>
+  <select id="pageTagNotify" resultMap="pageTagNotifyMap">
+    select nt.*,tt.user_tag_id from (
+    SELECT * FROM notify_template t WHERE t.`send_type` = 0 AND t.`status` = 1
+    order by t.`create_time` desc
+    LIMIT #{page.begin} , #{page.size}
+    ) nt
+    LEFT JOIN notify_template_tag tt ON nt.`template_id` = tt.`template_id`
+  </select>
+  <select id="countTagNotify" resultType="java.lang.Integer">
+    SELECT count(*) FROM notify_template t WHERE t.`send_type` = 0 AND t.`status` = 1
+  </select>
+  <select id="getTagIdsByTemplateId" resultType="java.lang.Long" parameterType="java.lang.Long">
+    select user_tag_id from notify_template_tag where template_id = #{templateId}
+  </select>
+  <insert id="save">
+    insert into notify_template_tag (`user_tag_id`,`template_id`)
+    values (#{notifyTemplateTag.userTagId},#{notifyTemplateTag.templateId});
+  </insert>
+    <insert id="saveBatch" parameterType="java.util.List">
+      insert into notify_template_tag (`user_tag_id`,`template_id`)
+      values
+      <foreach collection="notifyTemplateTags" item="notifyTemplateTag" separator=",">
+        (#{notifyTemplateTag.userTagId},#{notifyTemplateTag.templateId})
+      </foreach>
+    </insert>
+    <update id="update">
+    update notify_template_tag
+    <set>
+      <if test="notifyTemplateTag.userTagId != null">
+        `user_tag_id` = #{notifyTemplateTag.userTagId},
+      </if>
+      <if test="notifyTemplateTag.templateId != null">
+        `template_id` = #{notifyTemplateTag.templateId},
+      </if>
+    </set>
+    where notify_tag_id = #{notifyTemplateTag.notifyTagId}
+  </update>
+  <delete id="deleteById">
+    delete from notify_template_tag where notify_tag_id = #{notifyTagId}
+  </delete>
+  <delete id="deleteTemplateTagByTempLateId" parameterType="java.lang.Long">
+    delete from notify_template_tag where template_id = #{templateId}
+  </delete>
+  <delete id="deleteTemplateTagByTagId">
+    delete from notify_template_tag where user_tag_id = #{tagId}
+  </delete>
+
+  <select id="getByTemplateId" resultMap="pageTagNotifyMap">
+    SELECT nt.*,tt.user_tag_id FROM notify_template nt
+    LEFT JOIN notify_template_tag tt ON nt.`template_id` = tt.`template_id`
+    where nt.`template_id` = #{templateId}
+  </select>
+</mapper>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress ALL -->
+<mapper namespace="com.mall4j.cloud.product.mapper.RecommendMapper">
+
+    <select id="pageList" resultType="com.mall4j.cloud.common.product.vo.app.RecommendVO">
+        select
+        <include refid="pageListParamsSql"></include>
+        from recommend r
+        where disable = 0 and status = 2
+        <if test="title != null and title != ''">
+            and title like CONCAT('%',#{title},'%')
+        </if>
+        <if test="type == 1">
+            order by user_type asc , weight desc, create_time desc
+        </if>
+        <if test="type == 2">
+            order by praise_count desc
+        </if>
+        limit #{page.begin}, #{page.size}
+    </select>
+
+    <select id="adminPageList" parameterType="com.mall4j.cloud.product.dto.RecommendAdminPageParamsDTO"
+            resultType="com.mall4j.cloud.common.product.vo.app.RecommendVO">
+        select
+        <include refid="pageListParamsSql"></include>
+        from recommend r
+        where disable = 0
+        <include refid="adminPageListParamsSql"></include>
+        order by create_time desc
+        limit #{page.begin}, #{page.size}
+    </select>
+
+    <select id="adminPageListCount" parameterType="com.mall4j.cloud.product.dto.RecommendAdminPageParamsDTO"
+            resultType="Long">
+        select count(recommend_id)
+        from recommend r
+        where disable = 0
+        <include refid="adminPageListParamsSql"></include>
+    </select>
+
+    <select id="myPage" resultType="com.mall4j.cloud.common.product.vo.app.RecommendVO">
+        select
+        <include refid="pageListParamsSql"></include>
+        from recommend r
+        where disable = 0
+        and user_id = #{userId}
+        order by create_time desc
+        limit #{page.begin}, #{page.size}
+    </select>
+
+    <select id="myPageCount" resultType="Long">
+        select count(recommend_id)
+        from recommend r
+        where disable = 0
+        and user_id = #{userId}
+    </select>
+
+    <select id="pageListCount" resultType="Long">
+        select count(recommend_id)
+        from recommend r
+        where disable = 0 and status = 2
+    </select>
+
+
+    <!-- 列表参数通用 -->
+    <sql id="pageListParamsSql">
+        recommend_id as recommendId,
+        user_type as userType,
+        user_nick as userNick,
+        user_pic as userPic,
+        title as title,
+        cate_name as cateName,
+        weight as weight,
+        content as content,
+        product_ids as productIds,
+        status as status,
+        cover_url as coverUrl,
+        praise_count as praiseCount,
+        collect_count as collectCount,
+        share_count as shareCount,
+        read_count as readCount,
+        create_time as createTime
+    </sql>
+
+    <!-- admin列表条件 -->
+    <sql id="adminPageListParamsSql">
+        <if test="params.title != null and params.title != ''">
+            and r.title like CONCAT('%',#{params.title},'%')
+        </if>
+        <if test="params.status != null">
+            and r.status = #{params.status}
+        </if>
+        <if test="params.recommendCateId != null">
+            and r.recommend_cate_id = #{params.recommendCateId}
+        </if>
+        <if test="params.startTime != null">
+            and r.create_time &gt;= #{params.startTime}
+        </if>
+        <if test="params.endTime != null">
+            and r.create_time &lt;= #{params.endTime}
+        </if>
+    </sql>
+
+
+</mapper>

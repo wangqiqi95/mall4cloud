@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.LotteryDrawActivityPrizeMapper">
+
+    <update id="changeStockNum">
+        update lottery_draw_activity_prize set
+        <if test="changeType == 1">
+            prize_stock = prize_stock+#{changeNum},prize_init_stock = prize_init_stock + #{changeNum}
+        </if>
+        <if test="changeType == 2">
+            prize_stock = prize_stock+-#{changeNum},prize_init_stock = prize_init_stock + -#{changeNum}
+        </if>
+        where id = #{id}
+    </update>
+    <update id="reduceStockNum">
+        update lottery_draw_activity_prize set
+            prize_stock = prize_stock+ -1
+        where id = #{prizeId}
+    </update>
+</mapper>

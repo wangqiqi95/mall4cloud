@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.user.mapper.TagGroupMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.user.model.TagGroup">
+        <id column="tag_group_id" property="tagGroupId" />
+        <result column="group_name" property="groupName" />
+        <result column="auth_flag" property="authFlag" />
+        <result column="enable_state" property="enableState" />
+        <result column="single_state" property="singleState" />
+        <result column="group_type" property="groupType"/>
+        <result column="parent_id" property="parentId" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        tag_group_id, group_name, auth_flag, enable_state, single_state, parent_id, create_user, create_time
+    </sql>
+
+    <select id="selectSingleCountByVipCode" resultType="com.mall4j.cloud.user.vo.CheckVipCodeSingleTagCountVO">
+        SELECT
+        tgroup.tag_group_id, tgroup.group_name , COUNT(1) as markingCount
+        FROM
+        t_tag_group tgroup
+        LEFT JOIN t_user_tag_relation relation ON relation.group_id = tgroup.tag_group_id
+        WHERE
+        relation.vip_code = #{param.vipCode} and tgroup.single_state = 1 and tgroup.tag_group_id in
+        <foreach collection="param.tagGroupIdList" item="item"  index="index" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY tgroup.tag_group_id
+    </select>
+
+</mapper>

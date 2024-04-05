@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionSpecialSubjectMapper">
+  <resultMap id="distributionSpecialSubjectMap" type="com.mall4j.cloud.distribution.model.DistributionSpecialSubject">
+    <id column="id" property="id" />
+    <result column="page_id" property="pageId"/>
+    <result column="page_name" property="pageName"/>
+    <result column="subject_name" property="subjectName"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="publicity_img_url" property="publicityImgUrl"/>
+    <result column="store_type" property="storeType"/>
+    <result column="product_type" property="productType"/>
+    <result column="publicity_text" property="publicityText"/>
+    <result column="distribution_type" property="distributionType"/>
+    <result column="status" property="status"/>
+    <result column="is_rec" property="isRec"/>
+    <result column="rec_color" property="recColor"/>
+    <result column="top" property="top"/>
+    <result column="top_time" property="topTime"/>
+    <result column="customize_color" property="customizeColor"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`page_id`,`page_name`,`subject_name`,`start_time`,`end_time`,`publicity_img_url`,`store_type`,`product_type`,`publicity_text`,`distribution_type`,`status`,`is_rec`,`rec_color`,`customize_color`,`top`,`top_time`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionSpecialSubjectMap">
+    select <include refid="Vo_Column_List"/> from distribution_special_subject
+    <where>
+        <if test="distributionSpecialSubject.subjectName != null and distributionSpecialSubject.subjectName != ''">
+          and subject_name like CONCAT('%',#{distributionSpecialSubject.subjectName},'%')
+        </if>
+        <if test="distributionSpecialSubject.status != null">
+          and status = #{distributionSpecialSubject.status}
+        </if>
+        <if test="distributionSpecialSubject.distributionType != null">
+          and distribution_type = #{distributionSpecialSubject.distributionType}
+        </if>
+        <if test="distributionSpecialSubject.ids != null and distributionSpecialSubject.ids.size() > 0">
+          and id in
+          <foreach collection="distributionSpecialSubject.ids" item="id" open="(" close=")" separator=",">
+            #{id}
+          </foreach>
+        </if>
+        <if test="distributionSpecialSubject.top != null">
+          and top = #{distributionSpecialSubject.top}
+        </if>
+        <if test="distributionSpecialSubject.startTime != null">
+          and start_time >= #{distributionSpecialSubject.startTime}
+        </if>
+        <if test="distributionSpecialSubject.endTime != null">
+          and #{distributionSpecialSubject.endTime} >= end_time
+        </if>
+    </where>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="distributionSpecialSubjectMap">
+    select <include refid="Vo_Column_List"/> from distribution_special_subject where id = #{id}
+  </select>
+
+  <select id="countSpecialSubjectTopNum" resultType="java.lang.Integer">
+    select count(id) from distribution_special_subject where top = 1
+  </select>
+
+    <select id="pageEffect" resultMap="distributionSpecialSubjectMap">
+      select <include refid="Vo_Column_List"/> from distribution_special_subject
+      where status = 1
+      and now() >= start_time
+      and end_time >= now()
+      and (
+      <if test="distributionSpecialSubject.ids != null and distributionSpecialSubject.ids.size() > 0">
+        id in
+        <foreach collection="distributionSpecialSubject.ids" item="id" open="(" close=")" separator=",">
+          #{id}
+        </foreach>
+        or
+      </if>
+      store_type = 0)
+      order by top_time desc, id desc
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into distribution_special_subject (`page_id`,`page_name`,`subject_name`,`start_time`,`end_time`,`publicity_img_url`,`store_type`,`product_type`,`publicity_text`,`distribution_type`,`status`,`is_rec`,`rec_color`,`customize_color`)
+    values (#{distributionSpecialSubject.pageId},#{distributionSpecialSubject.pageName},#{distributionSpecialSubject.subjectName},#{distributionSpecialSubject.startTime},#{distributionSpecialSubject.endTime},#{distributionSpecialSubject.publicityImgUrl},#{distributionSpecialSubject.storeType},#{distributionSpecialSubject.productType},#{distributionSpecialSubject.publicityText},#{distributionSpecialSubject.distributionType},#{distributionSpecialSubject.status},#{distributionSpecialSubject.isRec},#{distributionSpecialSubject.recColor},#{distributionSpecialSubject.customizeColor});
+  </insert>
+  <update id="update">
+    update distribution_special_subject
+    <set>
+      <if test="distributionSpecialSubject.pageId != null">
+        `page_id` = #{distributionSpecialSubject.pageId},
+      </if>
+      <if test="distributionSpecialSubject.pageName != null">
+        `page_name` = #{distributionSpecialSubject.pageName},
+      </if>
+      <if test="distributionSpecialSubject.subjectName != null">
+        `subject_name` = #{distributionSpecialSubject.subjectName},
+      </if>
+      <if test="distributionSpecialSubject.startTime != null">
+        `start_time` = #{distributionSpecialSubject.startTime},
+      </if>
+      <if test="distributionSpecialSubject.endTime != null">
+        `end_time` = #{distributionSpecialSubject.endTime},
+      </if>
+      <if test="distributionSpecialSubject.publicityImgUrl != null">
+        `publicity_img_url` = #{distributionSpecialSubject.publicityImgUrl},
+      </if>
+      <if test="distributionSpecialSubject.storeType != null">
+        `store_type` = #{distributionSpecialSubject.storeType},
+      </if>
+      <if test="distributionSpecialSubject.productType != null">
+        `product_type` = #{distributionSpecialSubject.productType},
+      </if>
+      <if test="distributionSpecialSubject.publicityText != null">
+        `publicity_text` = #{distributionSpecialSubject.publicityText},
+      </if>
+      <if test="distributionSpecialSubject.distributionType != null">
+        `distribution_type` = #{distributionSpecialSubject.distributionType},
+      </if>
+      <if test="distributionSpecialSubject.status != null">
+        `status` = #{distributionSpecialSubject.status},
+      </if>
+      <if test="distributionSpecialSubject.isRec != null">
+        `is_rec` = #{distributionSpecialSubject.isRec},
+      </if>
+      <if test="distributionSpecialSubject.recColor != null">
+        `rec_color` = #{distributionSpecialSubject.recColor},
+      </if>
+      <if test="distributionSpecialSubject.customizeColor != null">
+        `customize_color` = #{distributionSpecialSubject.customizeColor},
+      </if>
+    </set>
+    where id = #{distributionSpecialSubject.id}
+  </update>
+
+  <update id="updateStatusBatch">
+    update distribution_special_subject
+    set status = #{status}
+    where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </update>
+
+  <update id="specialSubjectTop">
+    update distribution_special_subject
+    set top = #{top}, top_time = now()
+    where id = #{id}
+  </update>
+
+  <delete id="deleteById">
+    delete from distribution_special_subject where id = #{id}
+  </delete>
+
+
+
+</mapper>

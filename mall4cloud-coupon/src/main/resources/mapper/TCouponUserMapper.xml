@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.TCouponUserMapper">
+
+    <insert id="insertBatch">
+        insert into t_coupon_user
+        (coupon_id,
+         coupon_code,
+         activity_id,
+         activity_source,
+         user_id,
+         user_name,
+         user_phone,
+         vip_code,
+         user_start_time,
+         user_end_time,
+         batch_id,
+         shop_id,
+         shop_name,
+         create_id,
+         create_name,
+         create_phone,
+         coupon_source_type)
+        values
+        <foreach collection ="list" item="item" index= "index" separator =",">
+            (#{item.couponId},
+             #{item.couponCode},
+             #{item.activityId},
+             #{item.activitySource},
+             #{item.userId},
+             #{item.userName},
+             #{item.userPhone},
+             #{item.vipCode},
+             #{item.userStartTime},
+             #{item.userEndTime},
+             #{item.batchId},
+             #{item.shopId},
+             #{item.shopName},
+             #{item.createId},
+             #{item.createName},
+             #{item.createPhone},
+             #{item.couponSourceType})
+        </foreach >
+    </insert>
+
+    <select id="list" resultType="com.mall4j.cloud.coupon.vo.MyCouponListVO">
+        SELECT
+            cu.id AS id,
+            cu.coupon_id AS couponId,
+            cu.coupon_code AS couponCode,
+            c.`name` AS NAME,
+            c.type AS type,
+            c.reduce_amount AS reduceAmount,
+            c.coupon_discount AS couponDiscount,
+            c.amount_limit_type AS amountLimitType,
+            c.amount_limit_num AS amountLimitNum,
+            c.cover_url AS coverUrl,
+            c.description AS description,
+            c.is_all_shop AS isAllShop,
+            cu.user_start_time AS startTime,
+            cu.user_end_time AS endTime,
+            c.source_type as sourceType,
+            c.apply_scope_type as applyScopeType
+        ,
+            c.coupon_picture as couponPicture
+        FROM
+            t_coupon_user cu
+                LEFT JOIN t_coupon c ON cu.coupon_id = c.id
+        <where>
+            coupon_source_type = 1 and cu.user_id = #{userId} and receive_time between #{startTime} and NOW()
+            <if test="type == 'VALID' ">
+                and cu.status = 1 and cu.user_end_time > NOW()
+            </if>
+            <if test="type == 'USED' ">
+                and cu.status = 2
+            </if>
+            <if test="type == 'EXPIRED' ">
+                and cu.status = 1 and NOW() > cu.user_end_time
+            </if>
+        </where>
+        order by cu.receive_time desc
+    </select>
+
+    <select id="getCouponListByBatchId" resultType="com.mall4j.cloud.coupon.vo.MyCouponListVO">
+        SELECT
+        cu.id AS id,
+        cu.coupon_id AS couponId,
+        cu.coupon_code AS couponCode,
+        c.`name` AS NAME,
+        c.type AS type,
+        c.reduce_amount AS reduceAmount,
+        c.coupon_discount AS couponDiscount,
+        c.cover_url AS coverUrl,
+        c.description AS description,
+        c.amount_limit_type AS amountLimitType,
+        c.amount_limit_num AS amountLimitNum,
+        c.is_all_shop AS isAllShop,
+        c.time_type AS timeType,
+        c.after_receive_days AS afterReceiveDays,
+        cu.user_start_time AS startTime,
+        cu.user_end_time AS endTime,
+        c.source_type as sourceType,
+        c.apply_scope_type as applyScopeType
+        ,
+        c.coupon_picture as couponPicture
+        FROM
+        t_coupon_user cu
+        LEFT JOIN t_coupon c ON cu.coupon_id = c.id
+        where cu.user_id = #{userId} and cu.batch_id = #{batchId}
+        order by cu.receive_time desc
+    </select>
+
+    <select id="detail" resultType="com.mall4j.cloud.coupon.vo.MyCouponDetailVO">
+        SELECT
+            cu.id AS id,
+            cu.coupon_id AS couponId,
+            cu.coupon_code AS couponCode,
+            c.`name` AS NAME,
+            c.type AS type,
+            c.reduce_amount AS reduceAmount,
+            c.coupon_discount AS couponDiscount,
+            c.amount_limit_type AS amountLimitType,
+            c.amount_limit_num AS amountLimitNum,
+            c.cover_url AS coverUrl,
+            c.description AS description,
+            c.is_all_shop AS isAllShop,
+            cu.user_start_time AS startTime,
+            cu.user_end_time AS endTime,
+            c.source_type as sourceType,
+            c.apply_scope_type as applyScopeType
+            ,
+            c.coupon_picture as couponPicture
+        FROM
+            t_coupon_user cu
+                LEFT JOIN t_coupon c ON cu.coupon_id = c.id
+        where cu.id = #{id}
+    </select>
+
+    <select id="couponUserList" resultType="com.mall4j.cloud.coupon.model.TCouponUser">
+        select * from t_coupon_user
+        <where>
+            1 = 1
+            <if test="couponId != null">
+                and coupon_id = #{couponId}
+            </if>
+            <if test="couponCode != null">
+                and coupon_code = #{couponCode}
+            </if>
+            <if test="couponSourceType != null">
+                and coupon_source_type = #{couponSourceType}
+            </if>
+            <if test="activityId != null">
+                and activity_id = #{activityId}
+            </if>
+            <if test="activitySource != null">
+                and activity_source = #{activitySource}
+            </if>
+            <if test="batchId != null">
+                and batch_id = #{batchId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="receiveTime != null">
+                and receive_time = #{receiveTime}
+            </if>
+<!--            <if test="status != null">-->
+<!--                and status = #{status}-->
+<!--            </if>-->
+            <if test="staffId != null">
+                and staff_id = #{staffId}
+            </if>
+        </where>
+    </select>
+    <select id="selectOrderNo" resultType="com.mall4j.cloud.coupon.model.TCouponUser">
+        select cu.*
+        from t_coupon_user cu left join t_coupon c on cu.coupon_id = c.id
+        where c.kind = 3 and cu.status = 2 and cu.write_off_time between #{startTime} and #{endTime}
+    </select>
+
+    <select id="selectByOrderNo" resultType="com.mall4j.cloud.coupon.model.TCouponUser">
+        select cu.*
+        from t_coupon_user cu left join t_coupon c on cu.coupon_id = c.id
+        where c.kind = 3 and cu.status = 2 and cu.order_no = #{OrderNo}
+    </select>
+
+    <!-- 判断是否适用了团购券，不带核销状态条件判断，因为可能存在 在判断是否适用团购券的时候，此时，核销优惠券状态还没有执行完。而误判订单未使用团购券 -->
+    <select id="selectByOrderNo2" resultType="com.mall4j.cloud.coupon.model.TCouponUser">
+        select cu.*
+        from t_coupon_user cu left join t_coupon c on cu.coupon_id = c.id
+        where c.kind = 3 and cu.order_no = #{OrderNo}
+    </select>
+
+    <select id="selectByCouponCode" resultType="com.mall4j.cloud.coupon.model.TCouponUser">
+        select *
+        from t_coupon_user where coupon_code = #{couponCode}
+    </select>
+
+    <select id="selectByOrderIds" resultType="com.mall4j.cloud.api.coupon.vo.TCouponUserOrderVo">
+        select cu.*
+        from t_coupon_user cu
+        where
+        cu.order_no in
+        <foreach collection="orderIds" item="item"  index="index" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="writeOffCouponDetail" resultType="com.mall4j.cloud.coupon.vo.WriteOffDetailVO">
+        SELECT
+            cu.id AS id,
+            cu.coupon_id AS couponId,
+            cu.coupon_code AS couponCode,
+            cu.user_id AS userId,
+            cu.user_name as userName,
+            cu.user_phone as userPhone,
+            c.`name` AS NAME,
+            c.kind AS kind,
+            c.type AS type,
+            c.reduce_amount AS reduceAmount,
+            c.coupon_discount AS couponDiscount,
+            c.amount_limit_type AS amountLimitType,
+            c.amount_limit_num AS amountLimitNum,
+            c.time_type AS timeType,
+            c.description AS description,
+            cu.user_start_time AS startTime,
+            cu.user_end_time AS endTime
+        FROM
+            t_coupon_user cu
+                LEFT JOIN t_coupon c ON cu.coupon_id = c.id
+        where cu.coupon_code = #{couponCode}
+    </select>
+
+    <select id="couponActivityDetail" resultType="com.mall4j.cloud.coupon.vo.CouponActivityDetailVO">
+        select * from t_coupon_user
+        <where>
+             activity_source = #{activitySource} and activity_id = #{activityId} and coupon_id = #{couponId}
+            <if test="userPhone != null">
+                and user_phone = #{userPhone}
+            </if>
+            <if test="couponSourceType != null">
+                and coupon_source_type = #{couponSourceType}
+            </if>
+            <if test="shopIds != null and shopIds.size > 0 ">
+                and shop_id in
+                <foreach collection="shopIds" item="item"  index="index" open="("  separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="writeOffShopIds != null and writeOffShopIds.size > 0">
+                and write_off_shop_id in
+                <foreach collection="writeOffShopIds" item="item"  index="index" open="("  separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="userInfo != null">
+                and (create_name = #{userInfo} or create_phone #{userInfo})
+            </if>
+            <if test="writeOffInfo != null">
+                and (write_off_user_name = #{writeOffInfo} or write_off_user_phone #{writeOffInfo})
+            </if>
+            <if test="receiveStartTime != null and receiveEndTime != null">
+                and (receive_time between #{receiveStartTime} and #{receiveEndTime})
+            </if>
+            <if test="writeOffStartTime != null and writeOffEndTime != null">
+                and (write_off_time between #{writeOffStartTime} and #{writeOffEndTime})
+            </if>
+        </where>
+    </select>
+
+    <select id="indexStatistics" resultType="com.mall4j.cloud.coupon.model.TCouponUser">
+        select * from t_coupon_user cu left join t_coupon c on cu.coupon_id = c.id
+        <where>
+            cu.coupon_source_type = 1 and cu.activity_source =#{activitySource} and cu.activity_id = #{activityId}
+            <if test="couponInfo != null and couponInfo != '' ">
+                and (cu.coupon_id =#{couponInfo} or c.name = #{couponInfo})
+            </if>
+            <if test="type == 'USED' ">
+                and cu.status = 2
+            </if>
+            <if test="type == 'EXPIRED' ">
+                and cu.status = 1 and NOW() > cu.user_end_time
+            </if>
+        </where>
+    </select>
+
+    <select id="indexStatisticsCount" resultType="java.lang.Integer">
+        select count(1) from t_coupon_user cu left join t_coupon c on cu.coupon_id = c.id
+        <where>
+            cu.coupon_source_type = 1 and cu.activity_source =#{activitySource} and cu.activity_id = #{activityId}
+            <if test="couponInfo != null and couponInfo != '' ">
+                and (cu.coupon_id =#{couponInfo} or c.name = #{couponInfo})
+            </if>
+            <if test="type == 'USED' ">
+                and cu.status = 2
+            </if>
+            <if test="type == 'EXPIRED' ">
+                and cu.status = 1 and NOW() > cu.user_end_time
+            </if>
+        </where>
+    </select>
+
+    <select id="activityIncome" resultType="java.math.BigDecimal">
+        select ifnull(sum(order_amount),0)/100 from t_coupon_user cu left join t_coupon c on cu.coupon_id = c.id
+        <where>
+            cu.coupon_source_type = 1 and cu.activity_source =#{activitySource} and cu.activity_id = #{activityId}
+            <if test="couponInfo != null and couponInfo != '' ">
+                and (cu.coupon_id =#{couponInfo} or c.name = #{couponInfo})
+            </if>
+            <if test="type == 'USED' ">
+                and cu.status = 2
+            </if>
+            <if test="type == 'EXPIRED' ">
+                and cu.status = 1 and NOW() > cu.user_end_time
+            </if>
+        </where>
+    </select>
+
+    <select id="platformList" resultType="com.mall4j.cloud.coupon.vo.UserCouponListVO">
+        SELECT
+        cu.id AS id,
+        cu.coupon_id AS couponId,
+        c.`name` AS NAME,
+        c.kind AS kind,
+        c.type AS type,
+        c.amount_limit_type AS amountLimitType,
+        c.amount_limit_num AS amountLimitNum,
+        cu.user_start_time AS startTime,
+        cu.user_end_time AS endTime,
+        cu.status as status,
+        cu.receive_time as receiveTime
+        FROM
+        t_coupon_user cu
+        LEFT JOIN t_coupon c ON cu.coupon_id = c.id
+        <where>
+            coupon_source_type = 1 and cu.user_id = #{userId} and receive_time between #{startTime} and NOW()
+            <if test="type == 'VALID' ">
+                and cu.status = 1 and cu.user_end_time > NOW()
+            </if>
+            <if test="type == 'USED' ">
+                and cu.status = 2
+            </if>
+            <if test="type == 'EXPIRED' ">
+                and cu.status = 1 and NOW() > cu.user_end_time
+            </if>
+        </where>
+        order by cu.receive_time desc
+    </select>
+
+    <update id="updateCouponStatus">
+        update t_coupon_user set status = #{status}
+        <where>
+            <if test="orderIds != null">
+                and order_no in
+                <foreach collection="orderIds" item="item"  index="index" open="("  separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <select id="getCouponsByOrderIds" resultType="com.mall4j.cloud.api.coupon.vo.TCouponUserOrderDetailVO">
+        select b.id as couponId,b.name as couponName,
+               a.order_no as orderNo,a.coupon_amount as couponAmount,
+               b.kind,a.coupon_code as couponCode,b.source_type as sourceType
+        from t_coupon_user a
+        left join t_coupon b on a.coupon_id = b.id
+        where order_no in
+        <foreach collection="orderIds" item="item"  index="index" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="couponOverdue" resultType="com.mall4j.cloud.coupon.vo.UserCouponVO">
+        SELECT
+        cu.id AS id,
+        cu.coupon_id AS couponId,
+        c.`name` AS NAME,
+        c.description AS description,
+        c.is_all_shop AS isAllShop,
+        cu.receive_time AS receiveTime,
+        cu.user_start_time AS startTime,
+        cu.user_end_time AS endTime,
+        c.apply_scope_type as applyScopeType,
+        cu.user_id as userId
+        FROM
+        t_coupon_user cu
+        LEFT JOIN t_coupon c ON cu.coupon_id = c.id
+        WHERE
+          coupon_source_type = 1
+        <if test="userId != null">
+          and cu.user_id = #{userId}
+        </if>
+          and cu.status = 1 and cu.user_end_time > NOW()
+          AND cu.user_end_time between #{startTime} and #{endTime}
+    </select>
+    <update id="crmUseCoupon">
+        update t_coupon_user
+        set order_no = #{orderNo},
+            status =2,
+            write_off_time = NOW()
+        where coupon_code = #{couponCode}
+    </update>
+
+    <update id="crmFreezeCoupon">
+        update t_coupon_user
+        set order_no = #{orderNo},
+            status =0,
+            order_amount = #{orderAmount},
+            coupon_amount = #{couponAmount}
+        where coupon_code = #{couponCode}
+    </update>
+
+    <update id="crmEffective">
+        update t_coupon_user
+        set
+            status =1
+        where coupon_code = #{couponCode}
+    </update>
+
+    <update id="updateByCouponCode">
+        update t_coupon_user
+        <set>
+            <if test="param.status != null">
+                `status` = #{param.status},
+            </if>
+            <if test="param.orderNo != null">
+                `order_no` = #{param.orderNo},
+            </if>
+            <if test="param.orderAmount != null">
+                `order_amount` = #{param.orderAmount},
+            </if>
+            <if test="param.couponAmount != null">
+                `coupon_amount` = #{param.couponAmount},
+            </if>
+            <if test="param.writeOffTime != null">
+                `write_off_time` = #{param.writeOffTime},
+            </if>
+        </set>
+        where coupon_code = #{param.couponCode}
+    </update>
+
+    <select id="getCouponUserIds" resultType="Long">
+        SELECT
+        distinct(cu.user_id)
+        FROM
+        t_coupon_user cu
+        LEFT JOIN t_coupon c ON cu.coupon_id = c.id
+        <where>
+            cu.coupon_source_type = 1
+            <if test="userIds != null and userIds.size() > 0">
+                AND cu.user_id IN
+                <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+                    #{userId}
+                </foreach>
+            </if>
+            <if test="hasCouponFlag == 1 ">
+                and cu.status = 1 and cu.user_end_time > NOW()
+                <if test="couponPictures != null and couponPictures.size() > 0">
+                    AND c.coupon_picture IN
+                    <foreach collection="couponPictures" item="couponPicture" separator="," open="(" close=")">
+                        #{couponPicture}
+                    </foreach>
+                </if>
+                <if test="kinds != null and kinds.size() > 0">
+                    AND c.kind IN
+                    <foreach collection="kinds" item="kind" separator="," open="(" close=")">
+                        #{kind}
+                    </foreach>
+                </if>
+                <if test="beginTime != null and beginTime != '' and endTime != null and endTime != ''">
+                    and (cu.user_end_time between #{beginTime} and #{endTime})
+                </if>
+                <if test="couponName != null and couponName != ''">
+                    AND c.`name` LIKE CONCAT("%",#{couponName},"%")
+                </if>
+            </if>
+            <if test="hasCouponFlag == 0 ">
+                and cu.status = 1 and cu.user_end_time > NOW()
+            </if>
+        </where>
+        order by cu.receive_time desc
+    </select>
+
+    <select id="getSyncPointConvertCouponByBatchIds" resultType="com.mall4j.cloud.api.coupon.dto.SyncPointConvertCouponDto">
+        select
+            a.id,
+            a.batch_id,
+            case  when b.source_type=1 then a.coupon_id end  as xcxCouponId,
+            case  when b.source_type=1 then b.`name` end as xcxCouponName,
+            case  when b.source_type=2 then b.crm_coupon_id end as crmCouponId,
+            case  when b.source_type=2 then b.`name` end as crmCouponName,
+            a.coupon_code
+        from t_coupon_user a
+            left join t_coupon b on a.coupon_id=b.id
+            <where>
+                batch_id in
+                <foreach collection="batchIds" item="item" open="(" close=")"  separator=",">
+                    #{item}
+                </foreach>
+            </where>
+
+    </select>
+    <select id="listPaperCouponOrder" resultType="com.mall4j.cloud.api.coupon.vo.PaperCouponOrderVO">
+        SELECT
+            tc.id as couponId,
+            tc.`name`,
+            tc.type,
+            tc.reduce_amount,
+            tc.amount_limit_num,
+            tcu.order_no,
+            tcu.coupon_code
+        FROM
+            t_coupon tc
+                LEFT JOIN t_coupon_user tcu ON tc.id = tcu.coupon_id
+        WHERE
+            tcu.`status` = 2
+          AND (tcu.coupon_code LIKE 'A%' OR tcu.coupon_code LIKE 'B%')
+          AND write_off_time between #{startTime} and #{endTime}
+    </select>
+</mapper>

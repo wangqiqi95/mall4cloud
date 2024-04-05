@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.QuestionnaireGiftMapper">
+  <resultMap id="questionnaireGiftMap" type="com.mall4j.cloud.group.model.QuestionnaireGift">
+    <id column="id" property="id" />
+    <result column="activity_id" property="activityId"/>
+    <result column="gift_type" property="giftType"/>
+    <result column="gift_id" property="giftId"/>
+    <result column="gift_name" property="giftName"/>
+    <result column="gift_pic" property="giftPic"/>
+    <result column="stock" property="stock"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`activity_id`,`gift_type`,`gift_id`,`gift_name`,`gift_pic`,`stock`
+  </sql>
+  <select id="list" resultMap="questionnaireGiftMap">
+    select <include refid="Vo_Column_List"/> from questionnaire_gift order by id desc
+  </select>
+  <select id="getById" resultMap="questionnaireGiftMap">
+    select <include refid="Vo_Column_List"/> from questionnaire_gift where id = #{id}
+  </select>
+  <insert id="save">
+    insert into questionnaire_gift (`activity_id`,`gift_type`,`gift_id`,`gift_name`,`gift_pic`,`stock`,`game_type`)
+    values (#{questionnaireGift.activityId},#{questionnaireGift.giftType},#{questionnaireGift.giftId},#{questionnaireGift.giftName},#{questionnaireGift.giftPic},#{questionnaireGift.stock},#{questionnaireGift.gameType});
+  </insert>
+  <update id="update">
+    update questionnaire_gift
+    <set>
+      <if test="questionnaireGift.activityId != null">
+        `activity_id` = #{questionnaireGift.activityId},
+      </if>
+      <if test="questionnaireGift.giftType != null">
+        `gift_type` = #{questionnaireGift.giftType},
+      </if>
+      <if test="questionnaireGift.giftId != null">
+        `gift_id` = #{questionnaireGift.giftId},
+      </if>
+      <if test="questionnaireGift.giftName != null">
+        `gift_name` = #{questionnaireGift.giftName},
+      </if>
+      <if test="questionnaireGift.giftPic != null">
+        `gift_pic` = #{questionnaireGift.giftPic},
+      </if>
+      <if test="questionnaireGift.stock != null">
+        `stock` = #{questionnaireGift.stock},
+      </if>
+      <if test="questionnaireGift.gameType != null">
+        `game_type` = #{gameType},
+      </if>
+    </set>
+    where id = #{questionnaireGift.id}
+  </update>
+  <delete id="deleteById">
+    delete from questionnaire_gift where id = #{id}
+  </delete>
+
+</mapper>

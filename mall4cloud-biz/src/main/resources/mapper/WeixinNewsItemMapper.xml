@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinNewsItemMapper">
+  <resultMap id="weixinNewsItemMap" type="com.mall4j.cloud.biz.model.WeixinNewsItem">
+    <id column="id" property="id" />
+    <result column="newstemplate_id" property="newstemplateId"/>
+    <result column="thumb_media_id" property="thumbMediaId"/>
+    <result column="title" property="title"/>
+    <result column="author" property="author"/>
+    <result column="image_path" property="imagePath"/>
+    <result column="content" property="content"/>
+    <result column="abstract" property="abstract"/>
+    <result column="description" property="description"/>
+    <result column="order_no" property="orderNo"/>
+    <result column="new_type" property="newType"/>
+    <result column="url" property="url"/>
+    <result column="external_url" property="externalUrl"/>
+    <result column="show_cover_pic" property="showCoverPic"/>
+    <result column="ma_template_id" property="maTemplateId"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`newstemplate_id`,`thumb_media_id`,`title`,`author`,`image_path`,`content`,`abstract`,`description`,`order_no`,`new_type`,`url`,`external_url`,`show_cover_pic`,`ma_template_id`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinNewsItemMap">
+    select <include refid="Vo_Column_List"/> from weixin_news_item order by id desc
+  </select>
+  <select id="getById" resultMap="weixinNewsItemMap">
+    select <include refid="Vo_Column_List"/> from weixin_news_item where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_news_item (`id`,`newstemplate_id`,`thumb_media_id`,`title`,`author`,`image_path`,`content`,`abstract`,`description`,`order_no`,`new_type`,`url`,`external_url`,`show_cover_pic`,`ma_template_id`,`create_by`,`create_time`,`del_flag`)
+    values (#{weixinNewsItem.id},#{weixinNewsItem.newstemplateId},#{weixinNewsItem.thumbMediaId},#{weixinNewsItem.title},#{weixinNewsItem.author},#{weixinNewsItem.imagePath},#{weixinNewsItem.content},#{weixinNewsItem.abstract},#{weixinNewsItem.description},#{weixinNewsItem.orderNo},#{weixinNewsItem.newType},#{weixinNewsItem.url},#{weixinNewsItem.externalUrl},#{weixinNewsItem.showCoverPic},#{weixinNewsItem.maTemplateId},#{weixinNewsItem.createBy},#{weixinNewsItem.createTime},#{weixinNewsItem.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_news_item
+    <set>
+      <if test="weixinNewsItem.newstemplateId != null">
+        `newstemplate_id` = #{weixinNewsItem.newstemplateId},
+      </if>
+      <if test="weixinNewsItem.thumbMediaId != null">
+        `thumb_media_id` = #{weixinNewsItem.thumbMediaId},
+      </if>
+      <if test="weixinNewsItem.title != null">
+        `title` = #{weixinNewsItem.title},
+      </if>
+      <if test="weixinNewsItem.author != null">
+        `author` = #{weixinNewsItem.author},
+      </if>
+      <if test="weixinNewsItem.imagePath != null">
+        `image_path` = #{weixinNewsItem.imagePath},
+      </if>
+      <if test="weixinNewsItem.content != null">
+        `content` = #{weixinNewsItem.content},
+      </if>
+      <if test="weixinNewsItem.abstract != null">
+        `abstract` = #{weixinNewsItem.abstract},
+      </if>
+      <if test="weixinNewsItem.description != null">
+        `description` = #{weixinNewsItem.description},
+      </if>
+      <if test="weixinNewsItem.orderNo != null">
+        `order_no` = #{weixinNewsItem.orderNo},
+      </if>
+      <if test="weixinNewsItem.newType != null">
+        `new_type` = #{weixinNewsItem.newType},
+      </if>
+      <if test="weixinNewsItem.url != null">
+        `url` = #{weixinNewsItem.url},
+      </if>
+      <if test="weixinNewsItem.externalUrl != null">
+        `external_url` = #{weixinNewsItem.externalUrl},
+      </if>
+      <if test="weixinNewsItem.showCoverPic != null">
+        `show_cover_pic` = #{weixinNewsItem.showCoverPic},
+      </if>
+      <if test="weixinNewsItem.maTemplateId != null">
+        `ma_template_id` = #{weixinNewsItem.maTemplateId},
+      </if>
+      <if test="weixinNewsItem.createBy != null">
+        `create_by` = #{weixinNewsItem.createBy},
+      </if>
+      <if test="weixinNewsItem.updateBy != null">
+        `update_by` = #{weixinNewsItem.updateBy},
+      </if>
+      <if test="weixinNewsItem.delFlag != null">
+        `del_flag` = #{weixinNewsItem.delFlag},
+      </if>
+    </set>
+    where id = #{weixinNewsItem.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_news_item where id = #{id}
+  </delete>
+
+  <select id="getWeixinNewsItemList" resultType="com.mall4j.cloud.biz.vo.WeixinNewsItemVO">
+    select
+           *
+        from weixin_news_item
+        where del_flag=0
+        and newstemplate_id=#{newstemplateId}
+  </select>
+
+</mapper>

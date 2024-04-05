@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.scoreConvert.ScoreCouponLogMapper">
+    <!-- 兑换记录列表的返回参数-->
+    <resultMap id="result_Score_Barter_Log_Map" type="com.mall4j.cloud.user.vo.scoreConvert.ScoreCouponLogVO">
+        <id column="log_id" property="id" />
+        <result column="user_card_number" property="userCardNumber" />
+        <result column="user_phone" property="userPhone" />
+        <result column="convert_score" property="convertScore" />
+        <result column="note" property="note" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <select id="logList" parameterType="com.mall4j.cloud.user.dto.scoreConvert.ScoreBarterLogListDTO" resultType="com.mall4j.cloud.user.vo.scoreConvert.ScoreCouponLogVO">
+        select scl.log_id as id, scl.user_card_number as userCardNumber, scl.user_phone as userPhone, scl.convert_score as convertScore,
+        scl.note, scl.create_time as createTime,scl.`type`,scl.status,scl.export_status as exportStatus,
+        scl.store_name as storeName,scl.user_addr as userAddr,scl.user_name as userName,scl.phone,scl.logistics_no as logisticsNo,
+        scl.company,sc.commodity_name as commodityName,sc.convert_id as convertId,sc.convert_title as convertTitle
+        from score_coupon_log scl left join score_convert sc on scl.convert_id = sc.convert_id
+        <where>
+            scl.convert_id = #{convertId}
+            <if test="userInfo != null">
+                and (scl.user_card_number like concat('%',#{userInfo},'%') or scl.user_phone like concat('%',#{userInfo},'%'))
+            </if>
+            <if test="startTime != null and endTime != null">
+                and (scl.create_time between #{startTime} and #{endTime})
+            </if>
+            <if test="status != null">
+                and scl.status = #{status}
+            </if>
+            <if test="exportStatus != null">
+                and scl.export_status = #{exportStatus}
+            </if>
+        </where>
+    </select>
+
+    <select id="appLogList" resultType="com.mall4j.cloud.user.vo.scoreConvert.UserCouponLogVO">
+        select sc.convert_id as convertId,
+               sc.convert_title as convertTitle,
+               sc.convert_url as convertUrl,
+               sc.type as type,
+               sc.commodity_name as commodityName,
+               scl.log_id as id,
+               sc.commodity_des as commodityDes,
+               scl.convert_score as convertScore,
+               scl.create_time as createTime,
+               scl.status as status,
+               scl.user_addr as userAddr,
+               scl.user_name as userName,
+               scl.phone as phone,
+               scl.logistics_no as logisticsNo,
+               scl.company as company
+        from score_coupon_log scl left join score_convert sc on scl.convert_id = sc.convert_id
+        where scl.user_id = #{userId}
+        <if test="type == 1">
+            and sc.type = 1
+        </if>
+        <if test="type == 0">
+            and sc.type in (0,2)
+        </if>
+        order by scl.create_time desc
+    </select>
+
+    <update id="confirmExprot">
+        update score_coupon_log set export_status = 1,`status` = 2
+        where log_id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

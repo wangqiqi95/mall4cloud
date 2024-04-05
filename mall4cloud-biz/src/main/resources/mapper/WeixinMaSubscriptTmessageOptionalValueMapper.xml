@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinMaSubscriptTmessageOptionalValueMapper">
+  <resultMap id="weixinMaSubscriptTmessageOptionalValueMap" type="com.mall4j.cloud.biz.model.WeixinMaSubscriptTmessageOptionalValue">
+    <id column="id" property="id" />
+    <result column="template_type_id" property="templateTypeId"/>
+    <result column="value" property="value"/>
+    <result column="text" property="text"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`template_type_id`,`value`,`text`
+  </sql>
+  <select id="list" resultMap="weixinMaSubscriptTmessageOptionalValueMap">
+    select <include refid="Vo_Column_List"/> from weixin_ma_subscript_tmessage_optional_value order by id desc
+  </select>
+  <select id="getById" resultMap="weixinMaSubscriptTmessageOptionalValueMap">
+    select <include refid="Vo_Column_List"/> from weixin_ma_subscript_tmessage_optional_value where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_ma_subscript_tmessage_optional_value (`template_type_id`,`value`,`text`)
+    values (#{weixinMaSubscriptTmessageOptionalValue.templateTypeId},#{weixinMaSubscriptTmessageOptionalValue.value},#{weixinMaSubscriptTmessageOptionalValue.text});
+  </insert>
+  <update id="update">
+    update weixin_ma_subscript_tmessage_optional_value
+    <set>
+      <if test="weixinMaSubscriptTmessageOptionalValue.templateTypeId != null">
+        `template_type_id` = #{weixinMaSubscriptTmessageOptionalValue.templateTypeId},
+      </if>
+      <if test="weixinMaSubscriptTmessageOptionalValue.value != null">
+        `value` = #{weixinMaSubscriptTmessageOptionalValue.value},
+      </if>
+      <if test="weixinMaSubscriptTmessageOptionalValue.text != null">
+        `text` = #{weixinMaSubscriptTmessageOptionalValue.text},
+      </if>
+    </set>
+    where id = #{weixinMaSubscriptTmessageOptionalValue.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_ma_subscript_tmessage_optional_value where id = #{id}
+  </delete>
+
+    <select id="getByTypeId" resultType="com.mall4j.cloud.biz.vo.WeixinMaSubscriptTmessageOptionalValueVO">
+        select <include refid="Vo_Column_List"/> from weixin_ma_subscript_tmessage_optional_value where template_type_id = #{typeId}
+    </select>
+
+</mapper>

@@ -1,0 +1,903 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserMapper">
+    <resultMap id="userMap" type="com.mall4j.cloud.user.model.User">
+        <id column="user_id" property="userId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="sex" property="sex"/>
+        <result column="birth_date" property="birthDate"/>
+        <result column="pic" property="pic"/>
+        <result column="status" property="status"/>
+        <result column="level" property="level"/>
+        <result column="vip_end_time" property="vipEndTime"/>
+        <result column="level_type" property="levelType"/>
+        <result column="phone" property="phone"/>
+    </resultMap>
+
+    <resultMap id="veekerMap" type="com.mall4j.cloud.user.vo.VeekerVO">
+        <result column="user_id" property="userId"/>
+        <result column="nick_name" property="name"/>
+        <result column="pic" property="pic"/>
+        <result column="phone" property="phone"/>
+        <result column="vipcode" property="cardNo"/>
+        <result column="store_id" property="storeId"/>
+        <result column="staff_id" property="staffId"/>
+        <result column="veeker_status" property="veekerStatus"/>
+        <result column="veeker_audit_status" property="veekerAuditStatus"/>
+        <result column="add_wechat" property="addWechat"/>
+        <result column="veeker_apply_time" property="veekerApplyTime"/>
+    </resultMap>
+
+    <resultMap id="userAndOpenIdsMap" type="com.mall4j.cloud.api.user.vo.UserApiVO">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="sex" jdbcType="CHAR" property="sex"/>
+        <result column="birth_date" jdbcType="CHAR" property="birthDate"/>
+        <result column="pic" jdbcType="VARCHAR" property="pic"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="level_type" jdbcType="INTEGER" property="levelType"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="phone" property="phone"/>
+        <result column="vipcode" property="vipcode"/>
+        <result column="store_id" property="storeId"/>
+        <result column="service_store_id" property="serviceStoreId"/>
+        <result column="staff_id" property="staffId"/>
+        <result column="add_wechat" property="addWechat"/>
+    </resultMap>
+
+    <sql id="Vo_Column_List">
+        `user_id`
+        ,`create_time`,`update_time`,`nick_name`,`sex`,`birth_date`,`pic`,`status`,`level`,`vip_end_time`,`level_type`,`phone`,`vip_level`,
+    `store_id`,service_store_id,`staff_id`,`veeker_status`,`veeker_audit_status`,`add_wechat`,`veeker_apply_time`,`email`,
+  `job` , `have_baby` ,`baby_birthday`,`interests` ,`hobby` ,`second_baby_sex` ,`second_baby_birth` ,`third_baby_sex`,`third_baby_birth`,`province_id`,`province`,`city_id`,`city`,`area_id` ,`area`
+,vipcode,open_id,`name`,customer_name,union_id,rec_switch
+    </sql>
+    <select id="listUser" resultType="com.mall4j.cloud.user.vo.UserVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from user order by user_id desc
+    </select>
+    <select id="getByUserId" resultType="com.mall4j.cloud.api.user.vo.UserApiVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from user where user_id = #{userId}
+    </select>
+
+    <select id="getByUnionId" resultType="com.mall4j.cloud.api.user.vo.UserApiVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from user where union_id = #{unionId}
+    </select>
+
+    <select id="getByOpenId" resultType="com.mall4j.cloud.api.user.vo.UserApiVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from user where open_id = #{openId}
+    </select>
+
+
+    <insert id="saveUser">
+        insert into user (`user_id`, `nick_name`, `sex`, `birth_date`, `pic`, `status`, `level`, `vip_end_time`,
+                          `level_type`, `phone`, `store_id`, `staff_id`,`vipcode`)
+        values (#{user.userId}, #{user.nickName}, #{user.sex}, #{user.birthDate}, #{user.pic}, #{user.status},
+                #{user.level}, #{user.vipEndTime}, #{user.levelType}, #{user.phone}, #{user.storeId}, #{user.staffId},#{user.vipcode});
+    </insert>
+    <insert id="saveBatch" parameterType="java.util.List">
+        insert into `user`
+        (`user_id`,`nick_name`,`sex`,`birth_date`,`pic`,`status`,`level`,`vip_end_time`,`level_type`,`phone`,`vip_level`)
+        select * from (
+        <foreach collection="users" item="user" separator="UNION ALL">
+            SELECT #{user.userId} `user_id`,#{user.nickName} `nick_name`,#{user.sex} `sex`,#{user.birthDate}
+            `birth_date`,#{user.pic} `pic`,
+            #{user.status} `status`,#{user.level} `level`,#{user.vipEndTime} `vip_end_time`,#{user.levelType}
+            `level_type`, #{user.phone} `phone`,#{user.vipLevel} `vip_level`
+            FROM DUAL
+        </foreach>
+        ) a WHERE NOT EXISTS (SELECT `user_id`,`phone` FROM `user` b WHERE a.`phone` = b.`phone` or a.`user_id` =
+        b.`user_id`)
+    </insert>
+    <update id="updateUser">
+        update user
+        <set>
+            <if test="user.nickName != null">
+                `nick_name` = #{user.nickName},
+            </if>
+            <if test="user.sex != null">
+                `sex` = #{user.sex},
+            </if>
+            <if test="user.birthDate != null">
+                `birth_date` = #{user.birthDate},
+            </if>
+            <if test="user.pic != null">
+                `pic` = #{user.pic},
+            </if>
+            <if test="user.phone != null">
+                `phone` = #{user.phone},
+            </if>
+            <if test="user.status != null">
+                `status` = #{user.status},
+            </if>
+            <if test="user.level != null">
+                `level` = #{user.level},
+            </if>
+            <if test="user.staffId != null">
+                `staff_id` = #{user.staffId},
+            </if>
+            <if test="user.veekerStatus != null">
+                `veeker_status` = #{user.veekerStatus},
+            </if>
+            <if test="user.veekerAuditStatus != null">
+                `veeker_audit_status` = #{user.veekerAuditStatus},
+            </if>
+            <if test="user.veekerApplyTime != null">
+                `veeker_apply_time` = #{user.veekerApplyTime},
+            </if>
+            <if test="user.addWechat != null">
+                `add_wechat` = #{user.addWechat},
+            </if>
+            <if test="user.customerName != null">
+                `customer_name` = #{user.customerName},
+            </if>
+            <if test="user.email != null">
+                `email` = #{user.email},
+            </if>
+            <if test="user.job != null">
+                `job` = #{user.job},
+            </if>
+            <if test="user.haveBaby != null">
+                `have_baby` = #{user.haveBaby},
+            </if>
+            <if test="user.babyBirthday != null">
+                `baby_birthday` = #{user.babyBirthday},
+            </if>
+            <if test="user.interests != null">
+                `interests` = #{user.interests},
+            </if>
+            <if test="user.hobby != null">
+                `hobby` = #{user.hobby},
+            </if>
+            <if test="user.secondBabySex != null">
+                `second_baby_sex` = #{user.secondBabySex},
+            </if>
+            <if test="user.secondBabyBirth != null">
+                `second_baby_birth` = #{user.secondBabyBirth},
+            </if>
+            <if test="user.addWechat != null">
+                `third_baby_sex` = #{user.thirdBabySex},
+            </if>
+            <if test="user.addWechat != null">
+                `third_baby_birth` = #{user.thirdBabyBirth},
+            </if>
+            <if test="user.provinceId != null">
+                `province_id` = #{user.provinceId},
+            </if>
+            <if test="user.province != null">
+                `province` = #{user.province},
+            </if>
+            <if test="user.cityId != null">
+                `city_id` = #{user.cityId},
+            </if>
+            <if test="user.city != null">
+                `city` = #{user.city},
+            </if>
+            <if test="user.areaId != null">
+                `area_id` = #{user.areaId},
+            </if>
+            <if test="user.area != null">
+                `area` = #{user.area},
+            </if>
+        </set>
+        where user_id = #{user.userId}
+    </update>
+
+    <update id="updateByCrm">
+        update user
+        <set>
+            <if test="user.nickName != null">
+                `nick_name` = #{user.nickName},
+            </if>
+            <if test="user.sex != null">
+                `sex` = #{user.sex},
+            </if>
+            <if test="user.birthDate != null">
+                `birth_date` = #{user.birthDate},
+            </if>
+            <if test="user.pic != null">
+                `pic` = #{user.pic},
+            </if>
+            <if test="user.phone != null">
+                `phone` = #{user.phone},
+            </if>
+            <if test="user.status != null">
+                `status` = #{user.status},
+            </if>
+            <if test="user.level != null">
+                `level` = #{user.level},
+            </if>
+
+            <if test="user.unionId != null">
+                `union_id` = #{user.unionId},
+            </if>
+            <if test="user.refereePhone != null">
+                `referee_phone` = #{user.refereePhone},
+            </if>
+            <if test="user.customerName != null">
+                `customer_name` = #{user.customerName},
+            </if>
+            <if test="user.email != null">
+                `email` = #{user.email},
+            </if>
+            <if test="user.job != null">
+                `job` = #{user.job},
+            </if>
+            <if test="user.haveBaby != null">
+                `have_baby` = #{user.haveBaby},
+            </if>
+
+            <if test="user.babyBirthday != null">
+                `baby_birthday` = #{user.babyBirthday},
+            </if>
+            <if test="user.interests != null">
+                `interests` = #{user.interests},
+            </if>
+            <if test="user.hobby != null">
+                `hobby` = #{user.hobby},
+            </if>
+            <if test="user.secondBabySex != null">
+                `second_baby_sex` = #{user.secondBabySex},
+            </if>
+            <if test="user.secondBabyBirth != null">
+                `second_baby_birth` = #{user.secondBabyBirth},
+            </if>
+            <if test="user.thirdBabySex != null">
+                `third_baby_sex` = #{user.thirdBabySex},
+            </if>
+            <if test="user.thirdBabyBirth != null">
+                `third_baby_birth` = #{user.thirdBabyBirth},
+            </if>
+        </set>
+        where vipcode = #{user.vipcode}
+    </update>
+
+    <update id="updateUserLevel">
+        UPDATE
+        user
+        SET
+        `level` = #{level}
+        WHERE user_id IN
+        (SELECT user_id FROM user_extension WHERE level_type = 1 AND growth &gt; #{minGrowth}
+        <if test="maxGrowth != null">
+            AND growth &lt; #{maxGrowth}
+        </if>
+        )
+    </update>
+    <update id="updateUserLevelByUserExtensionAndUserIds" parameterType="java.util.List">
+        UPDATE `user` u INNER JOIN `user_extension` ue SET u.level = ue.level
+        WHERE u.user_id = ue.user_id AND
+        u.user_id IN
+        <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+            #{userId}
+        </foreach>
+    </update>
+    <select id="getUserByUserIds" resultType="com.mall4j.cloud.api.user.vo.UserApiVO">
+        select
+              `user_id` as userId,`nick_name` as nickName,`pic` as pic,`create_time` as createTime,`phone` as phone,vipcode as vipcode, staff_id as staffId
+        from user
+        where user_id in
+        <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+            #{userId}
+        </foreach>
+        order by user_id desc
+    </select>
+
+    <select id="checkUserExist" resultType="com.mall4j.cloud.api.user.vo.UserApiVO">
+        select
+        `user_id` as userId,`nick_name` as nickName,`pic` as pic,`create_time` as createTime,`phone` as phone,vipcode as vipcode, staff_id as staffId,
+        union_id as unionId
+        from user
+        where 1=1
+        <if test="phone != null and phone != ''">
+            and `phone` = #{phone}
+        </if>
+        <if test="unionId != null and unionId != ''">
+            and `union_id` = #{unionId}
+        </if>
+    </select>
+
+    <select id="countUserPageByParam" resultType="java.lang.Long"  parameterType="com.mall4j.cloud.user.dto.UserManagerDTO">
+        SELECT COUNT(u.user_id)
+        FROM `user` u
+<!--        left JOIN user_level ul ON ul.level = u.level AND ul.level_type = u.level_type-->
+<!--        JOIN user_extension ue ON ue.`user_id` = u.user_id-->
+        <where>
+            <if test="userManagerDTO.nickName != null and userManagerDTO.nickName != ''">
+                AND u.nick_name LIKE CONCAT("%",#{userManagerDTO.nickName},"%")
+            </if>
+            <if test="userManagerDTO.status != null">
+                AND u.status = #{userManagerDTO.status}
+            </if>
+            <if test="userManagerDTO.levelType != null">
+                AND u.level_Type = #{userManagerDTO.levelType}
+            </if>
+            <if test="userManagerDTO.phone != null and userManagerDTO.phone != ''">
+                AND u.phone LIKE CONCAT("%",#{userManagerDTO.phone},"%")
+            </if>
+            <if test="userManagerDTO.tagIds != null and userManagerDTO.tagIds.size() > 0">
+                AND u.user_id IN
+                (
+                SELECT DISTINCT(utg.user_id) FROM `user_tag_user` utg
+                WHERE utg.user_tag_id IN
+                <foreach collection="userManagerDTO.tagIds" item="tagId" index="index" open="(" close=")" separator=",">
+                    #{tagId}
+                </foreach>
+                )
+            </if>
+            <if test="userManagerDTO.userIds != null and userManagerDTO.userIds.size() > 0">
+                AND u.user_id IN
+                <foreach collection="userManagerDTO.userIds" item="userId" open="(" close=")" separator=",">
+                    #{userId}
+                </foreach>
+            </if>
+            <if test="userManagerDTO.createStartTime != null and userManagerDTO.createEndTime !=  null ">
+                AND (u.create_time between #{userManagerDTO.createStartTime} and #{userManagerDTO.createEndTime})
+            </if>
+            <!-- add by hwy 商城后台的查询条件补充 -->
+            <if test="userManagerDTO.staffList != null and userManagerDTO.staffList.size()>0">
+                AND u.staff_id IN
+                <foreach collection="userManagerDTO.staffList" item="staffId" open="(" close=")" separator=",">
+                    #{staffId}
+                </foreach>
+            </if>
+            <if test="userManagerDTO.registerStoreIdList != null and userManagerDTO.registerStoreIdList.size() > 0">
+                AND u.store_id IN
+                <foreach collection="userManagerDTO.registerStoreIdList" item="storeId" open="(" close=")" separator=",">
+                    #{storeId}
+                </foreach>
+            </if>
+            <if test="userManagerDTO.serverStoreIdList != null and userManagerDTO.serverStoreIdList.size() > 0">
+                AND u.service_store_id IN
+                <foreach collection="userManagerDTO.serverStoreIdList" item="storeId" open="(" close=")" separator=",">
+                    #{storeId}
+                </foreach>
+            </if>
+            <if test="userManagerDTO.hasServiceStaff != null and userManagerDTO.hasServiceStaff == 0">
+                AND (u.staff_id  is null or u.staff_id &lt;=0 )
+            </if>
+            <if test="userManagerDTO.hasServiceStaff != null and userManagerDTO.hasServiceStaff == 1">
+                AND u.staff_id >0
+            </if>
+
+        </where>
+        ORDER BY u.create_time DESC
+    </select>
+    <select id="listUserByParam" resultType="com.mall4j.cloud.api.user.vo.UserManagerVO">
+        SELECT utemp.*,
+        <!-- start初始化订单的数据 -->
+        @consAmount := 0 AS consAmount,
+        @actualAmount := 0 AS actualAmount,
+        @consTimes := 0 AS consTimes,
+        @reduceAmount := 0 AS reduceAmount,
+        @averDiscount := 0.00 AS averDiscount,
+        @afterSaleAmount := 0 AS afterSaleAmount,
+        @afterSaleTimes := 0 AS afterSaleTimes,
+        <!-- end初始化订单的数据 -->
+
+        <!--累计积分-->
+        IFNULL((SELECT if(SUM(score)>99999999,99999999,SUM(score)) FROM `user_score_log` usl WHERE usl.io_type = 1 AND
+        usl.user_id = utemp.user_id),0) AS sumScore,
+        <!--获取最新充值时间-->
+        (SELECT ubl.create_time FROM `user_balance_log` ubl WHERE ubl.user_id = utemp.user_id AND ubl.io_type = 1 AND
+        ubl.type = 1 AND ubl.is_payed = 1 ORDER BY ubl.create_time DESC LIMIT 0,1) AS reConsTime,
+        <!-- 充值余额-->
+        IFNULL((SELECT SUM(ubl.change_balance) FROM `user_balance_log` ubl WHERE ubl.user_id = utemp.user_id AND
+        ubl.io_type = 1 AND ubl.type = 1 AND ubl.is_payed = 1),0) AS rechargeAmount,
+        <!-- 充值次数-->
+        (SELECT COUNT(ubl.balance_log_id) FROM `user_balance_log` ubl WHERE ubl.user_id = utemp.user_id AND ubl.io_type
+        = 1 AND ubl.type = 1 AND ubl.is_payed = 1) AS rechargeTimes
+<!--        ,utemp.growth as growth-->
+        FROM (
+        SELECT u.nick_name,u.name,u.status,u.pic,u.level,u.level_type,u.vip_level,
+<!--        ul.level_name,pul.level_name as-->
+<!--        vip_level_name,-->
+        u.user_id,u.create_time,u.update_time,u.phone,
+<!--    ue.score,ue.`score` AS currentScore,  ue.balance AS sumBalance,IFNULL(ue.actual_balance,0) AS currentBalance,ue.growth AS growth,-->
+        u.vipcode,u.union_id as unionId ,u.customer_name as customerName,u.sex,u.birth_date as birthDate,
+        u.have_baby as haveBaby ,u.baby_birthday as babyBirthday,u.reg_source,
+        u.second_baby_sex as secondBabySex,u.second_baby_birth as secondBabyBirth,
+        u.third_baby_sex as thirdBabySex,u.third_baby_birth as thirdBabyBirth,
+        u.interests,u.hobby,u.store_id as storeId,u.staff_id as staffId,u.service_store_id as staffStoreId
+        FROM `user` u
+<!--        LEFT JOIN user_level pul ON pul.level = u.vip_level AND pul.level_type = 1-->
+<!--        LEFT JOIN user_level ul ON ul.level = u.level AND ul.level_type = 0-->
+<!--        JOIN user_extension ue ON ue.`user_id` = u.user_id-->
+        <where>
+            <if test="userManagerDTO.nickName != null and userManagerDTO.nickName != ''">
+                AND u.nick_name LIKE CONCAT("%",#{userManagerDTO.nickName},"%")
+            </if>
+            <if test="userManagerDTO.status != null">
+                AND u.status = #{userManagerDTO.status}
+            </if>
+            <if test="userManagerDTO.levelType != null">
+                AND u.level_Type = #{userManagerDTO.levelType}
+            </if>
+            <if test="userManagerDTO.phone != null and userManagerDTO.phone != ''">
+                AND u.phone LIKE CONCAT("%",#{userManagerDTO.phone},"%")
+            </if>
+            <if test="userManagerDTO.tagIds != null and userManagerDTO.tagIds.size() > 0">
+                AND u.user_id IN
+                (
+                SELECT DISTINCT(utg.user_id) FROM `user_tag_user` utg
+                WHERE utg.user_tag_id IN
+                <foreach collection="userManagerDTO.tagIds" item="tagId" index="index" open="(" close=")" separator=",">
+                    #{tagId}
+                </foreach>
+                )
+            </if>
+            <if test="userManagerDTO.userIds != null and userManagerDTO.userIds.size() > 0">
+                AND u.user_id IN
+                <foreach collection="userManagerDTO.userIds" item="userId" open="(" close=")" separator=",">
+                    #{userId}
+                </foreach>
+            </if>
+            <if test="userManagerDTO.createStartTime != null and userManagerDTO.createEndTime !=  null ">
+                AND (u.create_time between #{userManagerDTO.createStartTime} and #{userManagerDTO.createEndTime})
+            </if>
+            <!-- add by hwy 商城后台的查询条件补充 -->
+            <if test="userManagerDTO.staffList != null and userManagerDTO.staffList.size()>0">
+                AND u.staff_id IN
+                <foreach collection="userManagerDTO.staffList" item="staffId" open="(" close=")" separator=",">
+                    #{staffId}
+                </foreach>
+            </if>
+            <if test="userManagerDTO.registerStoreIdList != null and userManagerDTO.registerStoreIdList.size() > 0">
+                AND u.store_id IN
+                <foreach collection="userManagerDTO.registerStoreIdList" item="storeId" open="(" close=")" separator=",">
+                    #{storeId}
+                </foreach>
+            </if>
+            <if test="userManagerDTO.serverStoreIdList != null and userManagerDTO.serverStoreIdList.size() > 0">
+                AND u.service_store_id IN
+                <foreach collection="userManagerDTO.serverStoreIdList" item="storeId" open="(" close=")" separator=",">
+                    #{storeId}
+                </foreach>
+            </if>
+
+            <if test="userManagerDTO.hasServiceStaff != null and userManagerDTO.hasServiceStaff == 0">
+                AND (u.staff_id  is null or u.staff_id &lt;=0 )
+            </if>
+            <if test="userManagerDTO.hasServiceStaff != null and userManagerDTO.hasServiceStaff == 1">
+                AND u.staff_id >0
+            </if>
+
+        </where>
+        ORDER BY u.create_time DESC
+        LIMIT #{pageAdapter.begin} , #{pageAdapter.size}
+        ) AS utemp
+    </select>
+
+    <update id="updateUserLevelByBuyVip">
+        update user
+        set vip_level    = #{afterLevel},
+            level_type   = 1,
+            vip_end_time = #{date}
+        where user_id = #{userId}
+    </update>
+    <update id="updateUserTypeLevelByUserExtensionAndUserIds">
+        UPDATE `user` u INNER JOIN `user_extension` ue SET u.level = ue.level,u.level_type = ue.level_type,u.vip_level=
+        ue.vip_level
+        WHERE u.user_id = ue.user_id AND
+        u.user_id IN
+        <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+            #{userId}
+        </foreach>
+    </update>
+    <select id="getUserListByPhones" resultType="com.mall4j.cloud.user.vo.UserVO" parameterType="java.util.List">
+        select
+        <include refid="Vo_Column_List"/>
+        from user
+        where phone in
+        <foreach collection="phones" item="phone" separator="," open="(" close=")">
+            #{phone}
+        </foreach>
+        order by user_id desc
+    </select>
+
+    <select id="getUserByCreateTimeRange" resultType="com.mall4j.cloud.user.vo.UserVO">
+        select user_id from user
+        <where>
+            (create_time between #{startDate} and #{endDate})
+            <if test="status != null">
+                and `status` = #{status}
+            </if>
+        </where>
+    </select>
+    <select id="getUserCountInfo" resultType="com.mall4j.cloud.api.user.vo.MemberOverviewVO">
+        SELECT count(u.user_id)                                                               AS totalMember,
+               0  AS paidMember,
+               count(CASE WHEN u.create_time &gt;= #{startTime} THEN u.user_id ELSE NULL END) AS newMember
+        FROM `user` u
+        WHERE u.create_time &lt; #{endTime}
+    </select>
+    <select id="countUserByMobile" resultType="int">
+        select ifnull(count(*), 0)
+        from `user`
+        where phone = #{mobile}
+          and status = 1
+    </select>
+    <select id="countUserByLevel" resultType="int">
+        select ifnull(count(user_id), 0)
+        from `user`
+        where `level` = #{level}
+          and level_type = #{levelType}
+    </select>
+
+    <select id="selectMemberByEndTime" resultType="com.mall4j.cloud.user.vo.UserVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from user u
+        where level_type = 1
+        and vip_end_time &lt; #{endOfDay}
+    </select>
+
+
+    <select id="countVeekerPageByParam" resultType="java.lang.Long"
+            parameterType="com.mall4j.cloud.user.dto.VeekerQueryDTO">
+        select count(u.user_id)
+        from `user` u
+        where u.status = 1 and u.veeker_audit_status != -1
+        <if test="queryDTO.name != null and queryDTO.name != ''">
+            AND u.nick_name LIKE CONCAT("%",#{queryDTO.name},"%")
+        </if>
+        <if test="queryDTO.phone != null and queryDTO.phone != ''">
+            AND u.phone LIKE CONCAT("%",#{queryDTO.phone},"%")
+        </if>
+        <if test="queryDTO.cardNo != null and queryDTO.cardNo != ''">
+            AND u.vipcode LIKE CONCAT("%",#{queryDTO.cardNo},"%")
+        </if>
+        <if test="queryDTO.veekerStatus != null and queryDTO.veekerStatus != -1 ">
+            AND u.veeker_status = #{queryDTO.veekerStatus}
+        </if>
+        <if test="queryDTO.veekerAuditStatus != null and queryDTO.veekerAuditStatus != -1 ">
+            AND u.veeker_audit_status = #{queryDTO.veekerAuditStatus}
+        </if>
+        <if test="queryDTO.storeIdList != null and queryDTO.storeIdList.size() > 0">
+            AND u.store_id IN
+            <foreach collection="queryDTO.storeIdList" item="storeId" separator="," open="(" close=")">
+                #{storeId}
+            </foreach>
+        </if>
+        <if test="queryDTO.staffIdList != null and queryDTO.staffIdList.size() > 0">
+            AND u.staff_id IN
+            <foreach collection="queryDTO.staffIdList" item="staffId" separator="," open="(" close=")">
+                #{staffId}
+            </foreach>
+        </if>
+        <if test="queryDTO.veekerApplyStartTime != null and queryDTO.veekerApplyEndTime !=  null ">
+            AND (u.veeker_apply_time between #{queryDTO.veekerApplyStartTime} and #{queryDTO.veekerApplyEndTime})
+        </if>
+        <if test="queryDTO.veekerApplyStartTime != null and queryDTO.veekerApplyEndTime ==  null ">
+            AND u.veeker_apply_time &gt;= #{queryDTO.veekerApplyStartTime}
+        </if>
+        <if test="queryDTO.veekerApplyStartTime == null and queryDTO.veekerApplyEndTime != null">
+            AND u.veeker_apply_time &lt;= #{queryDTO.veekerApplyEndTime}
+        </if>
+        <if test="queryDTO.addWechat != null and queryDTO.addWechat == 1">
+            and u.user_id in (
+            select uscr.user_id from user_staff_cp_relation uscr where uscr.status = 1
+            )
+        </if>
+        <if test="queryDTO.addWechat != null and queryDTO.addWechat == 0">
+            and u.user_id not in (
+            select uscr.user_id from user_staff_cp_relation uscr where uscr.status = 1
+            )
+        </if>
+    </select>
+
+    <select id="listVeekerByParam" resultMap="veekerMap">
+        select u.user_id,u.nick_name,u.phone,u.vipcode,u.store_id,u.veeker_apply_time,u.add_wechat,
+        u.veeker_status,u.veeker_audit_status,u.staff_id
+        from `user` u
+        where u.status = 1 and u.veeker_audit_status != -1
+        <if test="queryDTO.name != null and queryDTO.name != ''">
+            AND u.nick_name LIKE CONCAT("%",#{queryDTO.name},"%")
+        </if>
+        <if test="queryDTO.phone != null and queryDTO.phone != ''">
+            AND u.phone LIKE CONCAT("%",#{queryDTO.phone},"%")
+        </if>
+        <if test="queryDTO.cardNo != null and queryDTO.cardNo != ''">
+            AND u.vipcode LIKE CONCAT("%",#{queryDTO.cardNo},"%")
+        </if>
+        <if test="queryDTO.veekerStatus != null and queryDTO.veekerStatus != -1 ">
+            AND u.veeker_status = #{queryDTO.veekerStatus}
+        </if>
+        <if test="queryDTO.veekerAuditStatus != null and queryDTO.veekerAuditStatus != -1 ">
+            AND u.veeker_audit_status = #{queryDTO.veekerAuditStatus}
+        </if>
+        <if test="queryDTO.storeIdList != null and queryDTO.storeIdList.size() > 0">
+            AND u.store_id IN
+            <foreach collection="queryDTO.storeIdList" item="storeId" separator="," open="(" close=")">
+                #{storeId}
+            </foreach>
+        </if>
+        <if test="queryDTO.staffIdList != null and queryDTO.staffIdList.size() > 0">
+            AND u.staff_id IN
+            <foreach collection="queryDTO.staffIdList" item="staffId" separator="," open="(" close=")">
+                #{staffId}
+            </foreach>
+        </if>
+        <if test="queryDTO.veekerApplyStartTime != null and queryDTO.veekerApplyEndTime !=  null ">
+            AND (u.veeker_apply_time between #{queryDTO.veekerApplyStartTime} and #{queryDTO.veekerApplyEndTime})
+        </if>
+        <if test="queryDTO.veekerApplyStartTime != null and queryDTO.veekerApplyEndTime ==  null ">
+            AND u.veeker_apply_time &gt;= #{queryDTO.veekerApplyStartTime}
+        </if>
+        <if test="queryDTO.veekerApplyStartTime == null and queryDTO.veekerApplyEndTime !=  null ">
+            AND u.veeker_apply_time &lt;= #{queryDTO.veekerApplyEndTime}
+        </if>
+        <if test="queryDTO.addWechat != null and queryDTO.addWechat == 1">
+            and u.user_id in (
+                select uscr.user_id from user_staff_cp_relation uscr where uscr.status = 1
+            )
+        </if>
+        <if test="queryDTO.addWechat != null and queryDTO.addWechat == 0">
+            and u.user_id not in (
+                select uscr.user_id from user_staff_cp_relation uscr where uscr.status = 1
+            )
+        </if>
+        ORDER BY u.veeker_apply_time DESC
+        LIMIT #{pageAdapter.begin} , #{pageAdapter.size}
+    </select>
+    <select id="listByStaff" resultMap="userAndOpenIdsMap">
+        select u.user_id,u.create_time,u.update_time,u.`name`,u.customer_name,u.nick_name,u.sex,u.birth_date,
+        u.pic,u.status,u.level,u.vip_end_time,u.level_type,u.phone,u.vip_level,u.vipcode,
+        IFNULL(datediff(now(), ue.recent_consumer_time),-1)+1 as consumeDay,
+        IFNULL(datediff(now(), ue.recent_visit_time),-1)+1 as visitDay
+        /* from user u INNER JOIN user_extension ue on u.user_id = ue.user_id */
+        from user u LEFT JOIN user_extension ue on u.user_id = ue.user_id
+        where u.status = 1
+        <if test="queryDTO.keywords != null and queryDTO.keywords != ''">
+            and (u.phone = #{queryDTO.keywords} or u.nick_name like concat('%',#{queryDTO.keywords},'%'))
+        </if>
+        <if test="queryDTO.storeId != null">
+            and u.store_id = #{queryDTO.storeId}
+        </if>
+        <if test="queryDTO.serviceStoreId != null">
+            and u.service_store_id = #{queryDTO.serviceStoreId}
+        </if>
+        <if test="queryDTO.staffId != null">
+            and u.staff_id = #{queryDTO.staffId}
+        </if>
+        <if test="queryDTO.sex != null">
+            and u.sex = #{queryDTO.sex}
+        </if>
+        <if test="queryDTO.levelType != null">
+            and u.level_type = #{queryDTO.levelType}
+        </if>
+        <if test="queryDTO.level != null">
+            and u.level = #{queryDTO.level}
+        </if>
+        <if test="queryDTO.unBindStaff">
+            and (u.staff_id &lt;= 0 or u.staff_id is null )
+        </if>
+        <if test="queryDTO.userIds != null and queryDTO.userIds.size() > 0">
+            AND u.user_id IN
+            <foreach collection="queryDTO.userIds" item="userId" separator="," open="(" close=")">
+                #{userId}
+            </foreach>
+        </if>
+        <if test="queryDTO.birthStartDate != null and queryDTO.birthEndDate != null">
+            and u.birth_date between #{queryDTO.birthStartDate} and #{queryDTO.birthEndDate}
+        </if>
+        <if test="queryDTO.birthDateFlag != null">
+            and DATE_FORMAT(u.birth_date,'%c') = DATE_FORMAT(now(),'%c')
+        </if>
+        <if test="queryDTO.startTime != null and queryDTO.endTime != null">
+            and u.create_time between #{queryDTO.startTime} and #{queryDTO.endTime}
+        </if>
+        <if test="queryDTO.visitDay != null">
+            and DATE_SUB(CURDATE(), INTERVAL #{queryDTO.visitDay} DAY) <![CDATA[<= ]]> date(ue.recent_visit_time)
+        </if>
+        <if test="queryDTO.consumeDay != null">
+            and DATE_SUB(CURDATE(), INTERVAL #{queryDTO.consumeDay} DAY) <![CDATA[<= ]]> date(ue.recent_consumer_time)
+        </if>
+        GROUP BY u.vipcode
+        ORDER BY CONVERT(u.nick_name USING 'gbk'), u.user_id DESC
+    </select>
+    <select id="getUserByMobile" resultType="com.mall4j.cloud.api.user.vo.UserApiVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from user
+        where phone = #{mobile}
+    </select>
+
+    <select id="getUserByStoreId" resultType="com.mall4j.cloud.api.user.vo.UserApiVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from user
+        where service_store_id = #{storeId}
+    </select>
+
+    <select id="getUserByStaffId" resultType="com.mall4j.cloud.api.user.vo.UserApiVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from user
+        where staff_id = #{staffId}
+    </select>
+
+    <select id="getUserByVipCode" resultType="com.mall4j.cloud.api.user.vo.UserApiVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from user
+        where vipcode = #{vipCode}
+    </select>
+
+    <update id="batchUpdateVeekerStatusByUserIds">
+        UPDATE `user` u
+        SET u.veeker_status = #{veekerStatus}
+        WHERE u.user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+    </update>
+
+    <update id="batchUpdateVeekerAuditStatusByUserIds">
+        UPDATE `user` u
+        SET u.veeker_audit_status = #{veekerAuditStatus}
+        WHERE u.user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+    </update>
+
+    <update id="unbindStaff">
+        UPDATE `user` u
+        SET u.staff_id = 0
+        WHERE u.user_id = #{userId}
+    </update>
+
+    <update id="batchBindStaff">
+        UPDATE `user` u SET u.staff_id = #{staffId} WHERE u.user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+    </update>
+
+    <update id="updateVipcodeByUserId">
+        UPDATE `user` u
+        SET u.vipcode = #{vipcode}
+        WHERE u.user_id = #{userId}
+    </update>
+
+    <update id="updateUnionIdByUserId">
+        UPDATE `user` u
+        SET u.union_id = #{unionId}
+        WHERE u.user_id = #{userId}
+    </update>
+
+    <select id="getBirthdayUser" resultType="Long">
+        select
+        user_id
+        from user
+        where DATE_FORMAT(birth_date,'%m%d') = DATE_FORMAT(now(),'%m%d')
+    </select>
+    <select id="findWeekerByKeyword" resultType="com.mall4j.cloud.api.user.vo.UserApiVO">
+        select <include refid="Vo_Column_List"/>
+        from `user`
+        where veeker_status = 1
+        and (nick_name like concat('%',#{keyword},'%')
+            or phone like concat('%',#{keyword},'%')
+            or vipcode like concat('%',#{keyword},'%'))
+    </select>
+
+    <select id="staffScreenUserForTask" resultType="com.mall4j.cloud.api.user.vo.UserApiVO">
+        SELECT
+            vip.vip_user_id AS userId,
+            vip.vip_code,
+            vip.staff_id,
+            vip.staff_cp_user_id,
+            vip.vip_cp_user_id AS qiWeiUserId,
+            IFNULL(record.send_status, 2) AS reachStatus,
+            vip.friend_state AS addWechat
+        FROM
+            t_group_push_task_vip_relation vip
+        LEFT JOIN t_group_push_son_task son ON vip.group_push_task_id = son.group_push_task_id
+        LEFT JOIN t_group_son_task_send_record record ON son.group_push_son_task_id = record.push_son_task_id  AND vip.vip_user_id = record.vip_user_id
+        WHERE
+            vip.group_push_task_id = #{dto.taskId}
+            AND son.group_push_son_task_id = #{dto.sonTaskId}
+            AND vip.staff_id = #{dto.staffId}
+        <if test="dto.vipCpUserId != null">
+            AND vip.vip_cp_user_id = #{dto.vipCpUserId}
+        </if>
+        <if test="dto.reachStatus == 1 ">
+            AND record.send_status = 1
+        </if>
+        <if test="dto.reachStatus != null and dto.reachStatus != 1">
+            AND (record.send_status IN (0,2,3) OR record.send_status IS NULL)
+        </if>
+        <if test="dto.addWechat != null">
+            AND vip.friend_state = #{dto.addWechat}
+        </if>
+        ORDER BY FIELD(reachStatus,"1") ASC, addWechat DESC, userId DESC
+    </select>
+
+    <select id="staffScreenUserForTag" resultType="com.mall4j.cloud.api.user.vo.UserApiVO">
+        SELECT
+            u.user_id,
+            u.vipcode
+        FROM
+            `user` u
+        LEFT JOIN user_staff_cp_relation cp ON u.user_id = cp.user_id AND u.staff_id = cp.staff_id
+        LEFT JOIN t_user_tag_relation tag ON tag.vip_code = u.vipcode
+        WHERE u.staff_id = #{dto.staffId}
+        <if test = "dto.addWechat != null and dto.addWechat == 0">
+            AND cp.user_id IS NULL
+        </if>
+        <if test = "dto.addWechat != null and dto.addWechat == 1">
+            AND cp.user_id IS NOT NULL
+        </if>
+        <if test="dto.firstTagId != null">
+            AND tag.tag_id = #{dto.firstTagId}
+            <if test = "dto.tagId != null and dto.tagId.size() > 0">
+                <foreach collection="dto.tagId" item="tagId">
+                    OR tag.tag_id = #{tagId}
+                </foreach>
+            </if>
+        </if>
+        GROUP BY u.user_id
+        <if test = "dto.tagIdListSize != null and dto.tagIdListSize > 0">
+            HAVING COUNT(u.user_id) >= #{dto.tagIdListSize}
+        </if>
+    </select>
+
+     <select id="findMaxPhone" resultType="string">
+        select max(new_phone)
+        from scrm_auth.auth_account_remove_log
+    </select>
+
+    <insert id="insertRemoveLog">
+        insert into scrm_auth.auth_account_remove_log (user_id, union_id, open_id, uid, phone, new_phone, create_time)
+        select a.user_id, a.union_id, a.open_id, b.uid, a.phone, #{maxPhone}, now()
+        from scrm_user.`user` a
+                 left join scrm_auth.auth_account b on a.user_id = b.user_id
+        where a.user_id = #{userId}
+    </insert>
+
+    <update id="updLogoutUser">
+        update scrm_user.`user`
+        set union_id = 1,
+            open_id = 1,
+            phone = #{maxPhone}
+        where user_id = #{userId}
+    </update>
+
+    <update id="updLogoutAccount">
+        update scrm_auth.auth_account
+        set phone=#{maxPhone},
+            username=#{maxPhone}
+        where user_id = #{userId}
+
+    </update>
+
+    <update id="updLogoutSocial">
+        update scrm_auth.auth_social
+        set biz_user_id = 1,
+            biz_unionid = 1
+        where uid = (select uid from scrm_auth.auth_account where user_id = #{userId})
+    </update>
+
+    <delete id="deleteUserAddr">
+        delete
+        from scrm_user.user_addr
+        where user_id = #{userId}
+    </delete>
+
+</mapper>

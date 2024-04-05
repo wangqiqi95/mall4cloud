@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.user.mapper.GroupPushSonTaskMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.user.model.GroupPushSonTask">
+        <id column="group_push_son_task_id" property="groupPushSonTaskId" />
+        <result column="son_task_name" property="sonTaskName" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="push_content" property="pushContent" />
+        <result column="group_push_task_id" property="groupPushTaskId" />
+        <result column="create_user_id" property="createUserId" />
+        <result column="create_time" property="createTime" />
+        <result column="delete_flag" property="deleteFlag" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        group_push_son_task_id, son_task_name, start_time, end_time, push_content, group_push_task_id, create_user_id, create_time
+    </sql>
+
+    <select id="taskList" resultType="com.mall4j.cloud.user.vo.TaskSonVO">
+        SELECT
+            son.group_push_task_id AS taskId,
+            son.group_push_son_task_id AS sonTaskId,
+            son.son_task_name,
+            son.push_content,
+            son.start_time,
+            son.end_time,
+            son.task_type
+        FROM t_group_push_son_task son
+        left join t_group_push_task task on son.group_push_task_id = task.group_push_task_id
+        left join t_group_push_task_staff_relation relation on relation.group_push_task_id=task.group_push_task_id
+        WHERE
+        task.operate_status = 1 and task.delete_flag = 0
+        and relation.staff_id=#{staffId}
+        AND (son.end_time <![CDATA[ >= ]]> NOW() or son.task_type=1)
+        <if test="taskMode != null">
+           and task.task_mode = #{taskMode}
+        </if>
+        ORDER BY son.end_time ASC
+    </select>
+
+    <select id="getSonTaskDetailBySonTaskId" resultType="com.mall4j.cloud.user.vo.TaskSonItemVO">
+        SELECT
+            son.group_push_task_id AS taskId,
+            task.task_name,
+            son.group_push_son_task_id AS sonTaskId,
+            son.son_task_name,
+            son.push_content,
+            son.end_time
+        FROM `t_group_push_son_task` AS son
+        LEFT JOIN t_group_push_task AS task ON son.group_push_task_id = task.group_push_task_id
+        WHERE son.group_push_son_task_id = #{sonTaskId}
+    </select>
+
+    <select id="getExpiredGroupPushTaskList" resultType="java.lang.Long">
+        SELECT son.group_push_son_task_id
+        FROM `t_group_push_son_task` son
+        LEFT JOIN t_staff_batch_send_cp_msg msg ON son.group_push_son_task_id = msg.push_son_task_id
+        WHERE son.delete_flag = 0
+        AND msg.send_status = 0
+        AND son.end_time <![CDATA[ < ]]> NOW()
+    </select>
+
+    <select id="staffGetGroupPushTaskCount" resultType="java.lang.Integer">
+        SELECT COUNT(son.group_push_task_id)
+        FROM t_group_push_task_staff_relation staff
+        LEFT JOIN t_group_push_task task ON staff.group_push_task_id = task.group_push_task_id
+        LEFT JOIN t_group_push_son_task son ON son.group_push_task_id = staff.group_push_task_id
+        WHERE staff.staff_id = #{staffId}
+        AND NOW() <![CDATA[ >= ]]> son.start_time
+        AND NOW() <![CDATA[ <= ]]> son.end_time
+        AND task.operate_status = 1
+        AND task.delete_flag = 0
+        AND son.delete_flag = 0
+        ORDER BY son.end_time ASC
+    </select>
+
+    <select id="getNotFinishedGroupPushTaskList" resultType="java.lang.Long">
+        SELECT
+            DISTINCT son.group_push_task_id
+        FROM t_group_push_son_task son
+        WHERE son.end_time <![CDATA[ >= ]]> NOW()
+    </select>
+
+    <select id="getFinishedGroupPushTaskList" resultType="java.lang.Long">
+        SELECT DISTINCT
+            son.group_push_task_id
+        FROM
+            t_group_push_son_task son
+        LEFT JOIN t_group_push_task task ON son.group_push_task_id = task.group_push_task_id
+        WHERE task.delete_flag = 0
+          AND task.operate_status = 1
+          AND son.end_time  <![CDATA[ >= ]]> NOW()
+    </select>
+
+</mapper>

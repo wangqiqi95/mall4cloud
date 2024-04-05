@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.platform.mapper.OrganizationMapper">
+    <resultMap id="organizationMap" type="com.mall4j.cloud.platform.model.Organization">
+        <id column="org_id" property="orgId"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="path" property="path"/>
+        <result column="org_name" property="orgName"/>
+        <result column="short_name" property="shortName"/>
+        <result column="type" property="type"/>
+        <result column="org_code" property="orgCode"/>
+        <result column="qi_wei_code" property="qiWeiCode"/>
+        <result column="linkman" property="linkman"/>
+        <result column="email" property="email"/>
+        <result column="mobile" property="mobile"/>
+        <result column="remark" property="remark"/>
+        <result column="order_num" property="orderNum"/>
+        <result column="department_leader" property="departmentLeader"/>
+        <result column="name_en" property="nameEn"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `org_id`
+        ,`parent_id`,`path`,`org_name`,`short_name`,`type`,`org_code`,`qi_wei_code`,`linkman`,`email`,`mobile`,`remark`,`is_deleted`,`create_time`,`update_time`
+        ,`order_num`,`department_leader`,`department_leader`
+    </sql>
+    <select id="listOrg" resultMap="organizationMap">
+        select `org_id`, `parent_id`, `org_name`, `type`, `path`
+        from organization
+        where is_deleted = 0
+        order by org_id desc
+    </select>
+    <select id="getByOrgId" resultMap="organizationMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from organization where org_id = #{orgId}
+    </select>
+    <insert id="saveOrg" useGeneratedKeys="true" keyProperty="orgId">
+        insert into organization (`parent_id`, `path`, `org_name`, `short_name`, `type`, `org_code`, `qi_wei_code`,
+                                  `linkman`, `email`, `mobile`, `remark`, `is_deleted`)
+        values (#{organization.parentId}, #{organization.path}, #{organization.orgName}, #{organization.shortName},
+                #{organization.type}, #{organization.orgCode}, #{organization.qiWeiCode}, #{organization.linkman},
+                #{organization.email}, #{organization.mobile}, #{organization.remark}, #{organization.isDeleted});
+    </insert>
+    <update id="updateOrg">
+        update organization
+        <set>
+            <if test="organization.parentId != null">
+                `parent_id` = #{organization.parentId},
+            </if>
+            <if test="organization.path != null">
+                `path` = #{organization.path},
+            </if>
+            <if test="organization.orgName != null">
+                `org_name` = #{organization.orgName},
+            </if>
+            <if test="organization.shortName != null">
+                `short_name` = #{organization.shortName},
+            </if>
+            <if test="organization.type != null">
+                `type` = #{organization.type},
+            </if>
+            <if test="organization.orgCode != null">
+                `org_code` = #{organization.orgCode},
+            </if>
+            <if test="organization.qiWeiCode != null">
+                `qi_wei_code` = #{organization.qiWeiCode},
+            </if>
+            <if test="organization.linkman != null">
+                `linkman` = #{organization.linkman},
+            </if>
+            <if test="organization.email != null">
+                `email` = #{organization.email},
+            </if>
+            <if test="organization.mobile != null">
+                `mobile` = #{organization.mobile},
+            </if>
+            <if test="organization.remark != null">
+                `remark` = #{organization.remark},
+            </if>
+            <if test="organization.isDeleted != null">
+                `is_deleted` = #{organization.isDeleted},
+            </if>
+        </set>
+        where org_id = #{organization.orgId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from organization
+        where org_id = #{orgId}
+    </delete>
+    <select id="listByType" resultMap="organizationMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from organization where type = #{type}
+        <if test="keyword != null and keyword != ''">
+            and concat(IFNULL(org_name,'') ,IFNULL(org_code,'')) like concat('%',#{keyword},'%')
+        </if>
+        order by org_id desc
+    </select>
+
+    <select id="listByTypeAndPathLike" resultMap="organizationMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from organization where path like concat('',#{path},'%') and type = #{type}
+    </select>
+
+    <select id="getOrganizationByParam" resultMap="organizationMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from organization
+        where is_deleted=0
+        <if test="orgName!=null and orgName!=''">
+            and org_name=#{param.orgName}
+        </if>
+        <if test="type!=null and type!=''">
+            and type=#{param.type}
+        </if>
+    </select>
+    <select id="getStoreOrgIdByPath" resultType="java.lang.Long">
+        select org_id
+        from organization
+        where is_deleted=0
+          and path like concat(#{path}, '%')
+    </select>
+
+    <select id="getStoreOrgIdByPaths" resultMap="organizationMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from organization
+        where is_deleted=0
+        and (
+        <foreach collection="paths" item="path" open="(" close=")" separator="or">
+            path like concat(#{path}, '%')
+        </foreach>
+        )
+        group by org_id
+    </select>
+
+    <select id="selectListByOrgIds" resultMap="organizationMap">
+        select <include refid="Vo_Column_List"/>
+        from organization
+        where is_deleted=0
+        <if test="orgIds!=null">
+            and org_id in
+            <foreach collection="orgIds" item="orgId" open="(" close=")" separator=",">
+                #{orgId}
+            </foreach>
+        </if>
+    </select>
+</mapper>

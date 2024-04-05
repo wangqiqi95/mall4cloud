@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.flow.mapper.CustomerAnalysisMapper">
+<!--    <sql id="newData">-->
+<!--        SELECT ou.*,nu.new_member,po.pay_member,po.member_pay_order,po.member_pay_amount,cu.coupon_member-->
+<!--        &lt;!&ndash;累计会员数&ndash;&gt;-->
+<!--        FROM (SELECT COUNT(*) AS total_member,1 AS data_type FROM user-->
+<!--        WHERE create_time &lt; #{memberReqParam.endTime}-->
+<!--            <if test="memberReqParam.memberType == 1">-->
+<!--                AND level_type = 0-->
+<!--            </if>-->
+<!--            <if test="memberReqParam.memberType == 2">-->
+<!--                AND level_type = 1-->
+<!--            </if>-->
+<!--        ) AS ou-->
+<!--        &lt;!&ndash;新增会员数&ndash;&gt;-->
+<!--        LEFT JOIN (SELECT COUNT(*) AS new_member,1 AS data_type FROM user WHERE create_time &gt;= #{memberReqParam.startTime} AND create_time &lt;= #{memberReqParam.endTime}-->
+<!--        <if test="memberReqParam.memberType == 1">-->
+<!--            AND level_type = 0-->
+<!--        </if>-->
+<!--        <if test="memberReqParam.memberType == 2">-->
+<!--            AND level_type = 1-->
+<!--        </if>-->
+<!--        ) AS nu  ON ou.data_type = nu.data_type-->
+<!--        &lt;!&ndash;支付会员数、会员支付金额、会员订单数&ndash;&gt;-->
+<!--        LEFT JOIN (-->
+<!--        SELECT COUNT(*) AS pay_member,SUM(pay.member_pay_order) AS member_pay_order,SUM(pay.member_pay_amount) AS member_pay_amount,1 AS data_type-->
+<!--        FROM-->
+<!--        (-->
+<!--        SELECT COUNT(*) AS member_pay_order,SUM(o.actual_total) AS member_pay_amount,1 AS data_type FROM order o-->
+<!--        <if test="memberReqParam.memberType == 1">-->
+<!--            JOIN user u ON u.user_id = o.user_id AND u.level_type = 0-->
+<!--        </if>-->
+<!--        <if test="memberReqParam.memberType == 2">-->
+<!--            JOIN user u ON u.user_id = o.user_id AND u.level_type = 1-->
+<!--        </if>-->
+<!--        WHERE o.pay_time &gt;= #{memberReqParam.startTime} AND o.pay_time &lt;= #{memberReqParam.endTime}-->
+<!--        GROUP BY o.user_id-->
+<!--        ) AS pay-->
+<!--        ) AS po  ON po.data_type = ou.data_type-->
+<!--        &lt;!&ndash;领券会员数&ndash;&gt;-->
+<!--        LEFT JOIN (-->
+<!--        SELECT COUNT(*) AS coupon_member,1 AS data_type-->
+<!--        FROM (-->
+<!--          SELECT DISTINCT user_id  FROM coupon_user  WHERE receive_time &gt;= #{memberReqParam.startTime} AND receive_time &lt;= #{memberReqParam.endTime}-->
+<!--        ) AS c-->
+<!--        <if test="memberReqParam.memberType == 1">-->
+<!--            JOIN user u ON u.user_id = c.user_id AND u.level_type = 0-->
+<!--        </if>-->
+<!--        <if test="memberReqParam.memberType == 2">-->
+<!--            JOIN user u ON u.user_id = c.user_id AND u.level_type = 1-->
+<!--        </if>-->
+
+<!--        ) AS cu ON cu.data_type = ou.data_type-->
+<!--    </sql>-->
+<!--    <sql id="oldData">-->
+<!--        SELECT ou.*,nu.new_member,po.pay_member,po.member_pay_order,po.member_pay_amount,cu.coupon_member-->
+<!--        &lt;!&ndash;累计会员数&ndash;&gt;-->
+<!--        FROM (SELECT COUNT(*) AS total_member,2 AS data_type FROM user-->
+<!--        WHERE create_time &lt; #{memberReqParam.startTime}-->
+<!--            <if test="memberReqParam.memberType == 1">-->
+<!--                AND level_type = 0-->
+<!--            </if>-->
+<!--            <if test="memberReqParam.memberType == 2">-->
+<!--                AND level_type = 1-->
+<!--            </if>-->
+<!--        ) AS ou-->
+<!--        &lt;!&ndash;新增会员数&ndash;&gt;-->
+<!--        LEFT JOIN (SELECT COUNT(*) AS new_member,2 AS data_type FROM user WHERE create_time &gt;= #{startTime} AND create_time &lt; #{memberReqParam.startTime}-->
+<!--        <if test="memberReqParam.memberType == 1">-->
+<!--            AND level_type = 0-->
+<!--        </if>-->
+<!--        <if test="memberReqParam.memberType == 2">-->
+<!--            AND level_type = 1-->
+<!--        </if>-->
+<!--        ) AS nu  ON ou.data_type = nu.data_type-->
+<!--        &lt;!&ndash;支付会员数、会员支付金额、会员订单数&ndash;&gt;-->
+<!--        LEFT JOIN (-->
+<!--        SELECT COUNT(*) AS pay_member,SUM(pay.member_pay_order) AS member_pay_order,SUM(pay.member_pay_amount) AS member_pay_amount,2 AS data_type-->
+<!--        FROM-->
+<!--        (-->
+<!--        SELECT COUNT(*) AS member_pay_order,SUM(o.actual_total) AS member_pay_amount,2 AS data_type FROM order o-->
+<!--        <if test="memberReqParam.memberType == 1">-->
+<!--            JOIN user u ON u.user_id = o.user_id AND u.level_type = 0-->
+<!--        </if>-->
+<!--        <if test="memberReqParam.memberType == 2">-->
+<!--            JOIN user u ON u.user_id = o.user_id AND u.level_type = 1-->
+<!--        </if>-->
+<!--        WHERE o.pay_time &gt;= #{startTime} AND o.pay_time &lt; #{memberReqParam.startTime}-->
+<!--        GROUP BY o.user_id-->
+<!--        ) AS pay-->
+<!--        ) AS po  ON po.data_type = ou.data_type-->
+<!--        &lt;!&ndash;领券会员数&ndash;&gt;-->
+<!--        LEFT JOIN (-->
+<!--        SELECT COUNT(*) AS coupon_member,2 AS data_type-->
+<!--        FROM (-->
+<!--          SELECT DISTINCT user_id  FROM coupon_user WHERE receive_time &gt;= #{memberReqParam.startTime} AND receive_time &lt;= #{memberReqParam.endTime}-->
+<!--        ) AS c-->
+<!--        <if test="memberReqParam.memberType == 1">-->
+<!--            JOIN user u ON u.user_id = c.user_id AND u.level_type = 0-->
+<!--        </if>-->
+<!--        <if test="memberReqParam.memberType == 2">-->
+<!--            JOIN user u ON u.user_id = c.user_id AND u.level_type = 1-->
+<!--        </if>-->
+<!--        ) AS cu ON cu.data_type = ou.data_type-->
+<!--    </sql>-->
+
+
+    <select id="getVisitRetained" resultType="com.mall4j.cloud.api.order.vo.CustomerRetainVO">
+        SELECT
+        a.create_date AS currentMonth,
+        COUNT(DISTINCT a.user_id) AS newCustomers,
+        COUNT(DISTINCT CASE WHEN PERIOD_DIFF(DATE_FORMAT(b.create_date,'%Y%m'), DATE_FORMAT(CONCAT(a.create_date, '-01'),'%Y%m')) = 1 THEN b.user_id ELSE NULL END) AS firstMonthRemain,
+        COUNT(DISTINCT CASE WHEN PERIOD_DIFF(DATE_FORMAT(b.create_date,'%Y%m'), DATE_FORMAT(CONCAT(a.create_date, '-01'),'%Y%m')) = 2 THEN b.user_id ELSE NULL END) AS secondMonthRemain,
+        COUNT(DISTINCT CASE WHEN PERIOD_DIFF(DATE_FORMAT(b.create_date,'%Y%m'), DATE_FORMAT(CONCAT(a.create_date, '-01'),'%Y%m')) = 3 THEN b.user_id ELSE NULL END) AS thirdMonthRemain,
+        COUNT(DISTINCT CASE WHEN PERIOD_DIFF(DATE_FORMAT(b.create_date,'%Y%m'), DATE_FORMAT(CONCAT(a.create_date, '-01'),'%Y%m')) = 4 THEN b.user_id ELSE NULL END) AS fourthMonthRemain,
+        COUNT(DISTINCT CASE WHEN PERIOD_DIFF(DATE_FORMAT(b.create_date,'%Y%m'), DATE_FORMAT(CONCAT(a.create_date, '-01'),'%Y%m')) = 5 THEN b.user_id ELSE NULL END) AS fifthMonthRemain,
+        COUNT(DISTINCT CASE WHEN PERIOD_DIFF(DATE_FORMAT(b.create_date,'%Y%m'), DATE_FORMAT(CONCAT(a.create_date, '-01'),'%Y%m')) = 6 THEN b.user_id ELSE NULL END) AS sixthMonthRemain
+        FROM
+        (
+        SELECT DISTINCT
+        DATE_FORMAT(MIN(create_date),'%Y-%m') AS create_date,`user_id`
+        FROM user_analysis
+        WHERE user_type = 0
+        GROUP BY `user_id`
+        ORDER BY create_date
+        ) a
+        LEFT JOIN user_analysis b ON a.user_id = b.user_id
+        GROUP BY a.create_date
+        <if test="customerRetainedDTO.startTime != null and customerRetainedDTO.endTime != null">
+            HAVING (a.create_date &gt;= #{customerRetainedDTO.startTime} AND a.create_date &lt;= #{customerRetainedDTO.endTime})
+        </if>
+    </select>
+</mapper>

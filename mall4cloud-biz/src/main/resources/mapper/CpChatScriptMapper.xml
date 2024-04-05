@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpChatScriptMapper">
+  <resultMap id="cpChatScriptMap" type="com.mall4j.cloud.biz.model.cp.CpChatScript">
+    <id column="id" property="id" />
+    <result column="script_name" property="scriptName"/>
+    <result column="script_menu_id" property="scriptMenuId"/>
+    <result column="script_content" property="scriptContent"/>
+    <result column="script_answer" property="scriptAnswer"/>
+    <result column="type" property="type"/>
+    <result column="validity_create_time" property="validityCreateTime"/>
+    <result column="validity_end_time" property="validityEndTime"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="status" property="status"/>
+    <result column="del_flag" property="delFlag"/>
+    <result column="is_all_shop" property="isAllShop"/>
+    <result column="create_name" property="createName"/>
+    <result column="script_labal" property="scriptLabal"/>
+    <result column="use_num" property="useNum"/>
+  </resultMap>
+
+  <resultMap id="cpChatScriptPageMap" extends="cpChatScriptMap" type="com.mall4j.cloud.biz.vo.cp.CpChatScriptpageVO">
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`script_name`,`script_menu_id`,`script_content`,`script_answer`,`type`,`validity_create_time`,`validity_end_time`,
+    `create_by`,`create_time`,`update_time`,`status`,`del_flag`,`is_all_shop`,`create_name`,`script_labal`,use_num
+  </sql>
+  <select id="list" resultMap="cpChatScriptMap">
+    select
+        <include refid="Vo_Column_List"/>
+    from cp_chat_script
+    where 1=1
+    <if test="request.name != null and request.name !='' ">
+      AND script_name LIKE CONCAT('%', #{request.name},'%')
+    </if>
+    <if test="request.menuId != null">
+      AND script_menu_id IN (SELECT ID FROM cp_chat_script_menu WHERE ID =#{request.menuId} OR PARENT_ID=#{request.menuId})
+    </if>
+    <if test="request.ids!=null and request.ids.size>0">
+      and id in
+      <foreach collection="request.ids" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+      order by id desc
+    </if>
+  </select>
+
+  <select id="page" resultMap="cpChatScriptPageMap">
+    select
+        <include refid="Vo_Column_List"/>
+    from cp_chat_script
+    where del_flag = 0 and type = #{request.type}
+    <if test="request.name != null and request.name !='' ">
+      AND script_name LIKE CONCAT('%', #{request.name},'%')
+    </if>
+    <if test="request.scriptContent != null and request.scriptContent !='' ">
+      AND script_content LIKE CONCAT('%', #{request.scriptContent},'%')
+    </if>
+    <if test="request.menuId != null">
+      AND script_menu_id IN (SELECT ID FROM cp_chat_script_menu WHERE ID =#{request.menuId} OR PARENT_ID=#{request.menuId})
+    </if>
+    order by id desc
+  </select>
+
+  <select id="appRecomdPage" resultMap="cpChatScriptPageMap">
+    select
+    <include refid="Vo_Column_List"/>
+    from cp_chat_script
+    where del_flag = 0 and status=1
+    and id in
+    <foreach collection="request.ids" item="item" index="index" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    order by id desc
+  </select>
+
+  <select id="appPage" resultMap="cpChatScriptPageMap">
+    select
+    <include refid="Vo_Column_List"/>
+    from cp_chat_script
+    where del_flag = 0 and status=1 and type = #{request.type}
+    AND (validity_create_time &lt; NOW() or validity_create_time is null)
+    AND (validity_end_time &gt; NOW() or validity_end_time is null)
+    <if test="request.orgIds != null ">
+      AND (IS_ALL_SHOP = 1 OR ID IN (SELECT distinct s.script_id FROM cp_chat_script_store s WHERE s.store_id in
+      <foreach collection="request.orgIds" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+      ))
+    </if>
+    <if test="request.name != null and request.name !='' ">
+      AND script_name LIKE CONCAT('%', #{request.name},'%')
+    </if>
+    <if test="request.scriptContent != null and request.scriptContent !='' ">
+      AND script_content LIKE CONCAT('%', #{request.scriptContent},'%')
+    </if>
+    <if test="request.scriptAnswer != null and request.scriptAnswer !='' ">
+      AND script_answer LIKE CONCAT('%', #{request.scriptAnswer},'%')
+    </if>
+    <if test="request.menuId != null">
+      AND script_menu_id IN (SELECT ID FROM cp_chat_script_menu WHERE ID =#{request.menuId} OR PARENT_ID=#{request.menuId})
+    </if>
+    order by id desc
+  </select>
+
+  <select id="getById" resultMap="cpChatScriptMap">
+    select <include refid="Vo_Column_List"/> from cp_chat_script where id = #{id}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into cp_chat_script (`script_name`,`script_menu_id`,`script_content`,`script_answer`,`type`,`validity_create_time`,`validity_end_time`,
+                                `create_by`,`status`,`del_flag`,`is_all_shop`,`create_name`,`script_labal`,`create_time`,`update_time`)
+    values (#{cpChatScript.scriptName},#{cpChatScript.scriptMenuId},#{cpChatScript.scriptContent},#{cpChatScript.scriptAnswer},
+            #{cpChatScript.type},#{cpChatScript.validityCreateTime},#{cpChatScript.validityEndTime},#{cpChatScript.createBy},#{cpChatScript.status},
+            #{cpChatScript.delFlag},#{cpChatScript.isAllShop},#{cpChatScript.createName},#{cpChatScript.scriptLabal},
+            #{cpChatScript.createTime},#{cpChatScript.updateTime});
+  </insert>
+  <update id="update">
+    update cp_chat_script
+    <set>
+      `validity_create_time` = #{cpChatScript.validityCreateTime},
+      `validity_end_time` = #{cpChatScript.validityEndTime},
+      <if test="cpChatScript.scriptName != null">
+        `script_name` = #{cpChatScript.scriptName},
+      </if>
+      <if test="cpChatScript.scriptMenuId != null">
+        `script_menu_id` = #{cpChatScript.scriptMenuId},
+      </if>
+      <if test="cpChatScript.scriptContent != null">
+        `script_content` = #{cpChatScript.scriptContent},
+      </if>
+      <if test="cpChatScript.scriptAnswer != null">
+        `script_answer` = #{cpChatScript.scriptAnswer},
+      </if>
+      <if test="cpChatScript.type != null">
+        `type` = #{cpChatScript.type},
+      </if>
+<!--      <if test="cpChatScript.validityCreateTime != null">-->
+<!--        `validity_create_time` = #{cpChatScript.validityCreateTime},-->
+<!--      </if>-->
+<!--      <if test="cpChatScript.validityEndTime != null">-->
+<!--        `validity_end_time` = #{cpChatScript.validityEndTime},-->
+<!--      </if>-->
+      <if test="cpChatScript.createBy != null">
+        `create_by` = #{cpChatScript.createBy},
+      </if>
+      <if test="cpChatScript.status != null">
+        `status` = #{cpChatScript.status},
+      </if>
+      <if test="cpChatScript.delFlag != null">
+        `del_flag` = #{cpChatScript.delFlag},
+      </if>
+      <if test="cpChatScript.isAllShop != null">
+        `is_all_shop` = #{cpChatScript.isAllShop},
+      </if>
+      <if test="cpChatScript.createName != null">
+        `create_name` = #{cpChatScript.createName},
+      </if>
+      <if test="cpChatScript.scriptLabal != null">
+        `script_labal` = #{cpChatScript.scriptLabal},
+      </if>
+      <if test="cpChatScript.updateTime != null">
+        `update_time` = #{cpChatScript.updateTime},
+      </if>
+    </set>
+    where id = #{cpChatScript.id}
+  </update>
+
+  <update id="updateStatus">
+    update cp_chat_script
+    <set>
+      <if test="cpChatScript.status != null">
+        `status` = #{cpChatScript.status},
+      </if>
+      <if test="cpChatScript.updateTime != null">
+        `update_time` = #{cpChatScript.updateTime},
+      </if>
+    </set>
+    where id = #{cpChatScript.id}
+  </update>
+
+  <update id="updateUseNum">
+    update cp_chat_script set use_num = use_num+1,update_time = #{cpChatScript.updateTime} where id = #{cpChatScript.id}
+  </update>
+
+  <delete id="deleteById">
+    delete from cp_chat_script where id = #{id}
+  </delete>
+
+  <update id="logicDeleteById">
+    update cp_chat_script set del_flag = 1 where id = #{id}
+  </update>
+
+
+</mapper>

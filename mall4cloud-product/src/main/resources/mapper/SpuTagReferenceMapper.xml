@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SpuTagReferenceMapper">
+  <resultMap id="spuTagReferenceMap" type="com.mall4j.cloud.product.model.SpuTagReference">
+    <id column="reference_id" property="referenceId" />
+    <result column="shop_id" property="shopId"/>
+    <result column="tag_id" property="tagId"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="status" property="status"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `reference_id`,`shop_id`,`tag_id`,`spu_id`,`status`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.product.vo.SpuTagReferenceVO">
+    select <include refid="Vo_Column_List"/> from spu_tag_reference order by reference_id desc
+  </select>
+  <select id="getByReferenceId" resultType="com.mall4j.cloud.product.vo.SpuTagReferenceVO">
+    select <include refid="Vo_Column_List"/> from spu_tag_reference where reference_id = #{referenceId}
+  </select>
+
+  <insert id="saveBatch">
+    insert into spu_tag_reference (`shop_id`,`tag_id`,`spu_id`,`status`,`seq`)
+    values
+    <foreach collection="spuTagReferences" item="spuTagReference" separator=",">
+      (#{spuTagReference.shopId},#{spuTagReference.tagId},#{spuTagReference.spuId},#{spuTagReference.status},#{spuTagReference.seq})
+    </foreach>
+  </insert>
+
+  <insert id="save">
+
+    insert into spu_tag_reference (`shop_id`,`tag_id`,`spu_id`,`status`,`create_time`,`update_time`)
+    values (#{spuTagReference.shopId},#{spuTagReference.tagId},#{spuTagReference.spuId},#{spuTagReference.status},#{spuTagReference.createTime},#{spuTagReference.updateTime});
+  </insert>
+  <update id="update">
+    update spu_tag_reference
+    <set>
+      <if test="spuTagReference.shopId != null">
+        `shop_id` = #{spuTagReference.shopId},
+      </if>
+      <if test="spuTagReference.tagId != null">
+        `tag_id` = #{spuTagReference.tagId},
+      </if>
+      <if test="spuTagReference.spuId != null">
+        `spu_id` = #{spuTagReference.spuId},
+      </if>
+      <if test="spuTagReference.status != null">
+        `status` = #{spuTagReference.status},
+      </if>
+      <if test="spuTagReference.createTime != null">
+        `create_time` = #{spuTagReference.createTime},
+      </if>
+      <if test="spuTagReference.updateTime != null">
+        `update_time` = #{spuTagReference.updateTime},
+      </if>
+    </set>
+    where reference_id = #{spuTagReference.referenceId}
+  </update>
+
+  <update id="updateSpuSeq">
+    <foreach collection="spuTagReferences" item="spuTagReference">
+      update spu_tag_reference
+      <set>
+        <if test="spuTagReference.seq != null">
+          `seq` = #{spuTagReference.seq}
+        </if>
+      </set>
+      where spu_id = #{spuTagReference.spuId} and tag_id = #{spuTagReference.tagId};
+    </foreach>
+  </update>
+
+  <delete id="deleteById">
+    delete from spu_tag_reference where reference_id = #{referenceId}
+  </delete>
+
+  <delete id="removeByIds">
+    delete from spu_tag_reference where tag_id = #{prodTagId} and spu_id in
+    <foreach collection="ids" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </delete>
+
+  <select id="countByStatusAndTagId" resultType="integer">
+    select ifnull(count(*),0) from spu_tag_reference where tag_id = #{id} and status = #{status}
+  </select>
+
+  <select id="listByIds" resultType="com.mall4j.cloud.product.vo.SpuTagReferenceVO">
+    select * from spu_tag_reference where spu_id in
+    <foreach collection="ids" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </select>
+  <select id="tagListBySpuId" resultType="java.lang.Long">
+    select tag_id from spu_tag_reference where spu_id = #{spuId}
+  </select>
+
+  <delete id="deleteSpuData">
+    delete from spu_tag_reference where spu_id in
+    <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+      #{spuId}
+    </foreach>
+  </delete>
+
+  <delete id="deleteSpuTagByShopIdAndCategoryIds">
+    DELETE FROM spu_tag_reference WHERE spu_id IN
+      (
+        SELECT spu_id FROM category c
+        JOIN spu s ON
+          <if test="shopId == 0">
+            c.category_id = s.category_id
+          </if>
+          <if test="shopId != 0">
+            c.category_id = s.shop_category_id
+          </if>
+        WHERE c.category_id IN
+        <foreach collection="categoryIds" item="categoryId" open="(" close=")" separator=",">
+          #{categoryId}
+        </foreach>
+      )
+  </delete>
+
+  <select id="listSpuTagIdBySpuIds" resultType="java.lang.Long">
+    select distinct tag_id from spu_tag_reference where spu_id in
+    <foreach collection="spuIds" item="spuId" separator="," open="(" close=")">
+      #{spuId}
+    </foreach>
+  </select>
+
+  <select id="getTagIdsByShopIdAndCategoryIds" resultType="java.lang.Long">
+    SELECT DISTINCT str.tag_id FROM spu_tag_reference str
+    JOIN (
+    SELECT spu_id FROM category c
+    JOIN spu s ON
+    <if test="shopId == 0">
+      c.category_id = s.category_id
+    </if>
+    <if test="shopId != 0">
+      c.category_id = s.shop_category_id
+    </if>
+    WHERE c.category_id IN
+    <foreach collection="categoryIds" item="categoryId" open="(" close=")" separator=",">
+      #{categoryId}
+    </foreach>
+    ) spu ON str.spu_id = spu.spu_id
+  </select>
+
+  <select id="spuIdsByTagId" resultType="java.lang.Long">
+    select distinct spu_id from spu_tag_reference where tag_id = #{tagId}
+  </select>
+
+  <select id="getSpuIds" resultMap="spuTagReferenceMap">
+    SELECT DISTINCT str.spu_id,str.seq
+    FROM spu_tag_reference  str
+    <if test="spuTagReference.spuName != null and spuTagReference.spuName != ''">
+      JOIN spu_lang sl ON str.spu_id = sl.spu_id
+    </if>
+    WHERE str.tag_id = #{spuTagReference.tagId}
+    <if test="spuTagReference.spuName != null and spuTagReference.spuName != ''">
+      AND sl.spu_name LIKE CONCAT('%', #{spuTagReference.spuName}, '%')
+    </if>
+    order by seq desc
+  </select>
+</mapper>

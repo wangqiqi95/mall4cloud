@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.coupon.mapper.ChooseMemberEventExchangeRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.coupon.model.ChooseMemberEventExchangeRecord">
+        <id column="exchange_record_id" property="exchangeRecordId" />
+        <result column="user_id" property="userId" />
+        <result column="event_id" property="eventId" />
+        <result column="belong_shop_id" property="belongShopId" />
+        <result column="belong_shop_name" property="belongShopName" />
+        <result column="exchange_num" property="exchangeNum" />
+        <result column="delivery_address" property="deliveryAddress" />
+        <result column="consignee" property="consignee" />
+        <result column="mobile" property="mobile" />
+        <result column="delivery_status" property="deliveryStatus" />
+        <result column="logistics_company" property="logisticsCompany" />
+        <result column="tracking_number" property="trackingNumber" />
+        <result column="delivery_mobile" property="deliveryMobile" />
+        <result column="export_status" property="exportStatus" />
+        <result column="user_vip_code" property="userVipCode" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        exchange_record_id, user_id, event_id, belong_shop_id, belong_shop_name, exchange_num, delivery_address, consignee, mobile, delivery_status, logistics_company, tracking_number, delivery_mobile, export_status, user_vip_code, create_time
+    </sql>
+
+    <select id="getTheUserEventExchangeNum" resultType="java.lang.Integer">
+        select IFNULL(SUM(exchange_num),0) as sumExchangeNum
+        from
+            t_choose_member_event_exchange_record
+        where
+            user_id = #{userId}
+          and
+            event_id = #{eventId}
+    </select>
+
+    <select id="recordList" resultType="com.mall4j.cloud.coupon.vo.ChooseMemberEventExchangeRecordVO">
+        SELECT
+            record.*,
+            member_event.exchange_type,
+            member_event.event_title
+        FROM
+            t_choose_member_event_exchange_record record
+                LEFT JOIN t_choose_member_event member_event ON record.event_id = member_event.choose_member_event_id
+        <where>
+            member_event.choose_member_event_id = #{pageDTO.eventId}
+            <if test="pageDTO.userInfo != null">
+                and (record.user_vip_code like concat('%',#{pageDTO.userInfo},'%') or record.mobile like concat('%',#{pageDTO.userInfo},'%'))
+            </if>
+            <if test="pageDTO.startTime != null and pageDTO.endTime != null">
+                and (record.create_time between #{pageDTO.startTime} and #{pageDTO.endTime})
+            </if>
+            <if test="pageDTO.deliveryStatus != null">
+                and record.delivery_status = #{pageDTO.deliveryStatus}
+            </if>
+            <if test="pageDTO.exportStatus != null">
+                and record.export_status = #{pageDTO.exportStatus}
+            </if>
+        </where>
+    </select>
+
+    <select id="getExchangeMemberCountByEvent" resultType="java.lang.Integer">
+        SELECT
+            COUNT( 1 )
+        FROM
+            ( SELECT DISTINCT user_id FROM t_choose_member_event_exchange_record WHERE event_id = #{eventId} ) t
+    </select>
+
+    <update id="confirmExport">
+        update t_choose_member_event_exchange_record set export_status = 1,delivery_status = 2
+        where exchange_record_id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="queryUserRecord" resultType="com.mall4j.cloud.coupon.vo.ChooseMemberEventExchangeRecordVO">
+        SELECT
+        record.*,
+        member_event.exchange_type,
+        member_event.event_title,
+        member_event.cover_image_url,
+        member_event.gift_image_url,
+        member_event.presentation,
+        event_coupon.coupon_id
+        FROM
+        t_choose_member_event_exchange_record record
+        LEFT JOIN t_choose_member_event member_event ON record.event_id = member_event.choose_member_event_id
+        LEFT JOIN t_choose_member_event_coupon_relation event_coupon ON member_event.choose_member_event_id = event_coupon.event_id
+        where record.user_id = #{userId}
+        order by record.create_time desc
+    </select>
+
+</mapper>

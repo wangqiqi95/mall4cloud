@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionBrowseRecordMapper">
+  <resultMap id="distributionBrowseRecordMap" type="com.mall4j.cloud.distribution.model.DistributionBrowseRecord">
+    <id column="id" property="id" />
+    <result column="browse_id" property="browseId"/>
+    <result column="browse_name" property="browseName"/>
+    <result column="browse_type" property="browseType"/>
+    <result column="tentacle_no" property="tentacleNo"/>
+    <result column="share_id" property="shareId"/>
+    <result column="share_type" property="shareType"/>
+    <result column="activity_id" property="activityId"/>
+    <result column="activity_type" property="activityType"/>
+    <result column="activity_name" property="activityName"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+
+  <resultMap id="distributionPromotionGroupMap" type="com.mall4j.cloud.distribution.vo.DistributionPromotionGroupVO">
+    <result column="activity_type" property="activityType"/>
+    <result column="count(1)" property="count"/>
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `id`,`browse_id`,`browse_name`,`browse_type`,`tentacle_no`,`share_id`,`share_type`,`activity_id`,`activity_type`,`activity_name`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.distribution.vo.DistributionBrowseRecordVO">
+    select <include refid="Vo_Column_List"/> from distribution_browse_record
+    <where>
+      <if test="distributionBrowseRecord.shareId != null">
+        and share_id = #{distributionBrowseRecord.shareId}
+      </if>
+      <if test="distributionBrowseRecord.shareType != null">
+        and share_type = #{distributionBrowseRecord.shareType}
+      </if>
+      <if test="distributionBrowseRecord.activityType != null">
+        and activity_type = #{distributionBrowseRecord.activityType}
+      </if>
+      <if test="distributionBrowseRecord.activityName != null and distributionBrowseRecord.activityName != ''">
+        and activity_name = #{distributionBrowseRecord.activityName}
+      </if>
+      <if test="distributionBrowseRecord.keywords != null and distributionBrowseRecord.keywords != ''">
+        and (activity_name = #{distributionBrowseRecord.keywords} or browse_id = #{distributionBrowseRecord.browseId})
+      </if>
+    </where>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="distributionBrowseRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_browse_record where id = #{id}
+  </select>
+  <select id="countByBrowseAndActivity" resultType="java.lang.Integer">
+    select count(id) from distribution_browse_record
+    where browse_id = #{browseId}
+    and browse_type = #{browseType}
+    and activity_id = #{activityId}
+    and activity_type = #{activityType}
+  </select>
+  <select id="countNumByActivityAndDate" resultType="java.lang.Integer">
+    select count(id) from distribution_browse_record
+    where activity_id = #{activityId}
+    and activity_type = #{activityType}
+    and create_time between #{startDate} and #{endDate}
+  </select>
+  <select id="countUserNumByActivityAndDate" resultType="java.lang.Integer">
+    select count(r.browse_id) from (
+    select browse_id from distribution_browse_record
+    where activity_id = #{activityId}
+    and activity_type = #{activityType}
+    and create_time between #{startDate} and #{endDate}
+    group by browse_id
+    ) as r
+  </select>
+
+  <select id="groupByActivityType" resultMap="distributionPromotionGroupMap">
+    select activity_type, count(1) from distribution_browse_record where share_type = #{shareType} and share_id = #{shareId} group by activity_type
+  </select>
+    <select id="listStaffByActivity" resultType="com.mall4j.cloud.distribution.vo.DistributionBrowseRecordVO">
+    select share_id as shareId, count(id) as totalNum from distribution_browse_record
+    where activity_id = #{activityId}
+    and activity_type = #{activityType}
+    and share_type = 1
+    <if test="startDate != null and endDate != null">
+      and create_time between #{startDate} and #{endDate}
+    </if>
+    group by share_id
+    </select>
+  <select id="countNumByShareActivityAndDate" resultType="java.lang.Integer">
+    select count(id) from distribution_browse_record
+    where activity_id = #{activityId}
+    and activity_type = #{activityType}
+    and share_id = #{shareId}
+    <if test="startDate != null and endDate != null">
+      and create_time between #{startDate} and #{endDate}
+    </if>
+  </select>
+  <select id="countUserNumByShareActivityAndDate" resultType="java.lang.Integer">
+    select count(r.browse_id) from (
+    select browse_id from distribution_browse_record
+    where activity_id = #{activityId}
+    and activity_type = #{activityType}
+    <if test="startDate != null and endDate != null">
+      and create_time between #{startDate} and #{endDate}
+    </if>
+    group by browse_id
+    ) as r
+  </select>
+
+  <insert id="save">
+    insert into distribution_browse_record (`browse_id`,`browse_name`,`browse_type`,`tentacle_no`,`share_id`,`share_type`,`activity_id`,`activity_type`,`activity_name`)
+    values (#{distributionBrowseRecord.browseId},#{distributionBrowseRecord.browseName},#{distributionBrowseRecord.browseType},#{distributionBrowseRecord.tentacleNo},#{distributionBrowseRecord.shareId},#{distributionBrowseRecord.shareType},#{distributionBrowseRecord.activityId},#{distributionBrowseRecord.activityType},#{distributionBrowseRecord.activityName});
+  </insert>
+  <update id="update">
+    update distribution_browse_record
+    <set>
+      <if test="distributionBrowseRecord.browseId != null">
+        `browse_id` = #{distributionBrowseRecord.browseId},
+      </if>
+      <if test="distributionBrowseRecord.browseName != null">
+        `browse_name` = #{distributionBrowseRecord.browseName},
+      </if>
+      <if test="distributionBrowseRecord.browseType != null">
+        `browse_type` = #{distributionBrowseRecord.browseType},
+      </if>
+      <if test="distributionBrowseRecord.tentacleNo != null">
+        `tentacle_no` = #{distributionBrowseRecord.tentacleNo},
+      </if>
+      <if test="distributionBrowseRecord.shareId != null">
+        `share_id` = #{distributionBrowseRecord.shareId},
+      </if>
+      <if test="distributionBrowseRecord.shareType != null">
+        `share_type` = #{distributionBrowseRecord.shareType},
+      </if>
+      <if test="distributionBrowseRecord.activityId != null">
+        `activity_id` = #{distributionBrowseRecord.activityId},
+      </if>
+      <if test="distributionBrowseRecord.activityType != null">
+        `activity_type` = #{distributionBrowseRecord.activityType},
+      </if>
+      <if test="distributionBrowseRecord.activityName != null">
+        `activity_name` = #{distributionBrowseRecord.activityName},
+      </if>
+    </set>
+    where id = #{distributionBrowseRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_browse_record where id = #{id}
+  </delete>
+
+</mapper>

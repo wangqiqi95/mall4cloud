@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.delivery.mapper.TranscityFreeMapper">
+  <resultMap id="transcityFreeMap" type="com.mall4j.cloud.delivery.model.TranscityFree">
+    <id column="transcity_free_id" property="transcityFreeId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="transfee_free_id" property="transfeeFreeId"/>
+    <result column="free_city_id" property="freeCityId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `transcity_free_id`,`create_time`,`update_time`,`transfee_free_id`,`free_city_id`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.delivery.vo.TranscityFreeVO">
+    select <include refid="Vo_Column_List"/> from transcity_free order by transcity_free_id desc
+  </select>
+  <select id="getByTranscityFreeId" resultType="com.mall4j.cloud.delivery.vo.TranscityFreeVO">
+    select <include refid="Vo_Column_List"/> from transcity_free where transcity_free_id = #{transcityFreeId}
+  </select>
+  <insert id="save">
+    insert into transcity_free (`transfee_free_id`,`free_city_id`)
+    values (#{transcityFree.transfeeFreeId},#{transcityFree.freeCityId});
+  </insert>
+  <update id="update">
+    update transcity_free
+    <set>
+      <if test="transcityFree.transfeeFreeId != null">
+        `transfee_free_id` = #{transcityFree.transfeeFreeId},
+      </if>
+      <if test="transcityFree.freeCityId != null">
+        `free_city_id` = #{transcityFree.freeCityId},
+      </if>
+    </set>
+    where transcity_free_id = #{transcityFree.transcityFreeId}
+  </update>
+
+  <delete id="deleteById">
+    delete from transcity_free where transcity_free_id = #{transcityFreeId}
+  </delete>
+
+  <insert id="saveBatch">
+    insert into transcity_free (`transfee_free_id`,`free_city_id`) values
+    <foreach collection="transCityFrees" item="transCityFree" separator=",">
+      (#{transCityFree.transfeeFreeId},#{transCityFree.freeCityId})
+    </foreach>
+  </insert>
+
+  <delete id="deleteBatchByTransFeeFreeIds">
+    delete from transcity_free where transfee_free_id in
+    <foreach collection="transFeeFreeIds" item="transFeeFreeId" open="(" close=")" separator=",">
+      #{transFeeFreeId}
+    </foreach>
+  </delete>
+
+</mapper>

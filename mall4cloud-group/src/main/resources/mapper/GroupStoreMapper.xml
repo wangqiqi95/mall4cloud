@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.GroupStoreMapper">
+  <resultMap id="groupStoreMap" type="com.mall4j.cloud.group.model.GroupStore">
+    <result column="id" property="id"/>
+    <result column="group_activity_id" property="groupActivityId"/>
+    <result column="store_id" property="storeId"/>
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `id`,`group_activity_id`,`store_id`
+  </sql>
+
+  <insert id="saveBatch">
+    insert into group_store(`group_activity_id`,`store_id`)
+    values
+    <foreach collection="groupStoreList" item="groupStore" separator=",">
+      (#{groupStore.groupActivityId},#{groupStore.storeId})
+    </foreach>
+  </insert>
+
+  <delete id="deleteByGroupActivityId">
+    delete from group_store where group_activity_id = #{groupActivityId}
+  </delete>
+
+  <select id="selectByActivityId" resultType="com.mall4j.cloud.group.model.GroupStore">
+    select * from group_store where group_activity_id = #{groupActivityId} order by id desc
+  </select>
+
+</mapper>

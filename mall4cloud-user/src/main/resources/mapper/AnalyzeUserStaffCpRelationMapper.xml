@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.AnalyzeUserStaffCpRelationMapper">
+
+  <select id="selectAnalyzeUSRFPage" resultType="com.mall4j.cloud.api.user.vo.cp.AnalyzeUserStaffCpRelationListVO">
+    select
+    id,
+    user_id,
+    qi_wei_nick_name,
+    user_union_id,
+    qi_wei_user_id,
+    staff_id,
+    qi_wei_staff_id,
+    status,
+    contact_change_type,
+    auto_type,
+    cp_remark as userRemarks,
+    cp_create_time,
+    cp_remark_mobiles as userPhone,
+    cp_add_way
+    from
+    user_staff_cp_relation
+    WHERE 1=1
+    <if test="dto.nickName!=null and dto.nickName!=''">
+      AND qi_wei_nick_name like CONCAT('%', #{dto.nickName},'%')
+    </if>
+    <if test="dto.phone!=null and dto.phone!=''">
+      AND cp_remark_mobiles like CONCAT('%', #{dto.phone},'%')
+    </if>
+    <if test="dto.startTime!=null and dto.endTime!=null">
+      AND cp_create_time between #{dto.startTime} and #{dto.endTime}
+    </if>
+    <if test="dto.codeChannelIds!=null and dto.codeChannelIds.size>0">
+      AND code_channel_id IN
+      <foreach collection="dto.codeChannelIds" item="codeChannelId" separator="," open="(" close=")">
+        #{codeChannelId}
+      </foreach>
+    </if>
+    <if test="dto.staffs!=null and dto.staffs.size>0">
+      AND staff_id IN
+      <foreach collection="dto.staffs" item="staffId" separator="," open="(" close=")">
+        #{staffId}
+      </foreach>
+    </if>
+    order by cp_create_time desc
+  </select>
+
+  <select id="selectAnalyzeNewUSRFList" resultType="com.mall4j.cloud.api.user.vo.cp.AnalyzeUserStaffCpRelationVO">
+  select
+      count(1) as count,
+    DATE_FORMAT(cp_create_time, '%Y-%m-%d') as dateKey
+  from user_staff_cp_relation
+  where contact_change_type=0
+    <if test="dto.startTime!=null and dto.endTime!=null">
+      AND cp_create_time between #{dto.startTime} and #{dto.endTime}
+    </if>
+    <if test="dto.codeChannelIds!=null and dto.codeChannelIds.size>0">
+      AND code_channel_id IN
+      <foreach collection="dto.codeChannelIds" item="codeChannelId" separator="," open="(" close=")">
+        #{codeChannelId}
+      </foreach>
+    </if>
+  group by DATE_FORMAT(cp_create_time, '%Y-%m-%d')
+  </select>
+
+  <select id="countAnalyzeNewUSRF" resultType="int">
+    select
+    ifnull(count(1),0)
+    from user_staff_cp_relation
+    where contact_change_type=0
+    <if test="dto.startTime!=null and dto.endTime!=null">
+      AND cp_create_time between #{dto.startTime} and #{dto.endTime}
+    </if>
+    <if test="dto.codeChannelIds!=null and dto.codeChannelIds.size>0">
+      AND code_channel_id IN
+      <foreach collection="dto.codeChannelIds" item="codeChannelId" separator="," open="(" close=")">
+        #{codeChannelId}
+      </foreach>
+    </if>
+  </select>
+
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.delivery.mapper.TranscityMapper">
+  <resultMap id="transcityMap" type="com.mall4j.cloud.delivery.model.Transcity">
+    <id column="transcity_id" property="transcityId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="transfee_id" property="transfeeId"/>
+    <result column="city_id" property="cityId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `transcity_id`,`create_time`,`update_time`,`transfee_id`,`city_id`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.delivery.vo.TranscityVO">
+    select <include refid="Vo_Column_List"/> from transcity order by transcity_id desc
+  </select>
+  <select id="getByTranscityId" resultType="com.mall4j.cloud.delivery.vo.TranscityVO">
+    select <include refid="Vo_Column_List"/> from transcity where transcity_id = #{transcityId}
+  </select>
+  <insert id="save">
+    insert into transcity (`transfee_id`,`city_id`)
+    values (#{transcity.transfeeId},#{transcity.cityId});
+  </insert>
+  <update id="update">
+    update transcity
+    <set>
+      <if test="transcity.transfeeId != null">
+        `transfee_id` = #{transcity.transfeeId},
+      </if>
+      <if test="transcity.cityId != null">
+        `city_id` = #{transcity.cityId},
+      </if>
+    </set>
+    where transcity_id = #{transcity.transcityId}
+  </update>
+  <delete id="deleteById">
+    delete from transcity where transcity_id = #{transcityId}
+  </delete>
+
+  <insert id="saveBatch">
+    insert into transcity (`transfee_id`,`city_id`) values
+    <foreach collection="transCities" item="transCity" separator=",">
+      (#{transCity.transfeeId},#{transCity.cityId})
+    </foreach>
+  </insert>
+
+  <delete id="deleteBatchByTransFeeIds">
+    delete from transcity where transfee_id in
+    <foreach collection="transFeeIds" item="transFeeId" open="(" close=")" separator=",">
+      #{transFeeId}
+    </foreach>
+  </delete>
+
+</mapper>

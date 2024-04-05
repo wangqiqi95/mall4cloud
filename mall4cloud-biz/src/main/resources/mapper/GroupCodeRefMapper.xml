@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.GroupCodeRefMapper">
+  <resultMap id="groupCodeRefMap" type="com.mall4j.cloud.biz.model.cp.CpGroupCodeRef">
+    <id column="id" property="id" />
+    <result column="name" property="name"/>
+    <result column="create_by" property="createBy"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="status" property="status"/>
+    <result column="is_delete" property="isDelete"/>
+    <result column="qr_code" property="qrCode"/>
+    <result column="auto_create_room" property="autoCreateRoom"/>
+    <result column="style" property="style"/>
+    <result column="total" property="total"/>
+    <result column="source_from" property="sourceFrom"/>
+    <result column="group_name_state" property="groupNameState"/>
+    <result column="room_base_name" property="roomBaseName"/>
+    <result column="room_base_id" property="roomBaseId"/>
+    <result column="expire_start" property="expireStart"/>
+    <result column="expire_end" property="expireEnd"/>
+    <result column="code_id" property="codeId"/>
+    <result column="chat_id" property="chatId"/>
+    <result column="config_id" property="configId"/>
+    <result column="state" property="state"/>
+    <result column="scan_count" property="scanCount"/>
+    <result column="code_type" property="codeType"/>
+  </resultMap>
+
+  <resultMap id="groupCodeRefVOMap" type="com.mall4j.cloud.biz.vo.cp.GroupCodeRefVO">
+    <result column="GROUP_TOTAL" property="groupTotal"/>
+    <result column="ENABLED_GROUP_TOTAL" property="enabledGroupTotal"/>
+    <result column="CUST_TOTAL" property="custTotal"/>
+    <result column="ENABLED_CUST_TOTAL" property="enabledCustTotal"/>
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `id`,`name`,`create_by`,`update_by`,`create_time`,`update_time`,`status`,`is_delete`,`qr_code`,`auto_create_room`,`style`,`total`,`source_from`,`group_name_state`,`room_base_name`,`room_base_id`,`expire_start`,`expire_end`,`code_id`,`chat_id`,`config_id`,`state`,`scan_count`
+  </sql>
+  <select id="list" resultMap="groupCodeRefMap">
+    select <include refid="Vo_Column_List"/> from cp_group_code_ref order by id desc
+  </select>
+
+<!--  <select id="selectListByCodeId" resultMap="groupCodeRefMap">-->
+<!--    select <include refid="Vo_Column_List"/> from cp_group_code_ref where is_delete=0 and code_id=#{codeId} and source_from=#{sourceFrom}-->
+<!--  </select>-->
+
+  <select id="selectListByCodeIds" resultType="com.mall4j.cloud.biz.model.cp.CpGroupCodeRef">
+    select
+    ref.*,
+    cg.total as chatUserTotal
+    from cp_group_code_ref ref
+    left join cp_cust_group cg on ref.chat_id=cg.ID
+    where ref.is_delete=0
+    and ref.source_from=#{sourceFrom}
+    and ref.code_id in
+    <foreach collection="codeIds" item="codeId" open="(" close=")" separator=",">
+      #{codeId}
+    </foreach>
+  </select>
+
+  <!-- 企业微信群聊上限500人 -->
+  <select id="statCount" resultMap="groupCodeRefVOMap">
+    SELECT
+    COUNT(1) GROUP_TOTAL,-- 关联群聊数
+    ifnull(SUM(G.TOTAL_CUST),0) CUST_TOTAL -- 当前群人数
+    FROM cp_group_code_ref F,cp_cust_group G
+    WHERE F.is_delete=0 AND G.FLAG=0
+    AND F.chat_id =G.ID
+    AND  F.code_id = #{codeId}
+  </select>
+<!--  <select id="statCount" resultMap="groupCodeRefVOMap">-->
+<!--    SELECT-->
+<!--    COUNT(1) GROUP_TOTAL,-->
+<!--    SUM(G.TOTAL_CUST) CUST_TOTAL,-->
+<!--    SUM(500-G.TOTAL) ENABLED_CUST_TOTAL,-->
+<!--    SUM(CASE WHEN G.TOTAL <![CDATA[ < ]]>500 THEN 1  ELSE 0 END ) ENABLED_GROUP_TOTAL-->
+<!--    FROM cp_group_code_ref F,cp_cust_group G-->
+<!--    WHERE F.is_delete=0 AND G.FLAG=0-->
+<!--    AND F.chat_id =G.ID-->
+<!--    AND  F.code_id = #{codeId}-->
+<!--  </select>-->
+
+
+  <select id="getById" resultMap="groupCodeRefMap">
+    select <include refid="Vo_Column_List"/> from cp_group_code_ref where id = #{id}
+  </select>
+
+  <delete id="deleteById">
+    delete from cp_group_code_ref where id = #{id}
+  </delete>
+
+  <delete id="deleteByCodeId">
+    update cp_group_code_ref set is_delete=1 where code_id = #{codeId}
+  </delete>
+
+  <select id="selectListBy" resultType="com.mall4j.cloud.biz.vo.cp.analyze.AnalyzeGroupCodeVO">
+    select
+    ref.id,
+    ref.status,
+    ref.qr_code,
+    ref.scan_count,
+    ref.total as upper_total,
+    ref.expire_end,
+    cg.total as chat_user_total,
+    (case when ref.code_type=1 then cg.GROUP_NAME else ref.name end) as name
+    from
+    cp_group_code_ref ref
+    left join cp_cust_group cg on ref.chat_id=cg.ID
+    where ref.is_delete=0
+    <if test="dto.codeId!=null">
+      and ref.code_id=#{dto.codeId}
+    </if>
+    <if test="dto.state!=null and dto.state!=''">
+      and ref.state=#{dto.state}
+    </if>
+    <if test="dto.sourceFrom!=null">
+      and ref.source_from=#{dto.sourceFrom}
+    </if>
+
+    order by ref.create_time desc
+  </select>
+
+</mapper>

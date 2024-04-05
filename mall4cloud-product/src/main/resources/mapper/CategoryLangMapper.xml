@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.CategoryLangMapper">
+  <resultMap id="categoryLangMap" type="com.mall4j.cloud.product.model.CategoryLang">
+    <id column="category_id" property="categoryId" />
+    <result column="lang" property="lang"/>
+    <result column="name" property="name"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `category_id`,`lang`,`name`
+  </sql>
+  <select id="list" resultMap="categoryLangMap">
+    select <include refid="Vo_Column_List"/> from category_lang order by category_id desc
+  </select>
+  <select id="getByCategoryId" resultMap="categoryLangMap">
+    select <include refid="Vo_Column_List"/> from category_lang where category_id = #{categoryId}
+  </select>
+  <insert id="save">
+    insert into category_lang (`category_id`,`lang`,`name`)
+    values (#{categoryLang.categoryId},#{categoryLang.lang},#{categoryLang.name});
+  </insert>
+  <update id="update">
+    update category_lang
+    <set>
+      <if test="categoryLang.lang != null">
+        `lang` = #{categoryLang.lang},
+      </if>
+      <if test="categoryLang.name != null">
+        `name` = #{categoryLang.name},
+      </if>
+    </set>
+    where category_id = #{categoryLang.categoryId}
+  </update>
+  <delete id="deleteById">
+    delete from category_lang where category_id = #{categoryId}
+  </delete>
+
+  <insert id="batchSave">
+    <foreach collection="categoryLangList" item="categoryLang">
+      insert into category_lang (`category_id`,`lang`,`name`)
+      values (#{categoryLang.categoryId},#{categoryLang.lang},#{categoryLang.name});
+    </foreach>
+  </insert>
+
+  <update id="batchUpdate">
+    <foreach collection="categoryLangList" item="categoryLang">
+      update category_lang
+      <set>
+        <if test="categoryLang.name != null">
+          `name` = #{categoryLang.name},
+        </if>
+      </set>
+      where category_id = #{categoryLang.categoryId} and lang = #{categoryLang.lang};
+    </foreach>
+  </update>
+
+  <delete id="batchDelete">
+    delete from category_lang where category_id = #{categoryId} and lang in
+    <foreach collection="langIds" item="lang" open="(" close=")" separator=",">
+      #{lang}
+    </foreach>
+  </delete>
+
+  <select id="existCategoryName" resultType="java.lang.String">
+    SELECT name FROM category_lang cl
+    JOIN category c ON cl.category_id = c.category_id and c.shop_id = #{category.shopId} and c.parent_id = #{category.parentId}
+    <where>
+      <if test="category.categoryLangList.size() > 0">
+        <foreach collection="category.categoryLangList" item="lang" separator="OR" open="(" close=")">
+          (cl.name = #{lang.name} and cl.lang = #{lang.lang})
+        </foreach>
+      </if>
+      <if test="category.categoryId != null">
+        AND cl.category_id != #{category.categoryId}
+      </if>
+    </where>
+  </select>
+</mapper>

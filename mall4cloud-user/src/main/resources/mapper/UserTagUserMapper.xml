@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserTagUserMapper">
+  <resultMap id="userTagUserMap" type="com.mall4j.cloud.user.model.UserTagUser">
+    <id column="user_tag_user_id" property="userTagUserId" />
+    <result column="create_time" property="createTime"/>
+    <result column="user_tag_id" property="userTagId"/>
+    <result column="user_id" property="userId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `user_tag_user_id`,`create_time`,`user_tag_id`,`user_id`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.user.vo.UserTagUserVO">
+    select <include refid="Vo_Column_List"/> from user_tag_user order by user_tag_user_id desc
+  </select>
+  <select id="getByUserTagUserId" resultType="com.mall4j.cloud.user.model.UserTagUser">
+    select <include refid="Vo_Column_List"/> from user_tag_user where user_tag_user_id = #{userTagUserId}
+  </select>
+  <select id="getUserTagsByUserId" resultType="com.mall4j.cloud.api.user.vo.UserTagApiVO">
+    SELECT distinct ut.user_tag_id AS tagId,ut.tag_name, ut.tag_type
+    FROM `user_tag` ut
+    LEFT JOIN `user_tag_user` utg ON utg.user_tag_id = ut.user_tag_id
+    WHERE utg.user_id = #{userId}
+  </select>
+  <select id="listByUserIds" resultType="com.mall4j.cloud.user.vo.UserTagUserVO"
+          parameterType="java.util.List">
+    select <include refid="Vo_Column_List"/> from user_tag_user
+    where user_id IN
+    <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+      #{userId}
+    </foreach>
+  </select>
+    <select id="getUserByTagIds" resultType="com.mall4j.cloud.api.user.vo.UserApiVO" parameterType="java.util.List">
+      SELECT u.`user_id`,u.`phone` as userMobile,u.`nick_name` FROM `user` u
+      LEFT JOIN `user_tag_user` utu ON u.`user_id` = utu.`user_id`
+      WHERE utu.user_tag_id IN
+      <foreach collection="userTagIds" item="userTagId" open="(" close=")" separator=",">
+        #{userTagId}
+      </foreach>
+    </select>
+    <select id="listByTag" resultType="com.mall4j.cloud.user.model.UserTagUser">
+      select <include refid="Vo_Column_List"/> from user_tag_user where user_tag_id = #{tagId}
+    </select>
+  <select id="listUserByStaffAndTagId" resultType="com.mall4j.cloud.api.user.vo.UserApiVO">
+    SELECT u.`user_id`,u.`phone` as userMobile,u.`nick_name`, u.`pic`, u.`add_wechat` FROM `user` u
+      LEFT JOIN `user_tag_user` utu ON u.`user_id` = utu.`user_id`
+      WHERE utu.user_tag_id = #{userTagId}
+      AND u.staff_id = #{staffId}
+      ORDER BY CONVERT(u.`nick_name` USING 'GBK')
+  </select>
+  <select id="listUserTagsByUserId" resultType="com.mall4j.cloud.api.user.vo.UserTagApiVO">
+    SELECT distinct ut.user_tag_id AS tagId,ut.tag_name, ut.tag_type
+    FROM `user_tag` ut
+    LEFT JOIN `user_tag_user` utg ON utg.user_tag_id = ut.user_tag_id
+    WHERE utg.user_id = #{userId}
+    AND (ut.tag_type = 2
+    <if test="staffTagIds != null and staffTagIds.size() != 0">
+      OR (ut.tag_type = 3 AND ut.user_tag_id IN
+        <foreach collection="staffTagIds" item="staffTagId" separator="," open="(" close=")">
+            #{staffTagId}
+        </foreach>
+        )
+    </if>
+    )
+  </select>
+  <select id="getByTagAndUser" resultType="com.mall4j.cloud.user.model.UserTagUser">
+    select <include refid="Vo_Column_List"/> from user_tag_user where user_tag_id = #{tagId} and user_id = #{userId}
+  </select>
+  <insert id="save">
+    insert into user_tag_user (`user_tag_id`,`user_id`)
+    values (#{userTagUser.userTagId},#{userTagUser.userId});
+  </insert>
+  <insert id="saveBatch" parameterType="java.util.List">
+    insert into user_tag_user (`user_tag_id`,`user_id`)
+    values
+    <foreach collection="userTagUsers" item="userTagUser" separator=",">
+      (#{userTagUser.userTagId},#{userTagUser.userId})
+    </foreach>
+  </insert>
+  <update id="update">
+    update user_tag_user
+    <set>
+      <if test="userTagUser.userTagId != null">
+        `user_tag_id` = #{userTagUser.userTagId},
+      </if>
+      <if test="userTagUser.userId != null">
+        `user_id` = #{userTagUser.userId},
+      </if>
+    </set>
+    where user_tag_user_id = #{userTagUser.userTagUserId}
+  </update>
+  <delete id="deleteById">
+    delete from user_tag_user where user_tag_user_id = #{userTagUserId}
+  </delete>
+    <delete id="removeByUserTagId" parameterType="java.lang.Long">
+      delete from user_tag_user where user_tag_id = #{userTagId}
+    </delete>
+  <delete id="removeByUserIdAndTagId">
+    DELETE FROM `user_tag_user` WHERE user_id = #{userId} AND user_tag_id = #{userTagId}
+  </delete>
+  <delete id="deleteByTagId">
+    DELETE FROM `user_tag_user` WHERE user_tag_id = #{tagId}
+  </delete>
+  <delete id="deleteByUserAndTagId">
+    DELETE FROM `user_tag_user` WHERE user_id IN
+    <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+      #{userId}
+    </foreach>
+    AND user_tag_id = #{tagId}
+  </delete>
+  <delete id="deleteByUserId">
+    DELETE FROM `user_tag_user` WHERE user_id = #{userId} AND user_tag_id IN (SELECT user_tag_id FROM user_tag WHERE tag_type = 2 OR tag_type = 3)
+  </delete>
+  <delete id="deleteByTagAndUserId">
+    DELETE FROM `user_tag_user` WHERE user_tag_id IN
+    <foreach collection="tagIds" item="tagId" open="(" close=")" separator=",">
+      #{tagId}
+    </foreach>
+    AND user_id = #{userId}
+  </delete>
+</mapper>

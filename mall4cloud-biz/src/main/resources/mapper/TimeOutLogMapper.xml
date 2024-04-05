@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.chat.TimeOutLogMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.mall4j.cloud.biz.model.chat.TimeOutLog" id="TimeOutLogMap">
+        <result property="id" column="id"/>
+        <result property="staffName" column="staff_name"/>
+        <result property="staffId" column="staff_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="userId" column="user_id"/>
+        <result property="status" column="status"/>
+        <result property="roomId" column="room_id"/>
+        <result property="ruleName" column="rule_name"/>
+        <result property="triggerTime" column="trigger_time"/>
+        <result property="sendTime" column="send_time"/>
+        <result property="timeOutId" column="time_out_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id,staff_name,staff_id,user_name,user_id,status,rule_name,trigger_time,send_time,time_out_id,create_time,update_time,room_id
+    </sql>
+    
+    <select id="list" resultType="com.mall4j.cloud.biz.vo.chat.TimeOutLogVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+            `cp_time_out_log`
+        <where>
+             1=1
+            <if test="param.staffName != null and param.staffName != ''">
+                and staff_name LIKE CONCAT("%",#{param.staffName},"%")
+            </if>
+            <if test="param.status != null and param.status != ''">
+                and status = #{param.status}
+            </if>
+            <if test="param.timeOutId != null and param.timeOutId != ''">
+                and time_out_id = #{param.timeOutId}
+            </if>
+            <if test="param.staffQiWeiId != null and param.staffQiWeiId.size() > 0">
+                and staff_id IN
+                <foreach collection="param.staffQiWeiId" item="staffId" separator="," open="(" close=")">
+                    #{staffId}
+                </foreach>
+            </if>
+            <if test="param.userIds != null and param.userIds.size() > 0">
+                and user_id IN
+                <foreach collection="param.userIds" item="userId" separator="," open="(" close=")">
+                    #{userId}
+                </foreach>
+            </if>
+            <if test="param.userName != null and param.userName != ''">
+                and user_name LIKE CONCAT("%",#{param.userName},"%")
+            </if>
+            <if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+                and trigger_time BETWEEN #{param.startTime} AND #{param.endTime}
+            </if>
+        </where>
+        order by trigger_time desc
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="timeOut.id">
+        insert into cp_time_out_log (`staff_name`,`staff_id`,`user_name`,`user_id`,`status`,`room_id`,`rule_name`,`trigger_time`,`send_time`,
+        `time_out_id`)
+        values (#{timeOut.staffName},#{timeOut.staffId},#{timeOut.userName},#{timeOut.userId},#{timeOut.status},
+        #{timeOut.roomId},#{timeOut.ruleName},#{timeOut.triggerTime},#{timeOut.sendTime},#{timeOut.timeOutId})
+    </insert>
+
+    <update id="update">
+        update cp_time_out_log
+        <set>
+            <if test="timeOut.staffName != null">
+                `staff_name` = #{timeOut.staffName},
+            </if>
+            <if test="timeOut.staffId != null">
+                `staff_id` = #{timeOut.staffId},
+            </if>
+            <if test="timeOut.userName != null">
+                `user_name` = #{timeOut.userName},
+            </if>
+            <if test="timeOut.userId != null">
+                `user_id` = #{timeOut.userId},
+            </if>
+            <if test="timeOut.status != null">
+                `status` = #{timeOut.status},
+            </if>
+            <if test="timeOut.roomId != null">
+                `room_id` = #{timeOut.roomId},
+            </if>
+            <if test="timeOut.ruleName != null">
+                `rule_name` = #{timeOut.ruleName},
+            </if>
+            <if test="timeOut.triggerTime != null">
+                `trigger_time` = #{timeOut.triggerTime},
+            </if>
+            <if test="timeOut.sendTime != null">
+                `send_time` = #{timeOut.sendTime},
+            </if>
+            <if test="timeOut.timeOutId != null">
+                `time_out_id` = #{timeOut.timeOutId},
+            </if>
+            update_time = NOW(),
+        </set>
+        where id = #{timeOut.id}
+    </update>
+
+    <delete id="deleteById">
+        delete from cp_time_out_log where id = #{id}
+    </delete>
+
+    <select id="getById" resultType="com.mall4j.cloud.biz.vo.chat.SessionTimeOutVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        `cp_time_out_log` where id = #{id}
+    </select>
+
+    <select id="getByRoomId" resultType="com.mall4j.cloud.biz.vo.chat.TimeOutLogVO">
+        select * from `cp_time_out_log` where status = 0 and  room_id = #{roomId}
+    </select>
+
+    <select id="getByUserId" resultType="com.mall4j.cloud.biz.vo.chat.TimeOutLogVO">
+        select * from `cp_time_out_log` where status = 0 and  user_id = #{userId} and staff_id = #{staffId}
+    </select>
+    <select id="getByStaffId" resultType="com.mall4j.cloud.biz.vo.chat.TimeOutLogVO">
+        select * from `cp_time_out_log` where status = 0 and  user_id LIKE CONCAT("%",#{staffId},"%") and staff_id LIKE CONCAT("%",#{userId},"%") limit 1
+    </select>
+
+    <!--<select id="getCountPeople" resultType="java.lang.Integer">
+        select count(DISTINCT staff_id) countPeople from cp_time_out_log  where status = 1
+        <if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+            and trigger_time BETWEEN #{param.startTime} AND #{param.endTime}
+        </if>
+    </select>-->
+
+    <select id="getCountPeople" resultType="java.lang.Integer">
+        select count(DISTINCT staff_id) countPeople from cp_time_out_log  where status = 1
+        <if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+            and trigger_time BETWEEN #{param.startTime} AND #{param.endTime}
+        </if>
+        <if test="param.timeOutId != null ">
+            and time_out_id =#{param.timeOutId}
+        </if>
+    </select>
+    <select id="getAddCount" resultType="java.lang.Integer">
+        select count(1) sumCount from cp_time_out_log  where status = 1
+        <if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+            and trigger_time BETWEEN #{param.startTime} AND #{param.endTime}
+        </if>
+        <if test="param.timeOutId != null ">
+            and time_out_id =#{param.timeOutId}
+        </if>
+    </select>
+    <select id="getCount" resultType="java.lang.Integer">
+        select count(1) sumCount from cp_time_out_log where status = 1
+        <if test="param.timeOutId != null">
+            and time_out_id =#{param.timeOutId}
+        </if>
+    </select>
+
+    <select id="outLogChart" resultType="com.mall4j.cloud.biz.vo.chat.TimeOutLogVO">
+        select DATE_FORMAT(trigger_time,'%Y-%m-%d') dayTime,count(1) addCount from cp_time_out_log  where status = 1
+        <if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+            and trigger_time BETWEEN #{param.startTime} AND #{param.endTime}
+        </if>
+        <if test="param.timeOutId != null and param.timeOutId != ''">
+            and time_out_id =#{param.timeOutId}
+        </if>
+        group by DATE_FORMAT(trigger_time,'%Y-%m-%d') order by trigger_time desc
+    </select>
+
+    <select id="getByRoomId" resultType="com.mall4j.cloud.biz.vo.chat.TimeOutLogVO">
+        select * from `cp_time_out_log` where room_id = #{roomId}
+    </select>
+
+    <select id="getByTimeOutId" resultType="com.mall4j.cloud.biz.vo.chat.TimeOutLogVO">
+        select * from `cp_time_out_log` where time_out_id = #{timeOutId} limit 1
+    </select>
+
+</mapper>

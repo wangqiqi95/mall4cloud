@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinMaSubscriptTmessageValueMapper">
+  <resultMap id="weixinMaSubscriptTmessageValueMap" type="com.mall4j.cloud.biz.model.WeixinMaSubscriptTmessageValue">
+    <id column="id" property="id" />
+    <result column="template_id" property="templateId"/>
+    <result column="template_key_name" property="templateKeyName"/>
+    <result column="template_value_name" property="templateValueName"/>
+    <result column="template_value" property="templateValue"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`template_id`,`template_key_name`,`template_value_name`,`template_value`
+  </sql>
+  <select id="list" resultMap="weixinMaSubscriptTmessageValueMap">
+    select <include refid="Vo_Column_List"/> from weixin_ma_subscript_tmessage_value order by id desc
+  </select>
+  <select id="getById" resultMap="weixinMaSubscriptTmessageValueMap">
+    select <include refid="Vo_Column_List"/> from weixin_ma_subscript_tmessage_value where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_ma_subscript_tmessage_value (`template_id`,`template_key_name`,`template_value_name`,`template_value`)
+    values (#{weixinMaSubscriptTmessageValue.templateId},#{weixinMaSubscriptTmessageValue.templateKeyName},#{weixinMaSubscriptTmessageValue.templateValueName},#{weixinMaSubscriptTmessageValue.templateValue});
+  </insert>
+  <insert id="saveBatch">
+    insert into weixin_ma_subscript_tmessage_value (`template_id`,`template_key_name`,`template_value_name`,`template_value`)
+    values
+    <foreach collection="weixinMaSubscriptTmessageValues" item="weixinMaSubscriptTmessageValue" separator=",">
+      (#{weixinMaSubscriptTmessageValue.templateId},#{weixinMaSubscriptTmessageValue.templateKeyName},
+       #{weixinMaSubscriptTmessageValue.templateValueName},#{weixinMaSubscriptTmessageValue.templateValue})
+    </foreach>
+  </insert>
+  <update id="update">
+    update weixin_ma_subscript_tmessage_value
+    <set>
+      <if test="weixinMaSubscriptTmessageValue.templateId != null">
+        `template_id` = #{weixinMaSubscriptTmessageValue.templateId},
+      </if>
+      <if test="weixinMaSubscriptTmessageValue.templateValueName != null">
+        `template_value_name` = #{weixinMaSubscriptTmessageValue.templateValueName},
+      </if>
+      <if test="weixinMaSubscriptTmessageValue.templateValue != null">
+        `template_value` = #{weixinMaSubscriptTmessageValue.templateValue},
+      </if>
+    </set>
+    where id = #{weixinMaSubscriptTmessageValue.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_ma_subscript_tmessage_value where id = #{id}
+  </delete>
+
+  <delete id="deleteByTemplateId">
+    delete from weixin_ma_subscript_tmessage_value where template_id = #{templateId}
+  </delete>
+
+    <select id="getByTmessageId" resultType="com.mall4j.cloud.api.biz.vo.WeixinMaSubscriptTmessageValueVO">
+        select
+          <include refid="Vo_Column_List"/>
+        from weixin_ma_subscript_tmessage_value
+        where template_id = #{id}
+    </select>
+
+</mapper>

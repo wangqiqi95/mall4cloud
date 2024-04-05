@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.platform.mapper.StaffOrgRelMapper">
+
+  <select id="selectStaffAndOrgs" resultType="com.mall4j.cloud.api.platform.vo.StaffOrgVO">
+    select org.org_id,
+    org.org_name,
+    org.path,
+    s.staff_id
+    from staff_org_rel s
+    left join organization org on s.org_id=org.org_id
+    where s.is_delete=0
+    and org.is_deleted=0
+    and s.staff_id in
+    <foreach collection="staffIds" item="staffId" separator="," open="(" close=")">
+      #{staffId}
+    </foreach>
+  </select>
+
+  <delete id="deleteByStaffId">
+    delete from staff_org_rel where staff_id = #{staffId}
+  </delete>
+
+</mapper>

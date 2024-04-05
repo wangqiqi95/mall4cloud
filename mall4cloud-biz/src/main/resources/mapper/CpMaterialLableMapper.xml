@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpMaterialLableMapper">
+  <resultMap id="cpMaterialLableMap" type="com.mall4j.cloud.biz.model.cp.CpMaterialLable">
+    <id column="id" property="id" />
+    <result column="mat_id" property="matId"/>
+    <result column="interaction_second" property="interactionSecond"/>
+    <result column="radar_labal_id" property="radarLabalId"/>
+    <result column="radar_labal_value" property="radarLableValue"/>
+    <result column="radar_labal_name" property="radarLabalName"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`mat_id`,`interaction_second`,`radar_labal_id`,`radar_labal_name`,`create_time`,`update_time`,`radar_lable_value`
+  </sql>
+  <select id="list" resultMap="cpMaterialLableMap">
+    select <include refid="Vo_Column_List"/> from cp_material_lable order by id desc
+  </select>
+  <select id="getById" resultMap="cpMaterialLableMap">
+    select <include refid="Vo_Column_List"/> from cp_material_lable where id = #{id}
+  </select>
+  <insert id="save">
+    insert into cp_material_lable (`mat_id`,`interaction_second`,`radar_labal_id`,`radar_labal_name`,`radar_lable_value`)
+    values (#{cpMaterialLable.matId},#{cpMaterialLable.interactionSecond},#{cpMaterialLable.radarLabalId},#{cpMaterialLable.radarLabalName},#{cpMaterialLable.radarLableValue});
+  </insert>
+  <update id="update">
+    update cp_material_lable
+    <set>
+      <if test="cpMaterialLable.matId != null">
+        `mat_id` = #{cpMaterialLable.matId},
+      </if>
+      <if test="cpMaterialLable.interactionSecond != null">
+        `interaction_second` = #{cpMaterialLable.interactionSecond},
+      </if>
+      <if test="cpMaterialLable.radarLabalId != null">
+        `radar_labal_id` = #{cpMaterialLable.radarLabalId},
+      </if>
+      <if test="cpMaterialLable.radarLabalName != null">
+        `radar_labal_name` = #{cpMaterialLable.radarLabalName},
+      </if>
+    </set>
+    where id = #{cpMaterialLable.id}
+  </update>
+  <delete id="deleteById">
+    delete from cp_material_lable where id = #{id}
+  </delete>
+
+  <delete id="deleteByMatId">
+    delete from cp_material_lable where mat_id = #{matId}
+  </delete>
+
+  <select id="listByMatId" resultMap="cpMaterialLableMap">
+    select <include refid="Vo_Column_List"/> from cp_material_lable where mat_id = #{matId} order by interaction_second desc
+  </select>
+
+</mapper>

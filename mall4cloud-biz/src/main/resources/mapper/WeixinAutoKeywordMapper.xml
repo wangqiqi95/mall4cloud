@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinAutoKeywordMapper">
+  <resultMap id="weixinAutoKeywordMap" type="com.mall4j.cloud.biz.model.WeixinAutoKeyword">
+    <id column="id" property="id" />
+    <result column="name" property="name"/>
+    <result column="keyword" property="keyword"/>
+    <result column="app_id" property="appId"/>
+    <result column="keyword_type" property="keywordType"/>
+    <result column="msg_type" property="msgType"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="is_work" property="isWork"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`name`,`keyword`,`app_id`,`keyword_type`,`msg_type`,`create_by`,`create_time`,`update_by`,`update_time`,`is_work`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinAutoKeywordMap">
+    select <include refid="Vo_Column_List"/> from weixin_auto_keyword order by id desc
+  </select>
+  <select id="getById" resultMap="weixinAutoKeywordMap">
+    select <include refid="Vo_Column_List"/> from weixin_auto_keyword where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_auto_keyword (`id`,`name`,`keyword`,`msg_type`,`app_id`,`keyword_type`,`create_by`,`create_time`,`is_work`,`del_flag`)
+    values (#{weixinAutoKeyword.id},#{weixinAutoKeyword.name},#{weixinAutoKeyword.keyword},#{weixinAutoKeyword.msgType},#{weixinAutoKeyword.appId},#{weixinAutoKeyword.keywordType},#{weixinAutoKeyword.createBy},#{weixinAutoKeyword.createTime},#{weixinAutoKeyword.isWork},#{weixinAutoKeyword.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_auto_keyword
+    <set>
+      <if test="weixinAutoKeyword.name != null">
+        `name` = #{weixinAutoKeyword.name},
+      </if>
+      <if test="weixinAutoKeyword.keyword != null">
+        `keyword` = #{weixinAutoKeyword.keyword},
+      </if>
+      <if test="weixinAutoKeyword.appId != null">
+        `app_id` = #{weixinAutoKeyword.appId},
+      </if>
+      <if test="weixinAutoKeyword.keywordType != null">
+        `keyword_type` = #{weixinAutoKeyword.keywordType},
+      </if>
+      <if test="weixinAutoKeyword.msgType != null">
+        `msg_type` = #{weixinAutoKeyword.msgType},
+      </if>
+      <if test="weixinAutoKeyword.updateBy != null">
+        `update_by` = #{weixinAutoKeyword.updateBy},
+      </if>
+      <if test="weixinAutoKeyword.updateTime != null">
+        `update_time` = #{weixinAutoKeyword.updateTime},
+      </if>
+      <if test="weixinAutoKeyword.isWork != null">
+        `is_work` = #{weixinAutoKeyword.isWork},
+      </if>
+      <if test="weixinAutoKeyword.delFlag != null">
+        `del_flag` = #{weixinAutoKeyword.delFlag},
+      </if>
+    </set>
+    where id = #{weixinAutoKeyword.id}
+  </update>
+  <delete id="deleteById">
+    update weixin_auto_keyword set update_time=now(),update_by=#{updateBy},del_flag=1 where id = #{id}
+  </delete>
+
+  <select id="getList" resultType="com.mall4j.cloud.biz.vo.WeixinAutoKeywordVO">
+    select *
+    from weixin_auto_keyword
+    where del_flag=0
+      and app_id=#{appId}
+    <if test="name!=null and name!=''">
+      and name LIKE CONCAT('%',#{name},'%')
+    </if>
+    <if test="keyword!=null and keyword!=''">
+      and keyword LIKE CONCAT('%',#{keyword},'%')
+    </if>
+    <if test="isWork!=null">
+      and  is_work=#{isWork}
+    </if>
+    order by create_time desc
+  </select>
+
+  <select id="getByKeyword" resultType="com.mall4j.cloud.biz.vo.WeixinAutoKeywordVO">
+    select *
+    from weixin_auto_keyword
+    where del_flag=0 and is_work=1
+    and app_id=#{appId}
+    and CONCAT(',',keyword,',') REGEXP #{keyword}
+    order by create_time desc
+    limit 1
+  </select>
+</mapper>

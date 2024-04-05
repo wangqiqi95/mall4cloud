@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionSubjectProductMapper">
+  <resultMap id="distributionSubjectProductMap" type="com.mall4j.cloud.distribution.model.DistributionSubjectProduct">
+    <id column="id" property="id" />
+    <result column="subject_id" property="subjectId"/>
+    <result column="product_id" property="productId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`subject_id`,`product_id`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionSubjectProductMap">
+    select <include refid="Vo_Column_List"/> from distribution_subject_product order by id desc
+  </select>
+  <select id="getById" resultMap="distributionSubjectProductMap">
+    select <include refid="Vo_Column_List"/> from distribution_subject_product where id = #{id}
+  </select>
+    <select id="listBySubjectId" resultMap="distributionSubjectProductMap">
+      select <include refid="Vo_Column_List"/> from distribution_subject_product where subject_id = #{subjectId}
+    </select>
+    <insert id="save">
+    insert into distribution_subject_product (`subject_id`,`product_id`)
+    values (#{distributionSubjectProduct.subjectId},#{distributionSubjectProduct.productId});
+  </insert>
+  <update id="update">
+    update distribution_subject_product
+    <set>
+      <if test="distributionSubjectProduct.subjectId != null">
+        `subject_id` = #{distributionSubjectProduct.subjectId},
+      </if>
+      <if test="distributionSubjectProduct.productId != null">
+        `product_id` = #{distributionSubjectProduct.productId},
+      </if>
+    </set>
+    where id = #{distributionSubjectProduct.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_subject_product where id = #{id}
+  </delete>
+  <delete id="deleteBySubjectIdNotInProductIds">
+    delete from distribution_subject_product where subject_id = #{subjectId}
+    and product_id not in
+    <foreach collection="productIds" item="productId" open="(" close=")" separator=",">
+      #{productId}
+    </foreach>
+  </delete>
+    <delete id="deleteBySubjectId">
+      delete from distribution_subject_product where subject_id = #{subjectId}
+    </delete>
+
+</mapper>

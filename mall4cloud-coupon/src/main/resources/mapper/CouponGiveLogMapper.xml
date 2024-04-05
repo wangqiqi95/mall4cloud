@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.CouponGiveLogMapper">
+  <resultMap id="couponGiveLogMap" type="com.mall4j.cloud.coupon.model.CouponGiveLog">
+    <id column="biz_type" property="bizType" />
+    <result column="biz_id" property="bizId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `biz_type`,`biz_id`
+  </sql>
+  <select id="list" resultMap="couponGiveLogMap">
+    select <include refid="Vo_Column_List"/> from coupon_give_log order by biz_type desc
+  </select>
+  <select id="getByBizType" resultMap="couponGiveLogMap">
+    select <include refid="Vo_Column_List"/> from coupon_give_log where biz_type = #{bizType}
+  </select>
+  <insert id="save">
+    insert into coupon_give_log (`biz_type`,`biz_id`)
+    values (#{couponGiveLog.bizType},#{couponGiveLog.bizId});
+  </insert>
+  <update id="update">
+    update coupon_give_log
+    <set>
+      <if test="couponGiveLog.bizId != null">
+        `biz_id` = #{couponGiveLog.bizId},
+      </if>
+    </set>
+    where biz_type = #{couponGiveLog.bizType}
+  </update>
+  <delete id="deleteById">
+    delete from coupon_give_log where biz_type = #{bizType}
+  </delete>
+
+  <select id="count" resultType="java.lang.Integer">
+    select count(*) from coupon_give_log where biz_id = #{bizId} and  biz_type = #{bizType}
+    </select>
+</mapper>

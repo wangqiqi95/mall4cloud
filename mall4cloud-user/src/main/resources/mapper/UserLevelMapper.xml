@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserLevelMapper">
+  <resultMap id="userLevelMap" type="com.mall4j.cloud.user.model.UserLevel">
+    <id column="user_level_id" property="userLevelId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="level" property="level"/>
+    <result column="level_name" property="levelName"/>
+    <result column="level_type" property="levelType"/>
+    <result column="need_growth" property="needGrowth"/>
+    <result column="update_status" property="updateStatus"/>
+    <result column="recruit_status" property="recruitStatus"/>
+  </resultMap>
+  <resultMap id="userLevelRightMap" type="com.mall4j.cloud.user.vo.UserLevelVO" extends="userLevelMap">
+    <result column="next_level_name" property="nextLevelName"/>
+    <result column="next_growth" property="nextGrowth"/>
+    <collection property="userRightsIds" ofType="java.lang.Long">
+      <id column="rights_id"/>
+    </collection>
+    <collection property="userRightsList" ofType="com.mall4j.cloud.user.vo.UserRightsVO">
+      <id column="rights_id" property="rightsId"/>
+      <result column="rights_name" property="rightsName"/>
+      <result column="icon" jdbcType="VARCHAR" property="icon"/>
+      <result column="description" jdbcType="VARCHAR" property="description"/>
+      <result column="details" jdbcType="LONGVARCHAR" property="details"/>
+      <result column="rights_type" property="rightsType"/>
+      <result column="rate_score" property="rateScore"/>
+      <result column="pres_score" property="presScore"/>
+      <result column="discount" property="discount"/>
+      <result column="discount_range" property="discountRange"/>
+      <result column="free_fee_type" property="freeFeeType"/>
+    </collection>
+  </resultMap>
+
+
+  <resultMap id="userLevelVoMap" type="com.mall4j.cloud.user.vo.UserLevelVO" extends="userLevelRightMap">
+    <collection property="userLevelTerms" ofType="com.mall4j.cloud.user.vo.UserLevelTermVO" columnPrefix="ult_">
+      <id column="level_term_id" property="levelTermId" />
+      <result column="user_level_id" property="userLevelId"/>
+      <result column="term_type" property="termType"/>
+      <result column="need_amount" property="needAmount"/>
+      <result column="status" property="status"/>
+    </collection>
+    <collection property="levelTermIds" ofType="java.lang.Long">
+      <id column="ult_level_term_id" />
+    </collection>
+  </resultMap>
+
+
+  <resultMap id="userLevelVoReMap" type="com.mall4j.cloud.user.vo.UserLevelVO" extends="userLevelMap">
+    <collection property="userRightsIds" ofType="java.lang.Long">
+      <id column="rights_id"/>
+    </collection>
+    <collection property="userRightsList" ofType="com.mall4j.cloud.user.vo.UserRightsVO">
+      <id column="rights_id" property="rightsId"/>
+      <result column="rights_name" property="rightsName"/>
+      <result column="icon" jdbcType="VARCHAR" property="icon"/>
+      <result column="description" jdbcType="VARCHAR" property="description"/>
+      <result column="details" jdbcType="LONGVARCHAR" property="details"/>
+      <result column="rights_type" property="rightsType"/>
+      <result column="rate_score" property="rateScore"/>
+      <result column="pres_score" property="presScore"/>
+      <result column="discount" property="discount"/>
+      <result column="discount_range" property="discountRange"/>
+      <result column="free_fee_type" property="freeFeeType"/>
+    </collection>
+    <collection property="couponIds" ofType="java.lang.Long">
+      <id column="coupon_id"/>
+    </collection>
+    <collection property="userLevelTerms" ofType="com.mall4j.cloud.user.vo.UserLevelTermVO">
+      <id column="level_term_id" property="levelTermId" />
+      <result column="user_level_id" property="userLevelId"/>
+      <result column="term_type" property="termType"/>
+      <result column="need_amount" property="needAmount"/>
+      <result column="status" property="status"/>
+    </collection>
+    <collection property="levelTermIds" ofType="java.lang.Long">
+      <id column="level_term_id"/>
+    </collection>
+  </resultMap>
+  <resultMap id="userLevelVoCouponMap" type="com.mall4j.cloud.user.vo.UserLevelVO" extends="userLevelMap">
+    <collection property="couponIds" ofType="java.lang.Long">
+      <id column="coupon_id"/>
+    </collection>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `user_level_id`,`create_time`,`update_time`,`level`,`level_name`,`level_type`,`need_growth`,`update_status`,`recruit_status`
+  </sql>
+  <select id="list" resultMap="userLevelVoMap">
+    select ul.*,ur.*,
+    ult.`level_term_id` as ult_level_term_id,
+    ult.`user_level_id` as ult_user_level_id,
+    ult.`term_type` as ult_term_type,
+    ult.`need_amount` as ult_need_amount,
+    ult.`status` as ult_status
+    from user_level ul
+    LEFT JOIN user_level_rights ulr ON ul.user_level_id = ulr.user_level_id
+    LEFT JOIN user_rights ur ON ur.rights_id = ulr.rights_id AND ur.status != -1
+    LEFT JOIN user_level_term ult ON ult.user_level_id = ul.user_level_id
+    <where>
+      <if test="levelType != null">
+        ul.level_type = #{levelType}
+      </if>
+      <if test="level != null">
+        and ul.level = #{level}
+      </if>
+    </where>
+  </select>
+  <select id="getByUserLevelId" resultMap="userLevelVoReMap">
+    SELECT ul.*,ur.*,ult.*,urc.coupon_id
+    FROM user_level ul
+    LEFT JOIN user_level_rights ulr ON ul.user_level_id = ulr.user_level_id
+    LEFT JOIN user_rights ur ON ur.rights_id = ulr.rights_id AND ur.status != -1
+    LEFT JOIN user_level_term ult ON ult.user_level_id = ul.user_level_id
+    LEFT JOIN user_rights_coupon urc ON ur.rights_id = urc.rights_id
+    WHERE ul.user_level_id = #{userLevelId}
+  </select>
+  <select id="countCouponsNumByUserLevelId" resultType="java.lang.Integer">
+    SELECT count(urc.coupon_id) as couponsNum
+    FROM user_level ul
+    LEFT JOIN user_level_rights ulr ON ul.user_level_id = ulr.user_level_id
+    LEFT JOIN user_rights ur ON ur.rights_id = ulr.rights_id AND ur.status != -1
+    LEFT JOIN user_rights_coupon urc ON ur.rights_id = urc.rights_id
+    WHERE ul.user_level_id = #{userLevelId}
+    group by ulr.user_level_id
+  </select>
+  <insert id="save"  useGeneratedKeys="true" keyProperty="userLevelId">
+    insert into user_level (`level`,`level_name`,`level_type`,`need_growth`,`update_status`,`recruit_status`)
+    values (#{userLevel.level},#{userLevel.levelName},#{userLevel.levelType},#{userLevel.needGrowth},#{userLevel.updateStatus},#{userLevel.recruitStatus});
+  </insert>
+  <update id="update">
+    update user_level
+    <set>
+      <if test="userLevel.level != null">
+        `level` = #{userLevel.level},
+      </if>
+      <if test="userLevel.levelName != null">
+        `level_name` = #{userLevel.levelName},
+      </if>
+      <if test="userLevel.levelType != null">
+        `level_type` = #{userLevel.levelType},
+      </if>
+      <if test="userLevel.needGrowth != null">
+        `need_growth` = #{userLevel.needGrowth},
+      </if>
+      <if test="userLevel.updateStatus != null">
+        `update_status` = #{userLevel.updateStatus},
+      </if>
+      <if test="userLevel.recruitStatus != null">
+        `recruit_status` = #{userLevel.recruitStatus},
+      </if>
+    </set>
+    where user_level_id = #{userLevel.userLevelId}
+  </update>
+  <delete id="deleteByUserLevelId">
+    delete from user_level where user_level_id = #{id}
+  </delete>
+
+  <select id="getUserMaxLevelByLevelType" resultType="java.lang.Integer">
+    SELECT ifnull(MAX(LEVEL),0) FROM user_level WHERE level_type = #{levelType}
+  </select>
+
+  <select id="countByLevelType" resultType="int">
+    SELECT ifnull(count(*),0) FROM user_level WHERE level_type = #{levelType}
+  </select>
+
+  <select id="getOneByTypeAndLevel" resultMap="userLevelRightMap">
+    SELECT ul.*,ur.rights_id, ur.icon, ur.description,ur.details,ur.rights_name,
+           ur.rights_type,ur.rate_score,ur.pres_score,ur.discount,ur.discount_range,ur.free_fee_type,
+           nul.`level_name` AS next_level_name,nul.`need_growth` AS next_growth
+    FROM user_level ul
+           LEFT JOIN user_level nul ON nul.`level` = #{level} + 1 AND nul.`level_type` = #{levelType}
+           LEFT JOIN user_level_rights ulr ON ul.user_level_id = ulr.user_level_id
+           LEFT JOIN user_rights ur ON ur.rights_id = ulr.rights_id AND ur.status != -1
+    WHERE ul.level_type = #{levelType} AND ul.level = #{level}
+  </select>
+  <select id="listLevelCouponByLevelType" resultMap = "userLevelVoCouponMap">
+    SELECT ul.*,urc.coupon_id
+    FROM user_level ul
+    LEFT JOIN user_level_rights ulr ON ul.user_level_id = ulr.user_level_id
+    LEFT JOIN user_rights ur ON ur.rights_id = ulr.rights_id AND ur.status != -1
+    LEFT JOIN user_rights_coupon urc ON ur.rights_id = urc.rights_id
+    WHERE  ul.level_type = #{levelType}
+    <if test="level != null">
+      AND ul.level = #{level}
+    </if>
+  </select>
+
+  <delete id="updateStatusByUserLevelIds">
+    UPDATE user_level SET update_status = 1 WHERE user_level_id IN
+    <foreach collection="userLevelIds" item="userLevelId" open="(" close=")" separator=",">
+      #{userLevelId}
+    </foreach>
+  </delete>
+
+  <select id="selectList" resultType="com.mall4j.cloud.user.vo.UserLevelVO">
+    SELECT ul.*
+    FROM `user_level` ul
+    WHERE ul.level > #{level}
+      AND ul.need_growth <![CDATA[ <= ]]> #{nowGrowth}
+      AND ul.level_type = 0
+    ORDER BY ul.level DESC
+  </select>
+  <select id="getUserNormalLevel" resultType="int">
+    SELECT MAX(`level`) FROM `user_level`
+    WHERE level_type = 0
+    AND need_growth <![CDATA[ <= ]]> #{growth}
+  </select>
+  <select id="getMaxLevel" resultType="int">
+    SELECT MAX(`level`) FROM `user_level` WHERE level_type = #{levelType}
+  </select>
+
+  <select id="listByCouponIds" resultMap="userLevelMap">
+    SELECT ul.user_level_id,ul.level,ul.level_type
+    FROM user_level ul
+    JOIN user_level_rights ulr ON ul.user_level_id = ulr.user_level_id
+    WHERE ulr.rights_id IN
+    <foreach collection="rightsIds" item="rightsId" open="(" close=")" separator=",">
+      #{rightsId}
+    </foreach>
+  </select>
+  <select id="listByLevelType" resultType="com.mall4j.cloud.user.model.UserLevel">
+    select * from user_level where level_type = #{levelType}
+  </select>
+</mapper>

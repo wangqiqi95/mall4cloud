@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionRecommendActivityMapper">
+    <resultMap id="distributionRecommendActivityMap"
+               type="com.mall4j.cloud.distribution.model.DistributionRecommendActivity">
+        <id column="id" property="id"/>
+        <result column="activity_name" property="activityName"/>
+        <result column="activity_begin_time" property="activityBeginTime"/>
+        <result column="activity_end_time" property="activityEndTime"/>
+        <result column="applicable_for_all_stores" property="applicableForAllStores"/>
+        <result column="applicable_stores_amount" property="applicableStoresAmount"/>
+        <result column="activity_goods_amount" property="activityGoodsAmount"/>
+        <result column="deleted_status" property="deletedStatus"/>
+        <result column="activity_status" property="activityStatus"/>
+        <result column="data_sort" property="dataSort"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="create_user_name" property="createUserName"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="update_user_name" property="updateUserName"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`,
+        `activity_name`,
+        `activity_begin_time`,
+        `activity_end_time`,
+        `applicable_for_all_stores`,
+        `applicable_stores_amount`,
+        `applicable_for_all_goods`,
+        `activity_goods_amount`,
+        `deleted_status`,
+        `activity_status`,
+        `data_sort`,
+        `create_time`,
+        `create_user_id`,
+        `create_user_name`,
+        `update_user_id`,
+        `update_user_name`,
+        `update_time`
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.mall4j.cloud.distribution.model.DistributionRecommendActivity">
+        INSERT INTO mall4cloud_distribution.distribution_recommend_activity (`activity_name`,
+                                                                             `activity_begin_time`,
+                                                                             `activity_end_time`,
+                                                                             `applicable_for_all_stores`,
+                                                                             `applicable_stores_amount`,
+                                                                             `applicable_for_all_goods`,
+                                                                             `activity_goods_amount`,
+                                                                             `deleted_status`,
+                                                                             `activity_status`,
+                                                                             `data_sort`,
+                                                                             `create_time`,
+                                                                             `create_user_id`,
+                                                                             `create_user_name`,
+                                                                             `update_user_id`,
+                                                                             `update_user_name`,
+                                                                             `update_time`)
+        VALUES (#{activityName},
+                #{activityBeginTime},
+                #{activityEndTime},
+                #{applicableForAllStores},
+                #{applicableStoresAmount},
+                #{applicableForAllGoods},
+                #{activityGoodsAmount},
+                #{deletedStatus},
+                #{activityStatus},
+                #{dataSort},
+                #{createTime},
+                #{createUserId},
+                #{createUserName},
+                #{updateUserId},
+                #{updateUserName},
+                #{updateTime})
+    </insert>
+
+    <insert id="createSpuRelates" useGeneratedKeys="true">
+        INSERT INTO mall4cloud_distribution.distribution_recommend_activity_spu(activity_id,
+        spu_id)
+        VALUES
+        <foreach collection="spuIds" item="value" separator=",">
+            (#{activityId},
+            #{value})
+        </foreach>
+    </insert>
+
+    <insert id="createShopRelates" useGeneratedKeys="true">
+        INSERT INTO mall4cloud_distribution.distribution_recommend_activity_shop(activity_id,
+        shop_id)
+        VALUES
+        <foreach collection="shopIds" item="value" separator=",">
+            (#{activityId},
+            #{value})
+        </foreach>
+    </insert>
+
+    <update id="modifyCache" useGeneratedKeys="true">
+        UPDATE mall4cloud_distribution.distribution_recommend_activity
+        <set>
+            <if test="updateStoreAmount != null and updateStoreAmount == 0">
+                applicable_stores_amount = (SELECT COUNT(id) FROM
+                mall4cloud_distribution.distribution_recommend_activity_shop WHERE activity_id = #{activityId}),
+            </if>
+            <if test="updateStoreAmount != null and updateStoreAmount == 1">
+                applicable_stores_amount = -1,
+            </if>
+            <if test="updateSpuAmount != null and updateSpuAmount == 0">
+                activity_goods_amount = (SELECT COUNT(id) FROM
+                mall4cloud_distribution.distribution_recommend_activity_spu WHERE activity_id = #{activityId}),
+            </if>
+            <if test="updateSpuAmount != null and updateSpuAmount == 1">
+                activity_goods_amount = -1,
+            </if>
+        </set>
+        WHERE id = #{activityId}
+    </update>
+
+    <select id="getById" resultMap="distributionRecommendActivityMap">
+        SELECT <include refid="Vo_Column_List"></include> FROM mall4cloud_distribution.distribution_recommend_activity
+        WHERE id = #{id} AND `deleted_status` = 0
+    </select>
+
+    <delete id="deleteShopRelatesByActivityId">
+        DELETE
+        FROM mall4cloud_distribution.distribution_recommend_activity_shop
+        WHERE activity_id = #{activityId}
+    </delete>
+
+    <delete id="deleteSpuRelatesByActivityId">
+        DELETE
+        FROM mall4cloud_distribution.distribution_recommend_activity_spu
+        WHERE activity_id = #{activityId}
+    </delete>
+
+    <update id="modify">
+        UPDATE mall4cloud_distribution.distribution_recommend_activity
+        <set>
+            <if test="activityName != null">
+                `activity_name` = #{activityName},
+            </if>
+            <if test="activityBeginTime != null">
+                `activity_begin_time` = #{activityBeginTime},
+            </if>
+            <if test="activityEndTime != null">
+                `activity_end_time` = #{activityEndTime},
+            </if>
+            <if test="applicableForAllStores != null">
+                `applicable_for_all_stores` = #{applicableForAllStores},
+            </if>
+            <if test="applicableForAllGoods != null">
+                `applicable_for_all_goods` = #{applicableForAllGoods},
+            </if>
+            <if test="deletedStatus != null">
+                `deleted_status` = #{deletedStatus},
+            </if>
+            <if test="activityStatus != null">
+                `activity_status` = #{activityStatus},
+            </if>
+            <if test="dataSort != null">
+                `data_sort` = #{dataSort},
+            </if>
+            <if test="createTime != null">
+                `create_time` = #{createTime},
+            </if>
+            <if test="createUserId != null">
+                `create_user_id` = #{createUserId},
+            </if>
+            <if test="createUserName != null">
+                `create_user_name` = #{createUserName},
+            </if>
+            <if test="updateUserId != null">
+                `update_user_id` = #{updateUserId},
+            </if>
+            <if test="updateUserName != null">
+                `update_user_name` = #{updateUserName},
+            </if>
+            <if test="updateTime != null">
+                `update_time` = #{updateTime},
+            </if>
+        </set>
+        WHERE `id` = #{id} AND `deleted_status` = 0
+    </update>
+
+    <select id="selectActivity" resultType="com.mall4j.cloud.distribution.vo.DistributionRecommendActivityVO">
+        SELECT activity.`id`,
+        activity.`activity_name`,
+        activity.`activity_begin_time`,
+        activity.`activity_end_time`,
+        activity.`activity_status`,
+        activity.`applicable_for_all_goods`,
+        (select count(1) from distribution_recommend_activity_spu d where d.activity_id = activity.id) as activityGoodsAmount,
+        (select count(1) from distribution_recommend_activity_shop d where d.activity_id = activity.id) as applicableStoresAmount,
+        activity.`applicable_for_all_stores`,
+        activity.`create_user_id`,
+        activity.`create_user_name`,
+        activity.`create_time`
+        FROM distribution_recommend_activity AS activity
+        WHERE activity.deleted_status = 0
+        <if test="shopIds != null">
+            and (activity.applicable_for_all_stores = 1 or
+            activity.id in (select activity_id from distribution_recommend_activity_shop where shop_id in
+            <foreach collection="shopIds" item="shopId" open="(" close=")" separator=",">
+                #{shopId}
+            </foreach>
+            ))
+        </if>
+        <if test="activityStatus == 0">
+            and activity.activity_status = 0
+        </if>
+        <if test="activityStatus == 1">
+            and activity.activity_begin_time &gt; now() and activity.activity_status = 1
+        </if>
+        <if test="activityStatus == 2">
+            and activity.activity_begin_time &lt; now() and activity.activity_end_time &gt; now() and activity.activity_status = 1
+        </if>
+        <if test="activityStatus == 3">
+            and activity.activity_end_time &lt; now() and activity.activity_status = 1
+        </if>
+        <if test="activityName != null">
+            and activity.activity_name like '%${activityName}%'
+        </if>
+        <if test="activityName != null and activityName != ''">
+            AND activity.`activity_name` LIKE CONCAT('%',#{activityName},'%')
+        </if>
+        ORDER BY activity.`create_time` desc
+    </select>
+
+
+    <select id="listActivityShopRelates" resultType="java.lang.Long">
+        SELECT `shop_id`
+        FROM distribution_recommend_activity_shop
+        WHERE activity_id = #{activityId}
+    </select>
+
+    <select id="listActivitySpuRelates" resultType="java.lang.Long">
+        SELECT `spu_id`
+        FROM distribution_recommend_activity_spu
+        WHERE activity_id = #{activityId}
+    </select>
+
+    <update id="modifyActivityStatus">
+        UPDATE distribution_recommend_activity
+        SET `activity_status` = #{activityStatus}
+        WHERE `id` = #{id}
+    </update>
+
+    <select id="getNumberOfAllSpuRunningActivity" resultType="java.lang.Long">
+        SELECT COUNT(`activity`.`id`)
+        FROM distribution_recommend_activity AS `activity`
+        WHERE `activity`.`activity_status` = 1
+          and (activity.applicable_for_all_stores = 1 or `activity`.id in (select activity_id from distribution_recommend_activity_shop where shop_id in (#{queryDTO.storeId})) )
+          AND `activity`.`applicable_for_all_goods` = 1
+          AND `activity`.`activity_begin_time` &lt;= #{queryDTO.currentTime}
+          AND `activity`.`activity_end_time` &gt;= #{queryDTO.currentTime}
+    </select>
+
+    <select id="listActivatingSpu" resultType="java.lang.Long">
+        SELECT DISTINCT `relateSpu`.spu_id
+        FROM mall4cloud_distribution.distribution_recommend_activity_spu AS `relateSpu`
+        LEFT JOIN mall4cloud_distribution.distribution_recommend_activity AS `activity` ON `relateSpu`.activity_id = `activity`.id
+        LEFT JOIN mall4cloud_distribution.distribution_recommend_activity_shop AS `relateShop` ON `relateShop`.activity_id = `activity`.id WHERE
+        `activity`.activity_status = 1
+        AND (`relateShop`.shop_id =  #{queryDTO.storeId} OR `activity`.applicable_for_all_stores = 1)
+        AND `activity`.`activity_begin_time`  &lt;= #{queryDTO.currentTime}
+        AND `activity`.`activity_end_time` &gt;= #{queryDTO.currentTime}
+        ORDER BY `activity`.activity_end_time
+    </select>
+
+</mapper>

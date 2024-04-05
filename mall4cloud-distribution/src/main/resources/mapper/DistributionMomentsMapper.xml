@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionMomentsMapper">
+  <resultMap id="distributionMomentsMap" type="com.mall4j.cloud.distribution.model.DistributionMoments">
+    <id column="id" property="id" />
+    <result column="title" property="title"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="avatar_url" property="avatarUrl"/>
+    <result column="desc_html" property="descHtml"/>
+    <result column="comment" property="comment"/>
+    <result column="product_type" property="productType"/>
+    <result column="store_type" property="storeType"/>
+    <result column="distribution_type" property="distributionType"/>
+    <result column="status" property="status"/>
+    <result column="top" property="top"/>
+    <result column="top_time" property="topTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`title`,`start_time`,`end_time`,`avatar_url`,`desc_html`,`comment`,`product_type`,`store_type`,`distribution_type`,`status`,`top`,`top_time`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionMomentsMap">
+    select <include refid="Vo_Column_List"/> from distribution_moments
+    <where>
+      <if test="distributionMoments.title != null and distributionMoments.title != ''">
+        and title like concat('%',#{distributionMoments.title},'%')
+      </if>
+      <if test="distributionMoments.status != null">
+        and status = #{distributionMoments.status}
+      </if>
+      <if test="distributionMoments.distributionType != null">
+        and distribution_type = #{distributionMoments.distributionType}
+      </if>
+      <if test="distributionMoments.top != null">
+        and top = #{distributionMoments.top}
+      </if>
+      <if test="distributionMoments.startTime != null">
+        and start_time >= #{distributionMoments.startTime}
+      </if>
+      <if test="distributionMoments.endTime != null">
+        and #{distributionMoments.endTime} >= end_time
+      </if>
+      <if test="distributionMoments.ids != null and distributionMoments.ids.size() > 0">
+        and id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+          #{id}
+        </foreach>
+      </if>
+      <if test="distributionMoments.queryStoreId != null">
+        and (store_type = 0 or
+        id in (select moments_id from distribution_moments_store where store_id in(#{distributionMoments.queryStoreId}))
+        )
+      </if>
+    </where>
+    order by top_time desc, id desc
+  </select>
+  <select id="getById" resultMap="distributionMomentsMap">
+    select <include refid="Vo_Column_List"/> from distribution_moments where id = #{id}
+  </select>
+  <select id="countMomentsTopNum" resultType="java.lang.Integer">
+    select count(id) from distribution_moments where top = 1
+  </select>
+    <select id="pageEffect" resultMap="distributionMomentsMap">
+      select <include refid="Vo_Column_List"/> from distribution_moments
+      where status = 1
+      and now() >= start_time
+      and end_time >= now()
+      <if test="distributionMoments.distributionType != null and distributionMoments.distributionType == 1">
+        and (distribution_type = 0 or distribution_type = 1)
+      </if>
+      <if test="distributionMoments.distributionType != null and distributionMoments.distributionType == 2">
+        and (distribution_type = 0 or distribution_type = 2)
+      </if>
+      and (
+        <if test="distributionMoments.ids != null and distributionMoments.ids.size() > 0">
+          id in
+          <foreach collection="distributionMoments.ids" item="id" open="(" close=")" separator=",">
+            #{id}
+          </foreach>
+          or
+        </if>
+        store_type = 0)
+      order by top_time desc, id desc
+    </select>
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into distribution_moments (`title`,`start_time`,`end_time`,`avatar_url`,`desc_html`,`comment`,`product_type`,`store_type`,`distribution_type`,`status`)
+    values (#{distributionMoments.title},#{distributionMoments.startTime},#{distributionMoments.endTime},#{distributionMoments.avatarUrl},#{distributionMoments.descHtml},#{distributionMoments.comment},#{distributionMoments.productType},#{distributionMoments.storeType},#{distributionMoments.distributionType},#{distributionMoments.status});
+  </insert>
+  <update id="update">
+    update distribution_moments
+    <set>
+      <if test="distributionMoments.title != null">
+        `title` = #{distributionMoments.title},
+      </if>
+      <if test="distributionMoments.startTime != null">
+        `start_time` = #{distributionMoments.startTime},
+      </if>
+      <if test="distributionMoments.endTime != null">
+        `end_time` = #{distributionMoments.endTime},
+      </if>
+      <if test="distributionMoments.avatarUrl != null">
+        `avatar_url` = #{distributionMoments.avatarUrl},
+      </if>
+      <if test="distributionMoments.descHtml != null">
+        `desc_html` = #{distributionMoments.descHtml},
+      </if>
+      <if test="distributionMoments.comment != null">
+        `comment` = #{distributionMoments.comment},
+      </if>
+      <if test="distributionMoments.productType != null">
+        `product_type` = #{distributionMoments.productType},
+      </if>
+      <if test="distributionMoments.storeType != null">
+        `store_type` = #{distributionMoments.storeType},
+      </if>
+      <if test="distributionMoments.distributionType != null">
+        `distribution_type` = #{distributionMoments.distributionType},
+      </if>
+      <if test="distributionMoments.status != null">
+        `status` = #{distributionMoments.status},
+      </if>
+    </set>
+    where id = #{distributionMoments.id}
+  </update>
+
+  <update id="updateStatusBatch">
+    update distribution_moments
+    set status = #{status}
+    where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </update>
+
+  <update id="momentsTop">
+    update distribution_moments
+    set top = #{top}, top_time = now()
+    where id = #{id}
+  </update>
+
+  <delete id="deleteById">
+    delete from distribution_moments where id = #{id}
+  </delete>
+
+</mapper>

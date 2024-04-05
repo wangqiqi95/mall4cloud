@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionStoreActivityUserMapper">
+  <resultMap id="distributionStoreActivityUserMap" type="com.mall4j.cloud.distribution.model.DistributionStoreActivityUser">
+    <id column="id" property="id" />
+    <result column="org_id" property="orgId"/>
+    <result column="activity_id" property="activityId"/>
+    <result column="user_id" property="userId"/>
+    <result column="user_name" property="userName"/>
+    <result column="user_mobile" property="userMobile"/>
+    <result column="user_age" property="userAge"/>
+    <result column="user_gender" property="userGender"/>
+    <result column="user_id_card" property="userIdCard"/>
+    <result column="user_staff_id" property="userStaffId"/>
+    <result column="user_staff_name" property="userStaffName"/>
+    <result column="store_id" property="storeId"/>
+    <result column="store_name" property="storeName"/>
+    <result column="status" property="status"/>
+    <result column="sign_status" property="signStatus"/>
+    <result column="sign_time" property="signTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`org_id`,`activity_id`,`user_id`,`user_name`,`user_mobile`,`user_age`,`user_gender`,`user_id_card`,`user_staff_id`,`user_staff_name`,`store_id`,`store_name`,`status`,`clothes_size`,`shoes_size`,`sign_status`,`create_time`,`update_time`,`sign_time`
+  </sql>
+
+  <select id="list" resultMap="distributionStoreActivityUserMap">
+    select <include refid="Vo_Column_List"/> from distribution_store_activity_user
+    <where>
+      <if test="queryDTO.activityId != null">
+        and activity_id = #{queryDTO.activityId}
+      </if>
+      <if test="queryDTO.status != null and queryDTO.status != -1">
+        and status = #{queryDTO.status}
+      </if>
+      <if test="queryDTO.userName != null and queryDTO.userName != ''">
+        and trim(replace(user_name,' ','')) like trim(replace(concat('%',#{queryDTO.userName},'%'),' ',''))
+      </if>
+      <if test="queryDTO.userMobile != null and queryDTO.userMobile != ''">
+        and trim(replace(user_mobile,' ','')) like trim(replace(concat('%',#{queryDTO.userMobile},'%'),' ',''))
+      </if>
+      <if test="queryDTO.keyword != null and queryDTO.keyword != ''">
+        and (
+            trim(replace(user_mobile,' ','')) like trim(replace(concat('%',#{queryDTO.keyword},'%'),' ',''))
+            or trim(replace(user_name,' ','')) like trim(replace(concat('%',#{queryDTO.keyword},'%'),' ',''))
+        )
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+  <select id="listByActivityIdIdList" resultMap="distributionStoreActivityUserMap">
+    select <include refid="Vo_Column_List"/> from distribution_store_activity_user
+      where activity_id IN
+      <foreach collection="activityIdList" item="activityId" separator="," open="(" close=")">
+        #{activityId}
+      </foreach>
+  </select>
+
+  <select id="listByUserId" resultMap="distributionStoreActivityUserMap">
+    select <include refid="Vo_Column_List"/> from distribution_store_activity_user where user_id = #{userId}
+  </select>
+
+  <select id="getById" resultMap="distributionStoreActivityUserMap">
+    select <include refid="Vo_Column_List"/> from distribution_store_activity_user where id = #{id}
+  </select>
+
+  <select id="findByUserIdAndActivityId" resultMap="distributionStoreActivityUserMap">
+    select <include refid="Vo_Column_List"/> from distribution_store_activity_user where user_id = #{userId} and activity_id = #{activityId}
+  </select>
+
+  <select id="findByActivityIdAndUserMobile" resultMap="distributionStoreActivityUserMap">
+    select <include refid="Vo_Column_List"/> from distribution_store_activity_user where activity_id = #{activityId} and user_mobile = #{userMobile}
+  </select>
+
+  <select id="countByActivityIdAndStatus" resultType="java.lang.Integer">
+    select IFNULL(count(id),0) from distribution_store_activity_user where activity_id = #{activityId} and status = #{status}
+  </select>
+
+  <insert id="save">
+    insert into distribution_store_activity_user (`org_id`,`activity_id`,`user_id`,`user_name`,
+    `user_mobile`,`user_gender`,`user_age`,`user_id_card`,`user_staff_id`,`user_staff_name`,`store_id`,
+    `store_name`,`status`,`clothes_size`,`shoes_size`,`sign_status`,`sign_time`)
+    values (#{distributionStoreActivityUser.orgId},#{distributionStoreActivityUser.activityId},#{distributionStoreActivityUser.userId},
+    #{distributionStoreActivityUser.userName},#{distributionStoreActivityUser.userMobile},#{distributionStoreActivityUser.userGender},
+    #{distributionStoreActivityUser.userAge},#{distributionStoreActivityUser.userIdCard},#{distributionStoreActivityUser.userStaffId},
+    #{distributionStoreActivityUser.userStaffName},#{distributionStoreActivityUser.storeId},#{distributionStoreActivityUser.storeName},
+    #{distributionStoreActivityUser.status},#{distributionStoreActivityUser.clothesSize},#{distributionStoreActivityUser.shoesSize},#{distributionStoreActivityUser.signStatus},#{distributionStoreActivityUser.signTime});
+  </insert>
+  <update id="update">
+    update distribution_store_activity_user
+    <set>
+      <if test="distributionStoreActivityUser.orgId != null">
+        `org_id` = #{distributionStoreActivityUser.orgId},
+      </if>
+      <if test="distributionStoreActivityUser.activityId != null">
+        `activity_id` = #{distributionStoreActivityUser.activityId},
+      </if>
+      <if test="distributionStoreActivityUser.userId != null">
+        `user_id` = #{distributionStoreActivityUser.userId},
+      </if>
+      <if test="distributionStoreActivityUser.userName != null">
+        `user_name` = #{distributionStoreActivityUser.userName},
+      </if>
+      <if test="distributionStoreActivityUser.userMobile != null">
+        `user_mobile` = #{distributionStoreActivityUser.userMobile},
+      </if>
+      <if test="distributionStoreActivityUser.userGender != null">
+        `user_gender` = #{distributionStoreActivityUser.userGender},
+      </if>
+      <if test="distributionStoreActivityUser.userAge != null">
+        `user_age` = #{distributionStoreActivityUser.userAge},
+      </if>
+      <if test="distributionStoreActivityUser.userIdCard != null">
+        `user_id_card` = #{distributionStoreActivityUser.userIdCard},
+      </if>
+      <if test="distributionStoreActivityUser.userStaffId != null">
+        `user_staff_id` = #{distributionStoreActivityUser.userStaffId},
+      </if>
+      <if test="distributionStoreActivityUser.userStaffName != null">
+        `user_staff_name` = #{distributionStoreActivityUser.userStaffName},
+      </if>
+      <if test="distributionStoreActivityUser.storeId != null">
+        `store_id` = #{distributionStoreActivityUser.storeId},
+      </if>
+      <if test="distributionStoreActivityUser.storeName != null">
+        `store_name` = #{distributionStoreActivityUser.storeName},
+      </if>
+      <if test="distributionStoreActivityUser.status != null">
+        `status` = #{distributionStoreActivityUser.status},
+      </if>
+      <if test="distributionStoreActivityUser.clothesSize != null">
+        `clothes_size` = #{distributionStoreActivityUser.clothesSize},
+      </if>
+      <if test="distributionStoreActivityUser.shoesSize != null">
+        `shoes_size` = #{distributionStoreActivityUser.shoesSize},
+      </if>
+      <if test="distributionStoreActivityUser.signStatus != null">
+        `sign_status` = #{distributionStoreActivityUser.signStatus},
+      </if>
+      <if test="distributionStoreActivityUser.signTime != null">
+        `sign_time` = #{distributionStoreActivityUser.signTime},
+      </if>
+    </set>
+    where id = #{distributionStoreActivityUser.id}
+  </update>
+
+  <update id="cancel">
+    update distribution_store_activity_user set status = 1 where user_id = #{userId} and activity_id = #{activityId}
+  </update>
+
+  <update id="sign">
+    update distribution_store_activity_user set sign_status = 1,sign_time = now() where user_id = #{userId} and activity_id = #{activityId}
+  </update>
+
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionStoreActivitySizesMapper">
+  <resultMap id="distributionStoreActivitySizesMap" type="com.mall4j.cloud.distribution.model.DistributionStoreActivitySizes">
+    <id column="id" property="id" />
+    <result column="activity_id" property="activityId"/>
+    <result column="type" property="type"/>
+    <result column="size" property="size"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`activity_id`,`type`,`size`
+  </sql>
+
+
+</mapper>

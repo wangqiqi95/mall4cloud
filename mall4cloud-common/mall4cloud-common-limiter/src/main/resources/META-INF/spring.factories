@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.mall4j.cloud.common.limiter.config.RateRateLimitConfiguration

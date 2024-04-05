@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionWithdrawCashMapper">
+  <resultMap id="distributionWithdrawCashMap" type="com.mall4j.cloud.distribution.model.DistributionWithdrawCash">
+    <id column="withdraw_cash_id" property="withdrawCashId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="wallet_id" property="walletId"/>
+    <result column="amount" property="amount"/>
+    <result column="fee" property="fee"/>
+    <result column="type" property="type"/>
+    <result column="money_flow" property="moneyFlow"/>
+    <result column="merchant_order_id" property="merchantOrderId"/>
+    <result column="version" property="version"/>
+    <result column="state" property="state"/>
+  </resultMap>
+  <resultMap id="distributionWithdrawCashMap_User" type="com.mall4j.cloud.distribution.vo.DistributionWithdrawCashVO" extends="distributionWithdrawCashMap">
+    <association property="distributionUserVO" javaType="com.mall4j.cloud.distribution.vo.DistributionUserVO">
+      <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+      <result column="user_mobile" jdbcType="VARCHAR" property="userMobile" />
+    </association>
+  </resultMap>
+  <resultMap id="appDistributionWithdrawCashMap" type="com.mall4j.cloud.distribution.vo.AppDistributionWithdrawCashVO">
+    <id column="withdraw_cash_id" property="withdrawCashId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="amount" property="amount"/>
+    <result column="fee" property="fee"/>
+    <result column="type" property="type"/>
+    <result column="money_flow" property="moneyFlow"/>
+    <result column="merchant_order_id" property="merchantOrderId"/>
+    <result column="state" property="state"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `withdraw_cash_id`,`create_time`,`update_time`,`wallet_id`,`amount`,`fee`,`type`,`money_flow`,`merchant_order_id`,`version`,`state`
+  </sql>
+  <select id="list" resultMap="distributionWithdrawCashMap">
+    select <include refid="Vo_Column_List"/> from distribution_withdraw_cash order by withdraw_cash_id desc
+  </select>
+  <select id="getByWithdrawCashId" resultMap="distributionWithdrawCashMap">
+    select <include refid="Vo_Column_List"/> from distribution_withdraw_cash where withdraw_cash_id = #{withdrawCashId}
+  </select>
+    <select id="withdrawCashPage" resultMap="distributionWithdrawCashMap_User">
+      SELECT
+              dwc.`withdraw_cash_id`,dwc.`create_time`,dwc.`update_time`,dwc.`wallet_id`,dwc.`amount`,dwc.`fee`,dwc.`type`,
+              dwc.`money_flow`,dwc.`merchant_order_id`,dwc.`version`,dwc.`state`,
+              du.nick_name,
+              du.user_mobile
+      FROM
+              distribution_withdraw_cash dwc
+                      LEFT JOIN distribution_user_wallet duw ON duw.wallet_id = dwc.wallet_id
+                      LEFT JOIN distribution_user du ON du.distribution_user_id=duw.distribution_user_id
+      <where>
+        <if test="distributionWithdrawCashDTO.merchantOrderId !=null">
+          and dwc.merchant_order_id = #{distributionWithdrawCashDTO.merchantOrderId}
+        </if>
+        <if test="distributionWithdrawCashDTO.state!=null">
+          and dwc.state = #{distributionWithdrawCashDTO.state}
+        </if>
+        <if test="userMobile!=null and userMobile!=''">
+          and du.user_mobile like concat('%',#{userMobile},'%')
+        </if>
+      </where>
+      GROUP BY dwc.withdraw_cash_id
+      <if test="distributionWithdrawCashDTO.sortParam != 0 and distributionWithdrawCashDTO.sortType != 0">
+        ORDER BY
+        <choose>
+          <when test="distributionWithdrawCashDTO.sortParam == 1">
+            dwc.amount
+          </when>
+          <when test="distributionWithdrawCashDTO.sortParam == 2">
+            dwc.fee
+          </when>
+          <when test="distributionWithdrawCashDTO.sortParam == 3">
+            create_time
+          </when>
+          <when test="distributionWithdrawCashDTO.sortParam == 4">
+            dwc.update_time
+          </when>
+          <otherwise>
+            dwc.withdraw_cash_id
+          </otherwise>
+        </choose>
+        <choose>
+          <when test="distributionWithdrawCashDTO.sortType == 1">
+            ASC
+          </when>
+          <when test="distributionWithdrawCashDTO.sortType == 2">
+            DESC
+          </when>
+        </choose>
+      </if>
+    </select>
+    <insert id="save">
+    insert into distribution_withdraw_cash (`wallet_id`,`amount`,`fee`,`type`,`money_flow`,`merchant_order_id`,`version`,`state`)
+    values (#{distributionWithdrawCash.walletId},#{distributionWithdrawCash.amount},#{distributionWithdrawCash.fee},#{distributionWithdrawCash.type},#{distributionWithdrawCash.moneyFlow},#{distributionWithdrawCash.merchantOrderId},#{distributionWithdrawCash.version},#{distributionWithdrawCash.state});
+  </insert>
+  <update id="update">
+    update distribution_withdraw_cash
+    <set>
+      <if test="distributionWithdrawCash.walletId != null">
+        `wallet_id` = #{distributionWithdrawCash.walletId},
+      </if>
+      <if test="distributionWithdrawCash.amount != null">
+        `amount` = #{distributionWithdrawCash.amount},
+      </if>
+      <if test="distributionWithdrawCash.fee != null">
+        `fee` = #{distributionWithdrawCash.fee},
+      </if>
+      <if test="distributionWithdrawCash.type != null">
+        `type` = #{distributionWithdrawCash.type},
+      </if>
+      <if test="distributionWithdrawCash.moneyFlow != null">
+        `money_flow` = #{distributionWithdrawCash.moneyFlow},
+      </if>
+      <if test="distributionWithdrawCash.merchantOrderId != null">
+        `merchant_order_id` = #{distributionWithdrawCash.merchantOrderId},
+      </if>
+      <if test="distributionWithdrawCash.version != null">
+        `version` = #{distributionWithdrawCash.version},
+      </if>
+      <if test="distributionWithdrawCash.state != null">
+        `state` = #{distributionWithdrawCash.state},
+      </if>
+    </set>
+    where withdraw_cash_id = #{distributionWithdrawCash.withdrawCashId}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_withdraw_cash where withdraw_cash_id = #{withdrawCashId}
+  </delete>
+  <update id="updateUserByDistributionUserId">
+    update distribution_withdraw_cash
+    set `state` = 2
+    where wallet_id in(
+      select wallet_id from distribution_user_wallet where distribution_user_id = #{distributionUserId}
+    )
+      and `state` = 0
+  </update>
+
+  <select id="pageByDistributionUserId" resultMap="appDistributionWithdrawCashMap">
+    SELECT
+    withdraw_cash_id,
+    amount,
+    fee,
+    type,
+    money_flow,
+    merchant_order_id,
+    state,
+    create_time,
+    update_time
+    FROM
+    distribution_withdraw_cash
+    WHERE
+    wallet_id IN ( SELECT wallet_id FROM distribution_user_wallet WHERE distribution_user_id = #{distributionUserId} )
+    order by create_time DESC
+  </select>
+
+  <select id="getCountByRangeTimeAndDistributionUserId" resultType="java.lang.Integer">
+    SELECT
+    count(*)
+    FROM
+    distribution_withdraw_cash
+    WHERE
+    wallet_id IN ( SELECT wallet_id FROM distribution_user_wallet WHERE distribution_user_id = #{distributionUserId} )
+    AND
+    create_time &gt;= #{rangeTime.startTime}
+    AND
+    create_time &lt;= #{rangeTime.endTime}
+  </select>
+
+  <select id="getUserTotalWithdrawCash" resultType="java.math.BigDecimal">
+    SELECT
+    COALESCE(SUM(amount), 0)
+    FROM
+    distribution_withdraw_cash
+    WHERE wallet_id = #{walletId}
+  </select>
+</mapper>

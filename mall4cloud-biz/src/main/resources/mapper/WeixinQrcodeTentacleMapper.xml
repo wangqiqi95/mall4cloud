@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinQrcodeTentacleMapper">
+  <resultMap id="weixinQrcodeTentacleMap" type="com.mall4j.cloud.biz.model.WeixinQrcodeTentacle">
+    <id column="id" property="id" />
+    <result column="name" property="name"/>
+    <result column="tentacle_path" property="tentaclePath"/>
+    <result column="recevie_email" property="recevieEmail"/>
+    <result column="code_zip_path" property="codeZipPath"/>
+    <result column="status" property="status"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`name`,`tentacle_path`,`recevie_email`,`code_zip_path`,`status`,`create_time`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinQrcodeTentacleMap">
+    select <include refid="Vo_Column_List"/> from weixin_qrcode_tentacle order by id desc
+  </select>
+  <select id="getById" resultMap="weixinQrcodeTentacleMap">
+    select <include refid="Vo_Column_List"/> from weixin_qrcode_tentacle where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_qrcode_tentacle (`id`,`name`,`tentacle_path`,`recevie_email`,`code_zip_path`,`status`,`create_time`,`del_flag`)
+    values (#{weixinQrcodeTentacle.id},#{weixinQrcodeTentacle.name},#{weixinQrcodeTentacle.tentaclePath},#{weixinQrcodeTentacle.recevieEmail},#{weixinQrcodeTentacle.codeZipPath},#{weixinQrcodeTentacle.status},#{weixinQrcodeTentacle.createTime},#{weixinQrcodeTentacle.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_qrcode_tentacle
+    <set>
+      <if test="weixinQrcodeTentacle.name != null">
+        `name` = #{weixinQrcodeTentacle.name},
+      </if>
+      <if test="weixinQrcodeTentacle.tentaclePath != null">
+        `tentacle_path` = #{weixinQrcodeTentacle.tentaclePath},
+      </if>
+      <if test="weixinQrcodeTentacle.recevieEmail != null">
+        `recevie_email` = #{weixinQrcodeTentacle.recevieEmail},
+      </if>
+      <if test="weixinQrcodeTentacle.codeZipPath != null">
+        `code_zip_path` = #{weixinQrcodeTentacle.codeZipPath},
+      </if>
+      <if test="weixinQrcodeTentacle.status != null">
+        `status` = #{weixinQrcodeTentacle.status},
+      </if>
+      <if test="weixinQrcodeTentacle.updateTime != null">
+        `update_time` = #{weixinQrcodeTentacle.updateTime},
+      </if>
+      <if test="weixinQrcodeTentacle.delFlag != null">
+        `del_flag` = #{weixinQrcodeTentacle.delFlag},
+      </if>
+    </set>
+    where id = #{weixinQrcodeTentacle.id}
+  </update>
+  <delete id="deleteById">
+    update weixin_qrcode_tentacle set update_time=now(),del_flag=1 where id = #{id}
+  </delete>
+
+  <select id="getList" resultType="com.mall4j.cloud.biz.vo.WeixinQrcodeTentacleVO">
+    SELECT qt.*,
+    SUM(ts.open_number) AS open_number,
+    SUM(ts.open_people) AS open_people
+    FROM weixin_qrcode_tentacle qt
+    LEFT JOIN weixin_qrcode_tentacle_store ts
+    ON ts.tentacle_id = qt.id
+    WHERE qt.del_flag=0
+    <if test="storeId!=null and storeId!=''">
+      AND ts.store_id = #{storeId}
+    </if>
+    <if test="name!=null and name!=''">
+      AND qt.name LIKE concat('%',#{name},'%')
+    </if>
+    GROUP BY qt.id
+    ORDER BY qt.create_time DESC
+  </select>
+
+</mapper>

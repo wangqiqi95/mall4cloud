@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.GroupActivityMapper">
+    <resultMap id="groupActivityMap" type="com.mall4j.cloud.group.model.GroupActivity">
+        <id column="group_activity_id" property="groupActivityId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="activity_name" property="activityName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="group_number" property="groupNumber"/>
+        <result column="has_max_num" property="hasMaxNum"/>
+        <result column="max_num" property="maxNum"/>
+        <result column="has_robot" property="hasRobot"/>
+        <result column="is_preheat" property="isPreheat"/>
+        <result column="has_group_tip" property="hasGroupTip"/>
+        <result column="spu_id" property="spuId"/>
+        <result column="group_order_count" property="groupOrderCount"/>
+        <result column="group_number_count" property="groupNumberCount"/>
+        <result column="price" property="price"/>
+        <result column="status" property="status"/>
+        <result column="limit_store_type" property="limitStoreType"/>
+    </resultMap>
+    <resultMap id="appGroupActivityVO" type="com.mall4j.cloud.group.vo.app.AppGroupActivityVO"
+               extends="groupActivityMap">
+        <result column="group_activity_id" property="groupActivityId"/>
+        <result column="spu_price" property="price"/>
+        <collection property="groupSkuList" ofType="com.mall4j.cloud.group.vo.app.AppGroupSkuVO">
+            <id column="group_sku_id" property="groupSkuId"/>
+            <result column="sku_id" property="skuId"/>
+            <result column="act_price" property="priceFee"/>
+        </collection>
+    </resultMap>
+
+    <sql id="Vo_Column_List">
+        `group_activity_id`
+        ,
+        `create_time`,
+        `update_time`,
+        `shop_id`,
+        `activity_name`,
+        `start_time`,
+        `end_time`,
+        `group_number`,
+        `has_max_num`,
+        `max_num`,
+        `has_robot`,
+        `is_preheat`,
+        `has_group_tip`,
+        `spu_id`,
+        `group_order_count`,
+        `group_number_count`,
+        `status`,
+        `limit_store_type`
+    </sql>
+    <select id="list" resultType="com.mall4j.cloud.group.vo.GroupActivityVO">
+        select `group_activity_id`,
+        `create_time`,
+        `update_time`,
+        `shop_id`,
+        `activity_name`,
+        `start_time`,
+        `end_time`,
+        `group_number`,
+        `has_max_num`,
+        `max_num`,
+        `has_robot`,
+        `is_preheat`,
+        `has_group_tip`,
+        `spu_id`,
+        `group_order_count`,
+        `group_number_count`,
+        `status`,
+        `limit_store_type`
+        from group_activity
+        where status != -1
+        <if test="groupActivity.shopId != null">
+            and shop_id = #{groupActivity.shopId}
+        </if>
+        <if test="groupActivity.status != null">
+            and status = #{groupActivity.status}
+        </if>
+        <if test="groupActivity.activityName != null">
+            and activity_name LIKE CONCAT('%', #{groupActivity.activityName}, '%')
+        </if>
+        <if test="groupActivity.limitStoreType != null">
+            and limit_store_type = #{groupActivity.limitStoreType}
+        </if>
+        order by group_activity_id desc
+    </select>
+    <select id="getByGroupActivityId" resultType="com.mall4j.cloud.group.vo.GroupActivityVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from group_activity
+        where group_activity_id = #{groupActivityId}
+    </select>
+    <insert id="save" useGeneratedKeys="true" keyProperty="groupActivity.groupActivityId">
+        insert into group_activity (`shop_id`, `activity_name`, `start_time`, `end_time`,
+                                    `group_number`, `has_max_num`, `max_num`, `has_robot`, `is_preheat`,
+                                    `has_group_tip`, `spu_id`, `price`, `status`, `limit_store_type`)
+        values (#{groupActivity.shopId}, #{groupActivity.activityName}, #{groupActivity.startTime},
+                #{groupActivity.endTime}, #{groupActivity.groupNumber},
+                #{groupActivity.hasMaxNum}, #{groupActivity.maxNum}, #{groupActivity.hasRobot},
+                #{groupActivity.isPreheat}, #{groupActivity.hasGroupTip}, #{groupActivity.spuId},
+                #{groupActivity.price}, #{groupActivity.status}, #{groupActivity.limitStoreType});
+    </insert>
+    <update id="update">
+        update group_activity
+        <set>
+            <if test="groupActivity.shopId != null">
+                `shop_id` = #{groupActivity.shopId},
+            </if>
+            <if test="groupActivity.activityName != null">
+                `activity_name` = #{groupActivity.activityName},
+            </if>
+            <if test="groupActivity.startTime != null">
+                `start_time` = #{groupActivity.startTime},
+            </if>
+            <if test="groupActivity.endTime != null">
+                `end_time` = #{groupActivity.endTime},
+            </if>
+            <if test="groupActivity.groupNumber != null">
+                `group_number` = #{groupActivity.groupNumber},
+            </if>
+            <if test="groupActivity.hasMaxNum != null">
+                `has_max_num` = #{groupActivity.hasMaxNum},
+            </if>
+            <if test="groupActivity.maxNum != null">
+                `max_num` = #{groupActivity.maxNum},
+            </if>
+            <if test="groupActivity.price != null">
+                `price` = #{groupActivity.price},
+            </if>
+            <if test="groupActivity.hasRobot != null">
+                `has_robot` = #{groupActivity.hasRobot},
+            </if>
+            <if test="groupActivity.isPreheat != null">
+                `is_preheat` = #{groupActivity.isPreheat},
+            </if>
+            <if test="groupActivity.hasGroupTip != null">
+                `has_group_tip` = #{groupActivity.hasGroupTip},
+            </if>
+            <if test="groupActivity.spuId != null">
+                `spu_id` = #{groupActivity.spuId},
+            </if>
+            <if test="groupActivity.groupOrderCount != null">
+                `group_order_count` = #{groupActivity.groupOrderCount},
+            </if>
+            <if test="groupActivity.groupNumberCount != null">
+                `group_number_count` = #{groupActivity.groupNumberCount},
+            </if>
+            <if test="groupActivity.status != null">
+                `status` = #{groupActivity.status},
+            </if>
+            <if test="groupActivity.limitStoreType != null">
+                `limit_store_type` = #{groupActivity.limitStoreType},
+            </if>
+        </set>
+        where group_activity_id = #{groupActivity.groupActivityId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from group_activity
+        where group_activity_id = #{groupActivityId}
+    </delete>
+
+
+    <select id="getBySpuId" resultMap="appGroupActivityVO">
+        SELECT ga.group_activity_id,
+               ga.start_time,
+               ga.shop_id,
+               ga.end_time,
+               ga.group_number,
+               ga.has_max_num,
+               ga.price as spu_price,
+               ga.max_num,
+               ga.is_preheat,
+               ga.has_group_tip,
+               ga.spu_id,
+               ga.status,
+               gs.group_sku_id,
+               gs.sku_id,
+               gs.act_price
+        FROM group_activity ga
+                 LEFT JOIN group_sku gs ON ga.group_activity_id = gs.group_activity_id
+        WHERE ga.status = 1
+          AND ga.spu_id = #{spuId}
+    </select>
+
+
+    <select id="getBySpuIdAndActivityId" resultMap="appGroupActivityVO">
+        SELECT ga.group_activity_id,
+               ga.start_time,
+               ga.shop_id,
+               ga.end_time,
+               ga.group_number,
+               ga.has_max_num,
+               ga.price as spu_price,
+               ga.max_num,
+               ga.is_preheat,
+               ga.has_group_tip,
+               ga.spu_id,
+               ga.status,
+               gs.group_sku_id,
+               gs.sku_id,
+               gs.act_price
+        FROM group_activity ga
+                 LEFT JOIN group_sku gs ON ga.group_activity_id = gs.group_activity_id
+        WHERE ga.status = 1
+          AND ga.spu_id = #{spuId}
+          AND ga.group_activity_id = #{groupActivityId}
+    </select>
+
+    <select id="groupSpuListBySpuIds" resultType="com.mall4j.cloud.common.product.vo.GroupActivitySpuVO">
+        SELECT group_activity_id, spu_id, group_number, group_order_count, price
+        FROM group_activity WHERE `status` = 1
+        AND spu_id IN
+        <foreach collection="spuIds" item="spuId" separator="," open="(" close=")">
+            #{spuId}
+        </foreach>
+    </select>
+
+    <select id="listUnEndButNeedEndActivity" resultMap="groupActivityMap">
+        select group_activity_id, spu_id, `status`
+        FROM group_activity
+        WHERE `status` not in (-1, 0, 4)
+          and end_time &lt; now()
+    </select>
+
+    <update id="expiredGroupActivityByGroupActivityIdList">
+        UPDATE group_activity SET `status` = 4 WHERE group_activity_id IN
+        <foreach collection="groupActivityList" item="groupActivity" separator="," open="(" close=")">
+            #{groupActivity.groupActivityId}
+        </foreach>
+    </update>
+
+    <update id="expiredGroupActivityBySpuIds">
+        UPDATE group_activity SET `status` = 4 WHERE spu_id IN
+        <foreach collection="spuIds" item="spuId" separator="," open="(" close=")">
+            #{spuId}
+        </foreach>
+    </update>
+    <select id="getAppGroupActivityByGroupActivityId" resultMap="appGroupActivityVO">
+        SELECT ga.group_activity_id,
+               ga.start_time,
+               ga.shop_id,
+               ga.end_time,
+               ga.group_number,
+               ga.has_max_num,
+               ga.price as spu_price,
+               ga.max_num,
+               ga.is_preheat,
+               ga.has_group_tip,
+               ga.spu_id,
+               ga.status,
+               gs.group_sku_id,
+               gs.sku_id,
+               gs.act_price,
+               ga.limit_store_type
+        FROM group_activity ga
+                 LEFT JOIN group_sku gs ON ga.group_activity_id = gs.group_activity_id
+        WHERE ga.group_activity_id = #{groupActivityId}
+    </select>
+
+    <update id="updateGroupOrderInfo">
+        UPDATE group_activity
+        SET group_order_count  = (SELECT COUNT(group_order_id)
+                                  FROM group_order
+                                  WHERE group_activity_id = #{groupActivityId}
+                                    AND `status` = 1),
+            group_number_count = (SELECT COUNT(DISTINCT user_id)
+                                  FROM group_order
+                                  WHERE group_activity_id = #{groupActivityId}
+                                    AND `status` = 1)
+        WHERE group_activity_id = #{groupActivityId}
+    </update>
+
+    <select id="getBySpuIdAndStoreId" resultMap="appGroupActivityVO">
+        SELECT ga.group_activity_id,
+               ga.start_time,
+               ga.shop_id,
+               ga.end_time,
+               ga.group_number,
+               ga.has_max_num,
+               ga.price as spu_price,
+               ga.max_num,
+               ga.is_preheat,
+               ga.has_group_tip,
+               ga.spu_id,
+               ga.status,
+               gs.group_sku_id,
+               gs.sku_id,
+               gs.act_price
+        FROM group_activity ga
+                 LEFT JOIN group_sku gs ON ga.group_activity_id = gs.group_activity_id
+                 LEFT JOIN group_store gst on ga.group_activity_id = gst.group_activity_id
+        WHERE (ga.status = 1
+            AND ga.spu_id = #{spuId}
+            and ga.limit_store_type = 0)
+           or (ga.status = 1
+            AND ga.spu_id = #{spuId}
+            and ga.limit_store_type = 1 and gst.store_id = #{storeId})
+    </select>
+</mapper>

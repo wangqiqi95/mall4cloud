@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mall4j.cloud.biz.mapper.WechatNotifyTaskMapper">
+
+    <resultMap id="BaseResultMap"  type="com.mall4j.cloud.biz.model.WechatNotifyTaskDO">
+        <id column="ID" property="id" jdbcType="BIGINT" javaType="Long"/>
+        <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="TYPE" property="type" jdbcType="VARCHAR" javaType="String"/>
+        <result column="ITEM_ID" property="itemId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="ITEM_STATUS" property="itemStatus" jdbcType="VARCHAR" javaType="String"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="IS_DELETED" property="isDeleted" jdbcType="INTEGER" javaType="Integer"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        ID,TENANT_ID,TYPE,ITEM_ID,ITEM_STATUS,CREATE_TIME,UPDATE_TIME,IS_DELETED
+    </sql>
+
+
+    <!--insert:wechat_notify_task-->
+    <insert id="insert" >
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO wechat_notify_task(
+            ID
+            ,TENANT_ID
+            ,TYPE
+            ,ITEM_ID
+            ,ITEM_STATUS
+        )VALUES(
+             #{id,jdbcType=BIGINT}
+            , #{tenantId,jdbcType=VARCHAR}
+            , #{type,jdbcType=VARCHAR}
+            , #{itemId,jdbcType=VARCHAR}
+            , #{itemStatus,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!--update table:wechat_notify_task-->
+    <update id="update" >
+        UPDATE /*MS-WECHAT-NOTIFY-TASK-UPDATE*/ wechat_notify_task
+        SET
+            UPDATE_TIME     = #{updateTime,jdbcType=TIMESTAMP}
+            <if test="tenantId != null">
+                ,TENANT_ID       = #{tenantId,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null">
+                ,TYPE            = #{type,jdbcType=VARCHAR}
+            </if>
+            <if test="itemId != null">
+                ,ITEM_ID         = #{itemId,jdbcType=VARCHAR}
+            </if>
+            <if test="itemStatus != null">
+                ,ITEM_STATUS     = #{itemStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null">
+                ,CREATE_TIME     = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="isDeleted != null">
+                ,IS_DELETED      = #{isDeleted,jdbcType=INTEGER}
+            </if>
+        WHERE
+            ID              = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!--delete:wechat_notify_task-->
+    <delete id="deleteByPrimary" >
+        DELETE /*MS-WECHAT-NOTIFY-TASK-DELETEBYPRIMARY*/ FROM
+            wechat_notify_task
+        WHERE
+            ID = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <!--get:wechat_notify_task-->
+    <select id="getByPrimary" resultMap="BaseResultMap">
+        SELECT /*MS-WECHAT-NOTIFY-TASK-GETBYPRIMARY*/  <include refid="Base_Column_List" />
+        FROM wechat_notify_task
+        WHERE
+            ID = #{id,jdbcType=BIGINT}
+    </select>
+</mapper>

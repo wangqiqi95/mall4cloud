@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.user.mapper.GroupPushTaskStoreRelationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.user.model.GroupPushTaskStoreRelation">
+        <id column="task_shop_relation_id" property="taskShopRelationId" />
+        <result column="group_push_task_id" property="groupPushTaskId" />
+        <result column="store_id" property="storeId" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        task_shop_relation_id, group_push_task_id, store_id, create_time
+    </sql>
+
+    <insert id="insertBatch">
+        insert into t_group_push_task_store_relation (group_push_task_id, store_id) values
+        <foreach collection="relationList" item="relation" separator="," close=";">
+            (#{relation.groupPushTaskId},#{relation.storeId})
+        </foreach>
+    </insert>
+
+
+    <select id="selectTheCountByTaskIdList" resultType="com.mall4j.cloud.user.vo.GroupPushTaskStoreCountVO">
+        SELECT
+            group_push_task_id,
+            COUNT(1) as storeCount
+        FROM
+            t_group_push_task_store_relation where group_push_task_id in
+            <foreach collection="taskIdList" item="item"  index="index" open="("  separator="," close=")">
+                #{item}
+            </foreach>
+        GROUP BY group_push_task_id
+    </select>
+
+</mapper>

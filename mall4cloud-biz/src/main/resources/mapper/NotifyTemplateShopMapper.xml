@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.NotifyTemplateShopMapper">
+  <resultMap id="notifyTemplateShopMap" type="com.mall4j.cloud.biz.model.NotifyTemplateShop">
+    <id column="notify_shop_id" property="notifyShopId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="template_id" property="templateId"/>
+    <result column="notify_types" property="notifyTypes"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `notify_shop_id`,`create_time`,`update_time`,`shop_id`,`template_id`,`notify_types`
+  </sql>
+  <select id="list" resultMap="notifyTemplateShopMap">
+    select <include refid="Vo_Column_List"/> from notify_template_shop order by notify_shop_id desc
+  </select>
+  <select id="getByNotifyShopId" resultMap="notifyTemplateShopMap">
+    select <include refid="Vo_Column_List"/> from notify_template_shop where notify_shop_id = #{notifyShopId}
+  </select>
+  <insert id="save">
+    insert into notify_template_shop (`shop_id`,`template_id`,`notify_types`)
+    values (#{notifyTemplateShop.shopId},#{notifyTemplateShop.templateId},#{notifyTemplateShop.notifyTypes});
+  </insert>
+  <update id="update">
+    update notify_template_shop
+    <set>
+      <if test="notifyTemplateShop.shopId != null">
+        `shop_id` = #{notifyTemplateShop.shopId},
+      </if>
+      <if test="notifyTemplateShop.templateId != null">
+        `template_id` = #{notifyTemplateShop.templateId},
+      </if>
+      <if test="notifyTemplateShop.notifyTypes != null">
+        `notify_types` = #{notifyTemplateShop.notifyTypes},
+      </if>
+    </set>
+    where notify_shop_id = #{notifyTemplateShop.notifyShopId}
+  </update>
+  <delete id="deleteById">
+    delete from notify_template_shop where notify_shop_id = #{notifyShopId}
+  </delete>
+
+</mapper>

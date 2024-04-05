@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserLevelLogMapper">
+  <resultMap id="userLevelLogMap" type="com.mall4j.cloud.user.model.UserLevelLog">
+    <id column="level_log_id" property="levelLogId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="user_id" property="userId"/>
+    <result column="level_io_type" property="levelIoType"/>
+    <result column="level_change_reason" property="levelChangeReason"/>
+    <result column="before_level" property="beforeLevel"/>
+    <result column="before_level_type" property="beforeLevelType"/>
+    <result column="after_level" property="afterLevel"/>
+    <result column="after_level_type" property="afterLevelType"/>
+    <result column="term_type" property="termType"/>
+    <result column="pay_id" property="payId"/>
+    <result column="is_payed" property="isPayed"/>
+    <result column="pay_amount" property="payAmount"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `term_type`,`level_log_id`,`create_time`,`update_time`,`user_id`,`level_io_type`,`level_change_reason`,`before_level`,`before_level_type`,`after_level`,`after_level_type`,`pay_id`,`is_payed`,`pay_amount`
+  </sql>
+  <select id="list" resultMap="userLevelLogMap">
+    select <include refid="Vo_Column_List"/> from user_level_log order by level_log_id desc
+  </select>
+  <select id="getByLevelLogId" resultMap="userLevelLogMap">
+    select <include refid="Vo_Column_List"/> from user_level_log where level_log_id = #{levelLogId}
+  </select>
+  <select id="listUserIdByEarliestRechargeTime" resultType="java.lang.Long">
+    SELECT
+    user_level_log.user_id
+    FROM
+    (SELECT
+    user_id,
+    MIN(create_time) AS earliest
+    FROM
+    user_level_log
+    WHERE is_payed = #{isPayed}
+    AND create_time BETWEEN #{startDate}
+    AND #{endDate}
+    GROUP BY user_id) temp
+    LEFT OUTER JOIN user_level_log
+    ON temp.user_id = user_level_log.user_id
+    AND temp.earliest = user_level_log.create_time
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="levelLogId">
+    insert into user_level_log (`user_id`,`level_io_type`,`level_change_reason`,`term_type`,`before_level`,`before_level_type`,`after_level`,`after_level_type`,`pay_id`,`is_payed`,`pay_amount`)
+    values (#{userLevelLog.userId},#{userLevelLog.levelIoType},#{userLevelLog.levelChangeReason},#{userLevelLog.termType},#{userLevelLog.beforeLevel},#{userLevelLog.beforeLevelType},#{userLevelLog.afterLevel},#{userLevelLog.afterLevelType},#{userLevelLog.payId},#{userLevelLog.isPayed},#{userLevelLog.payAmount});
+  </insert>
+    <insert id="batchSaveUserLevelLogs" parameterType="java.util.List">
+      insert into user_level_log (`user_id`,`level_io_type`,`level_change_reason`,`term_type`,`before_level`,`before_level_type`,`after_level`,`after_level_type`,`pay_id`,`is_payed`,`pay_amount`)
+      values
+      <foreach collection="userLevelLogs" item="userLevelLog" separator=",">
+        (#{userLevelLog.userId},#{userLevelLog.levelIoType},#{userLevelLog.levelChangeReason},#{userLevelLog.termType},#{userLevelLog.beforeLevel},#{userLevelLog.beforeLevelType},#{userLevelLog.afterLevel},#{userLevelLog.afterLevelType},#{userLevelLog.payId},#{userLevelLog.isPayed},#{userLevelLog.payAmount})
+      </foreach>
+    </insert>
+    <update id="update">
+    update user_level_log
+    <set>
+      <if test="userLevelLog.userId != null">
+        `user_id` = #{userLevelLog.userId},
+      </if>
+      <if test="userLevelLog.levelIoType != null">
+        `level_io_type` = #{userLevelLog.levelIoType},
+      </if>
+      <if test="userLevelLog.levelChangeReason != null">
+        `level_change_reason` = #{userLevelLog.levelChangeReason},
+      </if>
+      <if test="userLevelLog.beforeLevel != null">
+        `before_level` = #{userLevelLog.beforeLevel},
+      </if>
+      <if test="userLevelLog.beforeLevelType != null">
+        `before_level_type` = #{userLevelLog.beforeLevelType},
+      </if>
+      <if test="userLevelLog.afterLevel != null">
+        `after_level` = #{userLevelLog.afterLevel},
+      </if>
+      <if test="userLevelLog.afterLevelType != null">
+        `after_level_type` = #{userLevelLog.afterLevelType},
+      </if>
+      <if test="userLevelLog.payId != null">
+        `pay_id` = #{userLevelLog.payId},
+      </if>
+      <if test="userLevelLog.isPayed != null">
+        `is_payed` = #{userLevelLog.isPayed},
+      </if>
+      <if test="userLevelLog.payAmount != null">
+        `pay_amount` = #{userLevelLog.payAmount},
+      </if>
+    </set>
+    where level_log_id = #{userLevelLog.levelLogId}
+  </update>
+  <delete id="deleteById">
+    delete from user_level_log where level_log_id = #{levelLogId}
+  </delete>
+
+  <update id="updateToSuccess">
+    update user_level_log set pay_id= #{payId} ,is_payed = 1 where level_log_id = #{levelLogId} and is_payed = 0
+  </update>
+
+  <select id="getMaxLevelByUserId" resultType="java.lang.Integer">
+    SELECT MAX(`after_level`)
+    FROM `user_level_log`
+    WHERE user_id = #{userId}
+      and after_level_type = 0
+  </select>
+</mapper>

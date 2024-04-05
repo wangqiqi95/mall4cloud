@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.OrderItemMapper">
+  <resultMap id="orderItemMap" type="com.mall4j.cloud.transfer.model.OrderItem">
+    <id column="order_item_id" property="orderItemId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="order_id" property="orderId"/>
+    <result column="order_number" property="orderNumber"/>
+    <result column="category_id" property="categoryId"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="sku_id" property="skuId"/>
+    <result column="user_id" property="userId"/>
+    <result column="final_refund_id" property="finalRefundId"/>
+    <result column="distribution_user_id" property="distributionUserId"/>
+    <result column="count" property="count"/>
+    <result column="spu_name" property="spuName"/>
+    <result column="sku_name" property="skuName"/>
+    <result column="pic" property="pic"/>
+    <result column="is_comm" property="isComm"/>
+    <result column="comm_time" property="commTime"/>
+    <result column="refund_status" property="refundStatus"/>
+    <result column="be_delivered_num" property="beDeliveredNum"/>
+    <result column="delivery_type" property="deliveryType"/>
+    <result column="shop_cart_time" property="shopCartTime"/>
+    <result column="price" property="price"/>
+    <result column="spu_total_amount" property="spuTotalAmount"/>
+    <result column="actual_total" property="actualTotal"/>
+    <result column="share_reduce" property="shareReduce"/>
+    <result column="platform_share_reduce" property="platformShareReduce"/>
+    <result column="distribution_amount" property="distributionAmount"/>
+    <result column="distribution_parent_amount" property="distributionParentAmount"/>
+    <result column="score_fee" property="scoreFee"/>
+    <result column="use_score" property="useScore"/>
+    <result column="gain_score" property="gainScore"/>
+    <result column="rate" property="rate"/>
+    <result column="platform_commission" property="platformCommission"/>
+    <result column="score_amount" property="scoreAmount"/>
+    <result column="member_amount" property="memberAmount"/>
+    <result column="platform_coupon_amount" property="platformCouponAmount"/>
+    <result column="shop_coupon_amount" property="shopCouponAmount"/>
+    <result column="discount_amount" property="discountAmount"/>
+    <result column="platform_free_freight_amount" property="platformFreeFreightAmount"/>
+    <result column="free_freight_amount" property="freeFreightAmount"/>
+    <result column="shop_change_free_amount" property="shopChangeFreeAmount"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `order_item_id`,`create_time`,`update_time`,`shop_id`,`order_id`,`category_id`,`spu_id`,`sku_id`,`user_id`,`final_refund_id`,`distribution_user_id`,`count`,`spu_name`,`sku_name`,`pic`,`is_comm`,`comm_time`,`refund_status`,`be_delivered_num`,`delivery_type`,`shop_cart_time`,`price`,`spu_total_amount`,`actual_total`,`share_reduce`,`platform_share_reduce`,`distribution_amount`,`distribution_parent_amount`,`score_fee`,`use_score`,`gain_score`,`rate`,`platform_commission`,`score_amount`,`member_amount`,`platform_coupon_amount`,`shop_coupon_amount`,`discount_amount`,`platform_free_freight_amount`,`free_freight_amount`,`shop_change_free_amount`
+  </sql>
+  <select id="list" resultMap="orderItemMap">
+    select <include refid="Vo_Column_List"/> from order_item order by order_item_id desc
+  </select>
+  <select id="getByOrderItemId" resultMap="orderItemMap">
+    select <include refid="Vo_Column_List"/> from order_item where order_item_id = #{orderItemId}
+  </select>
+    <select id="getByOrderItemId2" resultMap="orderItemMap">
+        select <include refid="Vo_Column_List"/> from order_item2 where order_item_id = #{orderItemId}
+    </select>
+    <select id="getByOrderId" resultMap="orderItemMap">
+        select <include refid="Vo_Column_List"/> from order_item where order_id = #{orderId}
+    </select>
+  <insert id="save">
+    insert into order_item_add (order_item_id,`shop_id`,`order_id`,order_number,`category_id`,`spu_id`,`sku_id`,`user_id`,`final_refund_id`,`distribution_user_id`,`count`,`spu_name`,`sku_name`,`pic`,`is_comm`,`comm_time`,`refund_status`,`be_delivered_num`,`delivery_type`,`shop_cart_time`,`price`,`spu_total_amount`,`actual_total`,`share_reduce`,`platform_share_reduce`,`distribution_amount`,`distribution_parent_amount`,`score_fee`,`use_score`,`gain_score`,`rate`,`platform_commission`,`score_amount`,`member_amount`,`platform_coupon_amount`,`shop_coupon_amount`,`discount_amount`,`platform_free_freight_amount`,`free_freight_amount`,`shop_change_free_amount`)
+    values (#{orderItem.orderItemId},#{orderItem.shopId},#{orderItem.orderId},#{orderItem.orderNumber},#{orderItem.categoryId},#{orderItem.spuId},#{orderItem.skuId},#{orderItem.userId},#{orderItem.finalRefundId},#{orderItem.distributionUserId},#{orderItem.count},#{orderItem.spuName},#{orderItem.skuName},#{orderItem.pic},#{orderItem.isComm},#{orderItem.commTime},#{orderItem.refundStatus},#{orderItem.beDeliveredNum},#{orderItem.deliveryType},#{orderItem.shopCartTime},#{orderItem.price},#{orderItem.spuTotalAmount},#{orderItem.actualTotal},#{orderItem.shareReduce},#{orderItem.platformShareReduce},#{orderItem.distributionAmount},#{orderItem.distributionParentAmount},#{orderItem.scoreFee},#{orderItem.useScore},#{orderItem.gainScore},#{orderItem.rate},#{orderItem.platformCommission},#{orderItem.scoreAmount},#{orderItem.memberAmount},#{orderItem.platformCouponAmount},#{orderItem.shopCouponAmount},#{orderItem.discountAmount},#{orderItem.platformFreeFreightAmount},#{orderItem.freeFreightAmount},#{orderItem.shopChangeFreeAmount});
+  </insert>
+  <update id="update">
+    update order_item
+    <set>
+      <if test="orderItem.shopId != null">
+        `shop_id` = #{orderItem.shopId},
+      </if>
+      <if test="orderItem.orderId != null">
+        `order_id` = #{orderItem.orderId},
+      </if>
+      <if test="orderItem.categoryId != null">
+        `category_id` = #{orderItem.categoryId},
+      </if>
+      <if test="orderItem.spuId != null">
+        `spu_id` = #{orderItem.spuId},
+      </if>
+      <if test="orderItem.skuId != null">
+        `sku_id` = #{orderItem.skuId},
+      </if>
+      <if test="orderItem.userId != null">
+        `user_id` = #{orderItem.userId},
+      </if>
+      <if test="orderItem.finalRefundId != null">
+        `final_refund_id` = #{orderItem.finalRefundId},
+      </if>
+      <if test="orderItem.distributionUserId != null">
+        `distribution_user_id` = #{orderItem.distributionUserId},
+      </if>
+      <if test="orderItem.count != null">
+        `count` = #{orderItem.count},
+      </if>
+      <if test="orderItem.spuName != null">
+        `spu_name` = #{orderItem.spuName},
+      </if>
+      <if test="orderItem.skuName != null">
+        `sku_name` = #{orderItem.skuName},
+      </if>
+      <if test="orderItem.pic != null">
+        `pic` = #{orderItem.pic},
+      </if>
+      <if test="orderItem.isComm != null">
+        `is_comm` = #{orderItem.isComm},
+      </if>
+      <if test="orderItem.commTime != null">
+        `comm_time` = #{orderItem.commTime},
+      </if>
+      <if test="orderItem.refundStatus != null">
+        `refund_status` = #{orderItem.refundStatus},
+      </if>
+      <if test="orderItem.beDeliveredNum != null">
+        `be_delivered_num` = #{orderItem.beDeliveredNum},
+      </if>
+      <if test="orderItem.deliveryType != null">
+        `delivery_type` = #{orderItem.deliveryType},
+      </if>
+      <if test="orderItem.shopCartTime != null">
+        `shop_cart_time` = #{orderItem.shopCartTime},
+      </if>
+      <if test="orderItem.price != null">
+        `price` = #{orderItem.price},
+      </if>
+      <if test="orderItem.spuTotalAmount != null">
+        `spu_total_amount` = #{orderItem.spuTotalAmount},
+      </if>
+      <if test="orderItem.actualTotal != null">
+        `actual_total` = #{orderItem.actualTotal},
+      </if>
+      <if test="orderItem.shareReduce != null">
+        `share_reduce` = #{orderItem.shareReduce},
+      </if>
+      <if test="orderItem.platformShareReduce != null">
+        `platform_share_reduce` = #{orderItem.platformShareReduce},
+      </if>
+      <if test="orderItem.distributionAmount != null">
+        `distribution_amount` = #{orderItem.distributionAmount},
+      </if>
+      <if test="orderItem.distributionParentAmount != null">
+        `distribution_parent_amount` = #{orderItem.distributionParentAmount},
+      </if>
+      <if test="orderItem.scoreFee != null">
+        `score_fee` = #{orderItem.scoreFee},
+      </if>
+      <if test="orderItem.useScore != null">
+        `use_score` = #{orderItem.useScore},
+      </if>
+      <if test="orderItem.gainScore != null">
+        `gain_score` = #{orderItem.gainScore},
+      </if>
+      <if test="orderItem.rate != null">
+        `rate` = #{orderItem.rate},
+      </if>
+      <if test="orderItem.platformCommission != null">
+        `platform_commission` = #{orderItem.platformCommission},
+      </if>
+      <if test="orderItem.scoreAmount != null">
+        `score_amount` = #{orderItem.scoreAmount},
+      </if>
+      <if test="orderItem.memberAmount != null">
+        `member_amount` = #{orderItem.memberAmount},
+      </if>
+      <if test="orderItem.platformCouponAmount != null">
+        `platform_coupon_amount` = #{orderItem.platformCouponAmount},
+      </if>
+      <if test="orderItem.shopCouponAmount != null">
+        `shop_coupon_amount` = #{orderItem.shopCouponAmount},
+      </if>
+      <if test="orderItem.discountAmount != null">
+        `discount_amount` = #{orderItem.discountAmount},
+      </if>
+      <if test="orderItem.platformFreeFreightAmount != null">
+        `platform_free_freight_amount` = #{orderItem.platformFreeFreightAmount},
+      </if>
+      <if test="orderItem.freeFreightAmount != null">
+        `free_freight_amount` = #{orderItem.freeFreightAmount},
+      </if>
+      <if test="orderItem.shopChangeFreeAmount != null">
+        `shop_change_free_amount` = #{orderItem.shopChangeFreeAmount},
+      </if>
+    </set>
+    where order_item_id = #{orderItem.orderItemId}
+  </update>
+  <delete id="deleteById">
+    delete from order_item where order_item_id = #{orderItemId}
+  </delete>
+
+</mapper>

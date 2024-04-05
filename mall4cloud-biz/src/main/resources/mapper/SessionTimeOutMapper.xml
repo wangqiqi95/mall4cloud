@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.chat.SessionTimeOutMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.mall4j.cloud.biz.model.chat.SessionTimeOut" id="SessionTimeOutMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="suitPeople" column="suit_people"/>
+        <result property="type" column="type"/>
+        <result property="workDate" column="work_date"/>
+        <result property="workStartDate" column="work_start_date"/>
+        <result property="workEndDate" column="work_end_date"/>
+        <result property="timeOut" column="time_out"/>
+        <result property="normalEnd" column="normal_end"/>
+        <result property="conclusion" column="conclusion"/>
+        <result property="remind" column="remind"/>
+        <result property="remindPeople" column="remind_people"/>
+        <result property="remindOpen" column="remind_open"/>
+        <result property="staff" column="staff"/>
+        <result property="suitPeopleName" column="suit_people_name"/>
+        <result property="staffName" column="staff_name"/>
+        <result property="remindTime" column="remind_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createName" column="create_name"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id,name,suit_people,type,work_date,work_start_date,work_end_date,time_out,normal_end,staff_name,
+        conclusion,remind,remind_people,remind_open,staff,suit_people_name,remind_time,create_time,update_time,create_name
+    </sql>
+    
+    <select id="list" resultType="com.mall4j.cloud.biz.vo.chat.SessionTimeOutVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+            `session_time_out`
+        <where>
+             1=1
+            <if test="param.name != null and param.name != ''">
+                and name LIKE CONCAT("%",#{param.name},"%")
+            </if>
+            <if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+                and create_time BETWEEN #{param.startTime} AND #{param.endTime}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="timeOut.id">
+        insert into session_time_out (`name`,`suit_people`,`type`,`work_date`,`work_start_date`,`work_end_date`,`time_out`,`normal_end`,`conclusion`,
+        `remind`,`remind_people`,`remind_open`,`staff`,`suit_people_name`,`remind_time`,`create_name`,`staff_name`)
+        values (#{timeOut.name},#{timeOut.suitPeople},#{timeOut.type},#{timeOut.workDate},#{timeOut.workStartDate},#{timeOut.workEndDate},#{timeOut.timeOut},#{timeOut.normalEnd},
+        #{timeOut.conclusion},#{timeOut.remind},#{timeOut.remindPeople},#{timeOut.remindOpen},#{timeOut.staff},#{timeOut.suitPeopleName},#{timeOut.remindTime},#{timeOut.createName},#{timeOut.staffName})
+    </insert>
+
+    <update id="update">
+        update session_time_out
+        <set>
+            <if test="timeOut.name != null">
+                `name` = #{timeOut.name},
+            </if>
+            <if test="timeOut.suitPeople != null">
+                `suit_people` = #{timeOut.suitPeople},
+            </if>
+            <if test="timeOut.type != null">
+                `type` = #{timeOut.type},
+            </if>
+            <if test="timeOut.workDate != null">
+                `work_date` = #{timeOut.workDate},
+            </if>
+            <if test="timeOut.workStartDate != null">
+                `work_start_date` = #{timeOut.workStartDate},
+            </if>
+            <if test="timeOut.workEndDate != null">
+                `work_end_date` = #{timeOut.workEndDate},
+            </if>
+            <if test="timeOut.timeOut != null">
+                `time_out` = #{timeOut.timeOut},
+            </if>
+            <if test="timeOut.normalEnd != null">
+                `normal_end` = #{timeOut.normalEnd},
+            </if>
+            <if test="timeOut.conclusion != null">
+                `conclusion` = #{timeOut.conclusion},
+            </if>
+            <if test="timeOut.remind != null">
+                `remind` = #{timeOut.remind},
+            </if>
+            <if test="timeOut.remindPeople != null">
+                `remind_people` = #{timeOut.remindPeople},
+            </if>
+            <if test="timeOut.remindOpen != null">
+                `remind_open` = #{timeOut.remindOpen},
+            </if>
+            <if test="timeOut.remindTime != null">
+                `remind_time` = #{timeOut.remindTime},
+            </if>
+            <if test="timeOut.staff != null">
+                `staff` = #{timeOut.staff},
+            </if>
+            <if test="timeOut.suitPeopleName != null">
+                `suit_people_name` = #{timeOut.suitPeopleName},
+            </if>
+            <if test="timeOut.createName != null">
+                `create_name` = #{timeOut.createName},
+            </if>
+            <if test="timeOut.staffName != null">
+                `staff_name` = #{timeOut.staffName},
+            </if>
+            update_time = NOW(),
+        </set>
+        where id = #{timeOut.id}
+    </update>
+
+    <delete id="deleteById">
+        delete from session_time_out where id = #{id}
+    </delete>
+
+    <select id="getById" resultType="com.mall4j.cloud.biz.vo.chat.SessionTimeOutVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        `session_time_out` where id = #{id}
+    </select>
+
+    <select id="getByStaffId" resultType="com.mall4j.cloud.biz.vo.chat.SessionTimeOutVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM `session_time_out` where suit_people LIKE CONCAT("%",#{staffId},"%") and `type` LIKE CONCAT("%",#{type},"%")  order by create_time desc limit 1
+    </select>
+
+</mapper>

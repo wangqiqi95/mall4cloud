@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.CrmUserTagRelationMapper">
+  <resultMap id="crmUserTagRelationMap" type="com.mall4j.cloud.user.model.CrmUserTagRelation">
+    <id column="id" property="id" />
+    <result column="categoryId" property="categoryid"/>
+    <result column="tagId" property="tagid"/>
+    <result column="tagName" property="tagname"/>
+    <result column="tagValue" property="tagvalue"/>
+    <result column="originId" property="originid"/>
+    <result column="unionId" property="unionid"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="enable" property="enable"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`categoryId`,`tagId`,`tagName`,`tagValue`,`originId`,`unionId`,`update_time`,`enable`
+  </sql>
+
+  <select id="list" resultMap="crmUserTagRelationMap">
+    select <include refid="Vo_Column_List"/> from crm_user_tag_relation order by id desc
+  </select>
+
+  <select id="userTagList" resultMap="crmUserTagRelationMap">
+    select
+    <include refid="Vo_Column_List"/>
+    from crm_user_tag_relation
+    where enable='Y'
+    <if test="unionId!=null and unionId!=''">
+      and unionId=#{unionId}
+    </if>
+    <if test="originId!=null and originId!=''">
+      and originId=#{originId}
+    </if>
+    order by id desc
+  </select>
+
+  <select id="userTagListByDTO" resultMap="crmUserTagRelationMap">
+    select
+    <include refid="Vo_Column_List"/>
+    from crm_user_tag_relation
+    where enable='Y'
+    <if test="dto.unionIds!=null and dto.unionIds.size>0">
+      and unionId in
+      <foreach collection="dto.unionIds" item="unionId" open="(" close=")" separator=",">
+        #{unionId}
+      </foreach>
+    </if>
+    <if test="dto.originIds!=null and dto.originIds.size>0">
+      and originId in
+      <foreach collection="dto.originIds" item="originId" open="(" close=")" separator=",">
+        #{originId}
+      </foreach>
+    </if>
+    order by id desc
+  </select>
+
+
+  <select id="listUnionIdByTagId" resultType="java.lang.String">
+    select
+        distinct unionId
+    from crm_user_tag_relation
+    where enable='Y'
+    and tagId in
+    <foreach collection="tagIds" item="tagId" open="(" close=")" separator=",">
+      #{tagId}
+    </foreach>
+  </select>
+
+  <select id="getById" resultMap="crmUserTagRelationMap">
+    select <include refid="Vo_Column_List"/> from crm_user_tag_relation where id = #{id}
+  </select>
+  <insert id="save">
+    insert into crm_user_tag_relation (`categoryId`,`tagId`,`tagName`,`tagValue`,`originId`,`unionId`,`enable`)
+    values (#{crmUserTagRelation.categoryid},#{crmUserTagRelation.tagid},#{crmUserTagRelation.tagname},#{crmUserTagRelation.tagvalue},#{crmUserTagRelation.originid},#{crmUserTagRelation.unionid},#{crmUserTagRelation.enable});
+  </insert>
+  <update id="update">
+    update crm_user_tag_relation
+    <set>
+      <if test="crmUserTagRelation.categoryid != null">
+        `categoryId` = #{crmUserTagRelation.categoryid},
+      </if>
+      <if test="crmUserTagRelation.tagid != null">
+        `tagId` = #{crmUserTagRelation.tagid},
+      </if>
+      <if test="crmUserTagRelation.tagname != null">
+        `tagName` = #{crmUserTagRelation.tagname},
+      </if>
+      <if test="crmUserTagRelation.tagvalue != null">
+        `tagValue` = #{crmUserTagRelation.tagvalue},
+      </if>
+      <if test="crmUserTagRelation.originid != null">
+        `originId` = #{crmUserTagRelation.originid},
+      </if>
+      <if test="crmUserTagRelation.unionid != null">
+        `unionId` = #{crmUserTagRelation.unionid},
+      </if>
+      <if test="crmUserTagRelation.enable != null">
+        `enable` = #{crmUserTagRelation.enable},
+      </if>
+    </set>
+    where id = #{crmUserTagRelation.id}
+  </update>
+  <delete id="deleteById">
+    delete from crm_user_tag_relation where id = #{id}
+  </delete>
+
+</mapper>

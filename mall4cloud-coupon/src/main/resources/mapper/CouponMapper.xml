@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.CouponMapper">
+  <resultMap id="couponMap" type="com.mall4j.cloud.coupon.model.Coupon">
+    <id column="coupon_id" property="couponId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="coupon_name" property="couponName"/>
+    <result column="sub_title" property="subTitle"/>
+    <result column="coupon_type" property="couponType"/>
+    <result column="suitable_prod_type" property="suitableProdType"/>
+    <result column="get_way" property="getWay"/>
+    <result column="valid_time_type" property="validTimeType"/>
+    <result column="cash_condition" property="cashCondition"/>
+    <result column="reduce_amount" property="reduceAmount"/>
+    <result column="coupon_discount" property="couponDiscount"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="after_receive_days" property="afterReceiveDays"/>
+    <result column="valid_days" property="validDays"/>
+    <result column="total_stock" property="totalStock"/>
+    <result column="stocks" property="stocks"/>
+    <result column="limit_num" property="limitNum"/>
+    <result column="status" property="status"/>
+    <result column="puton_status" property="putonStatus"/>
+    <result column="version" property="version"/>
+  </resultMap>
+
+  <resultMap id="couponVOMap" type="com.mall4j.cloud.coupon.vo.CouponVO">
+    <id column="coupon_id" property="couponId" />
+    <result column="shop_id" property="shopId"/>
+    <result column="coupon_name" property="couponName"/>
+    <result column="sub_title" property="subTitle"/>
+    <result column="coupon_type" property="couponType"/>
+    <result column="suitable_prod_type" property="suitableProdType"/>
+    <result column="get_way" property="getWay"/>
+    <result column="valid_time_type" property="validTimeType"/>
+    <result column="cash_condition" property="cashCondition"/>
+    <result column="reduce_amount" property="reduceAmount"/>
+    <result column="coupon_discount" property="couponDiscount"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="after_receive_days" property="afterReceiveDays"/>
+    <result column="valid_days" property="validDays"/>
+    <result column="total_stock" property="totalStock"/>
+    <result column="stocks" property="stocks"/>
+    <result column="limit_num" property="limitNum"/>
+    <result column="status" property="status"/>
+    <result column="puton_status" property="putonStatus"/>
+    <collection property="spuIds" ofType="java.lang.Long">
+      <id column="spu_id"/>
+    </collection>
+  </resultMap>
+  <resultMap id="couponAppVOMap" extends="couponMap" type="com.mall4j.cloud.coupon.vo.CouponAppVO">
+    <id column="coupon_id" property="couponId" />
+    <result column="shop_id" property="shopId"/>
+    <result column="coupon_name" property="couponName"/>
+    <result column="sub_title" property="subTitle"/>
+    <result column="coupon_type" property="couponType"/>
+    <result column="suitable_prod_type" property="suitableProdType"/>
+    <result column="get_way" property="getWay"/>
+    <result column="valid_time_type" property="validTimeType"/>
+    <result column="cash_condition" property="cashCondition"/>
+    <result column="reduce_amount" property="reduceAmount"/>
+    <result column="coupon_discount" property="couponDiscount"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="after_receive_days" property="afterReceiveDays"/>
+    <result column="valid_days" property="validDays"/>
+    <result column="total_stock" property="totalStock"/>
+    <result column="stocks" property="stocks"/>
+    <result column="limit_num" property="limitNum"/>
+    <result column="status" property="status"/>
+    <result column="puton_status" property="putonStatus"/>
+    <result column="user_has_count" property="hasReceive"/>
+    <collection property="spuIds" ofType="java.lang.Long">
+      <id column="spu_id"/>
+    </collection>
+  </resultMap>
+  <resultMap id="couponOrderVOMap" type="com.mall4j.cloud.common.order.vo.CouponOrderVO">
+    <result column="coupon_id" property="couponId"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="coupon_name" property="couponName"/>
+    <result column="cash_condition" property="cashCondition"/>
+    <result column="amountLimitType" property="amountLimitType"/>
+    <result column="reduce_amount" property="reduceAmount"/>
+    <result column="coupon_discount" property="couponDiscount"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="suitable_prod_type" property="suitableProdType"/>
+    <result column="can_use" property="canUse"/>
+    <result column="is_choose" property="isChoose"/>
+    <result column="coupon_type" property="couponType"/>
+    <result column="coupon_user_id" property="couponUserId"/>
+    <result column="order_id" property="orderId"/>
+    <result column="sourceType" property="sourceType"/>
+    <result column="commodityLimitNum" property="commodityLimitNum"/>
+    <result column="commodityLimitType" property="commodityLimitType"/>
+    <result column="priceType" property="priceType"/>
+    <result column="kind" property="kind"/>
+    <result column="crmCouponId" property="crmCouponId"/>
+    <result column="couponCode" property="couponCode"/>
+    <collection property="spuIds" ofType="java.lang.Long">
+      <id column="spu_id"/>
+    </collection>
+  </resultMap>
+<!--  优惠券列表优化不查询关联商品 -->
+  <resultMap id="newCouponOrderVOMap" type="com.mall4j.cloud.common.order.vo.CouponOrderVO">
+    <result column="coupon_id" property="couponId"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="coupon_name" property="couponName"/>
+    <result column="cash_condition" property="cashCondition"/>
+    <result column="amountLimitType" property="amountLimitType"/>
+    <result column="reduce_amount" property="reduceAmount"/>
+    <result column="coupon_discount" property="couponDiscount"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="suitable_prod_type" property="suitableProdType"/>
+    <result column="can_use" property="canUse"/>
+    <result column="is_choose" property="isChoose"/>
+    <result column="coupon_type" property="couponType"/>
+    <result column="coupon_user_id" property="couponUserId"/>
+    <result column="order_id" property="orderId"/>
+    <result column="sourceType" property="sourceType"/>
+    <result column="commodityLimitNum" property="commodityLimitNum"/>
+    <result column="commodityLimitMaxNum" property="commodityLimitMaxNum"/>
+    <result column="commodityLimitType" property="commodityLimitType"/>
+    <result column="priceType" property="priceType"/>
+    <result column="kind" property="kind"/>
+    <result column="crmCouponId" property="crmCouponId"/>
+    <result column="couponCode" property="couponCode"/>
+    <result column="commodityIds" property="commodityIds"/>
+    <result column="strPriceCodes" property="strPriceCodes"/>
+    <result column="category_scope_type" property="categoryScopeType"/>
+    <result column="max_deduction_amount" property="maxDeductionAmount"/>
+    <result column="dis_noles" property="disNoles"/>
+    <result column="dis_noles_value" property="disNolesValue"/>
+    <result column="isshare_paytype" property="issharePaytype"/>
+    <!--    <collection property="spuIds" ofType="java.lang.Long">-->
+    <!--      <id column="spu_id"/>-->
+    <!--    </collection>-->
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `coupon_id`,`create_time`,`update_time`,`shop_id`,`coupon_name`,`sub_title`,`coupon_type`,`suitable_prod_type`,`get_way`,`valid_time_type`,`cash_condition`,`reduce_amount`,`coupon_discount`,`start_time`,`end_time`,`after_receive_days`,`valid_days`,`total_stock`,`stocks`,`limit_num`,`status`,`puton_status`,`version`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.coupon.vo.CouponVO">
+    select <include refid="Vo_Column_List"/> from coupon
+    where status <![CDATA[<>]]> -1
+    <if test="coupon.shopId != null">
+      and shop_id = #{coupon.shopId}
+    </if>
+    <if test="coupon.couponName != null and coupon.couponName != ''">
+      and coupon_name like concat('%',#{coupon.couponName},'%')
+    </if>
+    <if test="coupon.status != null">
+      and status = #{coupon.status}
+    </if>
+    <if test="coupon.putonStatus != null">
+      and puton_status = #{coupon.putonStatus}
+    </if>
+    <if test="coupon.startTime != null">
+      and start_time &gt;= #{coupon.startTime}
+    </if>
+    <if test="coupon.endTime != null">
+      and end_time &lt;= #{coupon.endTime}
+    </if>
+    <if test="coupon.couponType != null">
+      and coupon_type = #{coupon.couponType}
+    </if>
+    <if test="coupon.suitableProdType != null">
+      and suitable_prod_type = #{coupon.suitableProdType}
+    </if>
+    <if test="coupon.getWay != null">
+      and get_way = #{coupon.getWay}
+    </if>
+    order by update_time desc
+  </select>
+  <select id="adminList" resultType="com.mall4j.cloud.coupon.vo.CouponVO">
+    select <include refid="Vo_Column_List"/> from coupon
+    where status <![CDATA[<>]]> -1 and shop_id <![CDATA[<>]]> 0
+    <if test="coupon.couponName != null and coupon.couponName != ''">
+      and coupon_name like concat('%',#{coupon.couponName},'%')
+    </if>
+    <if test="coupon.status != null">
+      and status = #{coupon.status}
+    </if>
+    <if test="coupon.putonStatus != null">
+      and puton_status = #{coupon.putonStatus}
+    </if>
+    <if test="coupon.startTime != null">
+      and start_time &gt;= #{coupon.startTime}
+    </if>
+    <if test="coupon.endTime != null">
+      and end_time &lt;= #{coupon.endTime}
+    </if>
+    <if test="coupon.couponType != null">
+      and coupon_type = #{coupon.couponType}
+    </if>
+    <if test="coupon.suitableProdType != null">
+      and suitable_prod_type = #{coupon.suitableProdType}
+    </if>
+    order by update_time desc
+  </select>
+
+  <select id="getShopCouponList" resultMap="couponAppVOMap">
+    SELECT c.coupon_id,c.shop_id,c.coupon_name,c.sub_title,c.coupon_type,c.suitable_prod_type,c.cash_condition,c.reduce_amount,c.coupon_discount,
+    c.limit_num,c.valid_time_type,c.start_time,c.end_time,c.after_receive_days,c.valid_days,c.stocks,c.total_stock,cs.spu_id
+    FROM coupon c
+    LEFT JOIN coupon_spu cs ON c.coupon_id = cs.coupon_id
+    WHERE c.status = 1 and get_way = 0 AND c.puton_status =1 AND c.shop_id = #{shopId}
+    ORDER BY c.coupon_type ASC, c.cash_condition ASC, c.coupon_discount ASC
+  </select>
+
+  <select id="getByCouponId" resultType="com.mall4j.cloud.coupon.model.Coupon">
+    select <include refid="Vo_Column_List"/> from coupon where coupon_id = #{couponId}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="couponId">
+    insert into coupon (`shop_id`,`coupon_name`,`sub_title`,`coupon_type`,`suitable_prod_type`,`get_way`,`valid_time_type`,`cash_condition`,`reduce_amount`,`coupon_discount`,`start_time`,`end_time`,`after_receive_days`,`valid_days`,`total_stock`,`stocks`,`limit_num`,`puton_status`)
+    values (#{coupon.shopId},#{coupon.couponName},#{coupon.subTitle},#{coupon.couponType},#{coupon.suitableProdType},#{coupon.getWay},#{coupon.validTimeType},#{coupon.cashCondition},#{coupon.reduceAmount},#{coupon.couponDiscount},#{coupon.startTime},#{coupon.endTime},#{coupon.afterReceiveDays},#{coupon.validDays},#{coupon.totalStock},#{coupon.stocks},#{coupon.limitNum},#{coupon.putonStatus});
+  </insert>
+  <update id="update">
+    update coupon
+    <set>
+      <if test="coupon.couponName != null">
+        `coupon_name` = #{coupon.couponName},
+      </if>
+      <if test="coupon.subTitle != null">
+        `sub_title` = #{coupon.subTitle},
+      </if>
+      <if test="coupon.couponType != null">
+        `coupon_type` = #{coupon.couponType},
+      </if>
+      <if test="coupon.suitableProdType != null">
+        `suitable_prod_type` = #{coupon.suitableProdType},
+      </if>
+      <if test="coupon.getWay != null">
+        `get_way` = #{coupon.getWay},
+      </if>
+      <if test="coupon.validTimeType != null">
+        `valid_time_type` = #{coupon.validTimeType},
+      </if>
+      <if test="coupon.cashCondition != null">
+        `cash_condition` = #{coupon.cashCondition},
+      </if>
+      <if test="coupon.reduceAmount != null">
+        `reduce_amount` = #{coupon.reduceAmount},
+      </if>
+      <if test="coupon.couponDiscount != null">
+        `coupon_discount` = #{coupon.couponDiscount},
+      </if>
+      <if test="coupon.startTime != null">
+        `start_time` = #{coupon.startTime},
+      </if>
+      <if test="coupon.endTime != null">
+        `end_time` = #{coupon.endTime},
+      </if>
+      <if test="coupon.afterReceiveDays != null">
+        `after_receive_days` = #{coupon.afterReceiveDays},
+      </if>
+      <if test="coupon.validDays != null">
+        `valid_days` = #{coupon.validDays},
+      </if>
+      <if test="coupon.limitNum != null">
+        `limit_num` = #{coupon.limitNum},
+      </if>
+      <if test="coupon.status != null">
+        `status` = #{coupon.status},
+      </if>
+      <if test="coupon.putonStatus != null">
+        `puton_status` = #{coupon.putonStatus},
+      </if>
+      <if test="coupon.version != null">
+        `version` = #{coupon.version} + 1,
+      </if>
+    </set>
+    where coupon_id = #{coupon.couponId}
+    <if test="coupon.version != null">
+      and `version` = #{coupon.version}
+    </if>
+  </update>
+  <update id="updateCouponAndStock">
+    update coupon
+    <set>
+      <if test="coupon.couponName != null">
+        `coupon_name` = #{coupon.couponName},
+      </if>
+      <if test="coupon.subTitle != null">
+        `sub_title` = #{coupon.subTitle},
+      </if>
+      <if test="coupon.couponType != null">
+        `coupon_type` = #{coupon.couponType},
+      </if>
+      <if test="coupon.suitableProdType != null">
+        `suitable_prod_type` = #{coupon.suitableProdType},
+      </if>
+      <if test="coupon.getWay != null">
+        `get_way` = #{coupon.getWay},
+      </if>
+      <if test="coupon.validTimeType != null">
+        `valid_time_type` = #{coupon.validTimeType},
+      </if>
+      <if test="coupon.cashCondition != null">
+        `cash_condition` = #{coupon.cashCondition},
+      </if>
+      <if test="coupon.reduceAmount != null">
+        `reduce_amount` = #{coupon.reduceAmount},
+      </if>
+      <if test="coupon.couponDiscount != null">
+        `coupon_discount` = #{coupon.couponDiscount},
+      </if>
+      <if test="coupon.startTime != null">
+        `start_time` = #{coupon.startTime},
+      </if>
+      <if test="coupon.endTime != null">
+        `end_time` = #{coupon.endTime},
+      </if>
+      <if test="coupon.afterReceiveDays != null">
+        `after_receive_days` = #{coupon.afterReceiveDays},
+      </if>
+      <if test="coupon.validDays != null">
+        `valid_days` = #{coupon.validDays},
+      </if>
+      <if test="coupon.changeStock != null and coupon.changeStock > 0">
+        `total_stock` = total_stock + #{coupon.changeStock},`stocks` = stocks + #{coupon.changeStock},
+      </if>
+      <if test="coupon.limitNum != null">
+        `limit_num` = #{coupon.limitNum},
+      </if>
+      <if test="coupon.status != null">
+        `status` = #{coupon.status},
+      </if>
+      <if test="coupon.putonStatus != null">
+        `puton_status` = #{coupon.putonStatus},
+      </if>
+      <if test="coupon.version != null">
+        `version` = #{coupon.version} + 1,
+      </if>
+    </set>
+    where coupon_id = #{coupon.couponId}
+  </update>
+  <delete id="deleteById">
+    delete from coupon where coupon_id = #{couponId}
+  </delete>
+
+  <select id="getCouponAndCouponProdsByCouponId" resultMap="couponVOMap">
+    SELECT c.*,cs.spu_id FROM coupon c
+    LEFT JOIN coupon_spu cs ON c.coupon_id = cs.coupon_id
+    WHERE c.coupon_id = #{couponId}
+  </select>
+
+  <select id="getListByCouponIds" resultMap="couponMap">
+    SELECT * FROM coupon WHERE coupon_id IN
+    <foreach collection="couponIds" item="couponId" open="(" close=")" separator=",">
+      #{couponId}
+    </foreach>
+  </select>
+
+  <select id="getCouponPage" resultType="com.mall4j.cloud.coupon.model.CouponUser">
+    SELECT cu.coupon_user_id, c.coupon_name, c.coupon_type, cu.user_start_time,cu.user_end_time,cu.status,c.cash_condition,
+    c.reduce_amount,c.coupon_discount,cu.receive_time
+    FROM coupon_user cu
+    LEFT JOIN coupon c ON c.coupon_id = cu.coupon_id
+    where cu.user_id = #{userId}
+    <if test="status != null">
+      AND cu.status = #{status}
+    </if>
+    ORDER BY cu.receive_time DESC
+  </select>
+
+  <select id="getUserCouponList" resultType="com.mall4j.cloud.coupon.vo.CouponAppVO">
+    SELECT cu.coupon_id,cu.coupon_user_id,cu.status,cu.receive_time,tc.shop_id,tc.coupon_name,
+    tc.sub_title,tc.coupon_type,tc.suitable_prod_type,tc.valid_time_type,tc.cash_condition,tc.reduce_amount,
+    tc.coupon_discount,tc.start_time,tc.end_time,tc.after_receive_days,tc.valid_days
+    FROM coupon_user cu
+    JOIN coupon tc ON cu.coupon_id = tc.coupon_id
+    WHERE cu.user_id = #{userId} AND cu.is_delete = 0 AND tc.puton_status NOT IN (2,3)
+    <if test="type == 1">
+      AND tc.shop_id = 0
+    </if>
+    <if test="type == 2">
+      AND tc.shop_id != 0
+    </if>
+    <if test="status == 1">
+      AND cu.`status` = #{status}
+      ORDER BY cu.create_time DESC
+    </if>
+    <if test="status == 2">
+      AND cu.`status` = #{status}
+      ORDER BY cu.update_time DESC
+    </if>
+    <if test="status == 0">
+      AND cu.`status` = #{status}
+      ORDER BY cu.update_time DESC
+    </if>
+  </select>
+
+  <update id="updateCouponStocks">
+    update coupon set `version` = `version` + 1, `stocks` = `stocks` - 1
+    where coupon_id = #{coupon.couponId} and `stocks` > 0
+  </update>
+
+  <select id="generalCouponList" resultType="com.mall4j.cloud.coupon.vo.CouponAppVO">
+    SELECT c.*
+    <if test="userId != null">
+      ,cu.*
+    </if>
+    FROM coupon c
+    <if test="userId != null">
+      LEFT JOIN
+      (
+      SELECT coupon_id, COUNT(*) cur_user_receive_count, SUM(IF(`status` = 1,1,0)) has_receive  FROM coupon_user
+      WHERE user_id = #{userId}
+      GROUP BY coupon_id
+      ) AS cu ON cu.coupon_id = c.coupon_id
+    </if>
+    WHERE c.`get_way` != 1 and shop_id = 0 and c.puton_status = 1 and c.status = 1
+    ORDER BY c.coupon_id DESC
+  </select>
+
+  <select id="getCouponList" resultMap="couponVOMap">
+    SELECT c.* FROM coupon c
+                            LEFT JOIN coupon_spu cs ON cs.`coupon_id` = c.`coupon_id`
+    WHERE c.status = 1 AND c.puton_status = 1 AND shop_id != 0
+    GROUP BY c.`coupon_id`
+    order by c.coupon_id desc
+  </select>
+
+  <select id="getCouponListByCouponIds" resultMap="couponMap">
+    select <include refid="Vo_Column_List"/> from coupon where coupon_id in
+    <foreach collection="couponIds" item="couponId" open="(" close=")" separator=",">
+      #{couponId}
+    </foreach>
+    <if test="putOnStatus != null">
+      and puton_status = #{putOnStatus}
+    </if>
+  </select>
+
+  <select id="getCouponListByUserIdAndShopId" resultMap="couponOrderVOMap">
+    select c.coupon_id,c.shop_id,c.coupon_name,c.cash_condition,c.reduce_amount,c.coupon_discount,c.suitable_prod_type,
+        c.coupon_type,cu.user_start_time start_time, cu.user_end_time end_time,cu.coupon_user_id,cs.spu_id
+    from coupon c
+    join coupon_user cu on c.coupon_id = cu.coupon_id
+    left join coupon_spu cs on cs.coupon_id = c.coupon_id
+    where cu.user_id = #{userId}
+            -- 获取用户未使用的优惠券
+      AND c.puton_status NOT IN (2,3)
+      and cu.status = 1
+      and cu.is_delete = 0
+      and c.shop_id = #{shopId}
+  </select>
+  <select id="getProdCouponList" resultMap="couponAppVOMap">
+    SELECT c.*,cs.spu_id
+    <if test="userId != null">
+      ,cu.*
+    </if>
+    FROM
+    (
+        SELECT coupon_id,shop_id,coupon_name,sub_title,coupon_type,suitable_prod_type,valid_time_type,total_stock
+             ,cash_condition,reduce_amount,coupon_discount,start_time,end_time,after_receive_days,valid_days,stocks,limit_num
+        FROM coupon
+        WHERE `get_way` != 1 and `status` = 1 AND puton_status = 1 AND shop_id != 0
+        ORDER BY coupon_id DESC
+        LIMIT #{page.begin}, #{page.size}
+    ) c
+    LEFT JOIN coupon_spu cs ON cs.`coupon_id` = c.`coupon_id` AND c.suitable_prod_type = 1
+    <if test="userId != null">
+      LEFT JOIN
+      (
+      SELECT coupon_id, COUNT(*) cur_user_receive_count, SUM(IF(`status` = 1,1,0)) user_has_count  FROM coupon_user
+      WHERE user_id = #{userId}
+      GROUP BY coupon_id
+      ) AS cu ON cu.coupon_id = c.coupon_id
+    </if>
+
+  </select>
+
+  <select id="getProdCouponListCount" resultType="java.lang.Long">
+    SELECT COUNT(*) FROM coupon WHERE status = 1 AND puton_status = 1 AND shop_id != 0
+  </select>
+  <update id="changeCouponStatusAndPutOnStatus">
+    UPDATE coupon  SET puton_status = #{putOnStatus}
+    <if test="status != null ">
+      ,`status` = #{status}
+    </if>
+    WHERE coupon_id = #{couponId}
+  </update>
+
+  <select id="listOverdueStatusShopIds" resultType="java.lang.Long">
+    SELECT shop_id FROM coupon
+    WHERE end_time &lt; now()
+    and valid_time_type = 1
+    GROUP BY shop_id
+  </select>
+
+  <update id="cancelPut">
+    update coupon set status = 0, puton_status = -1 where end_time &lt; now() and valid_time_type = 1
+  </update>
+
+  <update id="putonCoupon">
+    update coupon set puton_status = 1 where start_time &lt;= now() and status = 1 and stocks &gt; 0 and puton_status = 0
+  </update>
+
+  <update id="batchUpdateCouponStocks">
+    update coupon set `version` = `version` + 1, update_time = NOW(),
+    <trim prefix="stocks = case" suffix="else `stocks` end">
+      <foreach collection="coupons" item="coupon" index="index">
+        when coupon_id = #{coupon.couponId} and #{coupon.stocks} is not null
+        then (case when `stocks` + #{coupon.stocks} &lt; 0 then 0 ELSE `stocks` + #{coupon.stocks} end)
+      </foreach>
+    </trim>
+    WHERE coupon_id IN
+    <foreach collection="coupons" item="coupon" open="(" close=")" separator=",">
+      #{coupon.couponId}
+    </foreach>
+  </update>
+
+  <select id="listCouponBySpuIds" resultMap="couponVOMap">
+    SELECT c.coupon_id,c.shop_id,c.suitable_prod_type,cs.spu_id,c.puton_status
+    FROM coupon c
+    LEFT JOIN coupon_spu cs ON c.coupon_id = cs.coupon_id
+    WHERE
+    (
+      c.suitable_prod_type = 0 OR
+          c.coupon_id in
+        (
+          SELECT coupon_id FROM coupon_spu where spu_id IN
+          <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+            #{spuId}
+          </foreach>
+        )
+    ) AND c.puton_status != -1
+    <if test="shopIds != null and shopIds.size() != 0">
+      AND c.shop_id IN
+      <foreach collection="shopIds" item="shopId" open="(" close=")" separator=",">
+        #{shopId}
+      </foreach>
+    </if>
+  </select>
+
+  <update id="batchOfflineByDiscountIdsAndStatus">
+    update coupon set puton_status = 0 where coupon_id in
+    <foreach collection="couponIds" item="couponId" open="(" close=")" separator=",">
+      #{couponId}
+    </foreach>
+  </update>
+
+  <select id="cancelPutPlatformCouponIds" resultType="java.lang.Long">
+    select * from coupon where `status` = 1 and puton_status = 1 and end_time &lt; now() and valid_time_type = 1 and shop_id = 0
+  </select>
+
+
+  <select id="getCouponListByUserAndShop" resultMap="newCouponOrderVOMap">
+    SELECT
+      c.id AS coupon_id,
+      c.NAME AS coupon_name,
+      c.amount_limit_type AS amountLimitType,
+      c.amount_limit_num AS cash_condition,
+      c.reduce_amount as reduce_amount,
+      c.coupon_discount as coupon_discount,
+      c.commodity_scope_type AS suitable_prod_type,
+      c.commodity_limit_type AS commodityLimitType,
+      c.commodity_limit_num AS commodityLimitNum,
+      c.commodity_limit_max_num AS commodityLimitMaxNum,
+      c.kind AS kind,
+      c.type AS coupon_type,
+      c.price_type AS priceType,
+      c.crm_coupon_id AS crmCouponId,
+      c.source_type AS sourceType,
+      c.category_scope_type as category_scope_type,
+      c.max_deduction_amount as max_deduction_amount,
+      c.dis_noles as dis_noles,
+      c.dis_noles_value as dis_noles_value,
+      c.isshare_paytype as isshare_paytype,
+      cu.user_start_time AS start_time,
+      cu.user_end_time AS end_time,
+      cu.coupon_code AS couponCode,
+      cu.id AS coupon_user_id
+<!--      ,cm.commodity_id as spu_id-->
+    FROM
+      t_coupon c
+        JOIN t_coupon_user cu ON c.id = cu.coupon_id
+<!--        LEFT JOIN t_coupon_commodity cm ON cm.coupon_id = c.id-->
+        LEFT JOIN t_coupon_shop cs ON cs.coupon_id = c.id
+    WHERE
+      coupon_source_type = 1
+      AND cu.user_id = #{userId}
+      AND c.STATUS = 0
+      AND (c.apply_scope_type = 0 OR c.apply_scope_type = 1)
+      AND cu.STATUS = 1
+      AND NOW() between cu.user_start_time and cu.user_end_time
+      AND (
+        c.is_all_shop = 1
+        OR cs.shop_id = #{shopId})
+  </select>
+
+  <select id="getCouponListByUserAndShopAndSpuIds" resultMap="couponOrderVOMap">
+    SELECT
+    c.id AS coupon_id,
+    c.NAME AS coupon_name,
+    c.amount_limit_type AS amountLimitType,
+    c.amount_limit_num AS cash_condition,
+    c.reduce_amount as reduce_amount,
+    c.coupon_discount as coupon_discount,
+    c.commodity_scope_type AS suitable_prod_type,
+    c.commodity_limit_type AS commodityLimitType,
+    c.commodity_limit_num AS commodityLimitNum,
+    c.kind AS kind,
+    c.type AS coupon_type,
+    c.price_type AS priceType,
+    c.crm_coupon_id AS crmCouponId,
+    c.source_type AS sourceType,
+    cu.user_start_time AS start_time,
+    cu.user_end_time AS end_time,
+    cu.coupon_code AS couponCode,
+    cu.id AS coupon_user_id
+          ,cm.commodity_id as spu_id
+    FROM
+    t_coupon c
+    JOIN t_coupon_user cu ON c.id = cu.coupon_id
+    LEFT JOIN t_coupon_commodity cm ON cm.coupon_id = c.id
+    LEFT JOIN t_coupon_shop cs ON cs.coupon_id = c.id
+    WHERE
+    coupon_source_type = 1
+    AND cu.user_id = #{userId}
+    AND c.STATUS = 0
+    AND (c.apply_scope_type = 0 OR c.apply_scope_type = 1)
+    AND cu.STATUS = 1
+    AND NOW() between cu.user_start_time and cu.user_end_time
+    AND (
+    c.is_all_shop = 1
+    OR cs.shop_id = #{shopId})
+    <if test="spuIds != null">
+      and  (cm.commodity_id in
+      <foreach collection="spuIds" item="item"  index="index" open="("  separator="," close=")">
+        #{item}
+      </foreach> or c.commodity_scope_type = 0)
+    </if>
+  </select>
+
+
+  <select id="getCrmCouponList" resultMap="newCouponOrderVOMap">
+    SELECT
+      c.id AS coupon_id,
+      c.NAME AS coupon_name,
+      c.amount_limit_type AS amountLimitType,
+      c.amount_limit_num AS cash_condition,
+      c.reduce_amount as reduce_amount,
+      c.coupon_discount as coupon_discount,
+      c.commodity_scope_type AS suitable_prod_type,
+      c.commodity_limit_type AS commodityLimitType,
+      c.commodity_limit_num AS commodityLimitNum,
+      c.commodity_limit_max_num AS commodityLimitMaxNum,
+      c.kind AS kind,
+      c.type AS coupon_type,
+      c.price_type AS priceType,
+      c.crm_coupon_id AS crmCouponId,
+      c.source_type AS sourceType,
+      c.category_scope_type as category_scope_type,
+      c.max_deduction_amount as max_deduction_amount,
+      c.dis_noles as dis_noles,
+      c.dis_noles_value as dis_noles_value,
+      c.isshare_paytype as isshare_paytype
+    FROM
+      t_coupon c
+        LEFT JOIN t_coupon_shop cs ON cs.coupon_id = c.id
+    <where>
+      c.STATUS = 0
+      AND (c.apply_scope_type = 0 OR c.apply_scope_type = 1)
+      AND (c.is_all_shop = 1 OR cs.shop_id = #{shopId})
+      <if test="crmCouponIds != null">
+        and c.crm_coupon_id in
+        <foreach collection="crmCouponIds" item="item"  index="index" open="("  separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+  </select>
+  <select id="getCrmCouponListAndSpuIds" resultMap="couponOrderVOMap">
+    SELECT
+    c.id AS coupon_id,
+    c.NAME AS coupon_name,
+    c.amount_limit_type AS amountLimitType,
+    c.amount_limit_num AS cash_condition,
+    c.reduce_amount as reduce_amount,
+    c.coupon_discount as coupon_discount,
+    c.commodity_scope_type AS suitable_prod_type,
+    c.commodity_limit_type AS commodityLimitType,
+    c.commodity_limit_num AS commodityLimitNum,
+    c.kind AS kind,
+    c.type AS coupon_type,
+    c.price_type AS priceType,
+    c.crm_coupon_id AS crmCouponId,
+    c.source_type AS sourceType,
+    cm.commodity_id as commodityIds
+    FROM
+    t_coupon c
+    LEFT JOIN t_coupon_commodity cm ON cm.coupon_id = c.id
+    LEFT JOIN t_coupon_shop cs ON cs.coupon_id = c.id
+    <where>
+      c.STATUS = 0
+      AND (c.apply_scope_type = 0 OR c.apply_scope_type = 1)
+      AND (c.is_all_shop = 1 OR cs.shop_id = #{shopId})
+      <if test="crmCouponIds != null">
+        and c.crm_coupon_id in
+        <foreach collection="crmCouponIds" item="item"  index="index" open="("  separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="spuIds != null">
+        and (cm.commodity_id in
+        <foreach collection="spuIds" item="item"  index="index" open="("  separator="," close=")">
+          #{item}
+        </foreach> or c.commodity_scope_type = 0)
+      </if>
+    </where>
+  </select>
+</mapper>

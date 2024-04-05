@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.live.LiveRoomProdMapper">
+
+  <resultMap id="liveRoomProdMap" type="com.mall4j.cloud.biz.model.live.LiveRoomProd">
+    <id column="room_prod_id" property="roomProdId" />
+    <result column="prod_store_id" property="prodStoreId"/>
+    <result column="room_id" property="roomId"/>
+  </resultMap>
+</mapper>

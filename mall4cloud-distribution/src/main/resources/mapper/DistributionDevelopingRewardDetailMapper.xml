@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionDevelopingRewardDetailMapper">
+  <resultMap id="distributionDevelopingRewardDetailMap" type="com.mall4j.cloud.distribution.model.DistributionDevelopingRewardDetail">
+    <id column="id" property="id" />
+    <result column="developing_reward_id" property="developingRewardId"/>
+    <result column="staff_id" property="staffId"/>
+    <result column="staff_code" property="staffCode"/>
+    <result column="staff_name" property="staffName"/>
+    <result column="mobile" property="mobile"/>
+    <result column="store_id" property="storeId"/>
+    <result column="store_name" property="storeName"/>
+    <result column="member_num" property="memberNum"/>
+    <result column="total_reward" property="totalReward"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`developing_reward_id`,`staff_id`,`staff_code`,`staff_name`,`mobile`,`store_id`,`store_name`,`member_num`,`total_reward`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionDevelopingRewardDetailMap">
+    select <include refid="Vo_Column_List"/> from distribution_developing_reward_detail order by id desc
+  </select>
+  <select id="getById" resultMap="distributionDevelopingRewardDetailMap">
+    select <include refid="Vo_Column_List"/> from distribution_developing_reward_detail where id = #{id}
+  </select>
+    <select id="getByRewardIdAndStaffId" resultMap="distributionDevelopingRewardDetailMap">
+      select <include refid="Vo_Column_List"/> from distribution_developing_reward_detail
+      where developing_reward_id = #{rewardId}
+      and staff_id = #{staffId}
+    </select>
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into distribution_developing_reward_detail (`developing_reward_id`,`staff_id`,`staff_code`,`staff_name`,`mobile`,`store_id`,`store_name`,`member_num`,`total_reward`)
+    values (#{distributionDevelopingRewardDetail.developingRewardId},#{distributionDevelopingRewardDetail.staffId},#{distributionDevelopingRewardDetail.staffCode},#{distributionDevelopingRewardDetail.staffName},#{distributionDevelopingRewardDetail.mobile},#{distributionDevelopingRewardDetail.storeId},#{distributionDevelopingRewardDetail.storeName},#{distributionDevelopingRewardDetail.memberNum},#{distributionDevelopingRewardDetail.totalReward});
+  </insert>
+  <update id="update">
+    update distribution_developing_reward_detail
+    <set>
+      <if test="distributionDevelopingRewardDetail.developingRewardId != null">
+        `developing_reward_id` = #{distributionDevelopingRewardDetail.developingRewardId},
+      </if>
+      <if test="distributionDevelopingRewardDetail.staffId != null">
+        `staff_id` = #{distributionDevelopingRewardDetail.staffId},
+      </if>
+      <if test="distributionDevelopingRewardDetail.staffCode != null">
+        `staff_code` = #{distributionDevelopingRewardDetail.staffCode},
+      </if>
+      <if test="distributionDevelopingRewardDetail.staffName != null">
+        `staff_name` = #{distributionDevelopingRewardDetail.staffName},
+      </if>
+      <if test="distributionDevelopingRewardDetail.mobile != null">
+        `mobile` = #{distributionDevelopingRewardDetail.mobile},
+      </if>
+      <if test="distributionDevelopingRewardDetail.storeId != null">
+        `store_id` = #{distributionDevelopingRewardDetail.storeId},
+      </if>
+      <if test="distributionDevelopingRewardDetail.storeName != null">
+        `store_name` = #{distributionDevelopingRewardDetail.storeName},
+      </if>
+      <if test="distributionDevelopingRewardDetail.memberNum != null">
+        `member_num` = #{distributionDevelopingRewardDetail.memberNum},
+      </if>
+      <if test="distributionDevelopingRewardDetail.totalReward != null">
+        `total_reward` = #{distributionDevelopingRewardDetail.totalReward},
+      </if>
+    </set>
+    where id = #{distributionDevelopingRewardDetail.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_developing_reward_detail where id = #{id}
+  </delete>
+
+</mapper>

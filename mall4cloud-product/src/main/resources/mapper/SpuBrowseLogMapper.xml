@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SpuBrowseLogMapper">
+  <resultMap id="spuBrowseLogMap" type="com.mall4j.cloud.product.model.SpuBrowseLog">
+    <id column="spu_browse_log_id" property="spuBrowseLogId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="user_id" property="userId"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="category_id" property="categoryId"/>
+    <result column="status" property="status"/>
+    <result column="spu_type" property="spuType"/>
+  </resultMap>
+  <resultMap id="spuBrowseListMap" type="com.mall4j.cloud.product.vo.SpuBrowseLogVO">
+    <result column="spu_browse_log_id" property="spuBrowseLogId"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="main_img_url" property="mainImgUrl"/>
+    <result column="price_fee" property="priceFee"/>
+    <result column="spu_status" property="spuStatus"/>
+    <result column="browse_time" property="browseTime"/>
+    <result column="spu_type" property="spuType"/>
+      <result column="spu_name" property="spuName"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `spu_browse_log_id`,`create_time`,`update_time`,`user_id`,`spu_id`,`category_id`,`status`,`spu_type`
+  </sql>
+  <select id="spuBrowseList" resultMap="spuBrowseListMap">
+    SELECT sb.spu_browse_log_id,sb.update_time browse_time,sb.spu_id,sb.spu_type,s.price_fee,s.score_fee,s.main_img_url,s.status spu_status,s.name spu_name
+    FROM spu_browse_log sb
+    JOIN spu s ON s.spu_id = sb.spu_id AND s.status != -1
+    WHERE sb.status = 1 and user_id = #{userId}
+    ORDER BY sb.update_time DESC
+  </select>
+  <insert id="save">
+    insert into spu_browse_log (`user_id`,`spu_id`,`category_id`,`spu_type`)
+    values (#{spuBrowseLog.userId},#{spuBrowseLog.spuId},#{spuBrowseLog.categoryId},#{spuBrowseLog.spuType});
+  </insert>
+  <update id="update">
+    update spu_browse_log
+    set
+      <if test="spuBrowseLog.status">
+        `status` = #{spuBrowseLog.status},
+      </if>
+      update_time = NOW()
+    where spu_browse_log_id = #{spuBrowseLog.spuBrowseLogId}
+    <if test="spuBrowseLog.userId != null">
+      and user_id = #{spuBrowseLog.userId}
+    </if>
+  </update>
+
+  <select id="getBySpuIdAndUserId" resultMap="spuBrowseLogMap">
+    select spu_browse_log_id,spu_id,spu_type from spu_browse_log where user_id = #{userId} and spu_id = #{spuId}
+  </select>
+  <update id="batchUpdateStatus">
+    update spu_browse_log set `status` = #{status} where user_id = #{userId} and spu_browse_log_id in
+    <foreach collection="spuBrowseLogIds" item="spuBrowseLogId" open="(" close=")" separator=",">
+      #{spuBrowseLogId}
+    </foreach>
+  </update>
+
+  <select id="recommendCategoryId" resultType="java.lang.Long">
+    SELECT b.category_id, COUNT(*) AS num FROM
+    (
+      SELECT category_id FROM spu_browse_log WHERE `status` = 1 AND user_id = #{userId} AND spu_type = #{spuType}
+      ORDER BY update_time DESC
+      LIMIT #{limit}
+    ) b
+    GROUP BY b.category_id
+    ORDER BY num DESC
+    LIMIT 1
+  </select>
+
+  <select id="getCurrentLogBySpuIdAndUserId" resultMap="spuBrowseLogMap">
+    select spu_browse_log_id,spu_id,spu_type
+    from spu_browse_log
+    where user_id = #{spuBrowseLog.userId} and spu_id = #{spuBrowseLog.spuId} and spu_type = #{spuBrowseLog.spuType} and create_time &gt;= #{startTime}
+  </select>
+</mapper>

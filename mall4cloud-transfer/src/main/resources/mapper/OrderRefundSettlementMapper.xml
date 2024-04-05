@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.OrderRefundSettlementMapper">
+  <resultMap id="orderRefundSettlementMap" type="com.mall4j.cloud.transfer.model.OrderRefundSettlement">
+    <id column="settlement_id" property="settlementId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="pay_id" property="payId"/>
+    <result column="order_id" property="orderId"/>
+    <result column="refund_id" property="refundId"/>
+    <result column="user_id" property="userId"/>
+    <result column="biz_refund_no" property="bizRefundNo"/>
+    <result column="pay_type" property="payType"/>
+    <result column="refund_status" property="refundStatus"/>
+    <result column="refund_amount" property="refundAmount"/>
+    <result column="order_total_amount" property="orderTotalAmount"/>
+    <result column="version" property="version"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `settlement_id`,`create_time`,`update_time`,`pay_id`,`order_id`,`refund_id`,`user_id`,`biz_refund_no`,`pay_type`,`refund_status`,`refund_amount`,`order_total_amount`,`version`
+  </sql>
+  <select id="list" resultMap="orderRefundSettlementMap">
+    select <include refid="Vo_Column_List"/> from order_refund_settlement order by settlement_id desc
+  </select>
+  <select id="getBySettlementId" resultMap="orderRefundSettlementMap">
+    select <include refid="Vo_Column_List"/> from order_refund_settlement where settlement_id = #{settlementId}
+  </select>
+  <insert id="save">
+    insert into order_refund_settlement (`pay_id`,`order_id`,`refund_id`,`user_id`,`biz_refund_no`,`pay_type`,`refund_status`,`refund_amount`,`order_total_amount`,`version`)
+    values (#{orderRefundSettlement.payId},#{orderRefundSettlement.orderId},#{orderRefundSettlement.refundId},#{orderRefundSettlement.userId},#{orderRefundSettlement.bizRefundNo},#{orderRefundSettlement.payType},#{orderRefundSettlement.refundStatus},#{orderRefundSettlement.refundAmount},#{orderRefundSettlement.orderTotalAmount},#{orderRefundSettlement.version});
+  </insert>
+  <update id="update">
+    update order_refund_settlement
+    <set>
+      <if test="orderRefundSettlement.payId != null">
+        `pay_id` = #{orderRefundSettlement.payId},
+      </if>
+      <if test="orderRefundSettlement.orderId != null">
+        `order_id` = #{orderRefundSettlement.orderId},
+      </if>
+      <if test="orderRefundSettlement.refundId != null">
+        `refund_id` = #{orderRefundSettlement.refundId},
+      </if>
+      <if test="orderRefundSettlement.userId != null">
+        `user_id` = #{orderRefundSettlement.userId},
+      </if>
+      <if test="orderRefundSettlement.bizRefundNo != null">
+        `biz_refund_no` = #{orderRefundSettlement.bizRefundNo},
+      </if>
+      <if test="orderRefundSettlement.payType != null">
+        `pay_type` = #{orderRefundSettlement.payType},
+      </if>
+      <if test="orderRefundSettlement.refundStatus != null">
+        `refund_status` = #{orderRefundSettlement.refundStatus},
+      </if>
+      <if test="orderRefundSettlement.refundAmount != null">
+        `refund_amount` = #{orderRefundSettlement.refundAmount},
+      </if>
+      <if test="orderRefundSettlement.orderTotalAmount != null">
+        `order_total_amount` = #{orderRefundSettlement.orderTotalAmount},
+      </if>
+      <if test="orderRefundSettlement.version != null">
+        `version` = #{orderRefundSettlement.version},
+      </if>
+    </set>
+    where settlement_id = #{orderRefundSettlement.settlementId}
+  </update>
+  <delete id="deleteById">
+    delete from order_refund_settlement where settlement_id = #{settlementId}
+  </delete>
+
+</mapper>

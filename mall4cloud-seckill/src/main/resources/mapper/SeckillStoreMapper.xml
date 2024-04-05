@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.seckill.mapper.SeckillStoreMapper">
+    <resultMap id="seckillStoreMap" type="com.mall4j.cloud.seckill.model.SeckillStore">
+        <id column="id" property="id"/>
+        <result column="seckill_id" property="seckillId"/>
+        <result column="store_id" property="storeId"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`,
+        `seckill_id`,
+        `store_id`
+    </sql>
+
+    <select id="listBySeckillId" resultMap="seckillStoreMap">
+        select <include refid="Vo_Column_List"/> from seckill_store where seckill_id = #{seckillId}
+    </select>
+
+    <select id="findBySeckillIdAndStoreId" resultMap="seckillStoreMap">
+        select <include refid="Vo_Column_List"/> from seckill_store where seckill_id = #{seckillId} and store_id = #{storeId}
+        limit 1
+    </select>
+
+    <select id="listBySeckillIdList" resultMap="seckillStoreMap">
+        select <include refid="Vo_Column_List"/> from seckill_store where seckill_id in
+        <foreach collection="seckillIdList" item="seckillId" separator="," open="(" close=")">
+            #{seckillId}
+        </foreach>
+    </select>
+
+    <insert id="saveBatch">
+        insert into seckill_store (`seckill_id`, `store_id`) values
+        <foreach collection="seckillStoreList" item="seckillStore" separator=",">
+            (#{seckillStore.seckillId}, #{seckillStore.storeId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteBySeckillId">
+        delete
+        from seckill_store
+        where seckill_id = #{seckillId}
+    </delete>
+
+</mapper>

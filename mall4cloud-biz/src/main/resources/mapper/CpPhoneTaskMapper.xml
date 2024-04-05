@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpPhoneTaskMapper">
+  <resultMap id="cpPhoneTaskMap" type="com.mall4j.cloud.biz.model.cp.CpPhoneTask">
+    <id column="id" property="id" />
+    <result column="task_name" property="taskName"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="user_type" property="userType"/>
+    <result column="daily_allocation_total" property="dailyAllocationTotal"/>
+    <result column="allocation_total" property="allocationTotal"/>
+    <result column="slogan" property="slogan"/>
+    <result column="open_status" property="openStatus"/>
+    <result column="status" property="status"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="import_from" property="importFrom"/>
+    <result column="phone_start_time" property="phoneStartTime"/>
+    <result column="phone_end_time" property="phoneEndTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="is_delete" property="isDelete"/>
+    <result column="distribute_time" property="distributeTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`task_name`,`start_time`,`end_time`,`user_type`,`daily_allocation_total`,`allocation_total`,`slogan`,`open_status`,`status`,`create_by`
+    ,`create_time`,`update_by`,`import_from`,`phone_start_time`,`phone_end_time`,`update_time`,`is_delete`,`distribute_time`
+  </sql>
+
+  <select id="selectDistributeTask" resultMap="cpPhoneTaskMap">
+    select
+    <include refid="Vo_Column_List"/>
+    from cp_phone_task
+    where is_delete=0
+    and open_status=1
+    and start_time &lt; now() and now() &lt; end_time
+    <if test="taskId!=null">
+      and id=#{taskId}
+    </if>
+    order by start_time desc
+  </select>
+
+  <select id="mobileList" resultMap="cpPhoneTaskMap">
+    select
+    task.id,
+    task.task_name,
+    task.start_time,
+    task.end_time,
+    task.user_type,
+    task.daily_allocation_total,
+    task.allocation_total,
+    task.slogan,
+    task.open_status,
+    task.status,
+    task.create_by,
+    task.create_time,
+    task.update_by,
+    task.import_from,
+    task.phone_start_time,
+    task.phone_end_time,
+    task.update_time,
+    task.is_delete
+    from cp_phone_task task
+    <if test="dto.staffs!=null and dto.staffs.size>0">
+      left join cp_phone_task_staff staff on staff.task_id=task.id
+    </if>
+    where task.is_delete=0
+    and start_time &lt; now() and now() &lt; end_time
+    <if test="dto.staffs!=null and dto.staffs.size>0">
+      and staff.staff_id in
+      <foreach collection="dto.staffs" item="staffId" open="(" close=")" separator=",">
+        #{staffId}
+      </foreach>
+    </if>
+    <if test="dto.taskName!=null and dto.taskName!=''">
+      AND task_name like CONCAT('%', #{dto.taskName},'%')
+    </if>
+    <if test="dto.openStatus!=null">
+      AND open_status=#{dto.openStatus}
+    </if>
+    <if test="dto.status!=null">
+      AND status=#{status}
+    </if>
+    order by task.create_time desc
+  </select>
+
+  <select id="list" resultMap="cpPhoneTaskMap">
+    select
+    task.id,
+    task.task_name,
+    task.start_time,
+    task.end_time,
+    task.user_type,
+    task.daily_allocation_total,
+    task.allocation_total,
+    task.slogan,
+    task.open_status,
+    task.status,
+    task.create_by,
+    task.create_time,
+    task.update_by,
+    task.import_from,
+    task.phone_start_time,
+    task.phone_end_time,
+    task.update_time,
+    task.is_delete
+    from cp_phone_task task
+    <if test="dto.staffs!=null and dto.staffs.size>0">
+      left join cp_phone_task_staff staff on staff.task_id=task.id
+    </if>
+    where task.is_delete=0
+    <if test="dto.staffs!=null and dto.staffs.size>0">
+      and staff.staff_id in
+      <foreach collection="dto.staffs" item="staffId" open="(" close=")" separator=",">
+        #{staffId}
+      </foreach>
+    </if>
+    <if test="dto.taskName!=null and dto.taskName!=''">
+      AND task_name like CONCAT('%', #{dto.taskName},'%')
+    </if>
+    <if test="dto.openStatus!=null">
+      AND open_status=#{dto.openStatus}
+    </if>
+    <if test="dto.status!=null">
+      AND status=#{status}
+    </if>
+    order by task.create_time desc
+  </select>
+
+  <select id="getById" resultMap="cpPhoneTaskMap">
+    select <include refid="Vo_Column_List"/> from cp_phone_task where id = #{id}
+  </select>
+
+  <delete id="deleteById">
+    delete from cp_phone_task where id = #{id}
+  </delete>
+
+  <select id="selectFinishList" resultType="com.mall4j.cloud.biz.model.cp.CpPhoneTask">
+    select
+    <include refid="Vo_Column_List"/>
+    from cp_phone_task
+    where is_delete=0
+    and end_time &lt; #{endTime}
+  </select>
+
+</mapper>

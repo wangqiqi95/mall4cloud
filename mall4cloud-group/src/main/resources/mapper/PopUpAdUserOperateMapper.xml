@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.group.mapper.PopUpAdUserOperateMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.group.model.PopUpAdUserOperate">
+        <id column="pop_up_ad_user_operate_id" property="popUpAdUserOperateId" />
+        <result column="pop_up_ad_id" property="popUpAdId" />
+        <result column="vip_user_id" property="vipUserId" />
+        <result column="union_id" property="unionId" />
+        <result column="operate_state" property="operate" />
+        <result column="store_id" property="storeId" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        open_screen_ad_user_operate_id, open_screen_ad_id, vip_user_id, union_id, operate, create_time
+    </sql>
+
+    <insert id="insertBatch">
+        insert into t_pop_up_ad_user_operate
+        (pop_up_ad_id,vip_user_id,union_id,operate,store_id, entrance)
+        values
+        <foreach collection ="adIdList" item="item" index= "index" separator =",">
+            (#{item},#{userId},#{unionId},#{operate},#{storeId},#{entrance})
+        </foreach >
+    </insert>
+
+    <select id="getBrowsePeopleCountByAdId" resultType="java.lang.Integer">
+        SELECT
+            count( DISTINCT union_id )
+        FROM
+            t_pop_up_ad_user_operate
+        WHERE
+            (
+                        pop_up_ad_id = #{popUpAdId}
+                    AND operate = 1)
+    </select>
+
+
+    <select id="getClickPeopleCountByAdId" resultType="java.lang.Integer">
+        SELECT
+            count( DISTINCT union_id )
+        FROM
+            t_pop_up_ad_user_operate
+        WHERE
+            (
+                        pop_up_ad_id = #{popUpAdId}
+                    AND operate = 2)
+    </select>
+
+</mapper>

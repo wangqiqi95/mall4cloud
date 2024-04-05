@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.ResignAssignLogMapper">
+  <resultMap id="resignAssignLogMap" type="com.mall4j.cloud.biz.model.cp.ResignAssignLog">
+    <id column="ID" property="id" />
+    <result column="CREATE_BY" property="createBy"/>
+    <result column="CREATE_NAME" property="createName"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="ASSIGN_TYPE" property="assignType"/>
+    <result column="ADD_BY" property="addBy"/>
+    <result column="ADD_STAFF_NAME" property="addStaffName"/>
+    <result column="REPLACE_BY" property="replaceBy"/>
+    <result column="REPLACE_STAFF_NAME" property="replaceStaffName"/>
+    <result column="STORE_ID" property="storeId"/>
+    <result column="ASSIGN_TOTAL" property="assignTotal"/>
+    <result column="SUCCESS_TOTAL" property="successTotal"/>
+    <result column="MSG" property="msg"/>
+    <result column="PUSH_STATUS" property="pushStatus"/>
+    <result column="STATUS" property="status"/>
+    <result column="FLAG" property="flag"/>
+
+    <result column="ADD_BY_USER_ID" property="addByUserId"/>
+    <result column="REPLACE_BY_USER_ID" property="replaceByUserId"/>
+
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `ID`,CREATE_BY,`CREATE_NAME`,`CREATE_TIME`,`ASSIGN_TYPE`,`ADD_BY`,`REPLACE_BY`,`ASSIGN_TOTAL`,`SUCCESS_TOTAL`,`STATUS`,`FLAG`,REPLACE_STAFF_NAME,ADD_STAFF_NAME,STORE_ID,PUSH_STATUS,MSG,ADD_BY_USER_ID,REPLACE_BY_USER_ID
+  </sql>
+  <select id="list" resultMap="resignAssignLogMap">
+    select <include refid="Vo_Column_List"/> from CP_RESIGN_ASSIGN_LOG
+    where FLAG =0
+    <if test="et.createName != null and et.createName !='' "> and CREATE_NAME like CONCAT('%', #{et.createName},'%')   </if>
+    <if test="et.createTimeStart != null and et.createTimeStart !='' and et.createTimeEnd != null and et.createTimeEnd !=''">
+      and  CREATE_TIME between #{et.createTimeStart } and #{et.createTimeEnd}
+    </if>
+<!--    <if test="et.createTimeStart != null and et.createTimeStart !='' "> and  CREATE_TIME >=  STR_TO_DATE(#{et.createTimeStart },"%Y-%m-%d") </if>-->
+<!--    <if test="et.createTimeEnd != null and et.createTimeEnd !='' "> and CREATE_TIME <![CDATA[< ]]> STR_TO_DATE(#{et.createTimeEnd },"%Y-%m-%d")+1  </if>-->
+    <if test="et.assignType != null "> and ASSIGN_TYPE = #{et.assignType } </if>
+    <if test="et.storeIds != null "> and STORE_ID in
+      <foreach collection="et.storeIds" index="index" item="storeId" open="(" separator="," close=")"> #{storeId} </foreach>
+    </if>
+    order by ID desc
+  </select>
+  <select id="getById" resultMap="resignAssignLogMap">
+    select <include refid="Vo_Column_List"/> from CP_RESIGN_ASSIGN_LOG where ID = #{id}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="ID" >
+    insert into CP_RESIGN_ASSIGN_LOG (`CREATE_BY`,`CREATE_TIME`,`ASSIGN_TYPE`,`ADD_BY`,`REPLACE_BY`,`ASSIGN_TOTAL`,`SUCCESS_TOTAL`,`STATUS`,`FLAG`,CREATE_NAME,ADD_STAFF_NAME,REPLACE_STAFF_NAME,STORE_ID,PUSH_STATUS,MSG,ADD_BY_USER_ID,REPLACE_BY_USER_ID)
+    values (#{et.createBy},#{et.createTime},#{et.assignType},#{et.addBy},#{et.replaceBy},#{et.assignTotal},#{et.successTotal},#{et.status},#{et.flag},#{et.createName},#{et.addStaffName},#{et.replaceStaffName},#{et.storeId},
+            #{et.pushStatus},#{et.msg},#{et.addByUserId},#{et.replaceByUserId});
+  </insert>
+  <update id="update">
+    update CP_RESIGN_ASSIGN_LOG
+    <set>
+      <if test="resignAssignLog.createBy != null">
+        `CREATE_BY` = #{resignAssignLog.createBy},
+      </if>
+      <if test="resignAssignLog.createTime != null">
+        `CREATE_TIME` = #{resignAssignLog.createTime},
+      </if>
+      <if test="resignAssignLog.assignType != null">
+        `ASSIGN_TYPE` = #{resignAssignLog.assignType},
+      </if>
+      <if test="resignAssignLog.addBy != null">
+        `ADD_BY` = #{resignAssignLog.addBy},
+      </if>
+      <if test="resignAssignLog.replaceBy != null">
+        `REPLACE_BY` = #{resignAssignLog.replaceBy},
+      </if>
+      <if test="resignAssignLog.assignTotal != null">
+        `ASSIGN_TOTAL` = #{resignAssignLog.assignTotal},
+      </if>
+      <if test="resignAssignLog.successTotal != null">
+        `SUCCESS_TOTAL` = #{resignAssignLog.successTotal},
+      </if>
+      <if test="resignAssignLog.status != null">
+        `STATUS` = #{resignAssignLog.status},
+      </if>
+      <if test="resignAssignLog.flag != null">
+        `FLAG` = #{resignAssignLog.flag},
+      </if>
+      <if test="resignAssignLog.msg != null">
+        `MSG` = #{resignAssignLog.msg},
+      </if>
+      <if test="resignAssignLog.pushStatus != null">
+        `PUSH_STATUS` = #{resignAssignLog.pushStatus},
+      </if>
+      <if test="resignAssignLog.addByUserId != null">
+        `ADD_BY_USER_ID` = #{resignAssignLog.addByUserId},
+      </if>
+      <if test="resignAssignLog.replaceByUserId != null">
+        `REPLACE_BY_USER_ID` = #{resignAssignLog.replaceByUserId},
+      </if>
+    </set>
+    where ID = #{resignAssignLog.id}
+  </update>
+  <delete id="deleteById">
+    delete from CP_RESIGN_ASSIGN_LOG where ID = #{id}
+  </delete>
+  <!--查询同步维系 -->
+  <select id="sycnCustList" resultMap="resignAssignLogMap">
+    select <include refid="Vo_Column_List"/> from CP_RESIGN_ASSIGN_LOG
+    where FLAG =0
+      and STATUS = 0
+      and  PUSH_STATUS = #{pushStatus}
+    limit  0,100
+  </select>
+
+  <!-- 关闭可以关闭的分配日志-->
+  <update id="completePush">
+    update CP_RESIGN_ASSIGN_LOG SET PUSH_STATUS =1  where ID = #{id} and not exists(select 1 from cp_cust_group_assign_detail d where d.RESIGN_ID =#{id} and d.STATUS=0 )
+  </update>
+  <!-- 完成接替分配日志-->
+  <update id="completeReplace">
+    update CP_RESIGN_ASSIGN_LOG SET STATUS =1  where ID = #{id} and not exists(select 1 from cp_cust_group_assign_detail d where d.RESIGN_ID =#{id} and d.STATUS in (0,3) )
+  </update>
+  <!--更新分配日志的成功数-->
+  <update id="updateSuccess">
+    update CP_RESIGN_ASSIGN_LOG SET SUCCESS_TOTAL =(select count(1) from cp_cust_group_assign_detail D where D.RESIGN_ID =#{id} and D.STATUS=1 )  where ID = #{id}
+  </update>
+
+</mapper>

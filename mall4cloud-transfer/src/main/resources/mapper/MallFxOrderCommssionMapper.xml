@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.MallFxOrderCommssionMapper">
+  <resultMap id="mallFxOrderCommssionMap" type="com.mall4j.cloud.transfer.model.MallFxOrderCommssion">
+    <id column="Id" property="id" />
+    <result column="CopId" property="copid"/>
+    <result column="BrandId" property="brandid"/>
+    <result column="PopulationType" property="populationtype"/>
+    <result column="PopulationId" property="populationid"/>
+    <result column="PopulationPhone" property="populationphone"/>
+    <result column="OrderId" property="orderid"/>
+    <result column="OrderType" property="ordertype"/>
+    <result column="OrderSaveType" property="ordersavetype"/>
+    <result column="OrderCode" property="ordercode"/>
+    <result column="IsPayed" property="ispayed"/>
+    <result column="OrderPayTime" property="orderpaytime"/>
+    <result column="AddTime" property="addtime"/>
+    <result column="ServiceChannel" property="servicechannel"/>
+    <result column="CommissionStatus" property="commissionstatus"/>
+    <result column="RelationType" property="relationtype"/>
+    <result column="BuyerId" property="buyerid"/>
+    <result column="RecvMobile" property="recvmobile"/>
+    <result column="RecvConsignee" property="recvconsignee"/>
+    <result column="OcType" property="octype"/>
+    <result column="RefundId" property="refundid"/>
+    <result column="RefundNo" property="refundno"/>
+    <result column="ReturnId" property="returnid"/>
+    <result column="ReturnNo" property="returnno"/>
+    <result column="AddOcId" property="addocid"/>
+    <result column="InAccountTime" property="inaccounttime"/>
+    <result column="CreateDate" property="createdate"/>
+    <result column="LastModifiedDate" property="lastmodifieddate"/>
+    <result column="ProvideId" property="provideid"/>
+    <result column="FxShareId" property="fxshareid"/>
+    <result column="ShopId" property="shopid"/>
+    <result column="BuyMySelf" property="buymyself"/>
+    <result column="SourceOcId" property="sourceocid"/>
+    <result column="ParentFxId" property="parentfxid"/>
+    <result column="DataSource" property="datasource"/>
+    <result column="PromotionSource" property="promotionsource"/>
+    <result column="PSId" property="psid"/>
+    <result column="PSCode" property="pscode"/>
+    <result column="PSName" property="psname"/>
+    <result column="PromotionId" property="promotionid"/>
+    <result column="PromotionCode" property="promotioncode"/>
+    <result column="PromotionName" property="promotionname"/>
+    <result column="RtSuccess" property="rtsuccess"/>
+    <result column="RtAgree" property="rtagree"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `Id`,`CopId`,`BrandId`,`PopulationType`,`PopulationId`,`PopulationPhone`,`OrderId`,`OrderType`,`OrderSaveType`,`OrderCode`,`IsPayed`,`OrderPayTime`,`AddTime`,`ServiceChannel`,`CommissionStatus`,`RelationType`,`BuyerId`,`RecvMobile`,`RecvConsignee`,`OcType`,`RefundId`,`RefundNo`,`ReturnId`,`ReturnNo`,`AddOcId`,`InAccountTime`,`CreateDate`,`LastModifiedDate`,`ProvideId`,`FxShareId`,`ShopId`,`BuyMySelf`,`SourceOcId`,`ParentFxId`,`DataSource`,`PromotionSource`,`PSId`,`PSCode`,`PSName`,`PromotionId`,`PromotionCode`,`PromotionName`,`RtSuccess`,`RtAgree`
+  </sql>
+  <select id="list" resultMap="mallFxOrderCommssionMap">
+    select <include refid="Vo_Column_List"/> from mall_fx_order_commssion order by Id desc
+  </select>
+  <select id="getById" resultMap="mallFxOrderCommssionMap">
+    select <include refid="Vo_Column_List"/> from mall_fx_order_commssion where Id = #{id}
+  </select>
+  <insert id="save">
+    insert into mall_fx_order_commssion (`CopId`,`BrandId`,`PopulationType`,`PopulationId`,`PopulationPhone`,`OrderId`,`OrderType`,`OrderSaveType`,`OrderCode`,`IsPayed`,`OrderPayTime`,`AddTime`,`ServiceChannel`,`CommissionStatus`,`RelationType`,`BuyerId`,`RecvMobile`,`RecvConsignee`,`OcType`,`RefundId`,`RefundNo`,`ReturnId`,`ReturnNo`,`AddOcId`,`InAccountTime`,`CreateDate`,`LastModifiedDate`,`ProvideId`,`FxShareId`,`ShopId`,`BuyMySelf`,`SourceOcId`,`ParentFxId`,`DataSource`,`PromotionSource`,`PSId`,`PSCode`,`PSName`,`PromotionId`,`PromotionCode`,`PromotionName`,`RtSuccess`,`RtAgree`)
+    values (#{mallFxOrderCommssion.copid},#{mallFxOrderCommssion.brandid},#{mallFxOrderCommssion.populationtype},#{mallFxOrderCommssion.populationid},#{mallFxOrderCommssion.populationphone},#{mallFxOrderCommssion.orderid},#{mallFxOrderCommssion.ordertype},#{mallFxOrderCommssion.ordersavetype},#{mallFxOrderCommssion.ordercode},#{mallFxOrderCommssion.ispayed},#{mallFxOrderCommssion.orderpaytime},#{mallFxOrderCommssion.addtime},#{mallFxOrderCommssion.servicechannel},#{mallFxOrderCommssion.commissionstatus},#{mallFxOrderCommssion.relationtype},#{mallFxOrderCommssion.buyerid},#{mallFxOrderCommssion.recvmobile},#{mallFxOrderCommssion.recvconsignee},#{mallFxOrderCommssion.octype},#{mallFxOrderCommssion.refundid},#{mallFxOrderCommssion.refundno},#{mallFxOrderCommssion.returnid},#{mallFxOrderCommssion.returnno},#{mallFxOrderCommssion.addocid},#{mallFxOrderCommssion.inaccounttime},#{mallFxOrderCommssion.createdate},#{mallFxOrderCommssion.lastmodifieddate},#{mallFxOrderCommssion.provideid},#{mallFxOrderCommssion.fxshareid},#{mallFxOrderCommssion.shopid},#{mallFxOrderCommssion.buymyself},#{mallFxOrderCommssion.sourceocid},#{mallFxOrderCommssion.parentfxid},#{mallFxOrderCommssion.datasource},#{mallFxOrderCommssion.promotionsource},#{mallFxOrderCommssion.psid},#{mallFxOrderCommssion.pscode},#{mallFxOrderCommssion.psname},#{mallFxOrderCommssion.promotionid},#{mallFxOrderCommssion.promotioncode},#{mallFxOrderCommssion.promotionname},#{mallFxOrderCommssion.rtsuccess},#{mallFxOrderCommssion.rtagree});
+  </insert>
+  <update id="update">
+    update mall_fx_order_commssion
+    <set>
+      <if test="mallFxOrderCommssion.copid != null">
+        `CopId` = #{mallFxOrderCommssion.copid},
+      </if>
+      <if test="mallFxOrderCommssion.brandid != null">
+        `BrandId` = #{mallFxOrderCommssion.brandid},
+      </if>
+      <if test="mallFxOrderCommssion.populationtype != null">
+        `PopulationType` = #{mallFxOrderCommssion.populationtype},
+      </if>
+      <if test="mallFxOrderCommssion.populationid != null">
+        `PopulationId` = #{mallFxOrderCommssion.populationid},
+      </if>
+      <if test="mallFxOrderCommssion.populationphone != null">
+        `PopulationPhone` = #{mallFxOrderCommssion.populationphone},
+      </if>
+      <if test="mallFxOrderCommssion.orderid != null">
+        `OrderId` = #{mallFxOrderCommssion.orderid},
+      </if>
+      <if test="mallFxOrderCommssion.ordertype != null">
+        `OrderType` = #{mallFxOrderCommssion.ordertype},
+      </if>
+      <if test="mallFxOrderCommssion.ordersavetype != null">
+        `OrderSaveType` = #{mallFxOrderCommssion.ordersavetype},
+      </if>
+      <if test="mallFxOrderCommssion.ordercode != null">
+        `OrderCode` = #{mallFxOrderCommssion.ordercode},
+      </if>
+      <if test="mallFxOrderCommssion.ispayed != null">
+        `IsPayed` = #{mallFxOrderCommssion.ispayed},
+      </if>
+      <if test="mallFxOrderCommssion.orderpaytime != null">
+        `OrderPayTime` = #{mallFxOrderCommssion.orderpaytime},
+      </if>
+      <if test="mallFxOrderCommssion.addtime != null">
+        `AddTime` = #{mallFxOrderCommssion.addtime},
+      </if>
+      <if test="mallFxOrderCommssion.servicechannel != null">
+        `ServiceChannel` = #{mallFxOrderCommssion.servicechannel},
+      </if>
+      <if test="mallFxOrderCommssion.commissionstatus != null">
+        `CommissionStatus` = #{mallFxOrderCommssion.commissionstatus},
+      </if>
+      <if test="mallFxOrderCommssion.relationtype != null">
+        `RelationType` = #{mallFxOrderCommssion.relationtype},
+      </if>
+      <if test="mallFxOrderCommssion.buyerid != null">
+        `BuyerId` = #{mallFxOrderCommssion.buyerid},
+      </if>
+      <if test="mallFxOrderCommssion.recvmobile != null">
+        `RecvMobile` = #{mallFxOrderCommssion.recvmobile},
+      </if>
+      <if test="mallFxOrderCommssion.recvconsignee != null">
+        `RecvConsignee` = #{mallFxOrderCommssion.recvconsignee},
+      </if>
+      <if test="mallFxOrderCommssion.octype != null">
+        `OcType` = #{mallFxOrderCommssion.octype},
+      </if>
+      <if test="mallFxOrderCommssion.refundid != null">
+        `RefundId` = #{mallFxOrderCommssion.refundid},
+      </if>
+      <if test="mallFxOrderCommssion.refundno != null">
+        `RefundNo` = #{mallFxOrderCommssion.refundno},
+      </if>
+      <if test="mallFxOrderCommssion.returnid != null">
+        `ReturnId` = #{mallFxOrderCommssion.returnid},
+      </if>
+      <if test="mallFxOrderCommssion.returnno != null">
+        `ReturnNo` = #{mallFxOrderCommssion.returnno},
+      </if>
+      <if test="mallFxOrderCommssion.addocid != null">
+        `AddOcId` = #{mallFxOrderCommssion.addocid},
+      </if>
+      <if test="mallFxOrderCommssion.inaccounttime != null">
+        `InAccountTime` = #{mallFxOrderCommssion.inaccounttime},
+      </if>
+      <if test="mallFxOrderCommssion.createdate != null">
+        `CreateDate` = #{mallFxOrderCommssion.createdate},
+      </if>
+      <if test="mallFxOrderCommssion.lastmodifieddate != null">
+        `LastModifiedDate` = #{mallFxOrderCommssion.lastmodifieddate},
+      </if>
+      <if test="mallFxOrderCommssion.provideid != null">
+        `ProvideId` = #{mallFxOrderCommssion.provideid},
+      </if>
+      <if test="mallFxOrderCommssion.fxshareid != null">
+        `FxShareId` = #{mallFxOrderCommssion.fxshareid},
+      </if>
+      <if test="mallFxOrderCommssion.shopid != null">
+        `ShopId` = #{mallFxOrderCommssion.shopid},
+      </if>
+      <if test="mallFxOrderCommssion.buymyself != null">
+        `BuyMySelf` = #{mallFxOrderCommssion.buymyself},
+      </if>
+      <if test="mallFxOrderCommssion.sourceocid != null">
+        `SourceOcId` = #{mallFxOrderCommssion.sourceocid},
+      </if>
+      <if test="mallFxOrderCommssion.parentfxid != null">
+        `ParentFxId` = #{mallFxOrderCommssion.parentfxid},
+      </if>
+      <if test="mallFxOrderCommssion.datasource != null">
+        `DataSource` = #{mallFxOrderCommssion.datasource},
+      </if>
+      <if test="mallFxOrderCommssion.promotionsource != null">
+        `PromotionSource` = #{mallFxOrderCommssion.promotionsource},
+      </if>
+      <if test="mallFxOrderCommssion.psid != null">
+        `PSId` = #{mallFxOrderCommssion.psid},
+      </if>
+      <if test="mallFxOrderCommssion.pscode != null">
+        `PSCode` = #{mallFxOrderCommssion.pscode},
+      </if>
+      <if test="mallFxOrderCommssion.psname != null">
+        `PSName` = #{mallFxOrderCommssion.psname},
+      </if>
+      <if test="mallFxOrderCommssion.promotionid != null">
+        `PromotionId` = #{mallFxOrderCommssion.promotionid},
+      </if>
+      <if test="mallFxOrderCommssion.promotioncode != null">
+        `PromotionCode` = #{mallFxOrderCommssion.promotioncode},
+      </if>
+      <if test="mallFxOrderCommssion.promotionname != null">
+        `PromotionName` = #{mallFxOrderCommssion.promotionname},
+      </if>
+      <if test="mallFxOrderCommssion.rtsuccess != null">
+        `RtSuccess` = #{mallFxOrderCommssion.rtsuccess},
+      </if>
+      <if test="mallFxOrderCommssion.rtagree != null">
+        `RtAgree` = #{mallFxOrderCommssion.rtagree},
+      </if>
+    </set>
+    where Id = #{mallFxOrderCommssion.id}
+  </update>
+  <delete id="deleteById">
+    delete from mall_fx_order_commssion where Id = #{id}
+  </delete>
+
+</mapper>

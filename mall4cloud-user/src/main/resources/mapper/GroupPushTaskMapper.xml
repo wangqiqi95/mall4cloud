@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.user.mapper.GroupPushTaskMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.user.model.GroupPushTask">
+        <id column="group_push_task_id" property="groupPushTaskId" />
+        <result column="task_name" property="taskName" />
+        <result column="create_user_id" property="createUserId" />
+        <result column="operate_status" property="operateStatus" />
+        <result column="fail_param" property="failParam" />
+        <result column="create_time" property="createTime" />
+        <result column="update_user_id" property="updateUserId" />
+        <result column="update_time" property="updateTime" />
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="allow_select" property="allowSelect"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        group_push_task_id, task_name, is_all_shop, create_user_id, create_time, createStatus, createParam,allow_select
+    </sql>
+    <select id="selectGroupPushTaskPage" resultType="com.mall4j.cloud.user.vo.GroupPushTaskPageVO">
+        SELECT
+            DISTINCT
+            task.group_push_task_id,
+            task.create_user_id,
+            task.create_time,
+            task.task_name,
+            task.task_type,
+            task.task_mode,
+            task.operate_status,
+            task.allow_select
+        FROM
+            t_group_push_task task
+            <if test="param.staffName != null">
+            left join t_group_push_task_staff_relation sr on task.group_push_task_id = sr.group_push_task_id
+            </if>
+        <where>
+            task.task_mode = #{param.taskMode}
+            <if test="param.pushTaskName != null and param.pushTaskName != ''">
+                AND task.task_name like CONCAT('%',#{param.pushTaskName},'%')
+            </if>
+            <if test="param.staffName != null">
+                AND sr.staff_name like CONCAT('%',#{param.staffName},'%')
+            </if>
+            <if test="param.operateStatus != null">
+                AND task.operate_status = #{param.operateStatus}
+            </if>
+            <if test="param.taskType != null">
+                AND task.task_type = #{param.taskType}
+            </if>
+            AND task.delete_flag = 0
+        </where>
+        ORDER BY task.create_time desc
+    </select>
+
+</mapper>

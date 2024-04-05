@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.QuestionnaireMapper">
+  <resultMap id="questionnaireMap" type="com.mall4j.cloud.group.model.Questionnaire">
+    <id column="id" property="id" />
+    <result column="status" property="status"/>
+    <result column="name" property="name"/>
+    <result column="activity_begin_time" property="activityBeginTime"/>
+    <result column="activity_end_time" property="activityEndTime"/>
+    <result column="is_all_shop" property="isAllShop"/>
+    <result column="remarks" property="remarks"/>
+    <result column="un_in_white" property="unInWhite"/>
+    <result column="user_white_type" property="userWhiteType"/>
+    <result column="user_tag" property="userTag"/>
+    <result column="un_reg_tip" property="unRegTip"/>
+    <result column="gift_grant_tip" property="giftGrantTip"/>
+    <result column="submit_tip" property="submitTip"/>
+    <result column="poster_url" property="posterUrl"/>
+    <result column="poster_button_url" property="posterButtonUrl"/>
+    <result column="describe" property="describe"/>
+    <result column="begin_tip" property="beginTip"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="create_id" property="createId"/>
+    <result column="create_name" property="createName"/>
+    <result column="update_id" property="updateId"/>
+    <result column="update_name" property="updateName"/>
+    <result column="user_tag_name" property="userTagName"/>
+    <result column="background_url" property="backgroundUrl"/>
+    <result column="is_first_enabled" property="isFirstEnabled"/>
+    <result column="is_send_subscribe" property="isSendSubscribe"/>
+    <result column="title" property="title"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`status`,`name`,`activity_begin_time`,`activity_end_time`,`is_all_shop`,`remarks`,
+    `un_in_white`,`un_reg_tip`,`gift_grant_tip`,`begin_tip`,`create_time`,`update_time`,
+    `create_id`,`create_name`,`update_id`,`update_name`,user_white_type,user_tag,poster_url,poster_button_url,`describe`,
+        `submit_tip`, `user_tag_name`, `background_url`,`is_first_enabled`,`is_send_subscribe`,`title`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.group.vo.questionnaire.QuestionnaireDetailVO">
+    select <include refid="Vo_Column_List"/> from questionnaire q
+    where 1=1
+    <if test="status == 0">
+      and q.status = 0
+    </if>
+    <if test="status == 3">
+      and q.activity_begin_time &lt; now() and q.activity_end_time &gt; now() and q.status = 1
+    </if>
+    <if test="status == 2">
+      and q.activity_begin_time &gt; now() and q.status = 1
+    </if>
+
+    <if test="status == 4">
+      and q.activity_end_time &lt; now() and q.status = 1
+    </if>
+    <if test="name != null and name != ''" >
+      and q.name like CONCAT('%', #{name}, '%')
+    </if>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="questionnaireMap">
+    select <include refid="Vo_Column_List"/> from questionnaire where id = #{id}
+  </select>
+
+  <select id="getDetailById" resultMap="questionnaireMap">
+    select <include refid="Vo_Column_List"/> from questionnaire where id = #{id}
+  </select>
+
+  <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into questionnaire (`status`,`name`,`activity_begin_time`,`activity_end_time`,`is_all_shop`,
+                               `remarks`,`un_in_white`,`un_reg_tip`,`gift_grant_tip`,`begin_tip`,`create_id`,
+                               `create_name`,`update_id`,`update_name`,user_white_type,user_tag,poster_url,poster_button_url,`describe`,
+                               `submit_tip`, `user_tag_name`, `background_url`,`is_send_subscribe`, `title`)
+    values (#{questionnaire.status},#{questionnaire.name},#{questionnaire.activityBeginTime},#{questionnaire.activityEndTime},
+            #{questionnaire.isAllShop},#{questionnaire.remarks},#{questionnaire.unInWhite},
+            #{questionnaire.unRegTip},#{questionnaire.giftGrantTip},#{questionnaire.beginTip},#{questionnaire.createId},
+            #{questionnaire.createName},#{questionnaire.updateId},#{questionnaire.updateName},#{questionnaire.userWhiteType},#{questionnaire.userTag}
+             ,#{questionnaire.posterUrl},#{questionnaire.posterButtonUrl},#{questionnaire.describe}, #{questionnaire.submitTip}, #{questionnaire.userTagName},
+            #{questionnaire.backgroundUrl},#{questionnaire.isSendSubscribe},#{questionnaire.title});
+  </insert>
+  <update id="update">
+    update questionnaire
+    <set>
+      <if test="questionnaire.status != null">
+        `status` = #{questionnaire.status},
+      </if>
+      <if test="questionnaire.name != null">
+        `name` = #{questionnaire.name},
+      </if>
+      <if test="questionnaire.activityBeginTime != null">
+        `activity_begin_time` = #{questionnaire.activityBeginTime},
+      </if>
+      <if test="questionnaire.activityEndTime != null">
+        `activity_end_time` = #{questionnaire.activityEndTime},
+      </if>
+      <if test="questionnaire.isAllShop != null">
+        `is_all_shop` = #{questionnaire.isAllShop},
+      </if>
+      <if test="questionnaire.remarks != null">
+        `remarks` = #{questionnaire.remarks},
+      </if>
+      <if test="questionnaire.unInWhite != null">
+        `un_in_white` = #{questionnaire.unInWhite},
+      </if>
+      <if test="questionnaire.userWhiteType != null">
+        `user_white_type` = #{questionnaire.userWhiteType},
+      </if>
+      <if test="questionnaire.userTag != null">
+        `user_tag` = #{questionnaire.userTag},
+      </if>
+
+      <if test="questionnaire.posterUrl != null">
+        `poster_url` = #{questionnaire.posterUrl},
+      </if>
+      <if test="questionnaire.posterButtonUrl != null">
+        `poster_button_url` = #{questionnaire.posterButtonUrl},
+      </if>
+      <if test="questionnaire.describe != null">
+        `describe` = #{questionnaire.describe},
+      </if>
+
+      <if test="questionnaire.unRegTip != null">
+        `un_reg_tip` = #{questionnaire.unRegTip},
+      </if>
+      <if test="questionnaire.giftGrantTip != null">
+        `gift_grant_tip` = #{questionnaire.giftGrantTip},
+      </if>
+      <if test="questionnaire.beginTip != null">
+        `begin_tip` = #{questionnaire.beginTip},
+      </if>
+      <if test="questionnaire.createId != null">
+        `create_id` = #{questionnaire.createId},
+      </if>
+      <if test="questionnaire.createName != null">
+        `create_name` = #{questionnaire.createName},
+      </if>
+      <if test="questionnaire.updateId != null">
+        `update_id` = #{questionnaire.updateId},
+      </if>
+      <if test="questionnaire.updateName != null">
+        `update_name` = #{questionnaire.updateName},
+      </if>
+      <if test="questionnaire.submitTip != null">
+        `submit_tip` = #{questionnaire.submitTip},
+      </if>
+      <if test="questionnaire.userTagName != null">
+        `user_tag_name` = #{questionnaire.userTagName},
+      </if>
+      <if test="questionnaire.backgroundUrl != null">
+        `background_url` = #{questionnaire.backgroundUrl},
+      </if>
+      <if test="questionnaire.isFirstEnabled != null">
+        `is_first_enabled` = #{questionnaire.isFirstEnabled},
+      </if>
+      <if test="questionnaire.isSendSubscribe != null">
+        `is_send_subscribe` = #{questionnaire.isSendSubscribe},
+      </if>
+      <if test="questionnaire.title != null">
+        `title` = #{questionnaire.title}
+      </if>
+
+    </set>
+    where id = #{questionnaire.id}
+  </update>
+  <delete id="deleteById">
+    delete from questionnaire where id = #{id}
+  </delete>
+
+</mapper>

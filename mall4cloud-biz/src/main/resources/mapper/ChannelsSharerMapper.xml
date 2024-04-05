@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.channels.ChannelsSharerMapper">
+    <select id="queryList" parameterType="com.mall4j.cloud.biz.dto.channels.sharer.SharerPageListReqDto" resultType="com.mall4j.cloud.biz.model.channels.LiveStoreSharer">
+        select id,
+               staff_id,
+               staff_no,
+               `name`,
+               sharer_type,
+               bind_time,
+               unbind_time,
+               qrcode_img_create_time,
+               qrcode_img_expire_time,
+               error_msg,
+               bind_status
+        from channels_sharer
+        <where>
+            <if test="reqDto.name != null and reqDto.name!='' ">
+                 and `NAME` LIKE CONCAT(#{reqDto.name}, '%' )
+            </if>
+            <if test="reqDto.status != null">
+                <choose>
+                    <when test="reqDto.status == '0'.toString() ">
+                        and bind_status = 0
+                    </when>
+                    <when test="reqDto.status == '1'.toString() ">
+                        and qrcode_img is not null and bind_time is null and unbind_time is null  AND qrcode_img_expire_time > now() and  qrcode_img_create_time &lt; now()
+                        and bind_status = 1
+                    </when>
+                    <when test="reqDto.status == '2'.toString() ">
+                        and ((qrcode_img_expire_time &lt; now() and bind_time is null)
+                        or bind_status=2)
+                    </when>
+                    <when test="reqDto.status == '3'.toString() ">
+                        and bind_time is not null and unbind_time is null
+                    </when>
+                    <when test="reqDto.status == '4'.toString() ">
+                        and unbind_time is not null and bind_time is not null
+                    </when>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <select id="queryQrCodeImgList" parameterType="com.mall4j.cloud.biz.dto.channels.sharer.SharerQrCodeImgListReqDto" resultType="com.mall4j.cloud.biz.model.channels.LiveStoreSharer">
+        select * from channels_sharer
+        <where>
+            <if test="reqDto.name != null and reqDto.name!='' ">
+                and CONCAT( staff_no, NAME ) LIKE CONCAT( '%', #{reqDto.name}, '%' );
+            </if>
+            <if test="reqDto.status != null ">
+                <choose>
+                    <when test="reqDto.status == '0'.toString() ">
+                        and bind_status = 0
+                    </when>
+                    <when test="reqDto.status == '1'.toString()">
+                        and qrcode_img is not null and bind_time is null and unbind_time is null AND qrcode_img_expire_time > now() and  qrcode_img_create_time &lt; now()
+                        and bind_status = 1
+                    </when>
+                    <when test="reqDto.status == '2'.toString()">
+                        and ((qrcode_img_expire_time &lt; now() and qrcode_img is not null and bind_time is null)
+                        or bind_status=2)
+                    </when>
+                    <when test="reqDto.status == '3'.toString()">
+                        and bind_time is not null and unbind_time is null
+                    </when>
+                    <when test="reqDto.status == '4'.toString()">
+                        and unbind_time is not null and bind_time is not null
+                    </when>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <select id="getByOpenIds" resultType="com.mall4j.cloud.api.biz.dto.ChannelsSharerDto">
+        select
+            openid,name
+        from channels_sharer
+        where openid in
+        <foreach collection="openids" item="openid" open="(" close=")" separator=",">
+            #{openid}
+        </foreach>
+    </select>
+
+    <insert id="batchInsert" parameterType="com.mall4j.cloud.biz.model.channels.LiveStoreSharer">
+        insert into channels_sharer
+            (`create_time`,
+            `update_time`,
+            `create_person`,
+            `update_person`,
+            `name`,
+            `sharer_type`,
+            `qrcode_img_create_time`,
+            `qrcode_img_expire_time`,
+            `staff_id`,
+            `staff_no`,
+            `qrcode_img`,
+            `qrcode_img_base64`,
+            `openid`,
+            `unionid`,
+            `nickname`,
+            `bind_time`,
+            `unbind_time`,
+            `error_msg`,
+             `bind_status`
+             )
+            values
+                <foreach collection="reqDtos" item="item" separator=",">
+                    (now(),
+                    now(),
+                    #{item.createPerson},
+                    #{item.updatePerson},
+                    #{item.name},
+                    #{item.sharerType},
+                    #{item.qrcodeImgCreateTime},
+                    #{item.qrcodeImgExpireTime},
+                    #{item.staffId},
+                    #{item.staffNo},
+                    #{item.qrcodeImg},
+                    #{item.qrcodeImgBase64},
+                    #{item.openid},
+                    #{item.unionid},
+                    #{item.nickname},
+                    #{item.bindTime},
+                    #{item.unbindTime},
+                    #{item.errorMsg},
+                    #{item.bindStatus}
+                    )
+
+                </foreach>
+    </insert>
+</mapper>

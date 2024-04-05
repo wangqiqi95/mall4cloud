@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.MallSalesOrderMapper">
+  <resultMap id="mallSalesOrderMap" type="com.mall4j.cloud.transfer.model.MallSalesOrder">
+    <id column="Id" property="id" />
+    <result column="CopId" property="copid"/>
+    <result column="BrandId" property="brandid"/>
+    <result column="OrderType" property="ordertype"/>
+    <result column="OutChannelType" property="outchanneltype"/>
+    <result column="Code" property="code"/>
+    <result column="OutChannelCode" property="outchannelcode"/>
+    <result column="EWareHouseId" property="ewarehouseid"/>
+    <result column="EShopId" property="eshopid"/>
+    <result column="TotalQty" property="totalqty"/>
+    <result column="TotalMoney" property="totalmoney"/>
+    <result column="DiscountMoney" property="discountmoney"/>
+    <result column="CouponUseAmount" property="couponuseamount"/>
+    <result column="DiscountAmount" property="discountamount"/>
+    <result column="ReturnQuantity" property="returnquantity"/>
+    <result column="ReturnMoney" property="returnmoney"/>
+    <result column="OrderTime" property="ordertime"/>
+    <result column="IsPayed" property="ispayed"/>
+    <result column="PayTime" property="paytime"/>
+    <result column="PrepayId" property="prepayid"/>
+    <result column="PayStatus" property="paystatus"/>
+    <result column="PayErrMsg" property="payerrmsg"/>
+    <result column="TradeNo" property="tradeno"/>
+    <result column="PayAmount" property="payamount"/>
+    <result column="RefundState" property="refundstate"/>
+    <result column="ExpressFee" property="expressfee"/>
+    <result column="ExpressFeeType" property="expressfeetype"/>
+    <result column="ExpressCost" property="expresscost"/>
+    <result column="ExpressCode" property="expresscode"/>
+    <result column="ExpressOrgId" property="expressorgid"/>
+    <result column="DelivType" property="delivtype"/>
+    <result column="ShipType" property="shiptype"/>
+    <result column="SelfFetchShopId" property="selffetchshopid"/>
+    <result column="IsCod" property="iscod"/>
+    <result column="CodServiceFee" property="codservicefee"/>
+    <result column="WxOpenAppId" property="wxopenappid"/>
+    <result column="BuyerId" property="buyerid"/>
+    <result column="BuyerGradeId" property="buyergradeid"/>
+    <result column="BuyerCode" property="buyercode"/>
+    <result column="BuyerEmail" property="buyeremail"/>
+    <result column="BuyerNick" property="buyernick"/>
+    <result column="BuyerRemark" property="buyerremark"/>
+    <result column="ServiceChannel" property="servicechannel"/>
+    <result column="ServiceSaler" property="servicesaler"/>
+    <result column="SalerTotalRewardFee" property="salertotalrewardfee"/>
+    <result column="IsSalerSaleCompute" property="issalersalecompute"/>
+    <result column="LinkTotalRewardFee" property="linktotalrewardfee"/>
+    <result column="LinkShareUser" property="linkshareuser"/>
+    <result column="SalerRewardFeeType" property="salerrewardfeetype"/>
+    <result column="ShareSaler" property="sharesaler"/>
+    <result column="RecvConsignee" property="recvconsignee"/>
+    <result column="RecvMobile" property="recvmobile"/>
+    <result column="RecvTel" property="recvtel"/>
+    <result column="RecvAddress" property="recvaddress"/>
+    <result column="RecvProvince" property="recvprovince"/>
+    <result column="RecvCity" property="recvcity"/>
+    <result column="RecvCounty" property="recvcounty"/>
+    <result column="IsSettle" property="issettle"/>
+    <result column="IsFeeCount" property="isfeecount"/>
+    <result column="OrderStatus" property="orderstatus"/>
+    <result column="HasSendTime" property="hassendtime"/>
+    <result column="FinishTime" property="finishtime"/>
+    <result column="OrderRemark" property="orderremark"/>
+    <result column="DataOrigin" property="dataorigin"/>
+    <result column="OutSysId" property="outsysid"/>
+    <result column="FromSystem" property="fromsystem"/>
+    <result column="SellerId" property="sellerid"/>
+    <result column="SellerSysShopId" property="sellersysshopid"/>
+    <result column="RewardFee" property="rewardfee"/>
+    <result column="UseBonus" property="usebonus"/>
+    <result column="UseCouponId" property="usecouponid"/>
+    <result column="BonusActId" property="bonusactid"/>
+    <result column="PackActId" property="packactid"/>
+    <result column="CalcBonus" property="calcbonus"/>
+    <result column="IsCommented" property="iscommented"/>
+    <result column="IsImportCrm" property="isimportcrm"/>
+    <result column="ImportTimestamp" property="importtimestamp"/>
+    <result column="CreateDate" property="createdate"/>
+    <result column="LastModifiedDate" property="lastmodifieddate"/>
+    <result column="IsSplit" property="issplit"/>
+    <result column="RateStatus" property="ratestatus"/>
+    <result column="CanalSyncVersion" property="canalsyncversion"/>
+    <result column="ExpressBonus" property="expressbonus"/>
+    <result column="ApplyInvoiceRecord" property="applyinvoicerecord"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `Id`,`CopId`,`BrandId`,`OrderType`,`OutChannelType`,`Code`,`OutChannelCode`,`EWareHouseId`,`EShopId`,`TotalQty`,`TotalMoney`,`DiscountMoney`,`CouponUseAmount`,`DiscountAmount`,`ReturnQuantity`,`ReturnMoney`,`OrderTime`,`IsPayed`,`PayTime`,`PrepayId`,`PayStatus`,`PayErrMsg`,`TradeNo`,`PayAmount`,`RefundState`,`ExpressFee`,`ExpressFeeType`,`ExpressCost`,`ExpressCode`,`ExpressOrgId`,`DelivType`,`ShipType`,`SelfFetchShopId`,`IsCod`,`CodServiceFee`,`WxOpenAppId`,`BuyerId`,`BuyerGradeId`,`BuyerCode`,`BuyerEmail`,`BuyerNick`,`BuyerRemark`,`ServiceChannel`,`ServiceSaler`,`SalerTotalRewardFee`,`IsSalerSaleCompute`,`LinkTotalRewardFee`,`LinkShareUser`,`SalerRewardFeeType`,`ShareSaler`,`RecvConsignee`,`RecvMobile`,`RecvTel`,`RecvAddress`,`RecvProvince`,`RecvCity`,`RecvCounty`,`IsSettle`,`IsFeeCount`,`OrderStatus`,`HasSendTime`,`FinishTime`,`OrderRemark`,`DataOrigin`,`OutSysId`,`FromSystem`,`SellerId`,`SellerSysShopId`,`RewardFee`,`UseBonus`,`UseCouponId`,`BonusActId`,`PackActId`,`CalcBonus`,`IsCommented`,`IsImportCrm`,`ImportTimestamp`,`CreateDate`,`LastModifiedDate`,`IsSplit`,`RateStatus`,`CanalSyncVersion`,`ExpressBonus`,`ApplyInvoiceRecord`
+  </sql>
+  <select id="list" resultMap="mallSalesOrderMap">
+    select <include refid="Vo_Column_List"/> from mall_sales_order_add
+    where OrderStatus in (0,1,2,4,8,16,20,1100)
+    order by Id desc
+  </select>
+  <select id="getById" resultMap="mallSalesOrderMap">
+    select <include refid="Vo_Column_List"/> from mall_sales_order where Id = #{id}
+  </select>
+  <insert id="save">
+    insert into mall_sales_order (`CopId`,`BrandId`,`OrderType`,`OutChannelType`,`Code`,`OutChannelCode`,`EWareHouseId`,`EShopId`,`TotalQty`,`TotalMoney`,`DiscountMoney`,`CouponUseAmount`,`DiscountAmount`,`ReturnQuantity`,`ReturnMoney`,`OrderTime`,`IsPayed`,`PayTime`,`PrepayId`,`PayStatus`,`PayErrMsg`,`TradeNo`,`PayAmount`,`RefundState`,`ExpressFee`,`ExpressFeeType`,`ExpressCost`,`ExpressCode`,`ExpressOrgId`,`DelivType`,`ShipType`,`SelfFetchShopId`,`IsCod`,`CodServiceFee`,`WxOpenAppId`,`BuyerId`,`BuyerGradeId`,`BuyerCode`,`BuyerEmail`,`BuyerNick`,`BuyerRemark`,`ServiceChannel`,`ServiceSaler`,`SalerTotalRewardFee`,`IsSalerSaleCompute`,`LinkTotalRewardFee`,`LinkShareUser`,`SalerRewardFeeType`,`ShareSaler`,`RecvConsignee`,`RecvMobile`,`RecvTel`,`RecvAddress`,`RecvProvince`,`RecvCity`,`RecvCounty`,`IsSettle`,`IsFeeCount`,`OrderStatus`,`HasSendTime`,`FinishTime`,`OrderRemark`,`DataOrigin`,`OutSysId`,`FromSystem`,`SellerId`,`SellerSysShopId`,`RewardFee`,`UseBonus`,`UseCouponId`,`BonusActId`,`PackActId`,`CalcBonus`,`IsCommented`,`IsImportCrm`,`ImportTimestamp`,`CreateDate`,`LastModifiedDate`,`IsSplit`,`RateStatus`,`CanalSyncVersion`,`ExpressBonus`,`ApplyInvoiceRecord`)
+    values (#{mallSalesOrder.copid},#{mallSalesOrder.brandid},#{mallSalesOrder.ordertype},#{mallSalesOrder.outchanneltype},#{mallSalesOrder.code},#{mallSalesOrder.outchannelcode},#{mallSalesOrder.ewarehouseid},#{mallSalesOrder.eshopid},#{mallSalesOrder.totalqty},#{mallSalesOrder.totalmoney},#{mallSalesOrder.discountmoney},#{mallSalesOrder.couponuseamount},#{mallSalesOrder.discountamount},#{mallSalesOrder.returnquantity},#{mallSalesOrder.returnmoney},#{mallSalesOrder.ordertime},#{mallSalesOrder.ispayed},#{mallSalesOrder.paytime},#{mallSalesOrder.prepayid},#{mallSalesOrder.paystatus},#{mallSalesOrder.payerrmsg},#{mallSalesOrder.tradeno},#{mallSalesOrder.payamount},#{mallSalesOrder.refundstate},#{mallSalesOrder.expressfee},#{mallSalesOrder.expressfeetype},#{mallSalesOrder.expresscost},#{mallSalesOrder.expresscode},#{mallSalesOrder.expressorgid},#{mallSalesOrder.delivtype},#{mallSalesOrder.shiptype},#{mallSalesOrder.selffetchshopid},#{mallSalesOrder.iscod},#{mallSalesOrder.codservicefee},#{mallSalesOrder.wxopenappid},#{mallSalesOrder.buyerid},#{mallSalesOrder.buyergradeid},#{mallSalesOrder.buyercode},#{mallSalesOrder.buyeremail},#{mallSalesOrder.buyernick},#{mallSalesOrder.buyerremark},#{mallSalesOrder.servicechannel},#{mallSalesOrder.servicesaler},#{mallSalesOrder.salertotalrewardfee},#{mallSalesOrder.issalersalecompute},#{mallSalesOrder.linktotalrewardfee},#{mallSalesOrder.linkshareuser},#{mallSalesOrder.salerrewardfeetype},#{mallSalesOrder.sharesaler},#{mallSalesOrder.recvconsignee},#{mallSalesOrder.recvmobile},#{mallSalesOrder.recvtel},#{mallSalesOrder.recvaddress},#{mallSalesOrder.recvprovince},#{mallSalesOrder.recvcity},#{mallSalesOrder.recvcounty},#{mallSalesOrder.issettle},#{mallSalesOrder.isfeecount},#{mallSalesOrder.orderstatus},#{mallSalesOrder.hassendtime},#{mallSalesOrder.finishtime},#{mallSalesOrder.orderremark},#{mallSalesOrder.dataorigin},#{mallSalesOrder.outsysid},#{mallSalesOrder.fromsystem},#{mallSalesOrder.sellerid},#{mallSalesOrder.sellersysshopid},#{mallSalesOrder.rewardfee},#{mallSalesOrder.usebonus},#{mallSalesOrder.usecouponid},#{mallSalesOrder.bonusactid},#{mallSalesOrder.packactid},#{mallSalesOrder.calcbonus},#{mallSalesOrder.iscommented},#{mallSalesOrder.isimportcrm},#{mallSalesOrder.importtimestamp},#{mallSalesOrder.createdate},#{mallSalesOrder.lastmodifieddate},#{mallSalesOrder.issplit},#{mallSalesOrder.ratestatus},#{mallSalesOrder.canalsyncversion},#{mallSalesOrder.expressbonus},#{mallSalesOrder.applyinvoicerecord});
+  </insert>
+  <update id="update">
+    update mall_sales_order
+    <set>
+      <if test="mallSalesOrder.copid != null">
+        `CopId` = #{mallSalesOrder.copid},
+      </if>
+      <if test="mallSalesOrder.brandid != null">
+        `BrandId` = #{mallSalesOrder.brandid},
+      </if>
+      <if test="mallSalesOrder.ordertype != null">
+        `OrderType` = #{mallSalesOrder.ordertype},
+      </if>
+      <if test="mallSalesOrder.outchanneltype != null">
+        `OutChannelType` = #{mallSalesOrder.outchanneltype},
+      </if>
+      <if test="mallSalesOrder.code != null">
+        `Code` = #{mallSalesOrder.code},
+      </if>
+      <if test="mallSalesOrder.outchannelcode != null">
+        `OutChannelCode` = #{mallSalesOrder.outchannelcode},
+      </if>
+      <if test="mallSalesOrder.ewarehouseid != null">
+        `EWareHouseId` = #{mallSalesOrder.ewarehouseid},
+      </if>
+      <if test="mallSalesOrder.eshopid != null">
+        `EShopId` = #{mallSalesOrder.eshopid},
+      </if>
+      <if test="mallSalesOrder.totalqty != null">
+        `TotalQty` = #{mallSalesOrder.totalqty},
+      </if>
+      <if test="mallSalesOrder.totalmoney != null">
+        `TotalMoney` = #{mallSalesOrder.totalmoney},
+      </if>
+      <if test="mallSalesOrder.discountmoney != null">
+        `DiscountMoney` = #{mallSalesOrder.discountmoney},
+      </if>
+      <if test="mallSalesOrder.couponuseamount != null">
+        `CouponUseAmount` = #{mallSalesOrder.couponuseamount},
+      </if>
+      <if test="mallSalesOrder.discountamount != null">
+        `DiscountAmount` = #{mallSalesOrder.discountamount},
+      </if>
+      <if test="mallSalesOrder.returnquantity != null">
+        `ReturnQuantity` = #{mallSalesOrder.returnquantity},
+      </if>
+      <if test="mallSalesOrder.returnmoney != null">
+        `ReturnMoney` = #{mallSalesOrder.returnmoney},
+      </if>
+      <if test="mallSalesOrder.ordertime != null">
+        `OrderTime` = #{mallSalesOrder.ordertime},
+      </if>
+      <if test="mallSalesOrder.ispayed != null">
+        `IsPayed` = #{mallSalesOrder.ispayed},
+      </if>
+      <if test="mallSalesOrder.paytime != null">
+        `PayTime` = #{mallSalesOrder.paytime},
+      </if>
+      <if test="mallSalesOrder.prepayid != null">
+        `PrepayId` = #{mallSalesOrder.prepayid},
+      </if>
+      <if test="mallSalesOrder.paystatus != null">
+        `PayStatus` = #{mallSalesOrder.paystatus},
+      </if>
+      <if test="mallSalesOrder.payerrmsg != null">
+        `PayErrMsg` = #{mallSalesOrder.payerrmsg},
+      </if>
+      <if test="mallSalesOrder.tradeno != null">
+        `TradeNo` = #{mallSalesOrder.tradeno},
+      </if>
+      <if test="mallSalesOrder.payamount != null">
+        `PayAmount` = #{mallSalesOrder.payamount},
+      </if>
+      <if test="mallSalesOrder.refundstate != null">
+        `RefundState` = #{mallSalesOrder.refundstate},
+      </if>
+      <if test="mallSalesOrder.expressfee != null">
+        `ExpressFee` = #{mallSalesOrder.expressfee},
+      </if>
+      <if test="mallSalesOrder.expressfeetype != null">
+        `ExpressFeeType` = #{mallSalesOrder.expressfeetype},
+      </if>
+      <if test="mallSalesOrder.expresscost != null">
+        `ExpressCost` = #{mallSalesOrder.expresscost},
+      </if>
+      <if test="mallSalesOrder.expresscode != null">
+        `ExpressCode` = #{mallSalesOrder.expresscode},
+      </if>
+      <if test="mallSalesOrder.expressorgid != null">
+        `ExpressOrgId` = #{mallSalesOrder.expressorgid},
+      </if>
+      <if test="mallSalesOrder.delivtype != null">
+        `DelivType` = #{mallSalesOrder.delivtype},
+      </if>
+      <if test="mallSalesOrder.shiptype != null">
+        `ShipType` = #{mallSalesOrder.shiptype},
+      </if>
+      <if test="mallSalesOrder.selffetchshopid != null">
+        `SelfFetchShopId` = #{mallSalesOrder.selffetchshopid},
+      </if>
+      <if test="mallSalesOrder.iscod != null">
+        `IsCod` = #{mallSalesOrder.iscod},
+      </if>
+      <if test="mallSalesOrder.codservicefee != null">
+        `CodServiceFee` = #{mallSalesOrder.codservicefee},
+      </if>
+      <if test="mallSalesOrder.wxopenappid != null">
+        `WxOpenAppId` = #{mallSalesOrder.wxopenappid},
+      </if>
+      <if test="mallSalesOrder.buyerid != null">
+        `BuyerId` = #{mallSalesOrder.buyerid},
+      </if>
+      <if test="mallSalesOrder.buyergradeid != null">
+        `BuyerGradeId` = #{mallSalesOrder.buyergradeid},
+      </if>
+      <if test="mallSalesOrder.buyercode != null">
+        `BuyerCode` = #{mallSalesOrder.buyercode},
+      </if>
+      <if test="mallSalesOrder.buyeremail != null">
+        `BuyerEmail` = #{mallSalesOrder.buyeremail},
+      </if>
+      <if test="mallSalesOrder.buyernick != null">
+        `BuyerNick` = #{mallSalesOrder.buyernick},
+      </if>
+      <if test="mallSalesOrder.buyerremark != null">
+        `BuyerRemark` = #{mallSalesOrder.buyerremark},
+      </if>
+      <if test="mallSalesOrder.servicechannel != null">
+        `ServiceChannel` = #{mallSalesOrder.servicechannel},
+      </if>
+      <if test="mallSalesOrder.servicesaler != null">
+        `ServiceSaler` = #{mallSalesOrder.servicesaler},
+      </if>
+      <if test="mallSalesOrder.salertotalrewardfee != null">
+        `SalerTotalRewardFee` = #{mallSalesOrder.salertotalrewardfee},
+      </if>
+      <if test="mallSalesOrder.issalersalecompute != null">
+        `IsSalerSaleCompute` = #{mallSalesOrder.issalersalecompute},
+      </if>
+      <if test="mallSalesOrder.linktotalrewardfee != null">
+        `LinkTotalRewardFee` = #{mallSalesOrder.linktotalrewardfee},
+      </if>
+      <if test="mallSalesOrder.linkshareuser != null">
+        `LinkShareUser` = #{mallSalesOrder.linkshareuser},
+      </if>
+      <if test="mallSalesOrder.salerrewardfeetype != null">
+        `SalerRewardFeeType` = #{mallSalesOrder.salerrewardfeetype},
+      </if>
+      <if test="mallSalesOrder.sharesaler != null">
+        `ShareSaler` = #{mallSalesOrder.sharesaler},
+      </if>
+      <if test="mallSalesOrder.recvconsignee != null">
+        `RecvConsignee` = #{mallSalesOrder.recvconsignee},
+      </if>
+      <if test="mallSalesOrder.recvmobile != null">
+        `RecvMobile` = #{mallSalesOrder.recvmobile},
+      </if>
+      <if test="mallSalesOrder.recvtel != null">
+        `RecvTel` = #{mallSalesOrder.recvtel},
+      </if>
+      <if test="mallSalesOrder.recvaddress != null">
+        `RecvAddress` = #{mallSalesOrder.recvaddress},
+      </if>
+      <if test="mallSalesOrder.recvprovince != null">
+        `RecvProvince` = #{mallSalesOrder.recvprovince},
+      </if>
+      <if test="mallSalesOrder.recvcity != null">
+        `RecvCity` = #{mallSalesOrder.recvcity},
+      </if>
+      <if test="mallSalesOrder.recvcounty != null">
+        `RecvCounty` = #{mallSalesOrder.recvcounty},
+      </if>
+      <if test="mallSalesOrder.issettle != null">
+        `IsSettle` = #{mallSalesOrder.issettle},
+      </if>
+      <if test="mallSalesOrder.isfeecount != null">
+        `IsFeeCount` = #{mallSalesOrder.isfeecount},
+      </if>
+      <if test="mallSalesOrder.orderstatus != null">
+        `OrderStatus` = #{mallSalesOrder.orderstatus},
+      </if>
+      <if test="mallSalesOrder.hassendtime != null">
+        `HasSendTime` = #{mallSalesOrder.hassendtime},
+      </if>
+      <if test="mallSalesOrder.finishtime != null">
+        `FinishTime` = #{mallSalesOrder.finishtime},
+      </if>
+      <if test="mallSalesOrder.orderremark != null">
+        `OrderRemark` = #{mallSalesOrder.orderremark},
+      </if>
+      <if test="mallSalesOrder.dataorigin != null">
+        `DataOrigin` = #{mallSalesOrder.dataorigin},
+      </if>
+      <if test="mallSalesOrder.outsysid != null">
+        `OutSysId` = #{mallSalesOrder.outsysid},
+      </if>
+      <if test="mallSalesOrder.fromsystem != null">
+        `FromSystem` = #{mallSalesOrder.fromsystem},
+      </if>
+      <if test="mallSalesOrder.sellerid != null">
+        `SellerId` = #{mallSalesOrder.sellerid},
+      </if>
+      <if test="mallSalesOrder.sellersysshopid != null">
+        `SellerSysShopId` = #{mallSalesOrder.sellersysshopid},
+      </if>
+      <if test="mallSalesOrder.rewardfee != null">
+        `RewardFee` = #{mallSalesOrder.rewardfee},
+      </if>
+      <if test="mallSalesOrder.usebonus != null">
+        `UseBonus` = #{mallSalesOrder.usebonus},
+      </if>
+      <if test="mallSalesOrder.usecouponid != null">
+        `UseCouponId` = #{mallSalesOrder.usecouponid},
+      </if>
+      <if test="mallSalesOrder.bonusactid != null">
+        `BonusActId` = #{mallSalesOrder.bonusactid},
+      </if>
+      <if test="mallSalesOrder.packactid != null">
+        `PackActId` = #{mallSalesOrder.packactid},
+      </if>
+      <if test="mallSalesOrder.calcbonus != null">
+        `CalcBonus` = #{mallSalesOrder.calcbonus},
+      </if>
+      <if test="mallSalesOrder.iscommented != null">
+        `IsCommented` = #{mallSalesOrder.iscommented},
+      </if>
+      <if test="mallSalesOrder.isimportcrm != null">
+        `IsImportCrm` = #{mallSalesOrder.isimportcrm},
+      </if>
+      <if test="mallSalesOrder.importtimestamp != null">
+        `ImportTimestamp` = #{mallSalesOrder.importtimestamp},
+      </if>
+      <if test="mallSalesOrder.createdate != null">
+        `CreateDate` = #{mallSalesOrder.createdate},
+      </if>
+      <if test="mallSalesOrder.lastmodifieddate != null">
+        `LastModifiedDate` = #{mallSalesOrder.lastmodifieddate},
+      </if>
+      <if test="mallSalesOrder.issplit != null">
+        `IsSplit` = #{mallSalesOrder.issplit},
+      </if>
+      <if test="mallSalesOrder.ratestatus != null">
+        `RateStatus` = #{mallSalesOrder.ratestatus},
+      </if>
+      <if test="mallSalesOrder.canalsyncversion != null">
+        `CanalSyncVersion` = #{mallSalesOrder.canalsyncversion},
+      </if>
+      <if test="mallSalesOrder.expressbonus != null">
+        `ExpressBonus` = #{mallSalesOrder.expressbonus},
+      </if>
+      <if test="mallSalesOrder.applyinvoicerecord != null">
+        `ApplyInvoiceRecord` = #{mallSalesOrder.applyinvoicerecord},
+      </if>
+    </set>
+    where Id = #{mallSalesOrder.id}
+  </update>
+  <delete id="deleteById">
+    delete from mall_sales_order where Id = #{id}
+  </delete>
+
+</mapper>

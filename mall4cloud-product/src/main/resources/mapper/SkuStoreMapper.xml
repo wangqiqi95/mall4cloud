@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.product.mapper.SkuStoreMapper">
+
+    <delete id="deleteBySpuIdAndStoreId">
+        update
+            sku_store
+        set status= -1,
+            update_time=now()
+        where spu_id = #{spuId}
+          and store_id = #{storeId}
+    </delete>
+
+    <!--    <delete id="deleteBySpuIdAndStoreId">-->
+    <!--        delete-->
+    <!--        from sku_store-->
+    <!--        where spu_id = #{spuId}-->
+    <!--          and store_id = #{storeId}-->
+    <!--    </delete>-->
+
+    <!--    <delete id="deleteBySpuIdAndSkuId">-->
+    <!--        delete from sku_store where sku_id in-->
+    <!--        <foreach collection="skuIds" item="skuId" open="(" close=")" separator=",">-->
+    <!--            #{skuId}-->
+    <!--        </foreach>-->
+    <!--    </delete>-->
+
+    <update id="deleteBySpuIdAndSkuId">
+        <foreach collection="skuIds" separator=";" item="skuId">
+            update sku_store set status=-1,update_time=now() where sku_id = #{skuId}
+        </foreach>
+    </update>
+
+
+    <update id="updateSkuStoreBatchByPriceCode">
+        <foreach collection="skus" separator=";" item="sku">
+            update sku_store
+            <set>
+                `update_time` = now(),
+                <if test="sku.priceFee != null">
+                    `price_fee` = #{sku.priceFee},
+                </if>
+                <if test="sku.priceFee != null">
+                    `ph_price` = #{sku.priceFee},
+                </if>
+            </set>
+            where price_code = #{sku.priceCode} and store_id = #{sku.storeId}
+        </foreach>
+    </update>
+
+    <update id="updateSkuBatch">
+        <foreach collection="skus" separator=";" item="sku">
+            update sku_store
+            <set>
+                <if test="sku.priceFee != null">
+                    `price_fee` = #{sku.priceFee},
+                </if>
+            </set>
+            where sku_id = #{sku.skuId} and store_id = #{storeId}
+        </foreach>
+
+    </update>
+
+    <select id="getSkuStoresByStoreId" resultType="com.mall4j.cloud.product.model.SkuStore">
+        SELECT sks.*,
+               sku.intscode
+        FROM sku_store sks
+                 LEFT JOIN sku ON sks.sku_id = sku.sku_id
+            AND sku.`status` !=- 1
+        WHERE
+            sks.`status` = 1
+          AND sks.store_id = #{storeId}
+    </select>
+
+    <select id="getElSkuStoresByStoreId" resultType="com.mall4j.cloud.product.model.SkuStore">
+        SELECT
+            sku.`sku_id`,
+            sku.`spu_id`,
+            sku.`img_url`,
+            CASE
+                WHEN ss.price_fee IS NULL THEN
+                    sku.price_fee ELSE ss.price_fee
+                END AS price_fee,
+            CASE
+                WHEN ss.activity_price IS NULL THEN
+                    sku.market_price_fee ELSE ss.activity_price
+                END AS activity_price,
+            CASE
+                WHEN ss.market_price_fee IS NULL THEN
+                    sku.market_price_fee ELSE ss.market_price_fee
+                END AS market_price_fee,
+            sku.score_fee,
+            sku.party_code,
+            sku.model_id,
+            sku.price_code,
+            sku.sku_code,
+            sku.intscode,
+            sku.forcode,
+            sku.`name`,
+            ss.store_id,
+            spu.name as spu_name,
+            spu.spu_code as spu_code,
+            spu.style_code as spu_style_code
+        FROM
+            sku
+                LEFT JOIN `sku_store` ss ON ss.sku_id = sku.sku_id AND ss.store_id = #{storeId} AND ss.status = 1
+                JOIN `el_price_prod` elp on sku.spu_id=elp.spu_id
+                LEFT JOIN spu on sku.spu_id=spu.spu_id
+        WHERE
+            sku.status = 1
+    </select>
+
+    <update id="addStockByOrder">
+        <foreach collection="skuWithStocks" item="skuWithStock" separator=";">
+            update sku_store
+            set `stock` = `stock` + #{skuWithStock.count}
+            where sku_id = #{skuWithStock.skuId} and store_id = #{storeId}
+        </foreach>
+    </update>
+
+
+    <select id="getChannelPirceSkuStores" resultType="com.mall4j.cloud.product.model.SkuStore">
+        SELECT
+            ss.spu_id,
+            ss.sku_id,
+            ss.price_code,
+            ss.sku_code,
+            ss.sku_store_id,
+            ss.price_fee,
+            ss.market_price_fee,
+            ss.stock,
+            ss.store_id
+        FROM
+            sku_store ss
+                join sku on sku.sku_id=ss.sku_id and sku.`status`=1
+        WHERE
+            ss.status = 1  and ss.store_id!=1
+            AND ss.stock &gt; 0
+            AND ss.price_fee &gt; 0
+            AND ss.price_fee &lt;= ss.market_price_fee
+            AND ss.spu_id=#{spuId}
+          <if test="priceCode!=null and priceCode!=''">
+              AND ss.price_code=#{priceCode}
+          </if>
+
+    </select>
+
+    <select id="getCancelChannelPriceSkuStores" resultType="com.mall4j.cloud.product.model.SkuStore">
+        SELECT
+            sst.*,
+            spu.spu_code
+        FROM
+            sku_store sst
+                join sku on sku.sku_id=sst.sku_id
+                join spu on sku.spu_id=spu.spu_id
+        WHERE
+            sst.channel_price > 0 and sst.store_id=1
+          and (ISNULL(spu.channel_name) or spu.channel_name!=#{channelName})
+        GROUP BY sst.sku_code
+    </select>
+
+    <select id="getPriceFeeErrorSkus" resultType="com.mall4j.cloud.product.vo.SkuVo">
+        select * from (
+        SELECT
+        ss.sku_id,
+        ss.spu_id,
+        ss.price_fee,
+        ss.market_price_fee,
+        ss.past_market_price_fee,
+        ss.activity_price,
+        ( ss.market_price_fee * #{discount} ) as discount_price,
+        ss.sku_code,
+        ss.price_code,
+        ss.store_id,
+        spu.spu_code
+        from sku_store ss
+        join sku on sku.sku_id=ss.sku_id and sku.`status`=1
+        join spu on spu.spu_id=ss.spu_id and spu.`status`=1
+        WHERE
+        ss.status =1
+        and ss.store_id=#{storeId}
+        <!--<if test="pageAdapter!=null">
+            LIMIT #{pageAdapter.begin} , #{pageAdapter.size}
+        </if>-->
+        )temp
+        where temp.price_fee &lt;  temp.discount_price
+    </select>
+
+
+    <select id="batchSkuCodeStatus" resultType="com.mall4j.cloud.product.vo.BatchSkuStoreVO">
+        SELECT
+        *
+        FROM
+        (
+        SELECT DISTINCT
+        ( ss.sku_store_id ) AS skuStoreId,
+        ss.sku_id,
+        ss.`status`,
+        ss.sku_code,
+        ss.store_id,
+        sku.`status` as sku_status
+        FROM
+        sku_store ss
+        LEFT JOIN sku ON ss.sku_id = sku.sku_id
+        AND sku.`status` = 1
+        WHERE
+        sku.price_code = #{priceCode}
+        ORDER BY
+        ss.update_time DESC
+        ) temp
+        GROUP BY
+        temp.sku_code,
+        temp.store_id
+    </select>
+
+    <select id="batchSkuPriceCode" resultType="com.mall4j.cloud.product.vo.BatchSkuStorePriceCodeVO">
+        SELECT
+        *
+        FROM
+        sku_price_code_temp
+        where status=1
+    </select>
+
+    <update id="batchSkuPriceCodeTempStatus">
+        update sku_price_code_temp set status=2 where price_code = #{priceCode}
+    </update>
+
+</mapper>
+

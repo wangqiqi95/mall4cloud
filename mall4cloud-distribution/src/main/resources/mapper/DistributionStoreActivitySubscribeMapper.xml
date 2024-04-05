@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionStoreActivitySubscribeMapper">
+  <resultMap id="distributionStoreActivitySubscribeMap" type="com.mall4j.cloud.distribution.model.DistributionStoreActivitySubscribe">
+    <id column="id" property="id" />
+    <result column="org_id" property="orgId"/>
+    <result column="user_id" property="userId"/>
+    <result column="is_subscribe" property="isSubscribe"/>
+    <result column="province_code" property="provinceCode"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`org_id`,`user_id`,`is_subscribe`,`province_code`,`create_time`,`update_time`
+  </sql>
+  <select id="getByUserId" resultMap="distributionStoreActivitySubscribeMap">
+    select <include refid="Vo_Column_List"/> from distribution_store_activity_subscribe where user_id = #{userId}
+  </select>
+  <insert id="save">
+    insert into distribution_store_activity_subscribe (`org_id`,`user_id`,`is_subscribe`,`province_code`)
+    values (#{distributionStoreActivitySubscribe.orgId},#{distributionStoreActivitySubscribe.userId},#{distributionStoreActivitySubscribe.isSubscribe},#{distributionStoreActivitySubscribe.provinceCode});
+  </insert>
+  <update id="cancelSubscribe">
+    update distribution_store_activity_subscribe set is_subscribe = 0 where user_id = #{userId}
+  </update>
+
+</mapper>

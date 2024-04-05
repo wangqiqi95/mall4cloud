@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.BrandLangMapper">
+  <resultMap id="brandLangMap" type="com.mall4j.cloud.product.model.BrandLang">
+    <id column="brand_id" property="brandId" />
+    <result column="lang" property="lang"/>
+    <result column="name" property="name"/>
+    <result column="desc" property="desc"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `brand_id`,`lang`,`name`,`desc`
+  </sql>
+  <select id="list" resultMap="brandLangMap">
+    select <include refid="Vo_Column_List"/> from brand_lang order by brand_id desc
+  </select>
+  <select id="getByBrandId" resultMap="brandLangMap">
+    select <include refid="Vo_Column_List"/> from brand_lang where brand_id = #{brandId}
+  </select>
+  <insert id="save">
+    insert into brand_lang (`lang`,`name`,`desc`)
+    values (#{brandLang.lang},#{brandLang.name},#{brandLang.desc});
+  </insert>
+  <update id="update">
+    update brand_lang
+    <set>
+      <if test="brandLang.lang != null">
+        `lang` = #{brandLang.lang},
+      </if>
+      <if test="brandLang.name != null">
+        `name` = #{brandLang.name},
+      </if>
+      <if test="brandLang.desc != null">
+        `desc` = #{brandLang.desc},
+      </if>
+    </set>
+    where brand_id = #{brandLang.brandId}
+  </update>
+  <delete id="deleteById">
+    delete from brand_lang where brand_id = #{brandId}
+  </delete>
+  <delete id="deleteBatchByBrandIds">
+    delete from brand_lang where brand_id in
+    <foreach collection="brandIdList" item="brandId" open="(" close=")" separator=",">
+      #{brandId}
+    </foreach>
+  </delete>
+
+  <insert id="batchSave">
+    insert into brand_lang (`brand_id`,`lang`,`name`,`desc`)
+    values
+    <foreach collection="brandLangList" item="brandLang" separator=",">
+       (#{brandLang.brandId},#{brandLang.lang},#{brandLang.name},#{brandLang.desc})
+    </foreach>
+  </insert>
+  <insert id="insertBatch">
+    insert into brand_lang (`brand_id`,`lang`,`name`,`desc`)
+    values
+    <foreach collection="brandList" item="brandLang" separator=",">
+      (#{brandLang.brandId},#{lang},#{brandLang.name},#{brandLang.desc})
+    </foreach>
+  </insert>
+
+  <update id="batchUpdate">
+    <foreach collection="brandLangList" item="brandLang">
+      update brand_lang set `name` = #{brandLang.name}, `desc` = #{brandLang.desc}
+      where brand_id = #{brandLang.brandId} and lang = #{brandLang.lang};
+    </foreach>
+  </update>
+
+  <select id="langIdsByBrandId" resultType="java.lang.Integer">
+    select lang from brand_lang where brand_id = #{brandId}
+  </select>
+
+  <delete id="batchDelete">
+    delete from brand_lang where brand_id = #{brandId} and lang in
+    <foreach collection="langIds" item="lang" open="(" close=")" separator=",">
+      #{lang}
+    </foreach>
+  </delete>
+
+  <select id="listByBrandNames" resultMap="brandLangMap">
+    select bl.brand_id,bl.lang, bl.name from brand_lang bl
+    join brand_shop bs on bs.brand_id = bl.brand_id
+    where bs.shop_id = #{shopId} and name in
+    <foreach collection="brandNames" item="brandName" open="(" close=")" separator=",">
+      #{brandName}
+    </foreach>
+  </select>
+</mapper>

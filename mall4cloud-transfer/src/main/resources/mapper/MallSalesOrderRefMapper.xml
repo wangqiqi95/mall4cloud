@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.MallSalesOrderRefMapper">
+  <resultMap id="mallSalesOrderRefMap" type="com.mall4j.cloud.transfer.model.MallSalesOrderRef">
+    <id column="Id" property="id" />
+    <result column="CopId" property="copid"/>
+    <result column="BrandId" property="brandid"/>
+    <result column="EWareHouseId" property="ewarehouseid"/>
+    <result column="SelfFetchShopId" property="selffetchshopid"/>
+    <result column="BuyerId" property="buyerid"/>
+    <result column="OrderId" property="orderid"/>
+    <result column="OrderCode" property="ordercode"/>
+    <result column="RefundCode" property="refundcode"/>
+    <result column="ExchangeOriginalOrderCode" property="exchangeoriginalordercode"/>
+    <result column="ReturnId" property="returnid"/>
+    <result column="OrderTime" property="ordertime"/>
+    <result column="RefundTime" property="refundtime"/>
+    <result column="FinishTime" property="finishtime"/>
+    <result column="RefundMoney" property="refundmoney"/>
+    <result column="AmountMenory" property="amountmenory"/>
+    <result column="GiftCardRefundStatus" property="giftcardrefundstatus"/>
+    <result column="GiftCardAmountMenory" property="giftcardamountmenory"/>
+    <result column="RefundBonus" property="refundbonus"/>
+    <result column="RefundReason" property="refundreason"/>
+    <result column="RefundStatus" property="refundstatus"/>
+    <result column="ProcessStatus" property="processstatus"/>
+    <result column="RefundCancellationType" property="refundcancellationtype"/>
+    <result column="WxRefundStatus" property="wxrefundstatus"/>
+    <result column="WxRefundMsg" property="wxrefundmsg"/>
+    <result column="MallRefundWay" property="mallrefundway"/>
+    <result column="MallDepositRefundWay" property="malldepositrefundway"/>
+    <result column="MallFinalRefundWay" property="mallfinalrefundway"/>
+    <result column="TradeNo" property="tradeno"/>
+    <result column="FinalTradeNo" property="finaltradeno"/>
+    <result column="FinalWxRefundStatus" property="finalwxrefundstatus"/>
+    <result column="FinalWxRefundMsg" property="finalwxrefundmsg"/>
+    <result column="IsCustomerServiceRemark" property="iscustomerserviceremark"/>
+    <result column="RefundRemark" property="refundremark"/>
+    <result column="AutoRefund" property="autorefund"/>
+    <result column="CreateUser" property="createuser"/>
+    <result column="CreateDate" property="createdate"/>
+    <result column="LastModifiedUser" property="lastmodifieduser"/>
+    <result column="LastModifiedDate" property="lastmodifieddate"/>
+    <result column="RefundType" property="refundtype"/>
+    <result column="ShipState" property="shipstate"/>
+    <result column="ConfirmRefundMoney" property="confirmrefundmoney"/>
+    <result column="ConfirmRefundMoneyRemark" property="confirmrefundmoneyremark"/>
+    <result column="OldRefundBonus" property="oldrefundbonus"/>
+    <result column="RefundExpressFeeByMoney" property="refundexpressfeebymoney"/>
+    <result column="RefundExpressFeeByBonus" property="refundexpressfeebybonus"/>
+    <result column="ComRefundMoney" property="comrefundmoney"/>
+    <result column="ComRefundBonus" property="comrefundbonus"/>
+    <result column="FxHandler" property="fxhandler"/>
+    <result column="IsSysRefApproved" property="issysrefapproved"/>
+    <result column="IsOpenRefundReject" property="isopenrefundreject"/>
+    <result column="IsImportCrm" property="isimportcrm"/>
+    <result column="FlagType" property="flagtype"/>
+    <result column="IsSingleRefund" property="issinglerefund"/>
+    <result column="MchId" property="mchid"/>
+    <result column="IsNotCalcBonus" property="isnotcalcbonus"/>
+    <result column="AutoAgreeApplyDate" property="autoagreeapplydate"/>
+    <result column="CanalSyncVersion" property="canalsyncversion"/>
+    <result column="UseIntegral" property="useintegral"/>
+    <result column="OldUseIntegral" property="olduseintegral"/>
+    <result column="UseIntegralType" property="useintegraltype"/>
+    <result column="ExpressFeeUseIntegral" property="expressfeeuseintegral"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `Id`,`CopId`,`BrandId`,`EWareHouseId`,`SelfFetchShopId`,`BuyerId`,`OrderId`,`OrderCode`,`RefundCode`,`ExchangeOriginalOrderCode`,`ReturnId`,`OrderTime`,`RefundTime`,`FinishTime`,`RefundMoney`,`AmountMenory`,`GiftCardRefundStatus`,`GiftCardAmountMenory`,`RefundBonus`,`RefundReason`,`RefundStatus`,`ProcessStatus`,`RefundCancellationType`,`WxRefundStatus`,`WxRefundMsg`,`MallRefundWay`,`MallDepositRefundWay`,`MallFinalRefundWay`,`TradeNo`,`FinalTradeNo`,`FinalWxRefundStatus`,`FinalWxRefundMsg`,`IsCustomerServiceRemark`,`RefundRemark`,`AutoRefund`,`CreateUser`,`CreateDate`,`LastModifiedUser`,`LastModifiedDate`,`RefundType`,`ShipState`,`ConfirmRefundMoney`,`ConfirmRefundMoneyRemark`,`OldRefundBonus`,`RefundExpressFeeByMoney`,`RefundExpressFeeByBonus`,`ComRefundMoney`,`ComRefundBonus`,`FxHandler`,`IsSysRefApproved`,`IsOpenRefundReject`,`IsImportCrm`,`FlagType`,`IsSingleRefund`,`MchId`,`IsNotCalcBonus`,`AutoAgreeApplyDate`,`CanalSyncVersion`,`UseIntegral`,`OldUseIntegral`,`UseIntegralType`,`ExpressFeeUseIntegral`
+  </sql>
+  <select id="list" resultMap="mallSalesOrderRefMap">
+    select <include refid="Vo_Column_List"/> from mall_sales_order_ref_add where RefundStatus in (0)
+    order by Id desc
+  </select>
+  <select id="getById" resultMap="mallSalesOrderRefMap">
+    select <include refid="Vo_Column_List"/> from mall_sales_order_ref where Id = #{id}
+  </select>
+  <insert id="save">
+    insert into mall_sales_order_ref (`CopId`,`BrandId`,`EWareHouseId`,`SelfFetchShopId`,`BuyerId`,`OrderId`,`OrderCode`,`RefundCode`,`ExchangeOriginalOrderCode`,`ReturnId`,`OrderTime`,`RefundTime`,`FinishTime`,`RefundMoney`,`AmountMenory`,`GiftCardRefundStatus`,`GiftCardAmountMenory`,`RefundBonus`,`RefundReason`,`RefundStatus`,`ProcessStatus`,`RefundCancellationType`,`WxRefundStatus`,`WxRefundMsg`,`MallRefundWay`,`MallDepositRefundWay`,`MallFinalRefundWay`,`TradeNo`,`FinalTradeNo`,`FinalWxRefundStatus`,`FinalWxRefundMsg`,`IsCustomerServiceRemark`,`RefundRemark`,`AutoRefund`,`CreateUser`,`CreateDate`,`LastModifiedUser`,`LastModifiedDate`,`RefundType`,`ShipState`,`ConfirmRefundMoney`,`ConfirmRefundMoneyRemark`,`OldRefundBonus`,`RefundExpressFeeByMoney`,`RefundExpressFeeByBonus`,`ComRefundMoney`,`ComRefundBonus`,`FxHandler`,`IsSysRefApproved`,`IsOpenRefundReject`,`IsImportCrm`,`FlagType`,`IsSingleRefund`,`MchId`,`IsNotCalcBonus`,`AutoAgreeApplyDate`,`CanalSyncVersion`,`UseIntegral`,`OldUseIntegral`,`UseIntegralType`,`ExpressFeeUseIntegral`)
+    values (#{mallSalesOrderRef.copid},#{mallSalesOrderRef.brandid},#{mallSalesOrderRef.ewarehouseid},#{mallSalesOrderRef.selffetchshopid},#{mallSalesOrderRef.buyerid},#{mallSalesOrderRef.orderid},#{mallSalesOrderRef.ordercode},#{mallSalesOrderRef.refundcode},#{mallSalesOrderRef.exchangeoriginalordercode},#{mallSalesOrderRef.returnid},#{mallSalesOrderRef.ordertime},#{mallSalesOrderRef.refundtime},#{mallSalesOrderRef.finishtime},#{mallSalesOrderRef.refundmoney},#{mallSalesOrderRef.amountmenory},#{mallSalesOrderRef.giftcardrefundstatus},#{mallSalesOrderRef.giftcardamountmenory},#{mallSalesOrderRef.refundbonus},#{mallSalesOrderRef.refundreason},#{mallSalesOrderRef.refundstatus},#{mallSalesOrderRef.processstatus},#{mallSalesOrderRef.refundcancellationtype},#{mallSalesOrderRef.wxrefundstatus},#{mallSalesOrderRef.wxrefundmsg},#{mallSalesOrderRef.mallrefundway},#{mallSalesOrderRef.malldepositrefundway},#{mallSalesOrderRef.mallfinalrefundway},#{mallSalesOrderRef.tradeno},#{mallSalesOrderRef.finaltradeno},#{mallSalesOrderRef.finalwxrefundstatus},#{mallSalesOrderRef.finalwxrefundmsg},#{mallSalesOrderRef.iscustomerserviceremark},#{mallSalesOrderRef.refundremark},#{mallSalesOrderRef.autorefund},#{mallSalesOrderRef.createuser},#{mallSalesOrderRef.createdate},#{mallSalesOrderRef.lastmodifieduser},#{mallSalesOrderRef.lastmodifieddate},#{mallSalesOrderRef.refundtype},#{mallSalesOrderRef.shipstate},#{mallSalesOrderRef.confirmrefundmoney},#{mallSalesOrderRef.confirmrefundmoneyremark},#{mallSalesOrderRef.oldrefundbonus},#{mallSalesOrderRef.refundexpressfeebymoney},#{mallSalesOrderRef.refundexpressfeebybonus},#{mallSalesOrderRef.comrefundmoney},#{mallSalesOrderRef.comrefundbonus},#{mallSalesOrderRef.fxhandler},#{mallSalesOrderRef.issysrefapproved},#{mallSalesOrderRef.isopenrefundreject},#{mallSalesOrderRef.isimportcrm},#{mallSalesOrderRef.flagtype},#{mallSalesOrderRef.issinglerefund},#{mallSalesOrderRef.mchid},#{mallSalesOrderRef.isnotcalcbonus},#{mallSalesOrderRef.autoagreeapplydate},#{mallSalesOrderRef.canalsyncversion},#{mallSalesOrderRef.useintegral},#{mallSalesOrderRef.olduseintegral},#{mallSalesOrderRef.useintegraltype},#{mallSalesOrderRef.expressfeeuseintegral});
+  </insert>
+  <update id="update">
+    update mall_sales_order_ref
+    <set>
+      <if test="mallSalesOrderRef.copid != null">
+        `CopId` = #{mallSalesOrderRef.copid},
+      </if>
+      <if test="mallSalesOrderRef.brandid != null">
+        `BrandId` = #{mallSalesOrderRef.brandid},
+      </if>
+      <if test="mallSalesOrderRef.ewarehouseid != null">
+        `EWareHouseId` = #{mallSalesOrderRef.ewarehouseid},
+      </if>
+      <if test="mallSalesOrderRef.selffetchshopid != null">
+        `SelfFetchShopId` = #{mallSalesOrderRef.selffetchshopid},
+      </if>
+      <if test="mallSalesOrderRef.buyerid != null">
+        `BuyerId` = #{mallSalesOrderRef.buyerid},
+      </if>
+      <if test="mallSalesOrderRef.orderid != null">
+        `OrderId` = #{mallSalesOrderRef.orderid},
+      </if>
+      <if test="mallSalesOrderRef.ordercode != null">
+        `OrderCode` = #{mallSalesOrderRef.ordercode},
+      </if>
+      <if test="mallSalesOrderRef.refundcode != null">
+        `RefundCode` = #{mallSalesOrderRef.refundcode},
+      </if>
+      <if test="mallSalesOrderRef.exchangeoriginalordercode != null">
+        `ExchangeOriginalOrderCode` = #{mallSalesOrderRef.exchangeoriginalordercode},
+      </if>
+      <if test="mallSalesOrderRef.returnid != null">
+        `ReturnId` = #{mallSalesOrderRef.returnid},
+      </if>
+      <if test="mallSalesOrderRef.ordertime != null">
+        `OrderTime` = #{mallSalesOrderRef.ordertime},
+      </if>
+      <if test="mallSalesOrderRef.refundtime != null">
+        `RefundTime` = #{mallSalesOrderRef.refundtime},
+      </if>
+      <if test="mallSalesOrderRef.finishtime != null">
+        `FinishTime` = #{mallSalesOrderRef.finishtime},
+      </if>
+      <if test="mallSalesOrderRef.refundmoney != null">
+        `RefundMoney` = #{mallSalesOrderRef.refundmoney},
+      </if>
+      <if test="mallSalesOrderRef.amountmenory != null">
+        `AmountMenory` = #{mallSalesOrderRef.amountmenory},
+      </if>
+      <if test="mallSalesOrderRef.giftcardrefundstatus != null">
+        `GiftCardRefundStatus` = #{mallSalesOrderRef.giftcardrefundstatus},
+      </if>
+      <if test="mallSalesOrderRef.giftcardamountmenory != null">
+        `GiftCardAmountMenory` = #{mallSalesOrderRef.giftcardamountmenory},
+      </if>
+      <if test="mallSalesOrderRef.refundbonus != null">
+        `RefundBonus` = #{mallSalesOrderRef.refundbonus},
+      </if>
+      <if test="mallSalesOrderRef.refundreason != null">
+        `RefundReason` = #{mallSalesOrderRef.refundreason},
+      </if>
+      <if test="mallSalesOrderRef.refundstatus != null">
+        `RefundStatus` = #{mallSalesOrderRef.refundstatus},
+      </if>
+      <if test="mallSalesOrderRef.processstatus != null">
+        `ProcessStatus` = #{mallSalesOrderRef.processstatus},
+      </if>
+      <if test="mallSalesOrderRef.refundcancellationtype != null">
+        `RefundCancellationType` = #{mallSalesOrderRef.refundcancellationtype},
+      </if>
+      <if test="mallSalesOrderRef.wxrefundstatus != null">
+        `WxRefundStatus` = #{mallSalesOrderRef.wxrefundstatus},
+      </if>
+      <if test="mallSalesOrderRef.wxrefundmsg != null">
+        `WxRefundMsg` = #{mallSalesOrderRef.wxrefundmsg},
+      </if>
+      <if test="mallSalesOrderRef.mallrefundway != null">
+        `MallRefundWay` = #{mallSalesOrderRef.mallrefundway},
+      </if>
+      <if test="mallSalesOrderRef.malldepositrefundway != null">
+        `MallDepositRefundWay` = #{mallSalesOrderRef.malldepositrefundway},
+      </if>
+      <if test="mallSalesOrderRef.mallfinalrefundway != null">
+        `MallFinalRefundWay` = #{mallSalesOrderRef.mallfinalrefundway},
+      </if>
+      <if test="mallSalesOrderRef.tradeno != null">
+        `TradeNo` = #{mallSalesOrderRef.tradeno},
+      </if>
+      <if test="mallSalesOrderRef.finaltradeno != null">
+        `FinalTradeNo` = #{mallSalesOrderRef.finaltradeno},
+      </if>
+      <if test="mallSalesOrderRef.finalwxrefundstatus != null">
+        `FinalWxRefundStatus` = #{mallSalesOrderRef.finalwxrefundstatus},
+      </if>
+      <if test="mallSalesOrderRef.finalwxrefundmsg != null">
+        `FinalWxRefundMsg` = #{mallSalesOrderRef.finalwxrefundmsg},
+      </if>
+      <if test="mallSalesOrderRef.iscustomerserviceremark != null">
+        `IsCustomerServiceRemark` = #{mallSalesOrderRef.iscustomerserviceremark},
+      </if>
+      <if test="mallSalesOrderRef.refundremark != null">
+        `RefundRemark` = #{mallSalesOrderRef.refundremark},
+      </if>
+      <if test="mallSalesOrderRef.autorefund != null">
+        `AutoRefund` = #{mallSalesOrderRef.autorefund},
+      </if>
+      <if test="mallSalesOrderRef.createuser != null">
+        `CreateUser` = #{mallSalesOrderRef.createuser},
+      </if>
+      <if test="mallSalesOrderRef.createdate != null">
+        `CreateDate` = #{mallSalesOrderRef.createdate},
+      </if>
+      <if test="mallSalesOrderRef.lastmodifieduser != null">
+        `LastModifiedUser` = #{mallSalesOrderRef.lastmodifieduser},
+      </if>
+      <if test="mallSalesOrderRef.lastmodifieddate != null">
+        `LastModifiedDate` = #{mallSalesOrderRef.lastmodifieddate},
+      </if>
+      <if test="mallSalesOrderRef.refundtype != null">
+        `RefundType` = #{mallSalesOrderRef.refundtype},
+      </if>
+      <if test="mallSalesOrderRef.shipstate != null">
+        `ShipState` = #{mallSalesOrderRef.shipstate},
+      </if>
+      <if test="mallSalesOrderRef.confirmrefundmoney != null">
+        `ConfirmRefundMoney` = #{mallSalesOrderRef.confirmrefundmoney},
+      </if>
+      <if test="mallSalesOrderRef.confirmrefundmoneyremark != null">
+        `ConfirmRefundMoneyRemark` = #{mallSalesOrderRef.confirmrefundmoneyremark},
+      </if>
+      <if test="mallSalesOrderRef.oldrefundbonus != null">
+        `OldRefundBonus` = #{mallSalesOrderRef.oldrefundbonus},
+      </if>
+      <if test="mallSalesOrderRef.refundexpressfeebymoney != null">
+        `RefundExpressFeeByMoney` = #{mallSalesOrderRef.refundexpressfeebymoney},
+      </if>
+      <if test="mallSalesOrderRef.refundexpressfeebybonus != null">
+        `RefundExpressFeeByBonus` = #{mallSalesOrderRef.refundexpressfeebybonus},
+      </if>
+      <if test="mallSalesOrderRef.comrefundmoney != null">
+        `ComRefundMoney` = #{mallSalesOrderRef.comrefundmoney},
+      </if>
+      <if test="mallSalesOrderRef.comrefundbonus != null">
+        `ComRefundBonus` = #{mallSalesOrderRef.comrefundbonus},
+      </if>
+      <if test="mallSalesOrderRef.fxhandler != null">
+        `FxHandler` = #{mallSalesOrderRef.fxhandler},
+      </if>
+      <if test="mallSalesOrderRef.issysrefapproved != null">
+        `IsSysRefApproved` = #{mallSalesOrderRef.issysrefapproved},
+      </if>
+      <if test="mallSalesOrderRef.isopenrefundreject != null">
+        `IsOpenRefundReject` = #{mallSalesOrderRef.isopenrefundreject},
+      </if>
+      <if test="mallSalesOrderRef.isimportcrm != null">
+        `IsImportCrm` = #{mallSalesOrderRef.isimportcrm},
+      </if>
+      <if test="mallSalesOrderRef.flagtype != null">
+        `FlagType` = #{mallSalesOrderRef.flagtype},
+      </if>
+      <if test="mallSalesOrderRef.issinglerefund != null">
+        `IsSingleRefund` = #{mallSalesOrderRef.issinglerefund},
+      </if>
+      <if test="mallSalesOrderRef.mchid != null">
+        `MchId` = #{mallSalesOrderRef.mchid},
+      </if>
+      <if test="mallSalesOrderRef.isnotcalcbonus != null">
+        `IsNotCalcBonus` = #{mallSalesOrderRef.isnotcalcbonus},
+      </if>
+      <if test="mallSalesOrderRef.autoagreeapplydate != null">
+        `AutoAgreeApplyDate` = #{mallSalesOrderRef.autoagreeapplydate},
+      </if>
+      <if test="mallSalesOrderRef.canalsyncversion != null">
+        `CanalSyncVersion` = #{mallSalesOrderRef.canalsyncversion},
+      </if>
+      <if test="mallSalesOrderRef.useintegral != null">
+        `UseIntegral` = #{mallSalesOrderRef.useintegral},
+      </if>
+      <if test="mallSalesOrderRef.olduseintegral != null">
+        `OldUseIntegral` = #{mallSalesOrderRef.olduseintegral},
+      </if>
+      <if test="mallSalesOrderRef.useintegraltype != null">
+        `UseIntegralType` = #{mallSalesOrderRef.useintegraltype},
+      </if>
+      <if test="mallSalesOrderRef.expressfeeuseintegral != null">
+        `ExpressFeeUseIntegral` = #{mallSalesOrderRef.expressfeeuseintegral},
+      </if>
+    </set>
+    where Id = #{mallSalesOrderRef.id}
+  </update>
+  <delete id="deleteById">
+    delete from mall_sales_order_ref where Id = #{id}
+  </delete>
+
+</mapper>

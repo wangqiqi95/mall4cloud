@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinWebAppMapper">
+    <resultMap id="weixinWebAppMap" type="com.mall4j.cloud.biz.model.WeixinWebApp">
+        <id column="id" property="id"/>
+        <result column="app_id" property="appId"/>
+        <result column="name" property="name"/>
+        <result column="app_img_url" property="appImgUrl"/>
+        <result column="application_type" property="applicationType"/>
+        <result column="qrcodeimg" property="qrcodeimg"/>
+        <result column="weixin_number" property="weixinNumber"/>
+        <result column="weixin_app_id" property="weixinAppId"/>
+        <result column="weixin_app_secret" property="weixinAppSecret"/>
+        <result column="account_type" property="accountType"/>
+        <result column="play_type" property="playType"/>
+        <result column="access_mode" property="accessMode"/>
+        <result column="validity_time" property="validityTime"/>
+        <result column="auth_status" property="authStatus"/>
+        <result column="access_token" property="accessToken"/>
+        <result column="token_gettime" property="tokenGettime"/>
+        <result column="apiticket" property="apiticket"/>
+        <result column="apiticket_gettime" property="apiticketGettime"/>
+        <result column="jsapiticket" property="jsapiticket"/>
+        <result column="jsapiticket_gettime" property="jsapiticketGettime"/>
+        <result column="auth_type" property="authType"/>
+        <result column="business_info" property="businessInfo"/>
+        <result column="func_info" property="funcInfo"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="headimgurl" property="headimgurl"/>
+        <result column="authorization_info" property="authorizationInfo"/>
+        <result column="authorizer_refresh_token" property="authorizerRefreshToken"/>
+        <result column="token" property="token"/>
+        <result column="authorization_status" property="authorizationStatus"/>
+        <result column="crm_type" property="crmType"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="del_flag" property="delFlag"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`,`app_id`,`name`,`app_img_url`,`application_type`,`qrcodeimg`,`weixin_number`,`weixin_app_id`,`weixin_app_secret`,`account_type`,`play_type`,`access_mode`,`validity_time`,`auth_status`,`access_token`,`token_gettime`,`apiticket`,`apiticket_gettime`,`jsapiticket`,`jsapiticket_gettime`,`auth_type`,`business_info`,`func_info`,`nick_name`,`headimgurl`,`authorization_info`,`authorizer_refresh_token`,`token`,`authorization_status`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`,`crm_type`
+    </sql>
+    <select id="list" resultMap="weixinWebAppMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from weixin_web_app order by id desc
+    </select>
+    <select id="getList" resultType="com.mall4j.cloud.biz.vo.WeixinWebAppVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from weixin_web_app order by create_time desc
+    </select>
+    <select id="getById" resultMap="weixinWebAppMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from weixin_web_app where id = #{id}
+    </select>
+    <insert id="save">
+        insert into weixin_web_app (`id`, `app_id`, `name`, `app_img_url`, `application_type`, `qrcodeimg`,
+                                    `weixin_number`, `weixin_app_id`, `weixin_app_secret`, `account_type`, `play_type`,
+                                    `access_mode`, `validity_time`, `auth_status`, `access_token`, `token_gettime`,
+                                    `apiticket`, `apiticket_gettime`, `jsapiticket`, `jsapiticket_gettime`, `auth_type`,
+                                    `business_info`, `func_info`, `nick_name`, `headimgurl`, `authorization_info`,
+                                    `authorizer_refresh_token`, `token`, `authorization_status`, `create_by`,
+                                    `create_time`, `del_flag`, `crm_type`)
+        values (#{weixinWebApp.id}, #{weixinWebApp.appId}, #{weixinWebApp.name}, #{weixinWebApp.appImgUrl},
+                #{weixinWebApp.applicationType}, #{weixinWebApp.qrcodeimg}, #{weixinWebApp.weixinNumber},
+                #{weixinWebApp.weixinAppId}, #{weixinWebApp.weixinAppSecret}, #{weixinWebApp.accountType},
+                #{weixinWebApp.playType}, #{weixinWebApp.accessMode}, #{weixinWebApp.validityTime},
+                #{weixinWebApp.authStatus}, #{weixinWebApp.accessToken}, #{weixinWebApp.tokenGettime},
+                #{weixinWebApp.apiticket}, #{weixinWebApp.apiticketGettime}, #{weixinWebApp.jsapiticket},
+                #{weixinWebApp.jsapiticketGettime}, #{weixinWebApp.authType}, #{weixinWebApp.businessInfo},
+                #{weixinWebApp.funcInfo}, #{weixinWebApp.nickName}, #{weixinWebApp.headimgurl},
+                #{weixinWebApp.authorizationInfo},
+                #{weixinWebApp.authorizerRefreshToken}, #{weixinWebApp.token}, #{weixinWebApp.authorizationStatus},
+                #{weixinWebApp.createBy},
+                #{weixinWebApp.createTime}, #{weixinWebApp.delFlag}, #{weixinWebApp.crmType});
+    </insert>
+    <update id="update">
+        update weixin_web_app
+        <set>
+            <if test="weixinWebApp.appId != null">
+                `app_id` = #{weixinWebApp.appId},
+            </if>
+            <if test="weixinWebApp.name != null">
+                `name` = #{weixinWebApp.name},
+            </if>
+            <if test="weixinWebApp.appImgUrl != null">
+                `app_img_url` = #{weixinWebApp.appImgUrl},
+            </if>
+            <if test="weixinWebApp.applicationType != null">
+                `application_type` = #{weixinWebApp.applicationType},
+            </if>
+            <if test="weixinWebApp.qrcodeimg != null">
+                `qrcodeimg` = #{weixinWebApp.qrcodeimg},
+            </if>
+            <if test="weixinWebApp.weixinNumber != null">
+                `weixin_number` = #{weixinWebApp.weixinNumber},
+            </if>
+            <if test="weixinWebApp.weixinAppId != null">
+                `weixin_app_id` = #{weixinWebApp.weixinAppId},
+            </if>
+            <if test="weixinWebApp.weixinAppSecret != null">
+                `weixin_app_secret` = #{weixinWebApp.weixinAppSecret},
+            </if>
+            <if test="weixinWebApp.accountType != null">
+                `account_type` = #{weixinWebApp.accountType},
+            </if>
+            <if test="weixinWebApp.playType != null">
+                `play_type` = #{weixinWebApp.playType},
+            </if>
+            <if test="weixinWebApp.accessMode != null">
+                `access_mode` = #{weixinWebApp.accessMode},
+            </if>
+            <if test="weixinWebApp.validityTime != null">
+                `validity_time` = #{weixinWebApp.validityTime},
+            </if>
+            <if test="weixinWebApp.authStatus != null">
+                `auth_status` = #{weixinWebApp.authStatus},
+            </if>
+            <if test="weixinWebApp.accessToken != null">
+                `access_token` = #{weixinWebApp.accessToken},
+            </if>
+            <if test="weixinWebApp.tokenGettime != null">
+                `token_gettime` = #{weixinWebApp.tokenGettime},
+            </if>
+            <if test="weixinWebApp.apiticket != null">
+                `apiticket` = #{weixinWebApp.apiticket},
+            </if>
+            <if test="weixinWebApp.apiticketGettime != null">
+                `apiticket_gettime` = #{weixinWebApp.apiticketGettime},
+            </if>
+            <if test="weixinWebApp.jsapiticket != null">
+                `jsapiticket` = #{weixinWebApp.jsapiticket},
+            </if>
+            <if test="weixinWebApp.jsapiticketGettime != null">
+                `jsapiticket_gettime` = #{weixinWebApp.jsapiticketGettime},
+            </if>
+            <if test="weixinWebApp.authType != null">
+                `auth_type` = #{weixinWebApp.authType},
+            </if>
+            <if test="weixinWebApp.businessInfo != null">
+                `business_info` = #{weixinWebApp.businessInfo},
+            </if>
+            <if test="weixinWebApp.funcInfo != null">
+                `func_info` = #{weixinWebApp.funcInfo},
+            </if>
+            <if test="weixinWebApp.nickName != null">
+                `nick_name` = #{weixinWebApp.nickName},
+            </if>
+            <if test="weixinWebApp.headimgurl != null">
+                `headimgurl` = #{weixinWebApp.headimgurl},
+            </if>
+            <if test="weixinWebApp.authorizationInfo != null">
+                `authorization_info` = #{weixinWebApp.authorizationInfo},
+            </if>
+            <if test="weixinWebApp.authorizerRefreshToken != null">
+                `authorizer_refresh_token` = #{weixinWebApp.authorizerRefreshToken},
+            </if>
+            <if test="weixinWebApp.token != null">
+                `token` = #{weixinWebApp.token},
+            </if>
+            <if test="weixinWebApp.authorizationStatus != null">
+                `authorization_status` = #{weixinWebApp.authorizationStatus},
+            </if>
+            <if test="weixinWebApp.updateTime != null">
+                `update_time` = #{weixinWebApp.updateTime},
+            </if>
+            <if test="weixinWebApp.updateBy != null">
+                `update_by` = #{weixinWebApp.updateBy},
+            </if>
+            <if test="weixinWebApp.delFlag != null">
+                `del_flag` = #{weixinWebApp.delFlag},
+            </if>
+            <if test="weixinWebApp.crmType != null">
+                `crm_type` = #{weixinWebApp.crmType}
+            </if>
+        </set>
+        where id = #{weixinWebApp.id}
+    </update>
+
+    <delete id="deleteById">
+        delete
+        from weixin_web_app
+        where id = #{id}
+    </delete>
+
+    <select id="queryByAppid" parameterType="Object" resultType="com.mall4j.cloud.biz.model.WeixinWebApp">
+        SELECT webapp.*
+        FROM weixin_web_app AS webapp
+        WHERE webapp.app_id = #{appid}
+        LIMIT 1
+    </select>
+
+    <select id="queryByWeixinAppid" parameterType="Object" resultType="com.mall4j.cloud.biz.model.WeixinWebApp">
+        SELECT webapp.*
+        FROM weixin_web_app AS webapp
+        WHERE webapp.weixin_app_id = #{appid}
+        LIMIT 1
+    </select>
+
+    <select id="listWechatAppIdByIds" resultType="java.lang.String">
+        SELECT `app_id` FROM `weixin_web_app` WHERE `id` IN
+        <foreach collection="ids" separator="," open="(" close=")" item="value">
+            #{value}
+        </foreach>
+    </select>
+
+    <select id="getWxMpFollowDatas" resultType="com.mall4j.cloud.biz.model.WeixinWebApp">
+        select *
+        from weixin_web_app
+        where del_flag=0
+        and weixin_app_secret is not null
+        <if test="appid != null and appid != ''">
+            `app_id` = #{appid}
+        </if>
+    </select>
+
+</mapper>

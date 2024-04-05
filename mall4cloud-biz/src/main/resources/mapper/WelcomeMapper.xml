@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.WelcomeMapper">
+  <resultMap id="welcomeMap" type="com.mall4j.cloud.biz.model.cp.CpWelcome">
+    <id column="id" property="id" />
+    <result column="TITLE" property="title"/>
+    <result column="WEIGHT" property="weight"/>
+    <result column="SLOGAN" property="slogan"/>
+    <result column="CREATE_BY" property="createBy"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="STATUS" property="status"/>
+    <result column="FLAG" property="flag"/>
+    <result column="is_all_shop" property="isAllShop"/>
+    <result column="create_name" property="createName"/>
+    <result column="source_id" property="sourceId"/>
+    <result column="source_from" property="sourceFrom"/>
+    <result column="time_cycle" property="timeCycle"/>
+    <result column="time_start" property="timeStart"/>
+    <result column="time_end" property="timeEnd"/>
+    <result column="scene" property="scene"/>
+    <result column="welcome_time_state" property="welcomeTimeState"/>
+  </resultMap>
+
+  <resultMap id="welcomeVoMap" extends="welcomeMap" type="com.mall4j.cloud.biz.vo.cp.WelcomeVO">
+    <result column="attachment_type" property="attachmentType" />
+    <collection property="shops" ofType="com.mall4j.cloud.biz.model.cp.ShopWelcomeConfig" column="ID" select="com.mall4j.cloud.biz.mapper.cp.ShopWelcomeConfigMapper.listByWelId" />
+  </resultMap>
+
+  <resultMap id="welcomeAndAttachMap" type="com.mall4j.cloud.biz.dto.cp.wx.ChannelCodeWelcomeDTO"
+             extends="com.mall4j.cloud.biz.mapper.cp.WelcomeMapper.welcomeMap">
+    <collection property="attachMents" ofType="com.mall4j.cloud.biz.dto.cp.AttachMentBaseDTO">
+      <id column="attachId" property="attachId" />
+      <result column="data" property="data"/>
+      <result column="material_id" property="materialId"/>
+    </collection>
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `id`,`TITLE`,`WEIGHT`,`SLOGAN`,`CREATE_BY`,`CREATE_TIME`,`STATUS`,`FLAG`,IS_ALL_SHOP,create_name,scene,welcome_time_state
+  </sql>
+  <select id="list" resultMap="welcomeVoMap">
+    select C.`id`,C.`TITLE`,C.`WEIGHT`,C.`SLOGAN`,C.`CREATE_BY`,C.`CREATE_TIME`,C.`STATUS`,C.`FLAG`,C.IS_ALL_SHOP,C.create_name,C.scene
+    from cp_welcome C
+<!--    LEFT JOIN  cp_welcome_attachment A ON C.id =A.wel_id and A.origin=0-->
+    where C.FLAG = 0
+    and source_from=0
+       <if test="welcome.title != null and welcome.title !='' "> AND C.TITLE like CONCAT('%', #{welcome.title},'%')  </if>
+      order by C.id desc
+  </select>
+  <!--根据店 按优先级越高，若数值相同，则创建时间越晚越高，返回一条数据 -->
+  <select id="getWelcomeByWeight" resultMap="welcomeMap">
+    select cp.`id`,cp.`TITLE`,cp.`WEIGHT`,cp.`SLOGAN`,cp.`CREATE_BY`,cp.`CREATE_TIME`,cp.`STATUS`,cp.`FLAG`,cp.IS_ALL_SHOP,cp.create_name
+        from  cp_welcome cp
+        left join CP_SHOP_WELCOME_CONFIG s on cp.id = s.wel_id
+    where   (s.shop_id = #{storeId} or cp.is_all_shop =1 ) and cp.`STATUS` = 1 and cp.FLAG = 0
+    order by cp.WEIGHT asc,cp.create_time desc
+    limit 0,1
+  </select>
+
+  <select id="getById" resultMap="welcomeMap">
+    select <include refid="Vo_Column_List"/> from cp_welcome where id = #{id}
+  </select>
+
+  <delete id="deleteById">
+    delete from cp_welcome where id = #{id}
+  </delete>
+
+  <delete id="deleteBySourceId">
+    delete from cp_welcome where source_id = #{sourceId}
+    and source_from in
+    <foreach collection="sourceFroms" item="sourceFrom" open="(" close=")" separator=",">
+      #{sourceFrom}
+    </foreach>
+  </delete>
+
+  <select id="selectWelcomes" resultMap="welcomeAndAttachMap">
+    select welcome.id,
+           welcome.time_cycle,
+           welcome.time_start,
+           welcome.time_end,
+           welcome.SLOGAN,
+           welcome.source_from,
+           attachment.id as attachId,
+           attachment.data,
+           attachment.material_id
+    from cp_welcome welcome
+    left join cp_welcome_attachment attachment  on attachment.wel_id=welcome.id
+    where welcome.FLAG=0
+    and welcome.source_id=#{sourceId}
+    order by attachment.id asc
+  </select>
+
+  <select id="checkonly" resultMap="welcomeMap">
+    select * from cp_welcome da
+    where
+      da.status = 1 and FLAG = 0
+    and scene like CONCAT('%', #{scene},'%')
+    and source_from = 0
+      <if test="shopIds != null">
+        and (da.is_all_shop = 1 or da.id in (select wel_id from CP_SHOP_WELCOME_CONFIG where shop_id in
+        <foreach collection="shopIds" item="storeId" open="(" close=")" separator=",">
+          #{storeId}
+        </foreach>))
+      </if>
+      limit 1
+  </select>
+
+  <update id="logicDelete">
+    update cp_welcome
+      set flag = 1
+    where id = #{id}
+  </update>
+
+  <select id="getWelcomeIdByOrgs" resultType="java.lang.Long">
+    select
+      distinct cp.`id`
+    from cp_welcome cp
+            left join CP_SHOP_WELCOME_CONFIG s on cp.id = s.wel_id
+    where (s.shop_id in
+              <foreach collection="orgs" item="org" open="(" close=")" separator=",">
+                #{org}
+              </foreach>
+      or cp.is_all_shop =1 ) and cp.`STATUS` = 1 and cp.FLAG = 0 and source_from = #{source_from} and scene = #{sence}
+    order by cp.WEIGHT asc,cp.create_time desc
+    limit 1
+  </select>
+
+  <select id="getWelcomeByOrgs" resultMap="welcomeMap">
+    select
+    cp.*
+    from cp_welcome cp
+    left join CP_SHOP_WELCOME_CONFIG s on cp.id = s.wel_id
+    where (s.shop_id in
+    <foreach collection="orgs" item="org" open="(" close=")" separator=",">
+      #{org}
+    </foreach>
+    or cp.is_all_shop =1 ) and cp.`STATUS` = 1 and cp.FLAG = 0 and source_from = #{source_from}
+    and scene like CONCAT('%', #{sence},'%')
+    order by cp.WEIGHT asc,cp.create_time desc
+    limit 1
+  </select>
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinQrcodeTentacleStoreItemMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.biz.model.WeixinQrcodeTentacleStoreItem">
+        <id column="id" property="id"/>
+        <result column="tentacle_store_id" property="tentacleStoreId"/>
+        <result column="uniid" property="uniId"/>
+        <result column="vipcode" property="vipCode"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="check_time" property="checkTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        , tentacle_store_id, uniid, vipcode, nick_name, check_time
+    </sql>
+
+    <select id="selectTentacleStoreItemList" resultType="com.mall4j.cloud.biz.vo.WeixinQrcodeTentacleStoreItemVO">
+        SELECT
+            k.id,
+            k.tentacle_store_id AS tentacleStoreId,
+            t.`name` AS tentacleName,
+            t.tentacle_path AS qrcodePath,
+            s.store_id AS storeId,
+            k.uniid,
+            k.vipcode AS vipCode,
+            k.nick_name AS nickName,
+            k.check_time AS checkTime
+        FROM mall4cloud_biz.weixin_qrcode_tentacle_store_item AS k
+        LEFT JOIN mall4cloud_biz.weixin_qrcode_tentacle_store AS s ON k.tentacle_store_id = s.id
+        LEFT JOIN mall4cloud_biz.weixin_qrcode_tentacle AS t ON s.tentacle_id = t.id
+        <where>
+            <if test="weixinQrcodeTentacleStoreItemDTO.tentacleId != null and weixinQrcodeTentacleStoreItemDTO.tentacleId != ''">
+                AND k.tentacle_store_id IN
+                (
+                SELECT ts.id
+                FROM weixin_qrcode_tentacle_store AS ts
+                WHERE ts.tentacle_id = #{weixinQrcodeTentacleStoreItemDTO.tentacleId}
+                )
+            </if>
+            <if test="weixinQrcodeTentacleStoreItemDTO.tentacleStoreId != null and weixinQrcodeTentacleStoreItemDTO.tentacleStoreId != ''">
+                AND k.tentacle_store_id = #{weixinQrcodeTentacleStoreItemDTO.tentacleStoreId}
+            </if>
+            <if test="weixinQrcodeTentacleStoreItemDTO.startTime != null">
+                and k.check_time &lt;= #{weixinQrcodeTentacleStoreItemDTO.startTime}
+            </if>
+            <if test="weixinQrcodeTentacleStoreItemDTO.endTime != null">
+                and k.check_time &gt;= #{weixinQrcodeTentacleStoreItemDTO.endTime}
+            </if>
+            <if test="weixinQrcodeTentacleStoreItemDTO.vipCode != null and weixinQrcodeTentacleStoreItemDTO.vipCode != ''">
+                and k.vipcode LIKE CONCAT('%',#{weixinQrcodeTentacleStoreItemDTO.vipCode},'%')
+                OR k.nick_name LIKE CONCAT('%',#{weixinQrcodeTentacleStoreItemDTO.vipCode},'%')
+            </if>
+        </where>
+        ORDER BY k.check_time DESC
+    </select>
+
+</mapper>

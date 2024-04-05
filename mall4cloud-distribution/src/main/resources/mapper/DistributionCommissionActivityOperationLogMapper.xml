@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionCommissionActivityOperationLogMapper">
+  <resultMap id="distributionCommissionActivityOperationLogMap" type="com.mall4j.cloud.distribution.model.DistributionCommissionActivityOperationLog">
+    <id column="id" property="id" />
+    <result column="activity_id" property="activityId"/>
+    <result column="operation_user_id" property="operationUserId"/>
+    <result column="operation_user_name" property="operationUserName"/>
+    <result column="org_id" property="orgId"/>
+    <result column="his_guide_rate_status" property="hisGuideRateStatus"/>
+    <result column="his_guide_rate" property="hisGuideRate"/>
+    <result column="his_share_rate_status" property="hisShareRateStatus"/>
+    <result column="his_share_rate" property="hisShareRate"/>
+    <result column="his_develop_rate_status" property="hisDevelopRateStatus"/>
+    <result column="his_develop_rate" property="hisDevelopRate"/>
+    <result column="his_limit_time_type" property="hisLimitTimeType"/>
+    <result column="his_limit_store_type" property="hisLimitStoreType"/>
+    <result column="his_limit_store_ids" property="hisLimitStoreIds"/>
+    <result column="his_limit_spu_type" property="hisLimitSpuType"/>
+    <result column="his_limit_spu_ids" property="hisLimitSpuIds"/>
+    <result column="his_start_time" property="hisStartTime"/>
+    <result column="his_end_time" property="hisEndTime"/>
+    <result column="limit_time_type" property="limitTimeType"/>
+    <result column="limit_store_type" property="limitStoreType"/>
+    <result column="limit_store_ids" property="limitStoreIds"/>
+    <result column="limit_spu_type" property="limitSpuType"/>
+    <result column="limit_spu_ids" property="limitSpuIds"/>
+    <result column="guide_rate_status" property="guideRateStatus"/>
+    <result column="guide_rate" property="guideRate"/>
+    <result column="share_rate_status" property="shareRateStatus"/>
+    <result column="share_rate" property="shareRate"/>
+    <result column="develop_rate_status" property="developRateStatus"/>
+    <result column="develop_rate" property="developRate"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`activity_id`,`operation_user_id`,`operation_user_name`,`org_id`,`his_guide_rate_status`,`his_guide_rate`,`his_share_rate_status`,`his_share_rate`,`his_develop_rate_status`,`his_develop_rate`,`his_limit_time_type`,`his_limit_store_type`,`his_limit_store_ids`,`his_limit_spu_type`,`his_limit_spu_ids`,`his_start_time`,`his_end_time`,`limit_time_type`,`limit_store_type`,`limit_store_ids`,`limit_spu_type`,`limit_spu_ids`,`guide_rate_status`,`guide_rate`,`share_rate_status`,`share_rate`,`develop_rate_status`,`develop_rate`,`start_time`,`end_time`,`create_time`,`update_time`
+  </sql>
+  <select id="listByActivityId" resultMap="distributionCommissionActivityOperationLogMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_activity_operation_log where activity_id = #{activityId} order by id desc
+  </select>
+  <insert id="save">
+    insert into distribution_commission_activity_operation_log (`activity_id`,`operation_user_id`,`operation_user_name`,`org_id`,`his_guide_rate_status`,`his_guide_rate`,`his_share_rate_status`,`his_share_rate`,`his_develop_rate_status`,`his_develop_rate`,`his_limit_time_type`,`his_limit_store_type`,`his_limit_store_ids`,`his_limit_spu_type`,`his_limit_spu_ids`,`his_start_time`,`his_end_time`,`limit_time_type`,`limit_store_type`,`limit_store_ids`,`limit_spu_type`,`limit_spu_ids`,`guide_rate_status`,`guide_rate`,`share_rate_status`,`share_rate`,`develop_rate_status`,`develop_rate`,`start_time`,`end_time`)
+    values (#{distributionCommissionActivityOperationLog.activityId},#{distributionCommissionActivityOperationLog.operationUserId},#{distributionCommissionActivityOperationLog.operationUserName},#{distributionCommissionActivityOperationLog.orgId},#{distributionCommissionActivityOperationLog.hisGuideRateStatus},#{distributionCommissionActivityOperationLog.hisGuideRate},#{distributionCommissionActivityOperationLog.hisShareRateStatus},#{distributionCommissionActivityOperationLog.hisShareRate},#{distributionCommissionActivityOperationLog.hisDevelopRateStatus},#{distributionCommissionActivityOperationLog.hisDevelopRate},#{distributionCommissionActivityOperationLog.hisLimitTimeType},#{distributionCommissionActivityOperationLog.hisLimitStoreType},#{distributionCommissionActivityOperationLog.hisLimitStoreIds},#{distributionCommissionActivityOperationLog.hisLimitSpuType},#{distributionCommissionActivityOperationLog.hisLimitSpuIds},#{distributionCommissionActivityOperationLog.hisStartTime},#{distributionCommissionActivityOperationLog.hisEndTime},#{distributionCommissionActivityOperationLog.limitTimeType},#{distributionCommissionActivityOperationLog.limitStoreType},#{distributionCommissionActivityOperationLog.limitStoreIds},#{distributionCommissionActivityOperationLog.limitSpuType},#{distributionCommissionActivityOperationLog.limitSpuIds},#{distributionCommissionActivityOperationLog.guideRateStatus},#{distributionCommissionActivityOperationLog.guideRate},#{distributionCommissionActivityOperationLog.shareRateStatus},#{distributionCommissionActivityOperationLog.shareRate},#{distributionCommissionActivityOperationLog.developRateStatus},#{distributionCommissionActivityOperationLog.developRate},#{distributionCommissionActivityOperationLog.startTime},#{distributionCommissionActivityOperationLog.endTime});
+  </insert>
+</mapper>

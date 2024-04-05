@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpMaterialMsgImgMapper">
+  <resultMap id="cpMaterialMsgImgMap" type="com.mall4j.cloud.biz.model.cp.CpMaterialMsgImg">
+    <id column="id" property="id" />
+    <result column="mat_id" property="matId"/>
+    <result column="mat_msg_id" property="matMsgId"/>
+    <result column="image" property="image"/>
+    <result column="is_delete" property="isDelete"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="seq" property="seq"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`mat_id`,`mat_msg_id`,`image`,`is_delete`,`create_by`,`create_time`,`update_by`,`update_time`
+  </sql>
+  <select id="mobileList" resultType="com.mall4j.cloud.biz.vo.cp.CpMaterialMsgImgVO">
+    select
+    `id`,
+    `mat_id`,
+    `mat_msg_id`,
+    `image`,
+    `seq`
+     from cp_material_msg_img
+     where is_delete=0
+     <if test="dto.matId!=null">
+       and mat_id=#{dto.matId}
+     </if>
+    <if test="dto.matMsgId!=null">
+      and mat_msg_id=#{dto.matMsgId}
+    </if>
+     order by seq asc
+  </select>
+
+  <delete id="deleteByMatId">
+    delete from cp_material_msg_img where mat_id = #{matId}
+  </delete>
+
+  <delete id="deleteByMatMsgId">
+    delete from cp_material_msg_img where mat_msg_id = #{matMsgId}
+  </delete>
+
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionCommissionActivityStoreMapper">
+  <resultMap id="distributionCommissionActivityStoreMap" type="com.mall4j.cloud.distribution.model.DistributionCommissionActivityStore">
+    <id column="id" property="id" />
+    <result column="activity_id" property="activityId"/>
+    <result column="org_id" property="orgId"/>
+    <result column="store_id" property="storeId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <resultMap id="countByActivityIdListMap" type="com.mall4j.cloud.distribution.vo.DistributionCommissionActivityCountVO">
+    <result column="activity_id" property="activityId"/>
+    <result column="count(1)" property="num"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`activity_id`,`org_id`,`store_id`,`create_time`,`update_time`
+  </sql>
+  <select id="listByActivityId" resultMap="distributionCommissionActivityStoreMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_activity_store where activity_id = #{activityId}
+  </select>
+  <select id="listByStoreId" resultMap="distributionCommissionActivityStoreMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_activity_store where store_id = #{storeId}
+  </select>
+  <select id="getById" resultMap="distributionCommissionActivityStoreMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_activity_store where id = #{id}
+  </select>
+  <insert id="save">
+    insert into distribution_commission_activity_store (`activity_id`,`org_id`,`store_id`)
+    values (#{distributionCommissionActivityStore.activityId},#{distributionCommissionActivityStore.orgId},#{distributionCommissionActivityStore.storeId});
+  </insert>
+
+  <insert id="saveBatch">
+    insert into distribution_commission_activity_store (`activity_id`, `org_id`, `store_id`)
+    values
+    <foreach collection="activityStoreList" item="activityStore" separator=",">
+      (#{activityStore.activityId}, #{activityStore.orgId}, #{activityStore.storeId})
+    </foreach>
+  </insert>
+
+  <update id="update">
+    update distribution_commission_activity_store
+    <set>
+      <if test="distributionCommissionActivityStore.activityId != null">
+        `activity_id` = #{distributionCommissionActivityStore.activityId},
+      </if>
+      <if test="distributionCommissionActivityStore.orgId != null">
+        `org_id` = #{distributionCommissionActivityStore.orgId},
+      </if>
+      <if test="distributionCommissionActivityStore.storeId != null">
+        `store_id` = #{distributionCommissionActivityStore.storeId},
+      </if>
+    </set>
+    where id = #{distributionCommissionActivityStore.id}
+  </update>
+  <delete id="deleteByActivityIdAndStoreId">
+    delete from distribution_commission_activity_store where activity_id = #{activityId} and store_id = #{storeId}
+  </delete>
+  <delete id="deleteByActivityId">
+    delete from distribution_commission_activity_store where activity_id = #{activityId}
+  </delete>
+
+  <select id="countByActivityIdList" resultMap="countByActivityIdListMap">
+    select  activity_id, count(1) from distribution_commission_activity_store where activity_id in
+    <foreach collection="activityIdList" item="activityId" open="(" close=")" separator=",">
+      #{activityId}
+    </foreach>
+    group by activity_id
+  </select>
+
+
+</mapper>

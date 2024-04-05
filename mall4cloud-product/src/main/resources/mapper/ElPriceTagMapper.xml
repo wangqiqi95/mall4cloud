@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.ElPriceTagMapper">
+  <resultMap id="elPriceTagMap" type="com.mall4j.cloud.product.model.ElPriceTag">
+    <id column="id" property="id" />
+    <result column="name" property="name"/>
+    <result column="prod_count" property="prodCount"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="is_deleted" property="isDeleted"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`name`,`prod_count`,`create_by`,`create_time`,`update_by`,`update_time`,`is_deleted`
+  </sql>
+  <select id="getList" resultType="com.mall4j.cloud.product.vo.ElPriceTagVO">
+    select
+    <include refid="Vo_Column_List"/>
+    from el_price_tag
+    where is_deleted=0
+    <if test="name!=null and name!=''">
+      and name LIKE CONCAT('%',#{name},'%')
+    </if>
+    order by create_time desc
+  </select>
+  <insert id="save">
+    insert into el_price_tag (`id`,`name`,`prod_count`,`create_by`,`create_time`,`is_deleted`)
+    values (#{elPriceTag.id},#{elPriceTag.name},#{elPriceTag.prodCount},#{elPriceTag.createBy},#{elPriceTag.createTime},#{elPriceTag.isDeleted});
+  </insert>
+  <update id="update">
+    update el_price_tag
+    <set>
+      <if test="elPriceTag.name != null">
+        `name` = #{elPriceTag.name},
+      </if>
+      <if test="elPriceTag.prodCount != null">
+        `prod_count` = #{elPriceTag.prodCount},
+      </if>
+      <if test="elPriceTag.updateBy != null">
+        `update_by` = #{elPriceTag.updateBy},
+      </if>
+      <if test="elPriceTag.updateTime != null">
+        `update_time` = #{elPriceTag.updateTime},
+      </if>
+      <if test="elPriceTag.isDeleted != null">
+        `is_deleted` = #{elPriceTag.isDeleted},
+      </if>
+    </set>
+    where id = #{elPriceTag.id}
+  </update>
+  <delete id="deleteById">
+    update el_price_tag set is_deleted=1,update_time=now() where id = #{id}
+  </delete>
+  <delete id="deleteByIds">
+    update el_price_tag set is_deleted=1,update_time=now() where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </delete>
+
+</mapper>

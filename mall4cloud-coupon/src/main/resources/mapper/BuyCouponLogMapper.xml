@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.BuyCouponLogMapper">
+
+    <select id="list" resultType="com.mall4j.cloud.coupon.model.BuyCouponLog">
+        select cl.coupon_id as couponId,
+               cl.price as price,
+               cl.order_no as orderCode,
+               cl.create_time as createTime,
+               c.name as name
+        from buy_coupon_log cl
+                 LEFT JOIN t_coupon c on cl.coupon_id = c.id
+        where cl.create_id = #{userId}
+    </select>
+</mapper>

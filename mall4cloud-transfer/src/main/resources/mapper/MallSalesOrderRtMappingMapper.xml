@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.MallSalesOrderRtMappingMapper">
+  <resultMap id="mallSalesOrderRtMappingMap" type="com.mall4j.cloud.transfer.model.MallSalesOrderRtMapping">
+    <id column="Id" property="id" />
+    <result column="CopId" property="copid"/>
+    <result column="BrandId" property="brandid"/>
+    <result column="OrderId" property="orderid"/>
+    <result column="OrderDtlId" property="orderdtlid"/>
+    <result column="ReturnId" property="returnid"/>
+    <result column="ReturnQty" property="returnqty"/>
+    <result column="BarCode" property="barcode"/>
+    <result column="CreateUser" property="createuser"/>
+    <result column="CreateDate" property="createdate"/>
+    <result column="LastModifiedUser" property="lastmodifieduser"/>
+    <result column="LastModifiedDate" property="lastmodifieddate"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `Id`,`CopId`,`BrandId`,`OrderId`,`OrderDtlId`,`ReturnId`,`ReturnQty`,`BarCode`,`CreateUser`,`CreateDate`,`LastModifiedUser`,`LastModifiedDate`
+  </sql>
+  <select id="list" resultMap="mallSalesOrderRtMappingMap">
+    select <include refid="Vo_Column_List"/> from mall_sales_order_rt_mapping order by Id desc
+  </select>
+    <select id="listByReturnId" resultMap="mallSalesOrderRtMappingMap">
+        select <include refid="Vo_Column_List"/> from mall_sales_order_rt_mapping
+        where ReturnId = #{returnId}
+        order by Id desc
+    </select>
+  <select id="getById" resultMap="mallSalesOrderRtMappingMap">
+    select <include refid="Vo_Column_List"/> from mall_sales_order_rt_mapping where Id = #{id}
+  </select>
+  <insert id="save">
+    insert into mall_sales_order_rt_mapping (`CopId`,`BrandId`,`OrderId`,`OrderDtlId`,`ReturnId`,`ReturnQty`,`BarCode`,`CreateUser`,`CreateDate`,`LastModifiedUser`,`LastModifiedDate`)
+    values (#{mallSalesOrderRtMapping.copid},#{mallSalesOrderRtMapping.brandid},#{mallSalesOrderRtMapping.orderid},#{mallSalesOrderRtMapping.orderdtlid},#{mallSalesOrderRtMapping.returnid},#{mallSalesOrderRtMapping.returnqty},#{mallSalesOrderRtMapping.barcode},#{mallSalesOrderRtMapping.createuser},#{mallSalesOrderRtMapping.createdate},#{mallSalesOrderRtMapping.lastmodifieduser},#{mallSalesOrderRtMapping.lastmodifieddate});
+  </insert>
+  <update id="update">
+    update mall_sales_order_rt_mapping
+    <set>
+      <if test="mallSalesOrderRtMapping.copid != null">
+        `CopId` = #{mallSalesOrderRtMapping.copid},
+      </if>
+      <if test="mallSalesOrderRtMapping.brandid != null">
+        `BrandId` = #{mallSalesOrderRtMapping.brandid},
+      </if>
+      <if test="mallSalesOrderRtMapping.orderid != null">
+        `OrderId` = #{mallSalesOrderRtMapping.orderid},
+      </if>
+      <if test="mallSalesOrderRtMapping.orderdtlid != null">
+        `OrderDtlId` = #{mallSalesOrderRtMapping.orderdtlid},
+      </if>
+      <if test="mallSalesOrderRtMapping.returnid != null">
+        `ReturnId` = #{mallSalesOrderRtMapping.returnid},
+      </if>
+      <if test="mallSalesOrderRtMapping.returnqty != null">
+        `ReturnQty` = #{mallSalesOrderRtMapping.returnqty},
+      </if>
+      <if test="mallSalesOrderRtMapping.barcode != null">
+        `BarCode` = #{mallSalesOrderRtMapping.barcode},
+      </if>
+      <if test="mallSalesOrderRtMapping.createuser != null">
+        `CreateUser` = #{mallSalesOrderRtMapping.createuser},
+      </if>
+      <if test="mallSalesOrderRtMapping.createdate != null">
+        `CreateDate` = #{mallSalesOrderRtMapping.createdate},
+      </if>
+      <if test="mallSalesOrderRtMapping.lastmodifieduser != null">
+        `LastModifiedUser` = #{mallSalesOrderRtMapping.lastmodifieduser},
+      </if>
+      <if test="mallSalesOrderRtMapping.lastmodifieddate != null">
+        `LastModifiedDate` = #{mallSalesOrderRtMapping.lastmodifieddate},
+      </if>
+    </set>
+    where Id = #{mallSalesOrderRtMapping.id}
+  </update>
+  <delete id="deleteById">
+    delete from mall_sales_order_rt_mapping where Id = #{id}
+  </delete>
+
+</mapper>

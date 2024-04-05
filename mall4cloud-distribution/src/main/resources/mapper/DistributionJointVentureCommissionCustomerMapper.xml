@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionJointVentureCommissionCustomerMapper">
+
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.distribution.model.DistributionJointVentureCommissionCustomer">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="customerName" column="customer_name" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="CHAR"/>
+        <result property="idCard" column="id_card" jdbcType="CHAR"/>
+        <result property="idCardPhotoFront" column="id_card_photo_front" jdbcType="VARCHAR"/>
+        <result property="idCardPhotoBack" column="id_card_photo_back" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="thirdPartyStatus" column="third_party_status" jdbcType="TINYINT"/>
+        <result property="commissionRate" column="commission_rate" jdbcType="BIGINT"/>
+        <result property="limitStoreType" column="limit_store_type" jdbcType="TINYINT"/>
+        <result property="cardholderName" column="cardholder_name" jdbcType="VARCHAR"/>
+        <result property="bankSimpleName" column="bank_simple_name" jdbcType="VARCHAR"/>
+        <result property="subbranchName" column="subbranch_name" jdbcType="VARCHAR"/>
+        <result property="bankCardNo" column="bank_card_no" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="deleted" column="deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,customer_name,phone,
+        id_card,id_card_photo_front,id_card_photo_back,address,third_party_status,commission_rate,limit_store_type,
+        cardholder_name,bank_simple_name,subbranch_name,
+        bank_card_no,status,create_time,
+        update_time, deleted
+    </sql>
+
+    <select id="list" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from distribution_joint_venture_commission_customer
+        where deleted = 0
+        <if test="searchDTO.customerName != null and searchDTO.customerName != ''">
+            and trim(replace(customer_name,' ','')) like trim(replace(concat('%',#{searchDTO.customerName},'%'),' ',''))
+        </if>
+        <if test="searchDTO.thirdPartyStatus != null">
+            and third_party_status = #{searchDTO.thirdPartyStatus}
+        </if>
+        <if test="searchDTO.storeIdList != null and searchDTO.storeIdList.size() > 0">
+            AND id IN (
+            select joint_venture_id from distribution_joint_venture_commission_store where store_id in (
+            <foreach collection="searchDTO.storeIdList" item="storeId" separator=",">
+                #{storeId}
+            </foreach>
+            )
+            )
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="getById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from distribution_joint_venture_commission_customer where id = #{id}
+    </select>
+
+    <select id="getByIdCard"
+            resultType="com.mall4j.cloud.distribution.model.DistributionJointVentureCommissionCustomer">
+        select
+        <include refid="Base_Column_List"/>
+        from distribution_joint_venture_commission_customer where id_card = #{idCard} and deleted != 1
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO distribution_joint_venture_commission_customer (`customer_name`, `phone`, `id_card`,
+                                                                    `id_card_photo_front`, `id_card_photo_back`,
+                                                                    `address`,
+                                                                    `commission_rate`, `limit_store_type`,
+                                                                    `cardholder_name`, `bank_simple_name`,
+                                                                    `subbranch_name`, `bank_card_no`, `status`,
+                                                                    `deleted`)
+        VALUES (#{entity.customerName}, #{entity.phone}, #{entity.idCard}, #{entity.idCardPhotoFront},
+                #{entity.idCardPhotoBack}, #{entity.address}, #{entity.commissionRate},
+                #{entity.limitStoreType}, #{entity.cardholderName}, #{entity.bankSimpleName}, #{entity.subbranchName},
+                #{entity.bankCardNo}, #{entity.status}, #{entity.deleted});
+    </insert>
+
+    <update id="update">
+        update distribution_joint_venture_commission_customer
+        <set>
+            <if test="entity.customerName != null">
+                `customer_name` = #{entity.customerName},
+            </if>
+            <if test="entity.phone != null">
+                `phone` = #{entity.phone},
+            </if>
+            <if test="entity.idCard != null">
+                `id_card` = #{entity.idCard},
+            </if>
+            <if test="entity.idCardPhotoFront != null">
+                `id_card_photo_front` = #{entity.idCardPhotoFront},
+            </if>
+            <if test="entity.idCardPhotoBack != null">
+                `id_card_photo_back` = #{entity.idCardPhotoBack},
+            </if>
+            <if test="entity.address != null">
+                `address` = #{entity.address},
+            </if>
+            <if test="entity.thirdPartyStatus != null">
+                `third_party_status` = #{entity.thirdPartyStatus},
+            </if>
+            <if test="entity.commissionRate != null">
+                `commission_rate` = #{entity.commissionRate},
+            </if>
+            <if test="entity.limitStoreType != null">
+                `limit_store_type` = #{entity.limitStoreType},
+            </if>
+            <if test="entity.cardholderName != null">
+                `cardholder_name` = #{entity.cardholderName},
+            </if>
+            <if test="entity.bankSimpleName != null">
+                `bank_simple_name` = #{entity.bankSimpleName},
+            </if>
+            <if test="entity.subbranchName != null">
+                `subbranch_name` = #{entity.subbranchName},
+            </if>
+            <if test="entity.bankCardNo != null">
+                `bank_card_no` = #{entity.bankCardNo},
+            </if>
+            <if test="entity.status != null">
+                `status` = #{entity.status},
+            </if>
+            <if test="entity.deleted != null">
+                `deleted` = #{entity.deleted},
+            </if>
+        </set>
+        where id = #{entity.id}
+    </update>
+
+    <delete id="deleteById">
+        update distribution_joint_venture_commission_customer
+        set deleted = 1
+        where id = #{id}
+    </delete>
+
+</mapper>

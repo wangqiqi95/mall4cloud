@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.group.mapper.PopUpAdMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.group.model.PopUpAd">
+        <id column="pop_up_ad_id" property="popUpAdId" />
+        <result column="activity_name" property="activityName" />
+        <result column="activity_begin_time" property="activityBeginTime" />
+        <result column="activity_end_time" property="activityEndTime" />
+        <result column="is_all_shop" property="isAllShop" />
+        <result column="user_tag_id" property="userTagId" />
+<!--        <result column="activity_pic_url" property="activityPicUrl" />-->
+<!--        <result column="redirect_type" property="redirectType" />-->
+<!--        <result column="redirect_url" property="redirectUrl" />-->
+        <result column="ad_frequency" property="adFrequency" />
+        <result column="weight" property="weight" />
+        <result column="status" property="status" />
+        <result column="deleted" property="deleted" />
+        <result column="create_time" property="createTime" />
+        <result column="create_user_id" property="createUserId" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_user_id" property="updateUserId" />
+        <result column="auto_off_seconds" property="autoOffSeconds" />
+        <result column="attachment_type" property="attachmentType" />
+        <result column="visible_type" property="visibleType" />
+        <result column="push_type" property="pushType" />
+        <result column="push_rule" property="pushRule" />
+        <result column="rule_time_tag" property="ruleTimeTag" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        pop_up_ad_id, activity_name, activity_begin_time, activity_end_time, is_all_shop, ad_frequency, weight, status, deleted, create_time, create_user_id, create_user_name, update_time, update_user_id, update_user_name, auto_off_seconds, content_type, visible_type, push_type, push_rule
+    </sql>
+
+    <select id="getThePageAdByUser" resultType="com.mall4j.cloud.group.vo.PageAdByUserVO">
+        SELECT
+        page.pop_up_ad_id,
+        page.page_url,
+        ad.user_tag_id
+        FROM
+        t_pop_up_ad ad
+        LEFT JOIN t_pop_up_ad_page page ON ad.pop_up_ad_id = page.pop_up_ad_id
+        <if test="storeId != null">
+            LEFT JOIN t_pop_up_ad_store_relation store ON store.pop_up_ad_id = ad.pop_up_ad_id
+        </if>
+        where
+        ad.status = 1
+        AND ( ad.activity_begin_time &lt;= #{time} AND ad.activity_end_time &gt; #{time} )
+        <if test="storeId != null">
+            AND (ad.is_all_shop = 1 or store.shop_id = #{storeId} or ad.is_all_shop is null)
+        </if>
+        <if test="storeId == null">
+            AND ad.is_all_shop = 1
+        </if>
+        AND deleted = 0
+        ORDER BY
+        ad.create_time DESC
+    </select>
+
+
+    <select id="selectPageVO" resultType="com.mall4j.cloud.group.vo.PopUpAdDataPageVO">
+        SELECT
+        DISTINCT ad.*
+        FROM
+            t_pop_up_ad ad
+                LEFT JOIN t_pop_up_ad_store_relation store ON ad.pop_up_ad_id = store.pop_up_ad_id
+        WHERE ad.deleted = 0
+        <if test="param.activityName != null and param.activityName != ''">
+            and ad.activity_name like concat('%',#{param.activityName},'%')
+        </if>
+        <if test="param.attachmentType != null and param.attachmentType != ''">
+            and ad.attachment_type = #{param.attachmentType}
+        </if>
+        <if test="param.status != null">
+            and ad.status = #{param.status}
+        </if>
+        <if test="param.stage != null and param.stage == 1">
+            AND NOW() &lt;= ad.activity_begin_time
+        </if>
+        <if test="param.stage != null and param.stage == 2">
+            AND NOW() BETWEEN ad.activity_begin_time
+            AND ad.activity_end_time
+        </if>
+        <if test="param.stage != null and param.stage == 3">
+            AND NOW() &gt;= ad.activity_end_time
+        </if>
+        <if test="param.storeIdList != null and param.storeIdList.size() > 0">
+            AND (ad.is_all_shop =1 or store.shop_id in(
+            <foreach collection ="couponIds" item="couponId" index= "index" separator =",">
+                (#{couponId})
+            </foreach >
+            ))
+        </if>
+        order by ad.create_time desc
+    </select>
+</mapper>

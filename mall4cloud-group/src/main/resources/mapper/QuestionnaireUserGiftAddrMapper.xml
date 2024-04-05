@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.QuestionnaireUserGiftAddrMapper">
+  <resultMap id="questionnaireUserGiftAddrMap" type="com.mall4j.cloud.group.model.QuestionnaireUserGiftAddr">
+    <id column="id" property="id" />
+    <result column="activity_id" property="activityId"/>
+    <result column="user_id" property="userId"/>
+    <result column="consignee" property="consignee"/>
+    <result column="province" property="province"/>
+    <result column="city" property="city"/>
+    <result column="area" property="area"/>
+    <result column="addr" property="addr"/>
+    <result column="mobile" property="mobile"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="logistics_company" property="logisticsCompany"/>
+    <result column="logistics_number" property="logisticsNumber"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`activity_id`,`user_id`,`consignee`,`province`,`city`,`area`,`addr`,`mobile`,`create_time`,`update_time`,`logistics_company`,`logistics_number`
+  </sql>
+  <select id="list" resultMap="questionnaireUserGiftAddrMap">
+    select <include refid="Vo_Column_List"/> from questionnaire_user_gift_addr order by id desc
+  </select>
+  <select id="getById" resultMap="questionnaireUserGiftAddrMap">
+    select <include refid="Vo_Column_List"/> from questionnaire_user_gift_addr where id = #{id}
+  </select>
+  <insert id="save">
+    insert into questionnaire_user_gift_addr (`activity_id`,`user_id`,`consignee`,`province`,`city`,`area`,`addr`,`mobile`)
+    values (#{questionnaireUserGiftAddr.activityId},#{questionnaireUserGiftAddr.userId},#{questionnaireUserGiftAddr.consignee},#{questionnaireUserGiftAddr.province},#{questionnaireUserGiftAddr.city},#{questionnaireUserGiftAddr.area},#{questionnaireUserGiftAddr.addr},#{questionnaireUserGiftAddr.mobile});
+  </insert>
+  <update id="update">
+    update questionnaire_user_gift_addr
+    <set>
+      <if test="questionnaireUserGiftAddr.activityId != null">
+        `activity_id` = #{questionnaireUserGiftAddr.activityId},
+      </if>
+      <if test="questionnaireUserGiftAddr.userId != null">
+        `user_id` = #{questionnaireUserGiftAddr.userId},
+      </if>
+      <if test="questionnaireUserGiftAddr.consignee != null">
+        `consignee` = #{questionnaireUserGiftAddr.consignee},
+      </if>
+      <if test="questionnaireUserGiftAddr.province != null">
+        `province` = #{questionnaireUserGiftAddr.province},
+      </if>
+      <if test="questionnaireUserGiftAddr.city != null">
+        `city` = #{questionnaireUserGiftAddr.city},
+      </if>
+      <if test="questionnaireUserGiftAddr.area != null">
+        `area` = #{questionnaireUserGiftAddr.area},
+      </if>
+      <if test="questionnaireUserGiftAddr.addr != null">
+        `addr` = #{questionnaireUserGiftAddr.addr},
+      </if>
+      <if test="questionnaireUserGiftAddr.mobile != null">
+        `mobile` = #{questionnaireUserGiftAddr.mobile},
+      </if>
+      <if test="questionnaireUserGiftAddr.logisticsCompany != null">
+        `logistics_company` = #{questionnaireUserGiftAddr.logisticsCompany},
+      </if>
+      <if test="questionnaireUserGiftAddr.logisticsNumber != null">
+        `logistics_number` = #{questionnaireUserGiftAddr.logisticsNumber}
+      </if>
+    </set>
+    where id = #{questionnaireUserGiftAddr.id}
+  </update>
+  <delete id="deleteById">
+    delete from questionnaire_user_gift_addr where id = #{id}
+  </delete>
+
+</mapper>

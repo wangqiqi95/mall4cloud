@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpMaterialUseRecordMapper">
+  <resultMap id="cpMaterialUseRecordMap" type="com.mall4j.cloud.biz.model.cp.CpMaterialUseRecord">
+    <id column="id" property="id" />
+    <result column="mat_id" property="matId"/>
+    <result column="staff_id" property="staffId"/>
+    <result column="staff_name" property="staffName"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`mat_id`,`staff_id`,`staff_name`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="cpMaterialUseRecordMap">
+    select
+        <include refid="Vo_Column_List"/>
+    from cp_material_use_record
+    where 1=1 and mat_id = #{request.matId}
+    <if test="request.createTimeStart != null and request.createTimeStart !='' and request.createTimeEnd != null and request.createTimeEnd !=''  ">
+      AND CREATE_TIME between #{request.createTimeStart} and #{request.createTimeEnd}
+    </if>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="cpMaterialUseRecordMap">
+    select <include refid="Vo_Column_List"/> from cp_material_use_record where id = #{id}
+  </select>
+  <insert id="save">
+    insert into cp_material_use_record (`mat_id`,`staff_id`,`staff_name`)
+    values (#{cpMaterialUseRecord.matId},#{cpMaterialUseRecord.staffId},#{cpMaterialUseRecord.staffName});
+  </insert>
+  <update id="update">
+    update cp_material_use_record
+    <set>
+      <if test="cpMaterialUseRecord.matId != null">
+        `mat_id` = #{cpMaterialUseRecord.matId},
+      </if>
+      <if test="cpMaterialUseRecord.staffId != null">
+        `staff_id` = #{cpMaterialUseRecord.staffId},
+      </if>
+      <if test="cpMaterialUseRecord.staffName != null">
+        `staff_name` = #{cpMaterialUseRecord.staffName},
+      </if>
+    </set>
+    where id = #{cpMaterialUseRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from cp_material_use_record where id = #{id}
+  </delete>
+
+
+  <select id="useStatistics" resultType="com.mall4j.cloud.biz.vo.cp.MaterialBrowseRecordByDayVO">
+    select
+      date(create_time) as day1,count(1) as num
+    from cp_material_use_record
+    where MAT_ID = #{request.matId}
+      and create_time between #{request.createTimeStart} and #{request.createTimeEnd}
+    group by date(create_time)
+  </select>
+
+</mapper>

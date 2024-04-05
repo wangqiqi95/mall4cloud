@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserStaffRelationFollowUpMapper">
+  <resultMap id="userStaffRelationFollowUpMap" type="com.mall4j.cloud.user.model.UserStaffRelationFollowUp">
+    <id column="id" property="id" />
+    <result column="relation_id" property="relationId"/>
+    <result column="follow_up_id" property="followUpId"/>
+    <result column="content" property="content"/>
+    <result column="staff_ids" property="staffIds"/>
+    <result column="order_id" property="orderId"/>
+    <result column="chat_ids" property="chatIds"/>
+    <result column="imgs_url" property="imgsUrl"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="origin" property="origin"/>
+    <result column="create_name" property="createName"/>
+    <result column="create_by_id" property="createById"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`relation_id`,`follow_up_id`,`content`,`staff_ids`,`order_id`,`chat_ids`,`imgs_url`,`create_time`,`update_time`,origin,create_name,create_by_id
+  </sql>
+  <select id="list" resultMap="userStaffRelationFollowUpMap">
+    select <include refid="Vo_Column_List"/> from user_staff_relation_follow_up order by id desc
+  </select>
+  <select id="getById" resultMap="userStaffRelationFollowUpMap">
+    select <include refid="Vo_Column_List"/> from user_staff_relation_follow_up where id = #{id}
+  </select>
+  <insert id="save">
+    insert into user_staff_relation_follow_up (`relation_id`,`follow_up_id`,`content`,`staff_ids`,`order_id`,`chat_ids`,`imgs_url`,`origin`,`create_name`,`user_id`,`union_id`,`create_by_id`)
+    values (#{userStaffRelationFollowUp.relationId},#{userStaffRelationFollowUp.followUpId},#{userStaffRelationFollowUp.content},#{userStaffRelationFollowUp.staffIds},#{userStaffRelationFollowUp.orderId},#{userStaffRelationFollowUp.chatIds},#{userStaffRelationFollowUp.imgsUrl}
+           ,#{userStaffRelationFollowUp.origin},#{userStaffRelationFollowUp.createName},#{userStaffRelationFollowUp.userId},#{userStaffRelationFollowUp.unionId},#{userStaffRelationFollowUp.createById});
+  </insert>
+  <update id="update">
+    update user_staff_relation_follow_up
+    <set>
+      <if test="userStaffRelationFollowUp.relationId != null">
+        `relation_id` = #{userStaffRelationFollowUp.relationId},
+      </if>
+      <if test="userStaffRelationFollowUp.followUpId != null">
+        `follow_up_id` = #{userStaffRelationFollowUp.followUpId},
+      </if>
+      <if test="userStaffRelationFollowUp.content != null">
+        `content` = #{userStaffRelationFollowUp.content},
+      </if>
+      <if test="userStaffRelationFollowUp.staffIds != null">
+        `staff_ids` = #{userStaffRelationFollowUp.staffIds},
+      </if>
+      <if test="userStaffRelationFollowUp.orderId != null">
+        `order_id` = #{userStaffRelationFollowUp.orderId},
+      </if>
+      <if test="userStaffRelationFollowUp.chatIds != null">
+        `chat_ids` = #{userStaffRelationFollowUp.chatIds},
+      </if>
+      <if test="userStaffRelationFollowUp.imgsUrl != null">
+        `imgs_url` = #{userStaffRelationFollowUp.imgsUrl},
+      </if>
+      <if test="userStaffRelationFollowUp.origin != null">
+        `origin` = #{userStaffRelationFollowUp.origin},
+      </if>
+      <if test="userStaffRelationFollowUp.createName != null">
+        `create_name` = #{userStaffRelationFollowUp.createName},
+      </if>
+    </set>
+    where id = #{userStaffRelationFollowUp.id}
+  </update>
+  <delete id="deleteById">
+    delete from user_staff_relation_follow_up where id = #{id}
+  </delete>
+
+  <select id="follwUpList" resultMap="userStaffRelationFollowUpMap">
+    select <include refid="Vo_Column_List"/> from user_staff_relation_follow_up
+    where 1=1 and  follow_up_id is null
+    <!--<if test="request.relationId != null ">
+  and relation_id = #{request.relationId}
+</if>-->
+    <if test="request.unionId != null and request.unionId != '' ">
+      and union_id = #{request.unionId}
+    </if>
+    <if test="request.startTime != null and request.endTime != null ">
+      AND (create_time between #{request.startTime} and #{request.endTime})
+    </if>
+  </select>
+
+  <select id="updateFollwUpList" resultMap="userStaffRelationFollowUpMap">
+    select <include refid="Vo_Column_List"/> from user_staff_relation_follow_up
+    where 1=1
+    and  follow_up_id is not null
+    <!--<if test="request.relationId != null ">
+      and relation_id = #{request.relationId}
+    </if>-->
+    <if test="request.unionId != null and request.unionId != '' ">
+      and union_id = #{request.unionId}
+    </if>
+    <if test="request.startTime != null and request.endTime != null ">
+      AND (create_time between #{request.startTime} and #{request.endTime})
+    </if>
+    <if test="request.startTime != null and request.endTime != null ">
+      AND (create_time between #{request.startTime} and #{request.endTime})
+    </if>
+  </select>
+
+</mapper>

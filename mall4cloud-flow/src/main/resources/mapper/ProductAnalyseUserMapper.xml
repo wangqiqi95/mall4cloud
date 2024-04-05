@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.flow.mapper.ProductAnalyseUserMapper">
+  <resultMap id="productAnalyseUserMap" type="com.mall4j.cloud.flow.model.ProductAnalyseUser">
+    <id column="product_analyse_user_id" property="productAnalyseUserId" />
+    <result column="product_analyse_id" property="productAnalyseId"/>
+    <result column="user_id" property="userId"/>
+    <result column="create_date" property="createDate"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="is_visit" property="isVisit"/>
+    <result column="is_click" property="isClick"/>
+    <result column="is_plus_shop_cart" property="isPlusShopCart"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `product_analyse_user_id`,`product_analyse_id`,`user_id`,`create_date`,`spu_id`,`is_visit`,`is_click`,`is_plus_shop_cart`
+  </sql>
+  <select id="list" resultMap="productAnalyseUserMap">
+    select <include refid="Vo_Column_List"/> from product_analyse_user order by product_analyse_user_id desc
+  </select>
+  <select id="getByProductAnalyseUserId" resultMap="productAnalyseUserMap">
+    select <include refid="Vo_Column_List"/> from product_analyse_user where product_analyse_user_id = #{productAnalyseUserId}
+  </select>
+  <insert id="save">
+    insert into product_analyse_user (`product_analyse_id`,`user_id`,`create_date`,`spu_id`,`is_visit`,`is_click`,`is_plus_shop_cart`)
+    values (#{productAnalyseUser.productAnalyseId},#{productAnalyseUser.userId},#{productAnalyseUser.createDate},#{productAnalyseUser.spuId},#{productAnalyseUser.isVisit},#{productAnalyseUser.isClick},#{productAnalyseUser.isPlusShopCart});
+  </insert>
+  <update id="update">
+    update product_analyse_user
+    <set>
+      <if test="productAnalyseUser.productAnalyseId != null">
+        `product_analyse_id` = #{productAnalyseUser.productAnalyseId},
+      </if>
+      <if test="productAnalyseUser.userId != null">
+        `user_id` = #{productAnalyseUser.userId},
+      </if>
+      <if test="productAnalyseUser.createDate != null">
+        `create_date` = #{productAnalyseUser.createDate},
+      </if>
+      <if test="productAnalyseUser.spuId != null">
+        `spu_id` = #{productAnalyseUser.spuId},
+      </if>
+      <if test="productAnalyseUser.isVisit != null">
+        `is_visit` = #{productAnalyseUser.isVisit},
+      </if>
+      <if test="productAnalyseUser.isClick != null">
+        `is_click` = #{productAnalyseUser.isClick},
+      </if>
+      <if test="productAnalyseUser.isPlusShopCart != null">
+        `is_plus_shop_cart` = #{productAnalyseUser.isPlusShopCart},
+      </if>
+    </set>
+    where product_analyse_user_id = #{productAnalyseUser.productAnalyseUserId}
+  </update>
+  <delete id="deleteById">
+    delete from product_analyse_user where product_analyse_user_id = #{productAnalyseUserId}
+  </delete>
+
+  <insert id="saveBatch">
+    insert into product_analyse_user (`product_analyse_id`,`user_id`,`create_date`,`spu_id`,`is_visit`,`is_click`,`is_plus_shop_cart`)
+    values
+    <foreach collection="productAnalyseUserList" item="productAnalyseUser" separator=",">
+        (#{productAnalyseUser.productAnalyseId},#{productAnalyseUser.userId},#{productAnalyseUser.createDate},#{productAnalyseUser.spuId},#{productAnalyseUser.isVisit},#{productAnalyseUser.isClick},#{productAnalyseUser.isPlusShopCart})
+      </foreach>
+  </insert>
+
+  <update id="updateBatch">
+    <foreach collection="productAnalyseUserList" item="productAnalyseUser">
+      update product_analyse_user
+      <set>
+        <if test="productAnalyseUser.userId != null">
+          `user_id` = #{productAnalyseUser.userId},
+        </if>
+        <if test="productAnalyseUser.isVisit != null">
+          `is_visit` = #{productAnalyseUser.isVisit},
+        </if>
+        <if test="productAnalyseUser.isClick != null">
+          `is_click` = #{productAnalyseUser.isClick},
+        </if>
+        <if test="productAnalyseUser.isPlusShopCart != null">
+          `is_plus_shop_cart` = #{productAnalyseUser.isPlusShopCart},
+        </if>
+      </set>
+      where product_analyse_user_id = #{productAnalyseUser.productAnalyseUserId};
+    </foreach>
+  </update>
+
+  <delete id="deleteSpuDataBySpuId">
+    DELETE FROM product_analyse_user WHERE product_analyse_id IN (SELECT product_analyse_id FROM product_analyse WHERE spu_id = #{spuId})
+  </delete>
+</mapper>

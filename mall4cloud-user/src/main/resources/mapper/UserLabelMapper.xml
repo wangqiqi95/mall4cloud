@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserLabelMapper">
+  <resultMap id="userLabelMap" type="com.mall4j.cloud.user.model.UserLabel">
+    <id column="id" property="id" />
+    <result column="store_id" property="storeId"/>
+    <result column="staff_id" property="staffId"/>
+    <result column="label_name" property="labelName"/>
+    <result column="label_type" property="labelType"/>
+    <result column="tag_id" property="tagId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`store_id`,`staff_id`,`label_name`,`label_type`,`tag_id`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.user.vo.UserLabelVO">
+    select ul.*,(select count(id) from user_label_user ulu where ulu.label_id = ul.id) as userNum from user_label ul
+    <where>
+      <if test="userLabelDTO.storeId != null">
+        and ul.store_id = #{userLabelDTO.storeId}
+      </if>
+      <if test="userLabelDTO.staffId != null">
+        and ul.staff_id = #{serLabelDTO.staffId}
+      </if>
+      <if test="userLabelDTO.labelType != null">
+        and ul.label_type = #{userLabelDTO.labelType}
+      </if>
+    </where>
+    order by ul.id desc
+  </select>
+  <select id="getById" resultMap="userLabelMap">
+    select <include refid="Vo_Column_List"/> from user_label where id = #{id}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into user_label (`store_id`,`staff_id`,`label_name`,`label_type`,`tag_id`)
+    values (#{userLabel.storeId},#{userLabel.staffId},#{userLabel.labelName},#{userLabel.labelType},#{userLabel.tagId});
+  </insert>
+  <update id="update">
+    update user_label
+    <set>
+      <if test="userLabel.storeId != null">
+        `store_id` = #{userLabel.storeId},
+      </if>
+      <if test="userLabel.staffId != null">
+        `staff_id` = #{userLabel.staffId},
+      </if>
+      <if test="userLabel.labelName != null">
+        `label_name` = #{userLabel.labelName},
+      </if>
+      <if test="userLabel.labelType != null">
+        `label_type` = #{userLabel.labelType},
+      </if>
+      <if test="userLabel.tagId != null">
+        `tag_id` = #{userLabel.tagId},
+      </if>
+    </set>
+    where id = #{userLabel.id}
+  </update>
+  <delete id="deleteById">
+    delete from user_label where id = #{id}
+  </delete>
+
+</mapper>

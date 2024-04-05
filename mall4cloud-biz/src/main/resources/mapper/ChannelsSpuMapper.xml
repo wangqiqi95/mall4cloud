@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.channels.ChannelsSpuMapper">
+  <resultMap id="channelsSpuMap" type="com.mall4j.cloud.biz.model.channels.ChannelsSpu">
+    <id column="id" property="id" />
+    <result column="spu_id" property="spuId"/>
+    <result column="out_spu_id" property="outSpuId"/>
+    <result column="brand_id" property="brandId"/>
+    <result column="title" property="title"/>
+    <result column="sub_title" property="subTitle"/>
+    <result column="head_imgs" property="headImgs"/>
+    <result column="deliver_method" property="deliverMethod"/>
+    <result column="freight_template" property="freightTemplate"/>
+    <result column="cats" property="cats"/>
+    <result column="audit_reason" property="auditReason"/>
+    <result column="status" property="status"/>
+    <result column="edit_status" property="editStatus"/>
+    <result column="in_winodws" property="inWinodws"/>
+    <result column="verify_time" property="verifyTime"/>
+    <result column="success_time" property="successTime"/>
+    <result column="fail_time" property="failTime"/>
+    <result column="shelf_time" property="shelfTime"/>
+    <result column="cancel_time" property="cancelTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="delete_time" property="deleteTime"/>
+    <result column="update_by" property="updateBy"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`spu_id`,`out_spu_id`,`brand_id`,`title`,`sub_title`,`head_imgs`,`deliver_method`,`freight_template`,`cats`,`audit_reason`,`status`,`edit_status`,`in_winodws`,`verify_time`,`success_time`,`fail_time`,`shelf_time`,`cancel_time`,`create_time`,`update_time`,`delete_time`,`update_by`
+  </sql>
+  <select id="list" resultMap="channelsSpuMap">
+    select <include refid="Vo_Column_List"/> from channels_spu order by id desc
+  </select>
+  <select id="getById" resultMap="channelsSpuMap">
+    select <include refid="Vo_Column_List"/> from channels_spu where id = #{id}
+  </select>
+  <insert id="save1" useGeneratedKeys="true" keyProperty="id">
+    insert into channels_spu (`spu_id`,`out_spu_id`,`brand_id`,`title`,`sub_title`,`head_imgs`,`deliver_method`,`freight_template`,`cats`,`audit_reason`,`status`,`edit_status`,`in_winodws`,`verify_time`,`success_time`,`fail_time`,`shelf_time`,`cancel_time`,`delete_time`,`update_by`)
+    values (#{channelsSpu.spuId},#{channelsSpu.outSpuId},#{channelsSpu.brandId},#{channelsSpu.title},#{channelsSpu.subTitle},#{channelsSpu.headImgs},#{channelsSpu.deliverMethod},#{channelsSpu.freightTemplate},#{channelsSpu.cats},#{channelsSpu.auditReason},#{channelsSpu.status},#{channelsSpu.editStatus},#{channelsSpu.inWinodws},#{channelsSpu.verifyTime},#{channelsSpu.successTime},#{channelsSpu.failTime},#{channelsSpu.shelfTime},#{channelsSpu.cancelTime},#{channelsSpu.deleteTime},#{channelsSpu.updateBy});
+  </insert>
+  <update id="update1">
+    update channels_spu
+    <set>
+      <if test="channelsSpu.spuId != null">
+        `spu_id` = #{channelsSpu.spuId},
+      </if>
+      <if test="channelsSpu.outSpuId != null">
+        `out_spu_id` = #{channelsSpu.outSpuId},
+      </if>
+      <if test="channelsSpu.brandId != null">
+        `brand_id` = #{channelsSpu.brandId},
+      </if>
+      <if test="channelsSpu.title != null">
+        `title` = #{channelsSpu.title},
+      </if>
+      <if test="channelsSpu.subTitle != null">
+        `sub_title` = #{channelsSpu.subTitle},
+      </if>
+      <if test="channelsSpu.headImgs != null">
+        `head_imgs` = #{channelsSpu.headImgs},
+      </if>
+      <if test="channelsSpu.deliverMethod != null">
+        `deliver_method` = #{channelsSpu.deliverMethod},
+      </if>
+      <if test="channelsSpu.freightTemplate != null">
+        `freight_template` = #{channelsSpu.freightTemplate},
+      </if>
+      <if test="channelsSpu.cats != null">
+        `cats` = #{channelsSpu.cats},
+      </if>
+      <if test="channelsSpu.auditReason != null">
+        `audit_reason` = #{channelsSpu.auditReason},
+      </if>
+      <if test="channelsSpu.status != null">
+        `status` = #{channelsSpu.status},
+      </if>
+      <if test="channelsSpu.editStatus != null">
+        `edit_status` = #{channelsSpu.editStatus},
+      </if>
+      <if test="channelsSpu.inWinodws != null">
+        `in_winodws` = #{channelsSpu.inWinodws},
+      </if>
+      <if test="channelsSpu.stockShareRate != null">
+        `stock_share_rate` = #{channelsSpu.stockShareRate},
+      </if>
+      <if test="channelsSpu.verifyTime != null">
+        `verify_time` = #{channelsSpu.verifyTime},
+      </if>
+      <if test="channelsSpu.successTime != null">
+        `success_time` = #{channelsSpu.successTime},
+      </if>
+      <if test="channelsSpu.failTime != null">
+        `fail_time` = #{channelsSpu.failTime},
+      </if>
+      <if test="channelsSpu.shelfTime != null">
+        `shelf_time` = #{channelsSpu.shelfTime},
+      </if>
+      <if test="channelsSpu.cancelTime != null">
+        `cancel_time` = #{channelsSpu.cancelTime},
+      </if>
+      <if test="channelsSpu.deleteTime != null">
+        `delete_time` = #{channelsSpu.deleteTime},
+      </if>
+      <if test="channelsSpu.updateBy != null">
+          `update_by` = #{channelsSpu.updateBy}
+      </if>
+    </set>
+    where id = #{channelsSpu.id}
+  </update>
+  <delete id="deleteById">
+    delete from channels_spu where id = #{id}
+  </delete>
+
+</mapper>

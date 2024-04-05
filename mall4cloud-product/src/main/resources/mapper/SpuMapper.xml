@@ -1,0 +1,1865 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SpuMapper">
+    <resultMap id="spuMap" type="com.mall4j.cloud.product.model.Spu">
+        <id column="spu_id" property="spuId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="spu_code" property="spuCode"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="brand_id" property="brandId"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="shop_category_id" property="shopCategoryId"/>
+        <result column="img_urls" property="imgUrls"/>
+        <result column="main_img_url" property="mainImgUrl"/>
+        <result column="video" property="video"/>
+        <result column="price_fee" property="priceFee"/>
+        <result column="market_price_fee" property="marketPriceFee"/>
+        <result column="status" property="status"/>
+        <result column="delivery_mode" property="deliveryMode"/>
+        <result column="delivery_template_id" property="deliveryTemplateId"/>
+        <result column="seq" property="seq"/>
+        <result column="is_top" property="isTop"/>
+        <result column="is_compose" property="isCompose"/>
+        <result column="activity_id" property="activityId"/>
+        <result column="spu_type" property="spuType"/>
+        <result column="has_sku_img" property="hasSkuImg"/>
+        <result column="name" property="name"/>
+    </resultMap>
+    <resultMap id="spuDetailMap" type="com.mall4j.cloud.common.product.vo.SpuVO"
+               extends="com.mall4j.cloud.product.mapper.SpuMapper.spuMap">
+        <result column="detail" property="detail"/>
+        <result column="spu_code" property="spuCode"/>
+        <result column="selling_point" property="sellingPoint"/>
+        <result column="stock" property="totalStock"/>
+        <result column="channels_stock" property="channelsStock"/>
+        <result column="style_code" property="styleCode"/>
+
+        <!--        <collection property="spuLangList" ofType="com.mall4j.cloud.common.product.vo.SpuLangVO">-->
+        <!--            <id column="lang" property="lang"/>-->
+        <!--            <result column="spu_name" property="spuName"/>-->
+        <!--            <result column="selling_point" property="sellingPoint"/>-->
+        <!--        </collection>-->
+        <!--    <result column="total_stock" property="totalStock"/>-->
+        <!--    <collection property="spuAttrValues" ofType="com.mall4j.cloud.common.product.vo.SpuAttrValueVO">-->
+        <!--      <id column="spu_attr_value_id" property="spuAttrValueId"/>-->
+        <!--      <result column="attr_id" property="attrId"/>-->
+        <!--      <result column="attr_name" property="attrName"/>-->
+        <!--      <result column="attr_value_id" property="attrValueId"/>-->
+        <!--      <result column="attr_value_name" property="attrValueName"/>-->
+        <!--      <result column="search_type" property="searchType"/>-->
+        <!--    </collection>-->
+    </resultMap>
+
+    <resultMap id="spuAndSkuMap" type="com.mall4j.cloud.common.product.vo.SpuVO"
+               extends="com.mall4j.cloud.product.mapper.SpuMapper.spuMap">
+        <result column="detail" property="detail"/>
+        <result column="total_stock" property="totalStock"/>
+        <collection property="skus" ofType="com.mall4j.cloud.common.product.vo.SkuVO">
+            <id column="sku_id" property="skuId"/>
+            <result column="create_time" property="createTime"/>
+            <result column="update_time" property="updateTime"/>
+            <result column="spu_id" property="spuId"/>
+            <result column="stock" property="stock"/>
+            <result column="sku_name" property="skuName"/>
+            <result column="img_url" property="imgUrl"/>
+            <result column="price_fee" property="priceFee"/>
+            <result column="market_price_fee" property="marketPriceFee"/>
+            <result column="status" property="status"/>
+            <result column="party_code" property="partyCode"/>
+            <result column="model_id" property="modelId"/>
+            <result column="weight" property="weight"/>
+            <result column="volume" property="volume"/>
+            <result column="score_fee" property="scoreFee"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="spuExcelVO" type="com.mall4j.cloud.product.vo.SpuExcelVO">
+        <result column="spu_id" property="spuId"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="shop_category_id" property="shopCategoryId"/>
+        <result column="status" property="status"/>
+        <result column="delivery_mode" property="deliveryMode"/>
+        <result column="delivery_template_id" property="deliveryTemplateId"/>
+        <result column="is_compose" property="isCompose"/>
+        <collection property="brandLangList" ofType="com.mall4j.cloud.common.product.vo.BrandLangVO">
+            <id column="b_lang" property="lang"/>
+            <result column="brand_name" property="name"/>
+        </collection>
+        <collection property="spuLangList" ofType="com.mall4j.cloud.common.product.vo.SpuLangVO">
+            <id column="lang" property="lang"/>
+            <result column="spu_name" property="spuName"/>
+            <result column="selling_point" property="sellingPoint"/>
+        </collection>
+    </resultMap>
+    <resultMap id="esProductBO" type="com.mall4j.cloud.common.product.bo.EsProductBO">
+        <result column="spu_id" property="spuId"/>
+        <result column="spu_code" property="spuCode"/>
+        <result column="spu_name_zh" property="spuNameZh"/>
+        <result column="spu_name_en" property="spuNameEn"/>
+        <result column="selling_point_zh" property="sellingPointZh"/>
+        <result column="selling_point_en" property="sellingPointEn"/>
+        <result column="is_compose" property="isCompose"/>
+        <result column="stock" property="stock"/>
+        <result column="price_fee" property="priceFee"/>
+        <result column="score_fee" property="scoreFee"/>
+        <result column="market_price_fee" property="marketPriceFee"/>
+        <result column="main_img_url" property="mainImgUrl"/>
+        <result column="spu_type" property="spuType"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="spu_status" property="spuStatus"/>
+        <result column="sale_num" property="saleNum"/>
+        <result column="comment_num" property="commentNum"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="brand_id" property="brandId"/>
+        <result column="seq" property="seq"/>
+        <result column="activity_id" property="activityId"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="shop_category_id" property="shopCategoryId"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        s
+        .
+        `spu_id`
+        ,s.`shop_id`,s.`create_time`,s.`update_time`,s.`brand_id`,s.`shop_category_id`,s.`category_id`,s.`img_urls`,s.`main_img_url`,s.`price_fee`
+    ,s.`market_price_fee`,s.`status`,s.`has_sku_img`,s.`seq`,s.`is_top`,s.delivery_mode,s.delivery_template_id,s.is_compose,s.activity_id,s.spu_type,s.video,s.name    </sql>
+    <select id="listSpu" resultMap="spuDetailMap">
+        select distinct
+        <include refid="Vo_Column_List"/>
+        ,se.actual_stock as total_stock,se.sale_num,sl.lang,sl.spu_name from spu s
+        left join `spu_extension` se on s.`spu_id` = se.`spu_id`
+        left join `spu_lang` sl on s.`spu_id` = sl.`spu_id`
+        <if test="spu.partyCode != null and spu.partyCode != ''">
+            join `sku` on s.`spu_id` = sku.`spu_id` and sku.party_code = #{spu.partyCode}
+        </if>
+        where s.status <![CDATA[<>]]> -1
+        <if test="spu.spuId != null">
+            and s.spu_id = #{spu.spuId}
+        </if>
+        <if test="spu.spuIds != null and spu.spuIds.size() > 0">
+            and s.spu_id in
+            <foreach collection="spu.spuIds" item="spuId" open="(" close=")" separator=",">
+                #{spuId}
+            </foreach>
+        </if>
+        <if test="spu.brandId != null">
+            and s.brand_id = #{spu.brandId}
+        </if>
+        <if test="spu.categoryId != null">
+            and s.category_id = #{spu.categoryId}
+        </if>
+        <if test="spu.name != null and spu.name != ''">
+            and sl.spu_name like concat('%', #{spu.name}, '%')
+        </if>
+        <if test="spu.status != null">
+            and s.status = #{spu.status}
+        </if>
+        <if test="spu.spuType != null">
+            and s.spu_type = #{spu.spuType}
+        </if>
+        <if test="spu.isCompose != null">
+            and s.is_compose = #{spu.isCompose}
+        </if>
+        <if test="spu.spuStatus == 1">
+            and s.status = 1 and se.stock &gt; 0
+        </if>
+        <if test="spu.spuStatus == 2">
+            and s.status = 1 and se.stock = 0
+        </if>
+        <if test="spu.spuStatus == 3">
+            and s.status = 0
+        </if>
+        <if test="spu.maxPrice != null">
+            and s.price_fee &lt;= #{spu.maxPrice}
+        </if>
+        <if test="spu.minPrice != null">
+            and s.price_fee &gt;= #{spu.minPrice}
+        </if>
+        <if test="spu.maxSaleNum != null">
+            and se.sale_num &lt;= #{spu.maxSaleNum}
+        </if>
+        <if test="spu.minSaleNum != null">
+            and se.sale_num &gt;= #{spu.minSaleNum}
+        </if>
+        order by
+        <trim prefixOverrides=",">
+            <if test="spu.priceFeeSort == 0">s.price_fee desc</if>
+            <if test="spu.priceFeeSort == 1">,s.price_fee</if>
+            <if test="spu.marketPriceFeeSort == 0">,s.market_price_fee desc</if>
+            <if test="spu.marketPriceFeeSort == 1">,s.market_price_fee</if>
+            <if test="spu.saleNumSort == 0">,se.sale_num desc</if>
+            <if test="spu.saleNumSort == 1">,se.sale_num</if>
+            <if test="spu.stockSort == 0">,se.actual_stock desc</if>
+            <if test="spu.stockSort == 1">,se.actual_stock</if>
+            <if test="spu.seqSort == 0">,s.seq desc</if>
+            <if test="spu.seqSort == 1">,s.seq</if>
+            <if test="spu.createTimeSort == 0">,s.create_time desc</if>
+            <if test="spu.createTimeSort == 1">,s.create_time</if>
+            <if test="spu.priceFeeSort == null and spu.marketPriceFeeSort == null and spu.saleNumSort == null
+          and spu.stockSort == null and spu.seqSort == null and spu.createTimeSort == null">
+                s.update_time desc, s.spu_id
+            </if>
+        </trim>
+    </select>
+
+    <select id="getBySpuId" resultMap="spuDetailMap">
+        select
+        <include refid="Vo_Column_List"/>
+        ,s.spu_code,
+        sd.`detail`,sd.lang detail_lang ,s.name as spuName,s.selling_point
+        FROM `spu` s
+        LEFT JOIN spu_detail sd ON s.`spu_id` = sd.`spu_id`
+        WHERE s.`spu_id` = #{spuId}
+    </select>
+
+    <insert id="saveSpu" useGeneratedKeys="true" keyProperty="spuId">
+        insert into spu (`brand_id`, `shop_id`, `category_id`, `shop_category_id`, `img_urls`, `main_img_url`, `video`,
+                         `price_fee`, `market_price_fee`, `score_fee`, `status`, `delivery_mode`,
+                         `delivery_template_id`, has_sku_img, `spu_type`, `is_compose`, `seq`)
+        values (#{spu.brandId}, #{spu.shopId}, #{spu.categoryId}, #{spu.shopCategoryId}, #{spu.imgUrls},
+                #{spu.mainImgUrl}, #{spu.video}, #{spu.priceFee}, #{spu.marketPriceFee}, #{spu.scoreFee}, #{spu.status},
+                #{spu.deliveryMode}, #{spu.deliveryTemplateId}, #{spu.hasSkuImg}, #{spu.spuType}, #{spu.isCompose},
+                #{spu.seq});
+    </insert>
+    <update id="updateStatusBySpuId">
+        update spu
+        set status = -1
+        where spu_id = #{spuId}
+    </update>
+    <update id="updateSpu">
+        update spu
+        set
+        <if test="spu.categoryId != null">
+            `category_id` = #{spu.categoryId},
+        </if>
+        <if test="spu.shopCategoryId != null">
+            `shop_category_id` = #{spu.shopCategoryId},
+        </if>
+        <if test="spu.imgUrls != null">
+            `img_urls` = #{spu.imgUrls},
+        </if>
+        <if test="spu.mainImgUrl != null">
+            `main_img_url` = #{spu.mainImgUrl},
+        </if>
+        <if test="spu.video != null">
+            `video` = #{spu.video},
+        </if>
+        <if test="spu.priceFee != null">
+            `price_fee` = #{spu.priceFee},
+        </if>
+        <if test="spu.marketPriceFee != null">
+            `market_price_fee` = #{spu.marketPriceFee},
+        </if>
+        <if test="spu.scoreFee != null">
+            `score_fee` = #{spu.scoreFee},
+        </if>
+        <if test="spu.status != null">
+            `status` = #{spu.status},
+        </if>
+        <if test="spu.deliveryMode != null">
+            `delivery_mode` = #{spu.deliveryMode},
+        </if>
+        <if test="spu.deliveryTemplateId != null">
+            `delivery_template_id` = #{spu.deliveryTemplateId},
+        </if>
+        <if test="spu.spuType != null">
+            `spu_type` = #{spu.spuType},
+        </if>
+        <if test="spu.activityId != null">
+            `activity_id` = #{spu.activityId},
+        </if>
+        <if test="spu.isCompose != null">
+            `is_compose` = #{spu.isCompose},
+        </if>
+        <if test="spu.hasSkuImg != null">
+            `has_sku_img` = #{spu.hasSkuImg},
+        </if>
+        <if test="spu.seq != null">
+            `seq` = #{spu.seq},
+        </if>
+        <!--品牌是可以删除的, 0代表删除-->
+        <if test="spu.brandId != null">
+            `brand_id` = #{spu.brandId},
+        </if>
+        <if test="spu.brandId != null">
+            `spu.primary_category_id` = #{spu.primaryCategoryId},
+        </if>
+        <if test="spu.brandId != null">
+            `spu.secondary_category_id` = #{spu.secondaryCategoryId},
+        </if>
+        `update_time` = NOW()
+        where spu_id = #{spu.spuId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from spu
+        where spu_id = #{spuId}
+    </delete>
+
+    <select id="loadEsProductBO" resultMap="esProductBO">
+        SELECT s.spu_id,
+               s.spu_code,
+               s.shop_id,
+               s.price_fee,
+               s.market_price_fee,
+               s.img_urls,
+               s.status              spu_status,
+               s.score_fee,
+               s.seq,
+               s.is_top,
+               s.spu_type,
+               s.is_compose,
+               s.create_time,
+               s.update_time,
+               s.category_id,
+               s.main_img_url,
+               s.category_id,
+               s.shop_category_id,
+               s.brand_id,
+               s.shop_category_id AS shop_secondary_category_id,
+               se.actual_stock    AS stock,
+               se.sale_num,
+               sl.spu_name_zh,
+               sl.selling_point_zh,
+               sl.spu_name_en,
+               sl.selling_point_en,
+               se.comment_num,
+               s.shop_category_id AS shop_secondary_category_id,
+               s.activity_id
+        FROM spu s
+                 LEFT JOIN (
+            SELECT zh.spu_id,
+                   zh.spu_name      AS spu_name_zh,
+                   zh.selling_point AS selling_point_zh,
+                   en.spu_name      AS spu_name_en,
+                   en.selling_point AS selling_point_en
+            FROM spu_lang zh
+                     LEFT JOIN spu_lang en ON zh.spu_id = en.spu_id and en.lang = 2
+            WHERE zh.lang = 1
+              AND zh.spu_id = #{spuId}
+        ) sl ON s.spu_id = sl.spu_id
+                 LEFT JOIN spu_extension se ON s.spu_id = se.spu_id
+        WHERE s.spu_id = #{spuId}
+    </select>
+
+    <select id="getSpuIdsBySpuUpdateDTO" resultType="java.lang.Long">
+        SELECT spu_id FROM spu
+        where status = 1
+        <if test="shopCategoryIds != null">
+            AND shop_category_id IN
+            <foreach collection="shopCategoryIds" item="shopCategoryId" open="(" close=")" separator=",">
+                #{shopCategoryId}
+            </foreach>
+        </if>
+        <if test="categoryIds != null">
+            AND category_id IN
+            <foreach collection="categoryIds" item="categoryId" open="(" close=")" separator=",">
+                #{categoryId}
+            </foreach>
+        </if>
+        <if test="brandId != null">
+            AND brand_id = #{brandId}
+        </if>
+        <if test="shopId != null">
+            AND shop_id = #{shopId}
+        </if>
+    </select>
+
+    <update id="changeSpuStatus">
+        update spu
+        set `status` = #{status}
+        where spu_id = #{spuId}
+    </update>
+
+    <update id="batchChangeSpuStatus">
+        update spu set `status` = #{status}, `update_time` = NOW()
+        <if test="status==0">
+            ,`down_time` = NOW()
+        </if>
+        <if test="status==1">
+            ,`push_time` = NOW()
+        </if>
+        where spu_id in
+        <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+            #{spuId}
+        </foreach>
+    </update>
+
+    <update id="batchSpusChannelBySpuId">
+        <foreach collection="spus" separator=";" item="spu">
+            update spu
+            <set>
+                `channel_name` = #{spu.channelName},
+                `channel_discount` = #{spu.channelDiscount},
+                `update_time` = now(),
+                `style_code` = #{spu.styleCode},
+                `sex` = #{spu.sex}
+            </set>
+            where spu_id = #{spu.spuId}
+        </foreach>
+    </update>
+
+    <update id="updateSpuUpdateTime">
+        update spu set `update_time` = NOW()
+        <where>
+            <if test="categoryIds != null or shopIds != null">
+                status = 1
+            </if>
+            <if test="categoryIds != null ">
+                and category_id in
+                <foreach collection="categoryIds" item="categoryId" open="(" close=")" separator=",">
+                    #{categoryId}
+                </foreach>
+            </if>
+            <if test="spuIds != null">
+                and spu_id in
+                <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+                    #{spuId}
+                </foreach>
+            </if>
+            <if test="shopIds != null">
+                and shop_id in
+                <foreach collection="shopIds" item="shopId" open="(" close=")" separator=",">
+                    #{shopId}
+                </foreach>
+            </if>
+        </where>
+
+    </update>
+
+    <select id="listCanSeckillProd" resultMap="spuAndSkuMap">
+        select spu.spu_id,spu.spu_name,spu.main_img_url,spu.status,spu.price_fee,
+        sku.sku_id,sku.name as sku_name,sku.price_fee,sku.market_price_fee,sku.party_code,sku.model_id,sku.weight,sku.volume,
+        stock.stock from (
+        SELECT spu.*,spu.name as spu_name FROM spu spu
+        <where>
+            spu.status = 1 and spu.spu_type = 0
+            <if test="spuDTO.spuId != null and spuDTO.spuId != 0">
+                AND spu.spu_id = #{spuDTO.spuId}
+            </if>
+            <if test="spuDTO.shopCategoryId != null">
+                and spu.shop_category_id = #{spuDTO.shopCategoryId}
+            </if>
+            <if test="spuDTO.name != null and spuDTO.name != ''">
+                and pl.spu_name like concat('%',#{spuDTO.name},'%')
+            </if>
+        </where>
+        limit #{page.begin}, #{page.size}
+        )as spu
+        LEFT JOIN sku sku ON spu.spu_id = sku.spu_id AND sku.status != -1
+        LEFT JOIN sku_stock stock ON stock.sku_id = sku.sku_id
+    </select>
+
+<!--    <select id="listCanSeckillProd" resultMap="spuAndSkuMap">-->
+<!--        select spu.spu_id,spu.spu_name,spu.main_img_url,spu.status,spu.price_fee,-->
+<!--        sku.sku_id,sl.sku_name,sku.price_fee,sku.market_price_fee,sku.party_code,sku.model_id,sku.weight,sku.volume,-->
+<!--        stock.stock from (-->
+<!--        SELECT spu.*,pl.spu_name FROM spu spu-->
+<!--        LEFT JOIN spu_lang pl ON pl.spu_id = spu.spu_id AND pl.`lang` = #{lang}-->
+<!--        <where>-->
+<!--            spu.status = 1 and spu.spu_type = 0-->
+<!--            <if test="spuDTO.spuId != null and spuDTO.spuId != 0">-->
+<!--                AND spu.spu_id = #{spuDTO.spuId}-->
+<!--            </if>-->
+<!--            <if test="spuDTO.shopId != null">-->
+<!--                and spu.`shop_id` =#{spuDTO.shopId}-->
+<!--            </if>-->
+<!--            <if test="spuDTO.shopCategoryId != null">-->
+<!--                and spu.shop_category_id = #{spuDTO.shopCategoryId}-->
+<!--            </if>-->
+<!--            <if test="spuDTO.name != null and spuDTO.name != ''">-->
+<!--                and pl.spu_name like concat('%',#{spuDTO.name},'%')-->
+<!--            </if>-->
+<!--        </where>-->
+<!--        limit #{page.begin}, #{page.size}-->
+<!--        )as spu-->
+<!--        LEFT JOIN sku sku ON spu.spu_id = sku.spu_id AND sku.status != -1-->
+<!--        LEFT JOIN sku_lang sl ON sl.sku_id = sku.sku_id AND sl.`lang` = #{lang}-->
+<!--        LEFT JOIN sku_stock stock ON stock.sku_id = sku.sku_id-->
+<!--    </select>-->
+    <select id="countCanSeckillProd" resultType="long">
+        SELECT ifnull(count(*),0) FROM spu spu
+        <where>
+            spu.status = 1 and spu.spu_type = 0
+            <if test="spuDTO.spuId != null and spuDTO.spuId != 0">
+                AND spu.spu_id = #{spuDTO.spuId}
+            </if>
+            <if test="spuDTO.shopId != null">
+                and spu.`shop_id` =#{spuDTO.shopId}
+            </if>
+            <if test="spuDTO.shopCategoryId != null">
+                and spu.shop_category_id = #{spuDTO.shopCategoryId}
+            </if>
+            <if test="spuDTO.name != null and spuDTO.name != ''">
+                and spu.name like concat('%',#{spuDTO.name},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="countByTransportId" resultType="int">
+        SELECT ifnull(count(*),0) FROM spu
+        <where>
+            spu.status  <![CDATA[<>]]> -1 and delivery_template_id = #{transportId}
+        </where>
+    </select>
+
+    <update id="offlienSpuByShopIdAndCategoryId">
+        update spu set status = 0,spu_type = 0,activity_id = 0 where
+        <if test="shopId == 0">
+            category_id in
+        </if>
+        <if test="shopId != 0">
+            shop_category_id in
+        </if>
+        <foreach collection="categoryIds" item="categoryId" open="(" close=")" separator=",">
+            #{categoryId}
+        </foreach>
+    </update>
+
+    <select id="getActivitySpuInfoByCategoryIdsAndShopId" resultType="com.mall4j.cloud.common.product.vo.SpuVO">
+        select spu_type,spu_id from spu
+        where
+        <if test="status != null">
+            status = #{status}
+        </if>
+        <if test="status == null">
+            `status` = 1
+        </if>
+        <if test="type == 1">
+            and spu_id in
+            <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+                #{spuId}
+            </foreach>
+        </if>
+        <if test="type == 2">
+            <if test="shopId == 0">
+                and category_id in
+            </if>
+            <if test="shopId != 0">
+                and shop_category_id in
+            </if>
+            <foreach collection="categoryIds" item="categoryId" open="(" close=")" separator=",">
+                #{categoryId}
+            </foreach>
+        </if>
+        <if test="type == 3 and shopId != null">
+            and shop_id = #{shopId}
+        </if>
+    </select>
+
+    <update id="offlineSpuByShopId">
+        update spu
+        set status = 0
+        where shop_id = #{shopId}
+          and status = 1
+    </update>
+
+    <!--    <select id="excelSpuList" resultMap="spuExcelVO">-->
+    <!--        SELECT spu.spu_id,sl.lang,sl.spu_name,sl.selling_point,spu.delivery_mode,spu.status,spu.delivery_template_id,-->
+    <!--        bl.lang as b_lang, bl.name AS brand_name,spu.category_id,spu.shop_category_id-->
+    <!--        FROM spu spu-->
+    <!--        LEFT JOIN spu_lang sl ON spu.spu_id = sl.spu_id-->
+    <!--        LEFT JOIN brand b ON spu.brand_id = b.brand_id-->
+    <!--        LEFT JOIN brand_lang bl ON bl.brand_id = spu.brand_id-->
+
+    <!--        WHERE spu.status != -1-->
+    <!--        <if test="spuSearch.spuId != null">-->
+    <!--            and spu.spu_id = #{spuSearch.spuId}-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.shopId != null">-->
+    <!--            and spu.shop_id = #{spuSearch.shopId}-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.brandId != null">-->
+    <!--            and spu.brand_id = #{spuSearch.brandId}-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.categoryId != null">-->
+    <!--            and spu.category_id = #{spuSearch.categoryId}-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.categoryId != null">-->
+    <!--            and spu.category_id = #{spuSearch.categoryId}-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.name != null and spuSearch.name != ''">-->
+    <!--            and spu.spu_id in (select spu_id from spu_lang where spu_name like concat('%', #{spuSearch.name}, '%'))-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.status != null">-->
+    <!--            and spu.status = #{spuSearch.status}-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.spuType != null">-->
+    <!--            and spu.spu_type = #{spuSearch.spuType}-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.isCompose != null">-->
+    <!--            and spu.is_compose = #{spuSearch.isCompose}-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.spuStatus == 1">-->
+    <!--            and spu.status = 1 and se.stock &gt; 0-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.spuStatus == 2">-->
+    <!--            and spu.status = 1 and se.stock = 0-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.spuStatus == 3">-->
+    <!--            and spu.status = 0-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.maxPrice != null">-->
+    <!--            and spu.price_fee &lt;= #{spuSearch.maxPrice}-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.minPrice != null">-->
+    <!--            and spu.price_fee &gt;= #{spuSearch.minPrice}-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.maxSaleNum != null">-->
+    <!--            and se.sale_num &lt;= #{spuSearch.maxSaleNum}-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.minSaleNum != null">-->
+    <!--            and se.sale_num &gt;= #{spuSearch.minSaleNum}-->
+    <!--        </if>-->
+    <!--        <if test="spuSearch.partyCode != null and spuSearch.partyCode != ''">-->
+    <!--            and sku.party_code = #{spuSearch.partyCode}-->
+    <!--        </if>-->
+    <!--    </select>-->
+
+    <select id="getShopIdBySpuId" resultType="java.lang.Long">
+        select shop_id
+        from spu
+        where spu_id = #{spuId} limit 1
+    </select>
+
+    <update id="changeToNormalSpu">
+        update spu set spu_type = 0,activity_id = 0 where spu_id in
+        <foreach collection="spuIds" item="spuId" separator="," open="(" close=")">
+            #{spuId}
+        </foreach>
+    </update>
+    <select id="countByCategoryAndShopId" resultType="java.lang.Integer">
+        select count(*)
+        from spu
+        where shop_id = #{shopId}
+          and category_id = #{categoryId}
+          and status != -1
+    </select>
+    <select id="countByUserId" resultType="java.lang.Integer">
+        select count(spu_id)
+        from spu_collection
+        where user_id = #{userId}
+        group by user_id
+    </select>
+
+    <select id="spuShopIdsBySpuIds" resultType="java.lang.Long">
+        SELECT DISTINCT shop_id FROM spu WHERE spu_id IN
+        <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+            #{spuId}
+        </foreach>
+    </select>
+    <select id="listIdByCidAndShopId" resultType="java.lang.Long">
+        SELECT DISTINCT spu_id FROM spu WHERE category_id IN
+        <foreach collection="cidList" item="cid" open="(" close=")" separator=",">
+            #{cid}
+        </foreach>
+        AND shop_id = #{shopId} AND status != -1
+    </select>
+
+    <update id="updateBatch">
+        <foreach collection="spuList" item="spu" separator=";">
+            update spu
+            <set>
+                <if test="spu.brandId != null">
+                    `brand_id` = #{spu.brandId},
+                </if>
+                <if test="spu.categoryId != null">
+                    `category_id` = #{spu.categoryId},
+                </if>
+                <if test="spu.priceFee != null">
+                    `price_fee` = #{spu.priceFee},
+                </if>
+                <if test="spu.priceFee != null">
+                    `ph_price` = #{spu.priceFee},
+                </if>
+                <if test="spu.marketPriceFee != null">
+                    `market_price_fee` = #{spu.marketPriceFee},
+                </if>
+                <if test="spu.status != null">
+                    `status` = #{spu.status},
+                </if>
+                <if test="spu.spuType != null">
+                    `spu_type` = #{spu.spuType},
+                </if>
+                <if test="spu.activityId != null">
+                    `activity_id` = #{spu.activityId},
+                </if>
+                <if test="spu.isCompose != null">
+                    `is_compose` = #{spu.isCompose},
+                </if>
+                <if test="spu.seq != null">
+                    `seq` = #{spu.seq},
+                </if>
+                <if test="spu.updateTime != null">
+                    `update_time` = #{spu.updateTime},
+                </if>
+            </set>
+            where spu_id = #{spu.spuId}
+        </foreach>
+    </update>
+    <update id="toTopBySpuId">
+        update spu
+        set is_top = if(is_top = 1, 0, 1)
+        where spu_id = #{spuId}
+          and (status = 1 or is_top = 1) limit 1
+    </update>
+    <update id="updateBatchFieldSetNull">
+        <foreach collection="spuList" item="spu" separator=";">
+            update spu
+            <set>
+                <if test="spu.brandId != null">
+                    `brand_id` = #{spu.brandId},
+                </if>
+                <if test="spu.brandId == null">
+                    `brand_id` = null,
+                </if>
+                <if test="spu.categoryId != null">
+                    `category_id` = #{spu.categoryId},
+                </if>
+                <if test="spu.priceFee != null">
+                    `price_fee` = #{spu.priceFee},
+                </if>
+                <if test="spu.marketPriceFee != null">
+                    `market_price_fee` = #{spu.marketPriceFee},
+                </if>
+                <if test="spu.status != null">
+                    `status` = #{spu.status},
+                </if>
+                <if test="spu.spuType != null">
+                    `spu_type` = #{spu.spuType},
+                </if>
+                <if test="spu.activityId != null">
+                    `activity_id` = #{spu.activityId},
+                </if>
+                <if test="spu.isCompose != null">
+                    `is_compose` = #{spu.isCompose},
+                </if>
+                <if test="spu.seq != null">
+                    `seq` = #{spu.seq},
+                </if>
+            </set>
+            where spu_id = #{spu.spuId}
+        </foreach>
+    </update>
+
+    <select id="listSpuBySpuIds" resultMap="spuDetailMap">
+        SELECT p.spu_id,p.name,p.price_fee,p.shop_id,p.`shop_category_id`,p.`category_id`,p.spu_type,p.main_img_url,p.spu_code,p.status
+        FROM `spu` p
+        WHERE p.spu_id IN
+        <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+            #{spuId}
+        </foreach>
+    </select>
+    <select id="pageList" resultMap="spuDetailMap">
+        SELECT
+        p.spu_id,p.name,p.price_fee,p.shop_id,p.`shop_category_id`,p.`category_id`,p.spu_type,p.main_img_url,
+        p.selling_point
+        FROM `spu` p
+        left join spu_extension se on p.spu_id = se.spu_id
+        where 1=1
+        <if test="param.spuIds !=null ">
+            and p.spu_id IN
+            <foreach collection="param.spuIds" item="spuId" open="(" close=")" separator=",">
+                #{spuId}
+            </foreach>
+        </if>
+        <if test="param.status !=null ">
+            and p.status = #{param.status}
+        </if>
+        <if test="param.sort == 1">ORDER BY p.create_time desc</if>
+        <if test="param.sort == 2">ORDER BY se.sale_num DESC</if>
+        <if test="param.sort == 3">ORDER BY se.sale_num asc</if>
+        <if test="param.sort == 4">ORDER BY p.price_fee DESC</if>
+        <if test="param.sort == 5">ORDER BY p.price_fee asc</if>
+        <if test="param.sort == 6">ORDER BY se.comment_num DESC</if>
+    </select>
+
+    <select id="listSpuBySpuCodes" resultType="com.mall4j.cloud.common.product.vo.SpuCodeVo">
+        SELECT p.spu_id as spuId,p.spu_code as spuCode
+        FROM `spu` p
+        WHERE p.spu_code IN
+        <foreach collection="spuCodes" item="spuCode" open="(" close=")" separator=",">
+            #{spuCode}
+        </foreach>
+    </select>
+
+    <select id="getNotDeleteSpuNum" resultType="java.lang.Long">
+        select count(*)
+        from spu
+        where `status` != -1 and create_time &lt; #{time}
+    </select>
+
+    <select id="listNotDeleteSpu" resultMap="spuMap">
+        select spu_id, update_time
+        from spu
+        where `status` != -1 and create_time &lt; #{time}
+        order by create_time desc
+    </select>
+    <select id="listSpuIdByShopIdsAndStatus" resultType="java.lang.Long">
+        select spu_id from spu where `status` = #{status}
+        and shop_id in
+        <foreach collection="shopIds" item="shopId" open="(" close=")" separator=",">
+            #{shopId}
+        </foreach>
+    </select>
+    <select id="listSimple" resultType="com.mall4j.cloud.api.product.bo.SpuSimpleBO">
+        select s.spu_id, sl.spu_name, s.status, s.shop_id, s.main_img_url
+        from spu s join spu_lang sl on s.spu_id = sl.spu_id and sl.lang = #{spuSimpleBO.lang}
+        <where>
+            <if test="spuSimpleBO.spuName != null and spuSimpleBO.spuName != ''">
+                AND sl.spu_name like concat('%', #{spuSimpleBO.spuName}, '%')
+            </if>
+            <if test="spuSimpleBO.status != null">
+                AND s.status = #{spuSimpleBO.status}
+            </if>
+            <if test="spuSimpleBO.shopId != null">
+                AND s.shop_id = #{spuSimpleBO.shopId}
+            </if>
+            <if test="spuSimpleBO.shopIds != null">
+                AND s.shop_id in
+                <foreach collection="spuSimpleBO.shopIds" item="shopId" open="(" close=")" separator=",">
+                    #{shopId}
+                </foreach>
+            </if>
+            <if test="spuSimpleBO.spuIds != null">
+                AND s.spu_id in
+                <foreach collection="spuSimpleBO.spuIds" item="spuId" open="(" close=")" separator=",">
+                    #{spuId}
+                </foreach>
+            </if>
+        </where>
+        <if test="spuSimpleBO.seq == 1">
+            ORDER BY spu_id ASC
+        </if>
+        <if test="spuSimpleBO.seq == 2">
+            ORDER BY spu_id DESC
+        </if>
+    </select>
+
+    <select id="listSpuNameBySpuIds" resultMap="spuDetailMap">
+        select s.spu_id,s.name as name,s.spu_code as spu_code, s.price_fee, s.market_price_fee
+        from spu s
+        where s.spu_id in
+        <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+            #{spuId}
+        </foreach>
+    </select>
+
+
+    <!--  <select id="getSpuListByParam" resultType="com.mall4j.cloud.api.product.vo.ProdEffectRespVO">-->
+    <!--    SELECT s.spu_id,sl.spu_name,price_fee AS price,s.main_img_url AS spuUrl-->
+    <!--    FROM spu s-->
+    <!--    LEFT JOIN spu_lang sl ON s.spu_id = sl.spu_id AND sl.lang = #{param.lang}-->
+    <!--    LEFT JOIN spu_extension se ON s.spu_id = se.spu_id-->
+    <!--    <where>-->
+    <!--        <if test="param.shopId != null">-->
+    <!--                AND s.shop_id = #{param.shopId}-->
+    <!--        </if>-->
+    <!--        <if test="param.status != null">-->
+    <!--          <if test="param.status == 0">-->
+    <!--                AND s.status > -1-->
+    <!--          </if>-->
+    <!--          <if test="param.status == 1">-->
+    <!--                AND s.status = 1-->
+    <!--          </if>-->
+    <!--          <if test="param.status == 2">-->
+    <!--                AND s.status = 0-->
+    <!--          </if>-->
+    <!--          <if test="param.status == 3">-->
+    <!--                AND (s.status = 1 AND se.stock = 0 AND se.sale_num > 0)-->
+    <!--          </if>-->
+    <!--        </if>-->
+    <!--        <if test="param.startTime != null and param.endTime != null">-->
+    <!--            AND (s.update_time <![CDATA[>=]]> #{param.startTime}-->
+    <!--                <if test="spuIds != null">-->
+    <!--                    or s.spu_id in-->
+    <!--                  <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">-->
+    <!--                    #{spuId}-->
+    <!--                  </foreach>-->
+    <!--                </if>-->
+    <!--                )-->
+    <!--        </if>-->
+    <!--    </where>-->
+    <!--    ORDER BY se.sale_num DESC, s.create_time DESC-->
+    <!--    limit #{param.begin},#{param.size}-->
+    <!--  </select>-->
+    <!--  <select id="getSpuListTotal" resultType="java.lang.Long">-->
+    <!--    SELECT count(s.spu_id)-->
+    <!--    FROM spu s-->
+    <!--    LEFT JOIN spu_lang sl ON s.spu_id = sl.spu_id AND sl.lang = #{param.lang}-->
+    <!--    LEFT JOIN spu_extension se ON s.spu_id = se.spu_id-->
+    <!--    <where>-->
+    <!--      <if test="param.shopId != null">-->
+    <!--        AND s.shop_id = #{param.shopId}-->
+    <!--      </if>-->
+    <!--      <if test="param.status != null">-->
+    <!--        <if test="param.status == 0">-->
+    <!--          AND s.status > -1-->
+    <!--        </if>-->
+    <!--        <if test="param.status == 1">-->
+    <!--          AND s.status = 1-->
+    <!--        </if>-->
+    <!--        <if test="param.status == 2">-->
+    <!--          AND s.status = 0-->
+    <!--        </if>-->
+    <!--        <if test="param.status == 3">-->
+    <!--          AND (s.status = 1 AND se.stock = 0 AND se.sale_num > 0)-->
+    <!--        </if>-->
+    <!--      </if>-->
+    <!--      <if test="param.startTime != null and param.endTime != null">-->
+    <!--        AND (s.update_time <![CDATA[>=]]> #{param.startTime}-->
+    <!--        <if test="spuIds != null">-->
+    <!--          or s.spu_id in-->
+    <!--          <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">-->
+    <!--            #{spuId}-->
+    <!--          </foreach>-->
+    <!--        </if>-->
+    <!--        )-->
+    <!--      </if>-->
+    <!--    </where>-->
+    <!--  </select>-->
+<!--    <select id="listPageVO" resultType="com.mall4j.cloud.product.vo.SpuPageVO">-->
+<!--        SELECT-->
+<!--        s.spu_id,-->
+<!--        s.spu_code,-->
+<!--        s.name as spuName,-->
+<!--        s.main_img_url,-->
+<!--        s.category_id,-->
+<!--        s.shop_category_id,-->
+<!--        s.delivery_template_id,-->
+<!--        s.delivery_mode,-->
+<!--        s.selling_point,-->
+<!--        s.create_time,-->
+<!--        s.update_time,-->
+<!--        pc.name as platformCategory,-->
+<!--        psc.name as shopCategory,-->
+<!--        CASE WHEN sps.price_fee is null-->
+<!--        then s.price_fee-->
+<!--        else sps.price_fee end as price_fee,-->
+<!--        CASE WHEN sps.market_price_fee is null-->
+<!--        then s.market_price_fee-->
+<!--        else sps.market_price_fee end as market_price_fee,-->
+<!--        s.`status`,-->
+<!--        se.sale_num as saleNu,-->
+<!--        case when sum(sks.stock) is null-->
+<!--        then 0-->
+<!--        else sum(sks.stock) end as stock-->
+<!--        FROM-->
+<!--        spu s-->
+<!--        LEFT JOIN spu_store sps ON s.spu_id = sps.spu_id-->
+<!--        AND sps.store_id = #{searchDTO.storeId}-->
+<!--        JOIN `spu_extension` se ON s.`spu_id` = se.`spu_id`-->
+<!--        LEFT JOIN sku_store sks ON s.spu_id = sks.spu_id and sks.store_id = #{searchDTO.storeId}-->
+<!--        LEFT JOIN `category` pc ON s.`category_id` = pc.`category_id`-->
+<!--        LEFT JOIN `category` psc ON psc.`category_id` = s.`shop_category_id`-->
+<!--        <if test="searchDTO.skuCode != null and searchDTO.skuCode != ''">-->
+<!--            LEFT JOIN `sku` on s.`spu_id` = sku.`spu_id` and sku.sku_code = #{searchDTO.skuCode}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.tagId != null">-->
+<!--            JOIN spu_tag_reference str on s.spu_id = str.spu_id and str.tag_id = #{searchDTO.tagId}-->
+<!--        </if>-->
+<!--        where s.status <![CDATA[<>]]> -1-->
+<!--        <if test="searchDTO.categoryId != null">-->
+<!--            and s.category_id = #{searchDTO.categoryId}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.primaryCategoryId != null">-->
+<!--            and s.primary_category_id = #{searchDTO.primaryCategoryId}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.secondaryCategoryId != null">-->
+<!--            and s.secondary_category_id = #{searchDTO.secondaryCategoryId}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.spuId != null">-->
+<!--            and s.spu_id = #{searchDTO.spuId}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.name != null and searchDTO.name != ''">-->
+<!--            and s.name like concat('%', #{searchDTO.name}, '%')-->
+<!--        </if>-->
+<!--        <if test="searchDTO.keyword != null and searchDTO.keyword != ''">-->
+<!--            and (-->
+<!--            s.name like concat('%', #{searchDTO.keyword}, '%')-->
+<!--            or s.spu_code=#{searchDTO.keyword}-->
+<!--            or s.`spu_id` in (select spu_id from sku where sku_code=#{searchDTO.keyword})-->
+<!--            )-->
+<!--        </if>-->
+<!--        <if test="searchDTO.spuCode != null and searchDTO.spuCode != ''">-->
+<!--            and s.spu_code like concat('%', #{searchDTO.spuCode}, '%')-->
+<!--        </if>-->
+<!--        <if test="searchDTO.status != null">-->
+<!--            and s.status = #{searchDTO.status}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.spuStatus == 1">-->
+<!--            and s.status = 1 and se.stock &gt; 0-->
+<!--        </if>-->
+<!--        <if test="searchDTO.spuStatus == 2">-->
+<!--            and s.status = 1 and se.stock = 0-->
+<!--        </if>-->
+<!--        <if test="searchDTO.spuStatus == 3">-->
+<!--            and s.status = 0-->
+<!--        </if>-->
+<!--        <if test="searchDTO.spuType != null">-->
+<!--            and s.spu_type = #{searchDTO.spuType}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.spuIds!= null and searchDTO.spuIds.size() > 0 ">-->
+<!--            and s.`spu_id` in-->
+<!--            <foreach collection="searchDTO.spuIds" item="spuId" open="(" separator="," close=")">-->
+<!--                #{spuId}-->
+<!--            </foreach>-->
+<!--        </if>-->
+<!--        <if test="searchDTO.spuIdsExclude!= null and searchDTO.spuIdsExclude.size() > 0 ">-->
+<!--            and s.`spu_id` not in-->
+<!--            <foreach collection="searchDTO.spuIdsExclude" item="spuId" open="(" separator="," close=")">-->
+<!--                #{spuId}-->
+<!--            </foreach>-->
+<!--        </if>-->
+<!--        <if test="searchDTO.spuCodeExcelList!= null and searchDTO.spuCodeExcelList.size() > 0 ">-->
+<!--            and s.`spu_code` in-->
+<!--            <foreach collection="searchDTO.spuCodeExcelList" item="spuCode" open="(" separator="," close=")">-->
+<!--                #{spuCode}-->
+<!--            </foreach>-->
+<!--        </if>-->
+<!--        group by s.spu_id-->
+<!--        order by-->
+<!--        <trim prefixOverrides=",">-->
+<!--            <if test="searchDTO.priceFeeSort == 0">sps.price_fee desc</if>-->
+<!--            <if test="searchDTO.priceFeeSort == 1">,sps.price_fee</if>-->
+<!--            <if test="searchDTO.marketPriceFeeSort == 0">,sps.market_price_fee desc</if>-->
+<!--            <if test="searchDTO.marketPriceFeeSort == 1">,sps.market_price_fee</if>-->
+<!--            <if test="searchDTO.saleNumSort == 0">,se.sale_num desc</if>-->
+<!--            <if test="searchDTO.saleNumSort == 1">,se.sale_num</if>-->
+<!--            <if test="searchDTO.stockSort == 0">,se.actual_stock desc</if>-->
+<!--            <if test="searchDTO.stockSort == 1">,se.actual_stock</if>-->
+<!--            <if test="searchDTO.seqSort == 0">,s.seq desc</if>-->
+<!--            <if test="searchDTO.seqSort == 1">,s.seq</if>-->
+<!--            <if test="searchDTO.createTimeSort == 0">,s.create_time desc</if>-->
+<!--            <if test="searchDTO.createTimeSort == 1">,s.create_time</if>-->
+<!--            <if test="searchDTO.priceFeeSort == null and searchDTO.marketPriceFeeSort == null and searchDTO.saleNumSort == null-->
+<!--          and searchDTO.stockSort == null and searchDTO.seqSort == null and searchDTO.createTimeSort == null">-->
+<!--                s.update_time desc, s.spu_id-->
+<!--            </if>-->
+<!--        </trim>-->
+<!--    </select>-->
+
+    <!--             LEFT JOIN `sku` on s.`spu_id` = sku.`spu_id` and sku.sku_code = #{searchDTO.skuCode}  -->
+    <select id="listPageVO" resultType="com.mall4j.cloud.product.vo.SpuPageVO">
+        SELECT
+        s.spu_id,
+        s.spu_code,
+        s.name as spuName,
+        s.main_img_url,
+        s.category_id,
+        s.shop_category_id,
+        s.delivery_template_id,
+        s.delivery_mode,
+        s.selling_point,
+        s.create_time,
+        s.update_time,
+        pc.name as platformCategory,
+        psc.name as shopCategory,
+        s.price_fee as price_fee,
+        s.market_price_fee as market_price_fee,
+        <!--CASE WHEN sps.price_fee is null
+        then s.price_fee
+        else sps.price_fee end as price_fee,
+        CASE WHEN sps.market_price_fee is null
+        then s.market_price_fee
+        else sps.market_price_fee end as market_price_fee,-->
+        s.`status`,
+        s.`iph_status`,
+        se.sale_num as saleNum
+        FROM
+        spu s
+        <!--LEFT JOIN spu_store sps ON s.spu_id = sps.spu_id
+        AND sps.store_id = #{searchDTO.storeId}-->
+        JOIN `spu_extension` se ON s.`spu_id` = se.`spu_id`
+        LEFT JOIN `category` pc ON s.`category_id` = pc.`category_id`
+        LEFT JOIN `category` psc ON psc.`category_id` = s.`shop_category_id`
+        <if test="searchDTO.skuCode != null and searchDTO.skuCode != ''">
+            JOIN `sku` on s.`spu_id` = sku.`spu_id` and sku.sku_code like concat('%', #{searchDTO.skuCode}, '%')
+        </if>
+        <if test="searchDTO.tagId != null">
+            JOIN spu_tag_reference str on s.spu_id = str.spu_id and str.tag_id = #{searchDTO.tagId}
+        </if>
+        where s.status <![CDATA[<>]]> -1
+        <if test="searchDTO.categoryId != null">
+            and s.category_id = #{searchDTO.categoryId}
+        </if>
+        <if test="searchDTO.shopCategoryId != null">
+            and s.shop_category_id = #{searchDTO.shopCategoryId}
+        </if>
+        <if test="searchDTO.primaryCategoryId != null">
+            and s.primary_category_id = #{searchDTO.primaryCategoryId}
+        </if>
+        <if test="searchDTO.iphStatus != null">
+            and s.iph_status = #{searchDTO.iphStatus}
+        </if>
+        <if test="searchDTO.secondaryCategoryId != null">
+            and s.secondary_category_id = #{searchDTO.secondaryCategoryId}
+        </if>
+        <if test="searchDTO.spuId != null">
+            and s.spu_id = #{searchDTO.spuId}
+        </if>
+        <if test="searchDTO.name != null and searchDTO.name != ''">
+            and s.name like concat('%', #{searchDTO.name}, '%')
+        </if>
+        <if test="searchDTO.keyword != null and searchDTO.keyword != ''">
+            and (
+            s.name like concat('%', #{searchDTO.keyword}, '%')
+            or s.spu_code=#{searchDTO.keyword}
+            or s.`spu_id` in (select spu_id from sku where sku_code=#{searchDTO.keyword})
+            or s.`abbr` = #{searchDTO.keyword}
+            )
+        </if>
+        <if test="searchDTO.spuCode != null and searchDTO.spuCode != ''">
+            and s.spu_code like concat('%', #{searchDTO.spuCode}, '%')
+        </if>
+        <if test="searchDTO.status != null">
+            and s.status = #{searchDTO.status}
+        </if>
+        <if test="searchDTO.spuStatus == 1">
+            and s.status = 1 and se.stock &gt; 0
+        </if>
+        <if test="searchDTO.spuStatus == 2">
+            and s.status = 1 and se.stock = 0
+        </if>
+        <if test="searchDTO.spuStatus == 3">
+            and s.status = 0
+        </if>
+        <if test="searchDTO.spuType != null">
+            and s.spu_type = #{searchDTO.spuType}
+        </if>
+        <if test="searchDTO.spuIds!= null and searchDTO.spuIds.size() > 0 ">
+            and s.`spu_id` in
+            <foreach collection="searchDTO.spuIds" item="spuId" open="(" separator="," close=")">
+                #{spuId}
+            </foreach>
+        </if>
+        <if test="searchDTO.spuIdsExclude!= null and searchDTO.spuIdsExclude.size() > 0 ">
+            and s.`spu_id` not in
+            <foreach collection="searchDTO.spuIdsExclude" item="spuId" open="(" separator="," close=")">
+                #{spuId}
+            </foreach>
+        </if>
+        <if test="searchDTO.spuCodeExcelList!= null and searchDTO.spuCodeExcelList.size() > 0 ">
+            and s.`spu_code` in
+            <foreach collection="searchDTO.spuCodeExcelList" item="spuCode" open="(" separator="," close=")">
+                #{spuCode}
+            </foreach>
+        </if>
+        group by s.spu_id
+        order by
+        <trim prefixOverrides=",">
+            <if test="searchDTO.priceFeeSort == 0">s.price_fee desc</if>
+            <if test="searchDTO.priceFeeSort == 1">,s.price_fee</if>
+            <if test="searchDTO.marketPriceFeeSort == 0">,s.market_price_fee desc</if>
+            <if test="searchDTO.marketPriceFeeSort == 1">,s.market_price_fee</if>
+            <!--<if test="searchDTO.priceFeeSort == 0">sps.price_fee desc</if>
+            <if test="searchDTO.priceFeeSort == 1">,sps.price_fee</if>
+            <if test="searchDTO.marketPriceFeeSort == 0">,sps.market_price_fee desc</if>
+            <if test="searchDTO.marketPriceFeeSort == 1">,sps.market_price_fee</if>-->
+            <if test="searchDTO.saleNumSort == 0">,se.sale_num desc</if>
+            <if test="searchDTO.saleNumSort == 1">,se.sale_num</if>
+            <if test="searchDTO.stockSort == 0">,se.actual_stock desc</if>
+            <if test="searchDTO.stockSort == 1">,se.actual_stock</if>
+            <if test="searchDTO.seqSort == 0">,s.seq desc</if>
+            <if test="searchDTO.seqSort == 1">,s.seq</if>
+            <if test="searchDTO.createTimeSort == 0">,s.create_time desc</if>
+            <if test="searchDTO.createTimeSort == 1">,s.create_time</if>
+            <if test="searchDTO.shopCategoryId != null">,IF(s.seq &lt; 0,1,0),s.seq ASC</if>
+            <if test="searchDTO.priceFeeSort == null and searchDTO.marketPriceFeeSort == null and searchDTO.saleNumSort == null
+          and searchDTO.stockSort == null and searchDTO.seqSort == null and searchDTO.createTimeSort == null
+          and searchDTO.shopCategoryId == null">
+                s.update_time desc, s.spu_id
+            </if>
+        </trim>
+    </select>
+
+
+<!--    <select id="appList" resultType="com.mall4j.cloud.product.dto.SpuAppPageVO">-->
+<!--        SELECT-->
+<!--        min( temp.price_fee ) AS price_fee,-->
+<!--        temp.market_price_fee,-->
+<!--        temp.spu_id,-->
+<!--        temp.spu_code,-->
+<!--        temp.spuName,-->
+<!--        temp.main_img_url,-->
+<!--        temp.shopCategory,-->
+<!--        temp.`status`,-->
+<!--        temp.spu_type,-->
+<!--        temp.activity_id,-->
+<!--        temp.update_time-->
+<!--        FROM-->
+<!--        (-->
+<!--        SELECT-->
+<!--        s.spu_id,-->
+<!--        s.spu_code,-->
+<!--        s.`name` AS spuName,-->
+<!--        s.main_img_url,-->
+<!--        psc.`name` AS shopCategory,-->
+<!--        CASE-->
+
+<!--        WHEN sks.stock > 0-->
+<!--        AND sks.price_fee > 0 THEN-->
+<!--        sks.price_fee ELSE sku.price_fee-->
+<!--        END AS price_fee,-->
+<!--        s.market_price_fee,-->
+<!--        s.`status`,-->
+<!--        s.spu_type,-->
+<!--        s.activity_id,-->
+<!--        s.update_time-->
+<!--        FROM-->
+<!--        sku-->
+<!--        LEFT JOIN spu s ON s.spu_id = sku.spu_id-->
+<!--        LEFT JOIN sku_store sks ON sku.sku_id = sks.sku_id-->
+<!--        AND sks.status = 1-->
+<!--        AND sks.store_id = #{searchDTO.storeId}-->
+<!--        LEFT JOIN `category` psc ON psc.`category_id` = s.`shop_category_id`-->
+<!--        WHERE-->
+<!--        s.status = 1-->
+<!--        <if test="searchDTO.shopCategoryId != null">-->
+<!--            and s.shop_category_id = #{searchDTO.shopCategoryId}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.primaryCategoryId != null">-->
+<!--            and s.primary_category_id = #{searchDTO.primaryCategoryId}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.secondaryCategoryId != null">-->
+<!--            and s.secondary_category_id = #{searchDTO.secondaryCategoryId}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.spuId != null">-->
+<!--            and s.spu_id = #{searchDTO.spuId}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.name != null and searchDTO.name != ''">-->
+<!--            and s.name like concat('%', #{searchDTO.name}, '%')-->
+<!--        </if>-->
+<!--        <if test="searchDTO.status != null">-->
+<!--            and s.status = #{searchDTO.status}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.spuIds!= null and searchDTO.spuIds.size() > 0 ">-->
+<!--            and s.`spu_id` in-->
+<!--            <foreach collection="searchDTO.spuIds" item="spuId" open="(" separator="," close=")">-->
+<!--                #{spuId}-->
+<!--            </foreach>-->
+<!--        </if>-->
+<!--        ) AS temp-->
+<!--        LEFT JOIN `spu_extension` se ON temp.`spu_id` = se.`spu_id`-->
+<!--        GROUP BY temp.spu_id-->
+<!--        order by-->
+<!--        <trim prefixOverrides=",">-->
+<!--            <if test="searchDTO.priceFeeSort == 0">temp.price_fee desc</if>-->
+<!--            <if test="searchDTO.priceFeeSort == 1">,temp.price_fee</if>-->
+<!--            <if test="searchDTO.marketPriceFeeSort == 0">,temp.market_price_fee desc</if>-->
+<!--            <if test="searchDTO.marketPriceFeeSort == 1">,temp.market_price_fee</if>-->
+<!--            <if test="searchDTO.saleNumSort == 0">,se.sale_num desc</if>-->
+<!--            <if test="searchDTO.saleNumSort == 1">,se.sale_num</if>-->
+<!--            <if test="searchDTO.stockSort == 0">,se.actual_stock desc</if>-->
+<!--            <if test="searchDTO.stockSort == 1">,se.actual_stock</if>-->
+<!--            <if test="searchDTO.seqSort == 0">,temp.seq desc</if>-->
+<!--            <if test="searchDTO.seqSort == 1">,temp.seq</if>-->
+<!--            <if test="searchDTO.createTimeSort == 0">,temp.create_time desc</if>-->
+<!--            <if test="searchDTO.createTimeSort == 1">,temp.create_time</if>-->
+<!--            <if test="searchDTO.priceFeeSort == null and searchDTO.marketPriceFeeSort == null and searchDTO.saleNumSort == null-->
+<!--          and searchDTO.stockSort == null and searchDTO.seqSort == null and searchDTO.createTimeSort == null">-->
+<!--                temp.update_time desc, temp.spu_id-->
+<!--            </if>-->
+<!--        </trim>-->
+<!--    </select>-->
+
+
+<!--    <select id="appList" resultType="com.mall4j.cloud.product.dto.SpuAppPageVO">-->
+<!--        SELECT-->
+<!--        s.spu_id,-->
+<!--        s.spu_code,-->
+<!--        s.`name` AS spuName,-->
+<!--        s.main_img_url,-->
+<!--        psc.`name` AS shopCategory,-->
+<!--        s.price_fee ,-->
+<!--        CASE-->
+<!--        WHEN MIN( sks.market_price_fee ) IS NULL THEN-->
+<!--        s.market_price_fee ELSE MIN( sks.market_price_fee )-->
+<!--        END AS market_price_fee,-->
+<!--        s.`status`,-->
+<!--        s.spu_type,-->
+<!--        s.activity_id-->
+<!--        FROM-->
+<!--        spu s-->
+<!--        left JOIN sku_store sks ON s.spu_id = sks.spu_id and sks.status=1-->
+<!--        AND sks.store_id = #{searchDTO.storeId}-->
+<!--        LEFT JOIN `spu_extension` se ON s.`spu_id` = se.`spu_id`-->
+<!--        LEFT JOIN `category` psc ON psc.`category_id` = s.`shop_category_id`-->
+<!--        where s.status = 1-->
+<!--        <if test="searchDTO.shopCategoryId != null">-->
+<!--            and s.shop_category_id = #{searchDTO.shopCategoryId}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.primaryCategoryId != null">-->
+<!--            and s.primary_category_id = #{searchDTO.primaryCategoryId}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.secondaryCategoryId != null">-->
+<!--            and s.secondary_category_id = #{searchDTO.secondaryCategoryId}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.spuId != null">-->
+<!--            and s.spu_id = #{searchDTO.spuId}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.name != null and searchDTO.name != ''">-->
+<!--            and s.name like concat('%', #{searchDTO.name}, '%')-->
+<!--        </if>-->
+<!--        <if test="searchDTO.status != null">-->
+<!--            and s.status = #{searchDTO.status}-->
+<!--        </if>-->
+<!--        <if test="searchDTO.spuIds!= null and searchDTO.spuIds.size() > 0 ">-->
+<!--            and s.`spu_id` in-->
+<!--            <foreach collection="searchDTO.spuIds" item="spuId" open="(" separator="," close=")">-->
+<!--                #{spuId}-->
+<!--            </foreach>-->
+<!--        </if>-->
+<!--        GROUP BY s.spu_id-->
+<!--        order by-->
+<!--        <trim prefixOverrides=",">-->
+<!--            <if test="searchDTO.priceFeeSort == 0">s.price_fee desc</if>-->
+<!--            <if test="searchDTO.priceFeeSort == 1">,s.price_fee</if>-->
+<!--            <if test="searchDTO.marketPriceFeeSort == 0">,s.market_price_fee desc</if>-->
+<!--            <if test="searchDTO.marketPriceFeeSort == 1">,s.market_price_fee</if>-->
+<!--            <if test="searchDTO.saleNumSort == 0">,se.sale_num desc</if>-->
+<!--            <if test="searchDTO.saleNumSort == 1">,se.sale_num</if>-->
+<!--            <if test="searchDTO.stockSort == 0">,se.actual_stock desc</if>-->
+<!--            <if test="searchDTO.stockSort == 1">,se.actual_stock</if>-->
+<!--            <if test="searchDTO.seqSort == 0">,s.seq desc</if>-->
+<!--            <if test="searchDTO.seqSort == 1">,s.seq</if>-->
+<!--            <if test="searchDTO.createTimeSort == 0">,s.create_time desc</if>-->
+<!--            <if test="searchDTO.createTimeSort == 1">,s.create_time</if>-->
+<!--            <if test="searchDTO.priceFeeSort == null and searchDTO.marketPriceFeeSort == null and searchDTO.saleNumSort == null-->
+<!--          and searchDTO.stockSort == null and searchDTO.seqSort == null and searchDTO.createTimeSort == null">-->
+<!--                s.update_time desc, s.spu_id-->
+<!--            </if>-->
+<!--        </trim>-->
+<!--    </select>-->
+
+
+    <select id="appList" resultType="com.mall4j.cloud.product.dto.SpuAppPageVO">
+        SELECT
+        s.spu_id,
+        s.spu_code,
+        s.`name` AS spuName,
+        s.main_img_url,
+        psc.`name` AS shopCategory,
+        s.price_fee ,
+        s.market_price_fee,
+        s.`status`,
+        s.spu_type,
+        s.activity_id
+        FROM
+        spu s
+        LEFT JOIN `spu_extension` se ON s.`spu_id` = se.`spu_id`
+        LEFT JOIN `category` psc ON psc.`category_id` = s.`shop_category_id`
+
+        /*JOIN sku_stock sst on sst.spu_id=s.spu_id and sst.stock>0
+        JOIN sku on sst.sku_id=sku.sku_id and sku.`status`=1*/
+        where s.status = 1
+        and se.stock > se.channels_stock
+        <if test="searchDTO.keyword != null and searchDTO.keyword != ''">
+            and (
+            s.name like concat('%', #{searchDTO.keyword}, '%')
+            or s.spu_code=#{searchDTO.keyword}
+            or s.`spu_id` in (select spu_id from sku where sku_code=#{searchDTO.keyword})
+            or s.`abbr` like concat('%', #{searchDTO.keyword}, '%')
+            )
+        </if>
+        <if test="searchDTO.shopCategoryId != null">
+            and s.shop_category_id = #{searchDTO.shopCategoryId}
+        </if>
+        <if test="searchDTO.primaryCategoryId != null">
+            and s.primary_category_id = #{searchDTO.primaryCategoryId}
+        </if>
+        <if test="searchDTO.secondaryCategoryId != null">
+            and s.secondary_category_id = #{searchDTO.secondaryCategoryId}
+        </if>
+        <if test="searchDTO.spuId != null">
+            and s.spu_id = #{searchDTO.spuId}
+        </if>
+        <if test="searchDTO.name != null and searchDTO.name != ''">
+            and (
+            s.name like concat('%', #{searchDTO.name}, '%')
+            or s.spu_code=#{searchDTO.name}
+            )
+        </if>
+        <if test="searchDTO.marketPriceFeeStart != null and searchDTO.marketPriceFeeEnd != null">
+            and s.market_price_fee BETWEEN #{searchDTO.marketPriceFeeStart} and #{searchDTO.marketPriceFeeEnd}
+        </if>
+        <if test="searchDTO.status != null">
+            and s.status = #{searchDTO.status}
+        </if>
+        <if test="searchDTO.iphStatus != null">
+            and s.iph_status = #{searchDTO.iphStatus}
+        </if>
+        <if test="searchDTO.spuIds!= null and searchDTO.spuIds.size() > 0 ">
+            and s.`spu_id` in
+            <foreach collection="searchDTO.spuIds" item="spuId" open="(" separator="," close=")">
+                #{spuId}
+            </foreach>
+        </if>
+        <if test="searchDTO.spuSearchAttr != null">
+            <if test="searchDTO.spuSearchAttr.sex != null and searchDTO.spuSearchAttr.sex.size() > 0">
+                and s.sex in
+                <foreach collection="searchDTO.spuSearchAttr.sex" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="searchDTO.spuSearchAttr.styleType !=null and searchDTO.spuSearchAttr.styleType.size() > 0">
+                and s.style_code in
+                <foreach collection="searchDTO.spuSearchAttr.styleType" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </if>
+        <if test="searchDTO.attrFilterSpuIds != null and searchDTO.attrFilterSpuIds.size()>0">
+            and s.`spu_id` in
+            <foreach collection="searchDTO.attrFilterSpuIds" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="searchDTO.shopCategoryNavigationIdList != null and searchDTO.shopCategoryNavigationIdList.size > 0">
+            and s.`spu_id` in
+            (
+                SELECT spu_id FROM category_navigation_spu_relation WHERE category_id IN
+                <foreach collection="searchDTO.shopCategoryNavigationIdList" item="shopCategoryNavigationId" separator="," open="(" close=")">
+                    #{shopCategoryNavigationId}
+                </foreach>
+            )
+        </if>
+
+        GROUP BY s.spu_id
+        <if test="searchDTO.spuIdsSort!=1">
+            order by
+            <trim prefixOverrides=",">
+                <if test="searchDTO.priceFeeSort == 0">s.price_fee desc</if>
+                <if test="searchDTO.priceFeeSort == 1">,s.price_fee</if>
+                <if test="searchDTO.marketPriceFeeSort == 0">,s.market_price_fee desc</if>
+                <if test="searchDTO.marketPriceFeeSort == 1">,s.market_price_fee</if>
+                <if test="searchDTO.saleNumSort == 0">,se.sale_num desc</if>
+                <if test="searchDTO.saleNumSort == 1">,se.sale_num</if>
+                <if test="searchDTO.stockSort == 0">,se.actual_stock desc</if>
+                <if test="searchDTO.stockSort == 1">,se.actual_stock</if>
+                <if test="searchDTO.seqSort == 0">,s.seq desc</if>
+                <if test="searchDTO.seqSort == 1">,s.seq</if>
+                <if test="searchDTO.createTimeSort == 0">,s.create_time desc</if>
+                <if test="searchDTO.createTimeSort == 1">,s.create_time</if>
+                <if test="searchDTO.shopCategoryId != null">,IF(s.seq &lt; 0,1,0),s.seq ASC</if>
+                <if test="searchDTO.priceFeeSort == null and searchDTO.marketPriceFeeSort == null and searchDTO.saleNumSort == null
+          and searchDTO.stockSort == null and searchDTO.seqSort == null and searchDTO.createTimeSort == null
+          and searchDTO.shopCategoryId == null">
+                    s.seq desc,s.update_time desc, s.spu_id
+                </if>
+            </trim>
+        </if>
+
+    </select>
+
+    <select id="getBySpuIdAndStoreId" resultMap="spuDetailMap">
+        select s.`spu_id`,
+               s.`spu_code`,
+               s.`shop_id`,
+               s.`create_time`,
+               s.`update_time`,
+               s.`brand_id`,
+               s.`shop_category_id`,
+               s.`category_id`,
+               s.`img_urls`,
+               s.`main_img_url`,
+               s.`price_fee` as price_fee,
+               s.`market_price_fee` as market_price_fee,
+               <!--case
+                   when ss.`price_fee` is null
+                       then s.`price_fee`
+                   else ss.`price_fee`
+                   end as price_fee,
+               case
+                   when ss.`market_price_fee` is null
+                       then s.`market_price_fee`
+                   else ss.`market_price_fee`
+                   end as market_price_fee,-->
+               s.`status`,
+               s.`has_sku_img`,
+               s.`seq`,
+               s.`is_top`,
+               s.delivery_mode,
+               s.delivery_template_id,
+               s.is_compose,
+               s.activity_id,
+               s.spu_type,
+               s.video,
+               s.name  as spuName,
+               s.name,
+               sd.`detail`,
+               s.selling_point,
+               s.spu_code,
+               se.stock,
+               se.channels_stock,
+               s.style_code,
+               s.abbr
+        FROM `spu` s
+                 LEFT JOIN spu_detail sd ON s.`spu_id` = sd.`spu_id`
+                 LEFT JOIN spu_extension se on s.spu_id = se.spu_id
+                 <!--left join spu_store ss on s.spu_id = ss.spu_id and ss.store_id = #{storeId}-->
+        WHERE s.`spu_id` = #{spuId}
+    </select>
+
+    <select id="commonList" resultType="com.mall4j.cloud.common.product.vo.search.SpuCommonVO">
+        select s.spu_id, s.`name` as spuName, s.spu_code, s.main_img_url,s.`status`,
+               se.sale_num,
+                s.price_fee,
+                s.market_price_fee
+        from spu s
+        left join spu_extension se on s.spu_id = se.spu_id
+        /*JOIN sku_stock sst on sst.spu_id=s.spu_id and sst.stock>0
+        JOIN sku on sst.sku_id=sku.sku_id and sku.`status`=1*/
+        where 1 = 1
+        and se.stock>0
+        <if test="productSearch.spuName!= null and productSearch.spuName != ''">
+            and s.`name` like concat('%',#{productSearch.spuName},'%')
+        </if>
+        <if test="productSearch.keyword!= null and productSearch.keyword != ''">
+            and (s.`name` like concat('%',#{productSearch.keyword},'%') or s.spu_code like concat('%',#{productSearch.keyword},'%')
+                 or s.`abbr` like concat('%', #{productSearch.keyword}, '%')
+                )
+        </if>
+        <if test="productSearch.shopCategoryId != null">
+            and s.shop_category_id = #{productSearch.shopCategoryId}
+        </if>
+        <if test="productSearch.categoryId!= null and productSearch.categoryId != ''">
+            and s.category_id = #{productSearch.categoryId}
+        </if>
+        <if test="productSearch.primaryCategoryId != null">
+            and s.primary_category_id = #{productSearch.primaryCategoryId}
+        </if>
+        <if test="productSearch.secondaryCategoryId != null">
+            and s.secondary_category_id = #{productSearch.secondaryCategoryId}
+        </if>
+        <if test="productSearch.status!= null and productSearch.status != ''">
+            and s.status = #{productSearch.status}
+        </if>
+        <if test="productSearch.iphStatus != null">
+            and s.iph_status = #{productSearch.iphStatus}
+        </if>
+        <if test="productSearch.spuType != null">
+            and s.`spu_type` = #{productSearch.spuType}
+        </if>
+        <if test="productSearch.marketPriceFeeStart != null and productSearch.marketPriceFeeEnd != null">
+            and s.market_price_fee BETWEEN #{productSearch.marketPriceFeeStart} and #{productSearch.marketPriceFeeEnd}
+        </if>
+        <if test="productSearch.erpCategorys!= null and productSearch.erpCategorys.size() > 0 ">
+            and s.`style_code` in
+            <foreach collection="productSearch.erpCategorys" item="category" open="(" separator="," close=")">
+                #{category}
+            </foreach>
+        </if>
+        <if test="productSearch.spuIds!= null and productSearch.spuIds.size() > 0 ">
+            and s.`spu_id` in
+            <foreach collection="productSearch.spuIds" item="spuId" open="(" separator="," close=")">
+                #{spuId}
+            </foreach>
+        </if>
+        <if test="productSearch.spuIdsExclude != null and productSearch.spuIdsExclude.size() > 0 ">
+            and s.`spu_id` not in
+            <foreach collection="productSearch.spuIdsExclude" item="spuIdExclude" open="(" separator="," close=")">
+                #{spuIdExclude}
+            </foreach>
+        </if>
+        <if test="productSearch.spuCodeList !=null and productSearch.spuCodeList.size>0">
+            and s.spu_code in
+            <foreach collection="productSearch.spuCodeList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="productSearch.spuSearchAttr != null">
+            <if test="productSearch.spuSearchAttr.sex != null and productSearch.spuSearchAttr.sex.size() > 0">
+                and s.sex in
+                <foreach collection="productSearch.spuSearchAttr.sex" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="productSearch.spuSearchAttr.styleType !=null and productSearch.spuSearchAttr.styleType.size() > 0">
+                and s.style_code in
+                <foreach collection="productSearch.spuSearchAttr.styleType" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </if>
+        <if test="productSearch.attrFilterSpuIds != null and productSearch.attrFilterSpuIds.size()>0">
+            and s.`spu_id` in
+            <foreach collection="productSearch.attrFilterSpuIds" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY s.spu_id
+        order by
+        <trim prefixOverrides=",">
+            <if test="productSearch.sort == 1">s.update_time desc</if>
+            <if test="productSearch.sort == 4">,s.price_fee desc</if>
+            <if test="productSearch.sort == 5">,s.price_fee</if>
+            <if test="productSearch.sort == 2">,se.sale_num desc</if>
+            <if test="productSearch.sort == 3">,se.sale_num</if>
+            <if test="productSearch.shopCategoryId != null">,IF(s.seq &lt; 0,1,0),s.seq ASC</if>
+            <if test="productSearch.sort == null and productSearch.shopCategoryId == null">
+                s.seq desc,s.spu_id asc ,s.create_time DESC
+            </if>
+        </trim>
+    </select>
+
+
+<!--    <select id="commonList" resultType="com.mall4j.cloud.common.product.vo.search.SpuCommonVO">-->
+<!--        select s.spu_id, s.`name` as spuName, s.spu_code, s.main_img_url,s.`status`,-->
+<!--        CASE-->
+<!--        WHEN ss.price_fee IS NULL THEN-->
+<!--        s.price_fee ELSE ss.price_fee-->
+<!--        END AS priceFee,-->
+<!--        CASE-->
+<!--        WHEN ss.market_price_fee IS NULL THEN-->
+<!--        s.market_price_fee ELSE ss.market_price_fee-->
+<!--        END AS market_price_fee,se.sale_num from spu s-->
+<!--        join spu_store ss on s.spu_id = ss.spu_id-->
+<!--        left join spu_extension se on s.spu_id = se.spu_id-->
+<!--        where 1 = 1-->
+<!--        <if test="productSearch.spuName!= null and productSearch.spuName != ''">-->
+<!--            and s.`name` like concat('%',#{productSearch.spuName},'%')-->
+<!--        </if>-->
+<!--        <if test="productSearch.keyword!= null and productSearch.keyword != ''">-->
+<!--            and (s.`name` like concat('%',#{productSearch.keyword},'%') or s.spu_code like concat('%',#{productSearch.keyword},'%'))-->
+<!--        </if>-->
+<!--        <if test="productSearch.categoryId!= null and productSearch.categoryId != ''">-->
+<!--            and s.category_id = #{productSearch.categoryId}-->
+<!--        </if>-->
+<!--        <if test="productSearch.primaryCategoryId != null">-->
+<!--            and s.primary_category_id = #{productSearch.primaryCategoryId}-->
+<!--        </if>-->
+<!--        <if test="productSearch.secondaryCategoryId != null">-->
+<!--            and s.secondary_category_id = #{productSearch.secondaryCategoryId}-->
+<!--        </if>-->
+<!--        <if test="productSearch.status!= null and productSearch.status != ''">-->
+<!--            and s.status = #{productSearch.status}-->
+<!--        </if>-->
+<!--        <if test="productSearch.spuType != null">-->
+<!--            and s.`spu_type` = #{productSearch.spuType}-->
+<!--        </if>-->
+<!--        <if test="productSearch.spuIds!= null and productSearch.spuIds.size() > 0 ">-->
+<!--            and s.`spu_id` in-->
+<!--            <foreach collection="productSearch.spuIds" item="spuId" open="(" separator="," close=")">-->
+<!--                #{spuId}-->
+<!--            </foreach>-->
+<!--        </if>-->
+<!--        <if test="productSearch.spuIdsExclude != null and productSearch.spuIdsExclude.size() > 0 ">-->
+<!--            and s.`spu_id` not in-->
+<!--            <foreach collection="productSearch.spuIdsExclude" item="spuIdExclude" open="(" separator="," close=")">-->
+<!--                #{spuIdExclude}-->
+<!--            </foreach>-->
+<!--        </if>-->
+<!--        order by-->
+<!--        <trim prefixOverrides=",">-->
+<!--            <if test="productSearch.sort == 1">s.update_time desc</if>-->
+<!--            <if test="productSearch.sort == 4">,s.price_fee desc</if>-->
+<!--            <if test="productSearch.sort == 5">,s.price_fee</if>-->
+<!--            <if test="productSearch.sort == 2">,se.sale_num desc</if>-->
+<!--            <if test="productSearch.sort == 3">,se.sale_num</if>-->
+<!--            <if test="productSearch.sort == null">-->
+<!--                s.spu_id asc ,s.create_time DESC-->
+<!--            </if>-->
+<!--        </trim>-->
+<!--    </select>-->
+    <select id="getSpuByCode" resultMap="spuDetailMap">
+        select *
+        from spu
+        where spu_code = #{spuCode}
+    </select>
+    <select id="listByTag" resultType="com.mall4j.cloud.product.vo.SpuPageVO">
+        SELECT
+        s.spu_id,
+        s.spu_code,
+        s.name as spuName,
+        s.main_img_url,
+        s.price_fee,
+        s.market_price_fee,
+        s.seq
+        from spu s join spu_tag_reference str on s.spu_id = str.spu_id and str.tag_id = #{tagParam.tagId}
+        <where>
+            <if test="tagParam.spuName != null and tagParam.spuName != ''">
+                and s.name like concat ('%',#{tagParam.spuName},'%')
+            </if>
+        </where>
+        order by s.seq desc,s.update_time desc
+    </select>
+
+    <select id="listSpuMarketPrice" resultType="com.mall4j.cloud.product.vo.SpuSkuVo">
+        select * from (
+            select
+            spu.spu_id,
+            spu.spu_code,
+            spu.`status`,
+            spu.price_fee,
+            spu.market_price_fee,
+            (select min(market_price_fee) from sku where `status`=1 and spu_id=spu.spu_id) as sku_market_price_fee
+            from spu
+            where spu.spu_code in
+                <foreach collection="spuCodes" item="spuCode" open="(" separator="," close=")">
+                    #{spuCode}
+                </foreach>
+        ) temp
+        where  temp.market_price_fee!=sku_market_price_fee
+    </select>
+
+    <!-- 推送中台售卖上架商品信息 -->
+    <select id="pushStdSpus" resultType="com.mall4j.cloud.api.product.vo.StdPushSpuVO">
+        SELECT
+            sku.price_code,
+            spu.spu_code,
+            spu.`status`
+        FROM
+            sku
+            left join spu on sku.spu_id=spu.spu_id
+        WHERE
+            sku.`status`=1 and spu.`status` = 1
+            <if test="spuCodes!=null and spuCodes.size>0">
+                and spu.spu_code in
+                <foreach collection="spuCodes" item="spuCode" open="(" separator="," close=")">
+                    #{spuCode}
+                </foreach>
+            </if>
+            GROUP BY sku.price_code
+    </select>
+
+    <select id="listSimpleSpuExcelVO" resultType="com.mall4j.cloud.product.vo.SimpleSpuExcelVO">
+        SELECT
+            <![CDATA[
+                temp.`name` AS 'spuName',
+                temp.spu_code AS 'spuCode',
+                temp.price_code AS 'priceCode',
+                temp.sku_code AS 'skuCode',
+                ROUND( temp.price_fee / 100, 2 ) AS 'priceFee',
+                ROUND( temp.market_price_fee / 100, 2 ) AS 'marketPriceFee',
+                temp.stock AS 'stock',
+                temp.`status` AS 'status' ,
+
+                CONCAT('pages/detail/detail','?id=',temp.spu_id,'&s=1') as 'spuUrl',
+                trans_name as 'transName'
+            ]]>
+        FROM
+            (
+                SELECT
+                    spu.`name`,
+                    spu.spu_code,
+                    sku.price_code,
+                    sku.sku_code,
+                    sku.`status`,
+                    spu.spu_id,
+                    spu.delivery_template_id,
+                    spu.update_time,
+                    transport.trans_name,
+                    CASE
+
+                        WHEN ss.price_fee IS NULL THEN
+                            sku.price_fee ELSE ss.price_fee
+                        END AS price_fee,
+                    CASE
+
+                        WHEN ss.market_price_fee IS NULL THEN
+                            sku.market_price_fee ELSE ss.market_price_fee
+                        END AS market_price_fee,
+                    sst.actual_stock,
+                    sst.lock_stock,
+                    sst.stock
+                FROM
+                    spu
+                        LEFT JOIN sku ON sku.spu_id = spu.spu_id
+                        LEFT JOIN `sku_store` ss ON ss.sku_id = sku.sku_id
+                        AND ss.`status` = 1
+                        AND ss.store_id = 1
+                        LEFT JOIN `sku_stock` sst ON sst.sku_id = sku.sku_id
+                        left join mall4cloud_delivery.transport transport on spu.delivery_template_id=transport.transport_id
+                WHERE
+                    spu.status = 1
+                GROUP BY sku_code
+            ) temp
+    </select>
+
+
+    <select id="listAllSpus" resultType="com.mall4j.cloud.product.vo.SpuPageVO">
+        SELECT
+        s.spu_id,
+        s.spu_code,
+        s.name as spuName,
+        s.main_img_url,
+        s.category_id,
+        s.shop_category_id,
+        s.delivery_template_id,
+        s.delivery_mode,
+        s.selling_point,
+        s.create_time,
+        s.update_time,
+        pc.name as platformCategory,
+        psc.name as shopCategory,
+        s.price_fee as price_fee,
+        s.market_price_fee as market_price_fee,
+        s.`status`,
+        s.`iph_status`,
+        se.sale_num as saleNum
+        FROM
+        spu s
+        JOIN `spu_extension` se ON s.`spu_id` = se.`spu_id`
+        LEFT JOIN `category` pc ON s.`category_id` = pc.`category_id`
+        LEFT JOIN `category` psc ON psc.`category_id` = s.`shop_category_id`
+        where s.iph_status=1
+        group by s.spu_id
+    </select>
+
+    <update id="batchUpdateAbbrBySpuCode" parameterType="com.mall4j.cloud.product.dto.SpuAbbrReqDto">
+        <if test="reqDtos !=null and reqDtos.size > 0">
+            <foreach collection="reqDtos" item="item" separator=";">
+                update spu set `abbr`=#{item.spuAbbr} where spu_code=#{item.spuCode}
+            </foreach>
+        </if>
+    </update>
+
+    <select id="getAttrFilterSpuIds" parameterType="com.mall4j.cloud.common.product.dto.SpuSearchAttrDTO" resultType="long">
+        SELECT
+        s.spu_id
+        FROM
+        spu s
+        LEFT JOIN `spu_extension` se ON s.`spu_id` = se.`spu_id`
+        LEFT JOIN spu_sku_attr_value attr on attr.spu_id=s.spu_id
+        LEFT JOIN sku sku on attr.sku_id=sku.sku_id
+        where s.status = 1
+        and s.iph_status = 1
+        and se.stock > 0
+        and se.stock > se.channels_stock
+        and attr.`status`=1
+        and sku.`status`=1
+        <if test="dto.sex != null and dto.sex.size() > 0">
+            and s.sex in
+            <foreach collection="dto.sex" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="dto.styleType !=null and dto.styleType.size() > 0">
+            and s.style_code in
+            <foreach collection="dto.styleType" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY s.spu_id
+        <if test="dto != null and dto.spuGroupAttrs !=null and dto.spuGroupAttrs.size()>0">
+            HAVING 1=1
+            <if test="exactAttrGroup !=null and exactAttrGroup.size>0">
+                and sum(CASE WHEN attr.attr_value_name IN
+                <foreach collection="exactAttrGroup" item="attrValue" open="(" close=")" separator=",">
+                    #{attrValue}
+                </foreach>
+                THEN 1 ELSE 0 END) > 0
+            </if>
+            <if test="vagueAttrGroup !=null and vagueAttrGroup.size()>0">
+                and sum(CASE WHEN
+                <foreach collection="vagueAttrGroup" item="attrValue" open="(" close=")" separator=" or ">
+                    attr.attr_value_name like concat ('%', #{attrValue}, '%')
+                </foreach>
+                THEN 1 ELSE 0 END) > 0
+            </if>
+        </if>
+    </select>
+</mapper>

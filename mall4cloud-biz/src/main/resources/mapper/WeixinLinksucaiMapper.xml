@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinLinksucaiMapper">
+  <resultMap id="weixinLinksucaiMap" type="com.mall4j.cloud.biz.model.WeixinLinksucai">
+    <id column="id" property="id" />
+    <result column="name" property="name"/>
+    <result column="outer_link" property="outerLink"/>
+    <result column="content" property="content"/>
+    <result column="inner_link" property="innerLink"/>
+    <result column="transfer_sign" property="transferSign"/>
+    <result column="accountid" property="accountid"/>
+    <result column="post_code" property="postCode"/>
+    <result column="share_status" property="shareStatus"/>
+    <result column="is_encrypt" property="isEncrypt"/>
+    <result column="app_id" property="appId"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`name`,`outer_link`,`content`,`inner_link`,`transfer_sign`,`accountid`,`post_code`,`share_status`,`is_encrypt`,`app_id`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinLinksucaiMap">
+    select <include refid="Vo_Column_List"/> from weixin_linksucai order by id desc
+  </select>
+  <select id="getById" resultMap="weixinLinksucaiMap">
+    select <include refid="Vo_Column_List"/> from weixin_linksucai where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_linksucai (`id`,`name`,`outer_link`,`content`,`inner_link`,`transfer_sign`,`accountid`,`post_code`,`share_status`,`is_encrypt`,`app_id`,`create_by`,`create_time`,`del_flag`)
+    values (#{weixinLinksucai.id},#{weixinLinksucai.name},#{weixinLinksucai.outerLink},#{weixinLinksucai.content},#{weixinLinksucai.innerLink},#{weixinLinksucai.transferSign},#{weixinLinksucai.accountid},#{weixinLinksucai.postCode},#{weixinLinksucai.shareStatus},#{weixinLinksucai.isEncrypt},#{weixinLinksucai.appId},#{weixinLinksucai.createBy},#{weixinLinksucai.createTime},#{weixinLinksucai.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_linksucai
+    <set>
+      <if test="weixinLinksucai.name != null">
+        `name` = #{weixinLinksucai.name},
+      </if>
+      <if test="weixinLinksucai.outerLink != null">
+        `outer_link` = #{weixinLinksucai.outerLink},
+      </if>
+      <if test="weixinLinksucai.content != null">
+        `content` = #{weixinLinksucai.content},
+      </if>
+      <if test="weixinLinksucai.innerLink != null">
+        `inner_link` = #{weixinLinksucai.innerLink},
+      </if>
+      <if test="weixinLinksucai.transferSign != null">
+        `transfer_sign` = #{weixinLinksucai.transferSign},
+      </if>
+      <if test="weixinLinksucai.accountid != null">
+        `accountid` = #{weixinLinksucai.accountid},
+      </if>
+      <if test="weixinLinksucai.postCode != null">
+        `post_code` = #{weixinLinksucai.postCode},
+      </if>
+      <if test="weixinLinksucai.shareStatus != null">
+        `share_status` = #{weixinLinksucai.shareStatus},
+      </if>
+      <if test="weixinLinksucai.isEncrypt != null">
+        `is_encrypt` = #{weixinLinksucai.isEncrypt},
+      </if>
+      <if test="weixinLinksucai.appId != null">
+        `app_id` = #{weixinLinksucai.appId},
+      </if>
+      <if test="weixinLinksucai.updateBy != null">
+        `update_by` = #{weixinLinksucai.updateBy},
+      </if>
+      <if test="weixinLinksucai.updateTime != null">
+        `update_time` = #{weixinLinksucai.updateTime},
+      </if>
+      <if test="weixinLinksucai.delFlag != null">
+        `del_flag` = #{weixinLinksucai.delFlag},
+      </if>
+    </set>
+    where id = #{weixinLinksucai.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_linksucai where id = #{id}
+  </delete>
+
+</mapper>

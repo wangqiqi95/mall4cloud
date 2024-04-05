@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.AttrMapper">
+  <resultMap id="attrMap" type="com.mall4j.cloud.product.model.Attr">
+    <id column="attr_id" property="attrId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="name" property="name"/>
+    <result column="desc" property="desc"/>
+  </resultMap>
+  <resultMap id="attrListMap" type="com.mall4j.cloud.common.product.vo.AttrVO">
+    <id column="attr_id" property="attrId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="search_type" property="searchType"/>
+    <result column="attr_type" property="attrType"/>
+    <result column="weight" property="weight"/>
+    <collection property="attrLangList" ofType="com.mall4j.cloud.common.product.vo.AttrLangVO">
+      <id column="lang" property="lang"/>
+      <result column="name" property="name"/>
+      <result column="desc" property="desc"/>
+    </collection>
+    <collection property="attrValues" ofType="com.mall4j.cloud.common.product.vo.AttrValueVO">
+      <id column="attr_value_id" property="attrValueId"/>
+      <result column="img_url" property="imgUrl"/>
+      <collection property="values" ofType="com.mall4j.cloud.common.product.vo.AttrValueLangVO">
+        <id column="value_lang" property="lang"/>
+        <result column="value" property="value"/>
+      </collection>
+    </collection>
+    <collection property="categories" ofType="com.mall4j.cloud.common.product.vo.CategoryVO">
+      <id column="category_id" property="categoryId"/>
+    </collection>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `attr_id`,`shop_id`,`create_time`,`update_time`,`search_type`,`attr_type`
+  </sql>
+<!--  <select id="list" resultMap="attrListMap">-->
+<!--    select a.*,av.attr_value_id,av.value from-->
+<!--    (-->
+<!--        select <include refid="Vo_Column_List"/> from attr-->
+<!--        <where>-->
+<!--          <if test="attr.name != null">-->
+<!--            and name like concat('%', #{attr.name}, '%')-->
+<!--          </if>-->
+<!--          <if test="attr.searchType != null">-->
+<!--            and search_type = #{attr.searchType}-->
+<!--          </if>-->
+<!--          <if test="attr.attrType != null">-->
+<!--            and attr_type = #{attr.attrType}-->
+<!--          </if>-->
+<!--          <if test="attr.shopId != null">-->
+<!--            and shop_id = #{attr.shopId}-->
+<!--          </if>-->
+<!--        </where>-->
+<!--        limit #{page.begin}, #{page.size}-->
+<!--    ) a-->
+<!--    left join attr_value av on a.attr_id = av.attr_id-->
+<!--    order by update_time desc-->
+<!--  </select>-->
+  <select id="listAttr" resultMap="attrListMap">
+    SELECT attr.*,av.attr_value_id,av.img_url,avl.value,avl.lang as value_lang,al.name,al.desc,al.lang
+    FROM
+    (
+      SELECT a.attr_id,a.create_time,a.update_time,a.shop_id,a.search_type,a.attr_type,a.weight
+      FROM attr a
+      <where>
+        <if test="attr.name != null">
+          and attr_id in (select distinct attr_id from attr_lang where name LIKE CONCAT('%', #{attr.name} ,'%'))
+        </if>
+        <if test="attr.searchType != null">
+          and search_type = #{attr.searchType}
+        </if>
+        <if test="attr.attrType != null">
+          and attr_type = #{attr.attrType}
+        </if>
+        <if test="attr.shopId != null">
+          and shop_id = #{attr.shopId}
+        </if>
+      </where>
+      ORDER BY update_time DESC
+      limit #{page.begin}, #{page.size}
+    ) attr
+    JOIN attr_lang al ON attr.attr_id = al.attr_id
+    LEFT JOIN attr_value av ON attr.attr_id = av.attr_id
+    LEFT JOIN attr_value_lang avl ON av.attr_value_id = avl.attr_value_id
+    order by attr.weight desc
+  </select>
+  <select id="countAttr" resultType="java.lang.Long">
+    select count(*) from attr
+    <where>
+        <if test="attr.searchType != null">
+        and search_type = #{attr.searchType}
+        </if>
+        <if test="attr.attrType != null">
+        and attr_type = #{attr.attrType}
+        </if>
+        <if test="attr.shopId != null">
+        and shop_id = #{attr.shopId}
+        </if>
+        <if test="attr.name != null">
+          and attr_id in (select distinct attr_id from attr_lang where name LIKE CONCAT('%', #{attr.name} ,'%'))
+        </if>
+    </where>
+  </select>
+  <select id="getByAttrId" resultMap="attrListMap">
+    SELECT a.attr_id,a.weight,al.name,al.desc,al.lang,a.create_time,a.update_time,a.shop_id,a.search_type,a.attr_type,av.attr_value_id,av.img_url,avl.value,avl.lang as value_lang,ac.category_id
+    FROM attr AS a
+    LEFT JOIN attr_lang al ON a.attr_id = al.attr_id
+    LEFT JOIN attr_value av ON a.attr_id = av.attr_id
+    LEFT JOIN attr_value_lang avl ON av.attr_value_id = avl.attr_value_id
+    LEFT JOIN attr_category ac ON a.attr_id = ac.attr_id
+    WHERE a.attr_id = #{attrId}
+  </select>
+  <insert id="saveAttr" useGeneratedKeys="true" keyProperty="attrId">
+    insert into attr (`search_type`,`attr_type`,`shop_id`,`weight`,`name`)
+    values (#{attr.searchType},#{attr.attrType},#{attr.shopId},#{attr.weight},#{attr.name})
+  </insert>
+  <update id="updateAttr">
+    update attr
+    set
+      <if test="attr.searchType != null">
+        `search_type` = #{attr.searchType},
+      </if>
+    <if test="attr.weight != null">
+      `weight` = #{attr.weight},
+    </if>
+    <if test="attr.name != null">
+      `name` = #{attr.name},
+    </if>
+    update_time = NOW()
+    where attr_id = #{attr.attrId}
+  </update>
+  <delete id="deleteById">
+    delete from attr where attr_id = #{attrId};
+    delete from attr_value where attr_id = #{attrId};
+    delete from attr_category where attr_id = #{attrId};
+  </delete>
+
+  <select id="getAttrsByCategoryIdAndAttrType" resultMap="attrListMap">
+    SELECT a.attr_id,a.search_type,al.name,al.lang,av.attr_value_id,avl.lang value_lang,avl.value
+    FROM attr AS a
+    JOIN `attr_lang` al ON al.attr_id = a.attr_id
+    <if test="categoryId != null">
+      JOIN `attr_category` ac ON ac.attr_id = a.attr_id AND ac.category_id = #{categoryId}
+    </if>
+    LEFT JOIN attr_value av ON a.attr_id = av.attr_id
+    LEFT JOIN attr_value_lang avl ON avl.attr_value_id = av.attr_value_id
+    WHERE a.attr_type = #{attrType}
+    <if test="shopId != null">
+      AND shop_id = #{shopId}
+    </if>
+  </select>
+
+
+  <select id="countAttrName" resultType="com.mall4j.cloud.product.model.AttrLang">
+    SELECT al.lang,al.name FROM (SELECT attr_id FROM attr WHERE shop_id = #{shopId} AND attr_type = 0
+    <if test="attrId != null">
+      AND attr_id != #{attrId}
+    </if>
+    ) a
+    JOIN attr_lang al ON a.attr_id = al.attr_id
+    <where>
+      <foreach collection="attrLangList" item="attrLang" separator="OR">
+        (al.name = #{attrLang.name} AND lang = #{attrLang.lang})
+      </foreach>
+    </where>
+  </select>
+
+  <select id="listAppAttrValues" resultType="com.mall4j.cloud.product.vo.AppAttrValuesVo">
+      SELECT attr.*,av.attr_value_id,av.`name` as attr_value_name,av.img_url
+      FROM
+      (
+      SELECT a.attr_id,a.`name` as attr_name,a.weight
+      FROM attr a
+      where attr_type = 0 and shop_id=0
+      <if test="attrIds != null and attrIds.size()> 0">
+        and a.attr_id in
+        <foreach collection="attrIds" item="item" open="(" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+      ORDER BY update_time DESC
+      ) attr
+      LEFT JOIN attr_value av ON attr.attr_id = av.attr_id
+      where av.`name` is not NULL
+      ORDER BY attr.weight desc,av.`name` desc
+  </select>
+</mapper>

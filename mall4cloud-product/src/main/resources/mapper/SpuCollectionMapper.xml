@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SpuCollectionMapper">
+  <resultMap id="spuCollectionMap" type="com.mall4j.cloud.product.model.SpuCollection">
+    <id column="id" property="id" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="user_id" property="userId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`create_time`,`update_time`,`spu_id`,`user_id`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.product.vo.SpuCollectionVO">
+    select <include refid="Vo_Column_List"/> from spu_collection order by id desc
+  </select>
+  <select id="getById" resultType="com.mall4j.cloud.product.vo.SpuCollectionVO">
+    select <include refid="Vo_Column_List"/> from spu_collection where id = #{id}
+  </select>
+  <insert id="save">
+    insert into spu_collection (`spu_id`,`user_id`)
+    values (#{spuCollection.spuId},#{spuCollection.userId});
+  </insert>
+  <update id="update">
+    update spu_collection
+    <set>
+      <if test="spuCollection.spuId != null">
+        `spu_id` = #{spuCollection.spuId},
+      </if>
+      <if test="spuCollection.userId != null">
+        `user_id` = #{spuCollection.userId},
+      </if>
+    </set>
+    where id = #{spuCollection.id}
+  </update>
+  <delete id="deleteById">
+    delete from spu_collection where id = #{id}
+  </delete>
+
+  <select id="userCollectionCount" resultType="int">
+    select ifnull(count(*),0) from spu_collection where user_id = #{userId}
+    <if test="spuId != null">
+        and spu_id = #{spuId}
+    </if>
+  </select>
+
+  <select id="getUserCollectionDtoPageByUserId" resultType="com.mall4j.cloud.common.product.vo.app.SpuAppVO">
+    select s.spu_id as spuId,s.name as spuName
+           ,s.price_fee as priceFee,s.market_price_fee as marketPriceFee,
+           s.main_img_url as mainImgUrl,s.status,s.selling_point as sellingPoint
+    from
+    spu_collection  sc
+    join spu s on sc.spu_id=s.spu_id
+    <where>
+        user_id = #{userId}
+        <if test="spuName != null and spuName != ''">
+            and s.spu_name like concat('%', #{spuName}, '%')
+        </if>
+        <if test="prodType == 2 " >
+          AND s.status <![CDATA[ <> ]]> 1
+        </if>
+    </where>
+    order by sc.id desc
+  </select>
+
+  <delete id="deleteUserCollection">
+    delete from spu_collection where user_id = #{userId}
+    <if test="spuId != null">
+    and spu_id = #{spuId}
+    </if>
+    <if test="spuIds != null and spuIds.size() > 0">
+    and spu_id in
+        <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+            #{spuId}
+        </foreach>
+    </if>
+  </delete>
+
+  <select id="hasCollection" resultType="java.lang.Long">
+    select spu_id from spu_collection where user_id = #{userId} and spu_id in
+    <foreach collection="spuIdList" item="spuId" open="(" close=")" separator=",">
+        #{spuId}
+    </foreach>
+  </select>
+
+  <insert id="saveBatch">
+    <foreach collection="spuIdList" item="spuId">
+      insert into spu_collection (`spu_id`,`user_id`) values (#{spuId},#{userId});
+    </foreach>
+  </insert>
+
+  <delete id="deleteBySpuId">
+    delete from spu_collection where spu_id = #{spuId}
+  </delete>
+
+</mapper>

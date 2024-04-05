@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.MallSalesOrderRtMapper">
+  <resultMap id="mallSalesOrderRtMap" type="com.mall4j.cloud.transfer.model.MallSalesOrderRt">
+    <id column="Id" property="id" />
+    <result column="CopId" property="copid"/>
+    <result column="BrandId" property="brandid"/>
+    <result column="EWareHouseId" property="ewarehouseid"/>
+    <result column="ShopId" property="shopid"/>
+    <result column="BuyerId" property="buyerid"/>
+    <result column="OrderId" property="orderid"/>
+    <result column="OrderCode" property="ordercode"/>
+    <result column="ReturnCode" property="returncode"/>
+    <result column="ExchangeOriginalOrderCode" property="exchangeoriginalordercode"/>
+    <result column="OrderTime" property="ordertime"/>
+    <result column="ReturnTime" property="returntime"/>
+    <result column="FinishTime" property="finishtime"/>
+    <result column="VerificationUserId" property="verificationuserid"/>
+    <result column="VerificationUserName" property="verificationusername"/>
+    <result column="ReturnQty" property="returnqty"/>
+    <result column="ReturnMoney" property="returnmoney"/>
+    <result column="ReturnBonus" property="returnbonus"/>
+    <result column="ReturnReason" property="returnreason"/>
+    <result column="ReturnStatus" property="returnstatus"/>
+    <result column="ReturnType" property="returntype"/>
+    <result column="ReturnWay" property="returnway"/>
+    <result column="OfflineReturnCode" property="offlinereturncode"/>
+    <result column="ShipState" property="shipstate"/>
+    <result column="CancelReturnType" property="cancelreturntype"/>
+    <result column="ComPostage" property="compostage"/>
+    <result column="ComBonus" property="combonus"/>
+    <result column="TradeNo" property="tradeno"/>
+    <result column="ExpressCode" property="expresscode"/>
+    <result column="ExpressOrgId" property="expressorgid"/>
+    <result column="ReturnRemark" property="returnremark"/>
+    <result column="OutSysId" property="outsysid"/>
+    <result column="IsSettle" property="issettle"/>
+    <result column="IsImportCrm" property="isimportcrm"/>
+    <result column="ImportTimestamp" property="importtimestamp"/>
+    <result column="IsDelete" property="isdelete"/>
+    <result column="CreateUser" property="createuser"/>
+    <result column="CreateDate" property="createdate"/>
+    <result column="LastModifiedUser" property="lastmodifieduser"/>
+    <result column="LastModifiedDate" property="lastmodifieddate"/>
+    <result column="FxHandler" property="fxhandler"/>
+    <result column="FormId" property="formid"/>
+    <result column="IsExchange" property="isexchange"/>
+    <result column="ExchangeId" property="exchangeid"/>
+    <result column="FlagType" property="flagtype"/>
+    <result column="IsSingleReturn" property="issinglereturn"/>
+    <result column="AutoAgreeApplyDate" property="autoagreeapplydate"/>
+    <result column="ExpressViewBy" property="expressviewby"/>
+    <result column="WaybillToken" property="waybilltoken"/>
+    <result column="BlRtStoreHouseId" property="blrtstorehouseid"/>
+    <result column="PickupStatus" property="pickupstatus"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `Id`,`CopId`,`BrandId`,`EWareHouseId`,`ShopId`,`BuyerId`,`OrderId`,`OrderCode`,`ReturnCode`,`ExchangeOriginalOrderCode`,`OrderTime`,`ReturnTime`,`FinishTime`,`VerificationUserId`,`VerificationUserName`,`ReturnQty`,`ReturnMoney`,`ReturnBonus`,`ReturnReason`,`ReturnStatus`,`ReturnType`,`ReturnWay`,`OfflineReturnCode`,`ShipState`,`CancelReturnType`,`ComPostage`,`ComBonus`,`TradeNo`,`ExpressCode`,`ExpressOrgId`,`ReturnRemark`,`OutSysId`,`IsSettle`,`IsImportCrm`,`ImportTimestamp`,`IsDelete`,`CreateUser`,`CreateDate`,`LastModifiedUser`,`LastModifiedDate`,`FxHandler`,`FormId`,`IsExchange`,`ExchangeId`,`FlagType`,`IsSingleReturn`,`AutoAgreeApplyDate`,`ExpressViewBy`,`WaybillToken`,`BlRtStoreHouseId`,`PickupStatus`
+  </sql>
+  <select id="list" resultMap="mallSalesOrderRtMap">
+    select <include refid="Vo_Column_List"/> from mall_sales_order_rt order by Id desc
+  </select>
+    <select id="list2" resultMap="mallSalesOrderRtMap">
+        select
+          <include refid="Vo_Column_List"/>
+        from mall_sales_order_rt_add where orderid not in
+        (
+        select orderid from mall_sales_order_ref_add
+        )
+    </select>
+  <select id="getById" resultMap="mallSalesOrderRtMap">
+    select <include refid="Vo_Column_List"/> from mall_sales_order_rt_add where Id = #{id}
+  </select>
+  <insert id="save">
+    insert into mall_sales_order_rt (`CopId`,`BrandId`,`EWareHouseId`,`ShopId`,`BuyerId`,`OrderId`,`OrderCode`,`ReturnCode`,`ExchangeOriginalOrderCode`,`OrderTime`,`ReturnTime`,`FinishTime`,`VerificationUserId`,`VerificationUserName`,`ReturnQty`,`ReturnMoney`,`ReturnBonus`,`ReturnReason`,`ReturnStatus`,`ReturnType`,`ReturnWay`,`OfflineReturnCode`,`ShipState`,`CancelReturnType`,`ComPostage`,`ComBonus`,`TradeNo`,`ExpressCode`,`ExpressOrgId`,`ReturnRemark`,`OutSysId`,`IsSettle`,`IsImportCrm`,`ImportTimestamp`,`IsDelete`,`CreateUser`,`CreateDate`,`LastModifiedUser`,`LastModifiedDate`,`FxHandler`,`FormId`,`IsExchange`,`ExchangeId`,`FlagType`,`IsSingleReturn`,`AutoAgreeApplyDate`,`ExpressViewBy`,`WaybillToken`,`BlRtStoreHouseId`,`PickupStatus`)
+    values (#{mallSalesOrderRt.copid},#{mallSalesOrderRt.brandid},#{mallSalesOrderRt.ewarehouseid},#{mallSalesOrderRt.shopid},#{mallSalesOrderRt.buyerid},#{mallSalesOrderRt.orderid},#{mallSalesOrderRt.ordercode},#{mallSalesOrderRt.returncode},#{mallSalesOrderRt.exchangeoriginalordercode},#{mallSalesOrderRt.ordertime},#{mallSalesOrderRt.returntime},#{mallSalesOrderRt.finishtime},#{mallSalesOrderRt.verificationuserid},#{mallSalesOrderRt.verificationusername},#{mallSalesOrderRt.returnqty},#{mallSalesOrderRt.returnmoney},#{mallSalesOrderRt.returnbonus},#{mallSalesOrderRt.returnreason},#{mallSalesOrderRt.returnstatus},#{mallSalesOrderRt.returntype},#{mallSalesOrderRt.returnway},#{mallSalesOrderRt.offlinereturncode},#{mallSalesOrderRt.shipstate},#{mallSalesOrderRt.cancelreturntype},#{mallSalesOrderRt.compostage},#{mallSalesOrderRt.combonus},#{mallSalesOrderRt.tradeno},#{mallSalesOrderRt.expresscode},#{mallSalesOrderRt.expressorgid},#{mallSalesOrderRt.returnremark},#{mallSalesOrderRt.outsysid},#{mallSalesOrderRt.issettle},#{mallSalesOrderRt.isimportcrm},#{mallSalesOrderRt.importtimestamp},#{mallSalesOrderRt.isdelete},#{mallSalesOrderRt.createuser},#{mallSalesOrderRt.createdate},#{mallSalesOrderRt.lastmodifieduser},#{mallSalesOrderRt.lastmodifieddate},#{mallSalesOrderRt.fxhandler},#{mallSalesOrderRt.formid},#{mallSalesOrderRt.isexchange},#{mallSalesOrderRt.exchangeid},#{mallSalesOrderRt.flagtype},#{mallSalesOrderRt.issinglereturn},#{mallSalesOrderRt.autoagreeapplydate},#{mallSalesOrderRt.expressviewby},#{mallSalesOrderRt.waybilltoken},#{mallSalesOrderRt.blrtstorehouseid},#{mallSalesOrderRt.pickupstatus});
+  </insert>
+  <update id="update">
+    update mall_sales_order_rt
+    <set>
+      <if test="mallSalesOrderRt.copid != null">
+        `CopId` = #{mallSalesOrderRt.copid},
+      </if>
+      <if test="mallSalesOrderRt.brandid != null">
+        `BrandId` = #{mallSalesOrderRt.brandid},
+      </if>
+      <if test="mallSalesOrderRt.ewarehouseid != null">
+        `EWareHouseId` = #{mallSalesOrderRt.ewarehouseid},
+      </if>
+      <if test="mallSalesOrderRt.shopid != null">
+        `ShopId` = #{mallSalesOrderRt.shopid},
+      </if>
+      <if test="mallSalesOrderRt.buyerid != null">
+        `BuyerId` = #{mallSalesOrderRt.buyerid},
+      </if>
+      <if test="mallSalesOrderRt.orderid != null">
+        `OrderId` = #{mallSalesOrderRt.orderid},
+      </if>
+      <if test="mallSalesOrderRt.ordercode != null">
+        `OrderCode` = #{mallSalesOrderRt.ordercode},
+      </if>
+      <if test="mallSalesOrderRt.returncode != null">
+        `ReturnCode` = #{mallSalesOrderRt.returncode},
+      </if>
+      <if test="mallSalesOrderRt.exchangeoriginalordercode != null">
+        `ExchangeOriginalOrderCode` = #{mallSalesOrderRt.exchangeoriginalordercode},
+      </if>
+      <if test="mallSalesOrderRt.ordertime != null">
+        `OrderTime` = #{mallSalesOrderRt.ordertime},
+      </if>
+      <if test="mallSalesOrderRt.returntime != null">
+        `ReturnTime` = #{mallSalesOrderRt.returntime},
+      </if>
+      <if test="mallSalesOrderRt.finishtime != null">
+        `FinishTime` = #{mallSalesOrderRt.finishtime},
+      </if>
+      <if test="mallSalesOrderRt.verificationuserid != null">
+        `VerificationUserId` = #{mallSalesOrderRt.verificationuserid},
+      </if>
+      <if test="mallSalesOrderRt.verificationusername != null">
+        `VerificationUserName` = #{mallSalesOrderRt.verificationusername},
+      </if>
+      <if test="mallSalesOrderRt.returnqty != null">
+        `ReturnQty` = #{mallSalesOrderRt.returnqty},
+      </if>
+      <if test="mallSalesOrderRt.returnmoney != null">
+        `ReturnMoney` = #{mallSalesOrderRt.returnmoney},
+      </if>
+      <if test="mallSalesOrderRt.returnbonus != null">
+        `ReturnBonus` = #{mallSalesOrderRt.returnbonus},
+      </if>
+      <if test="mallSalesOrderRt.returnreason != null">
+        `ReturnReason` = #{mallSalesOrderRt.returnreason},
+      </if>
+      <if test="mallSalesOrderRt.returnstatus != null">
+        `ReturnStatus` = #{mallSalesOrderRt.returnstatus},
+      </if>
+      <if test="mallSalesOrderRt.returntype != null">
+        `ReturnType` = #{mallSalesOrderRt.returntype},
+      </if>
+      <if test="mallSalesOrderRt.returnway != null">
+        `ReturnWay` = #{mallSalesOrderRt.returnway},
+      </if>
+      <if test="mallSalesOrderRt.offlinereturncode != null">
+        `OfflineReturnCode` = #{mallSalesOrderRt.offlinereturncode},
+      </if>
+      <if test="mallSalesOrderRt.shipstate != null">
+        `ShipState` = #{mallSalesOrderRt.shipstate},
+      </if>
+      <if test="mallSalesOrderRt.cancelreturntype != null">
+        `CancelReturnType` = #{mallSalesOrderRt.cancelreturntype},
+      </if>
+      <if test="mallSalesOrderRt.compostage != null">
+        `ComPostage` = #{mallSalesOrderRt.compostage},
+      </if>
+      <if test="mallSalesOrderRt.combonus != null">
+        `ComBonus` = #{mallSalesOrderRt.combonus},
+      </if>
+      <if test="mallSalesOrderRt.tradeno != null">
+        `TradeNo` = #{mallSalesOrderRt.tradeno},
+      </if>
+      <if test="mallSalesOrderRt.expresscode != null">
+        `ExpressCode` = #{mallSalesOrderRt.expresscode},
+      </if>
+      <if test="mallSalesOrderRt.expressorgid != null">
+        `ExpressOrgId` = #{mallSalesOrderRt.expressorgid},
+      </if>
+      <if test="mallSalesOrderRt.returnremark != null">
+        `ReturnRemark` = #{mallSalesOrderRt.returnremark},
+      </if>
+      <if test="mallSalesOrderRt.outsysid != null">
+        `OutSysId` = #{mallSalesOrderRt.outsysid},
+      </if>
+      <if test="mallSalesOrderRt.issettle != null">
+        `IsSettle` = #{mallSalesOrderRt.issettle},
+      </if>
+      <if test="mallSalesOrderRt.isimportcrm != null">
+        `IsImportCrm` = #{mallSalesOrderRt.isimportcrm},
+      </if>
+      <if test="mallSalesOrderRt.importtimestamp != null">
+        `ImportTimestamp` = #{mallSalesOrderRt.importtimestamp},
+      </if>
+      <if test="mallSalesOrderRt.isdelete != null">
+        `IsDelete` = #{mallSalesOrderRt.isdelete},
+      </if>
+      <if test="mallSalesOrderRt.createuser != null">
+        `CreateUser` = #{mallSalesOrderRt.createuser},
+      </if>
+      <if test="mallSalesOrderRt.createdate != null">
+        `CreateDate` = #{mallSalesOrderRt.createdate},
+      </if>
+      <if test="mallSalesOrderRt.lastmodifieduser != null">
+        `LastModifiedUser` = #{mallSalesOrderRt.lastmodifieduser},
+      </if>
+      <if test="mallSalesOrderRt.lastmodifieddate != null">
+        `LastModifiedDate` = #{mallSalesOrderRt.lastmodifieddate},
+      </if>
+      <if test="mallSalesOrderRt.fxhandler != null">
+        `FxHandler` = #{mallSalesOrderRt.fxhandler},
+      </if>
+      <if test="mallSalesOrderRt.formid != null">
+        `FormId` = #{mallSalesOrderRt.formid},
+      </if>
+      <if test="mallSalesOrderRt.isexchange != null">
+        `IsExchange` = #{mallSalesOrderRt.isexchange},
+      </if>
+      <if test="mallSalesOrderRt.exchangeid != null">
+        `ExchangeId` = #{mallSalesOrderRt.exchangeid},
+      </if>
+      <if test="mallSalesOrderRt.flagtype != null">
+        `FlagType` = #{mallSalesOrderRt.flagtype},
+      </if>
+      <if test="mallSalesOrderRt.issinglereturn != null">
+        `IsSingleReturn` = #{mallSalesOrderRt.issinglereturn},
+      </if>
+      <if test="mallSalesOrderRt.autoagreeapplydate != null">
+        `AutoAgreeApplyDate` = #{mallSalesOrderRt.autoagreeapplydate},
+      </if>
+      <if test="mallSalesOrderRt.expressviewby != null">
+        `ExpressViewBy` = #{mallSalesOrderRt.expressviewby},
+      </if>
+      <if test="mallSalesOrderRt.waybilltoken != null">
+        `WaybillToken` = #{mallSalesOrderRt.waybilltoken},
+      </if>
+      <if test="mallSalesOrderRt.blrtstorehouseid != null">
+        `BlRtStoreHouseId` = #{mallSalesOrderRt.blrtstorehouseid},
+      </if>
+      <if test="mallSalesOrderRt.pickupstatus != null">
+        `PickupStatus` = #{mallSalesOrderRt.pickupstatus},
+      </if>
+    </set>
+    where Id = #{mallSalesOrderRt.id}
+  </update>
+  <delete id="deleteById">
+    delete from mall_sales_order_rt where Id = #{id}
+  </delete>
+
+</mapper>

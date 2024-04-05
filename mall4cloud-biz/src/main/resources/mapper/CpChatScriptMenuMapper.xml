@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpChatScriptMenuMapper">
+  <resultMap id="cpChatScriptMenuMap" type="com.mall4j.cloud.biz.model.cp.CpChatScriptMenu">
+    <id column="id" property="id" />
+    <result column="menu_name" property="menuName"/>
+    <result column="parent_id" property="parentId"/>
+    <result column="is_show" property="isShow"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="flag" property="flag"/>
+    <result column="status" property="status"/>
+    <result column="is_top" property="isTop"/>
+    <result column="type" property="type"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`menu_name`,`parent_id`,`is_show`,`create_time`,`update_time`,`flag`,`status`,`is_top`,type
+  </sql>
+  <select id="list" resultMap="cpChatScriptMenuMap">
+    select <include refid="Vo_Column_List"/> from cp_chat_script_menu order by id desc
+  </select>
+  <select id="getById" resultMap="cpChatScriptMenuMap">
+    select <include refid="Vo_Column_List"/> from cp_chat_script_menu where id = #{id}
+  </select>
+  <insert id="save">
+    insert into cp_chat_script_menu (`menu_name`,`parent_id`,`is_show`,`flag`,`status`,`is_top`,`type`)
+    values (#{cpChatScriptMenu.menuName},#{cpChatScriptMenu.parentId},#{cpChatScriptMenu.isShow},
+            #{cpChatScriptMenu.flag},#{cpChatScriptMenu.status},#{cpChatScriptMenu.isTop},#{cpChatScriptMenu.type});
+  </insert>
+  <update id="update">
+    update cp_chat_script_menu
+    <set>
+      <if test="cpChatScriptMenu.menuName != null">
+        `menu_name` = #{cpChatScriptMenu.menuName},
+      </if>
+      <if test="cpChatScriptMenu.parentId != null">
+        `parent_id` = #{cpChatScriptMenu.parentId},
+      </if>
+      <if test="cpChatScriptMenu.isShow != null">
+        `is_show` = #{cpChatScriptMenu.isShow},
+      </if>
+      <if test="cpChatScriptMenu.flag != null">
+        `flag` = #{cpChatScriptMenu.flag},
+      </if>
+      <if test="cpChatScriptMenu.status != null">
+        `status` = #{cpChatScriptMenu.status},
+      </if>
+      <if test="cpChatScriptMenu.isTop != null">
+        `is_top` = #{cpChatScriptMenu.isTop},
+      </if>
+      <if test="cpChatScriptMenu.type != null">
+        `type` = #{cpChatScriptMenu.type},
+      </if>
+    </set>
+    where id = #{cpChatScriptMenu.id}
+  </update>
+  <delete id="deleteById">
+    delete from cp_chat_script_menu where id = #{id}
+  </delete>
+
+  <select id="listParent" resultMap="cpChatScriptMenuMap">
+    select
+        <include refid="Vo_Column_List"/>
+    from cp_chat_script_menu
+    where flag = 0 and (parent_id = 0 or parent_id is null)
+    order by id desc
+  </select>
+
+  <select id="listChildren" resultMap="cpChatScriptMenuMap">
+    select
+        <include refid="Vo_Column_List"/>
+    from cp_chat_script_menu
+    where flag = 0 and parent_id = #{parentId}
+    order by id desc
+  </select>
+
+  <select id="listParentContainChildren" resultMap="cpChatScriptMenuMap">
+    select
+        <include refid="Vo_Column_List"/>
+    from cp_chat_script_menu
+    where flag = 0 and type = #{type}
+    <if test="isShow!=null">
+      and is_show=#{isShow}
+    </if>
+    order by id desc
+  </select>
+
+  <update id="logicDeleteById">
+    update cp_chat_script_menu set flag = 1 where id = #{id}
+  </update>
+
+  <select id="checkMaterial" resultType="java.lang.Integer">
+    SELECT ID
+    FROM cp_chat_script_menu
+    WHERE STATUS = 1
+    AND FLAG = 0
+    <if test="parentId != null">
+      AND PARENT_ID = #{parentId}
+    </if>
+    ORDER BY IS_TOP DESC, UPDATE_TIME DESC
+  </select>
+
+  <select id="getMaterialCountByMatTypeId" resultType="java.lang.Integer">
+    SELECT COUNT(1)
+    FROM cp_chat_script
+    WHERE 1=1
+    <if test="matTypeIdList != null and matTypeIdList.size() > 0">
+      AND ( ID IN
+      <foreach collection="matTypeIdList" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+      )
+    </if>
+  </select>
+
+</mapper>

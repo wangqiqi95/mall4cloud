@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinMaSubscriptUserRecordMapper">
+  <resultMap id="weixinMaSubscriptUserRecordMap" type="com.mall4j.cloud.biz.model.WeixinMaSubscriptUserRecord">
+    <id column="id" property="id" />
+    <result column="template_id" property="templateId"/>
+    <result column="user_id" property="userId"/>
+    <result column="open_id" property="openId"/>
+    <result column="bussiness_id" property="bussinessId"/>
+    <result column="send_status" property="sendStatus"/>
+      <result column="send_type" property="sendType"/>
+    <result column="create_time" property="createTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`template_id`,`user_id`,`open_id`,`bussiness_id`,`send_status`,`create_time`
+  </sql>
+  <select id="list" resultMap="weixinMaSubscriptUserRecordMap">
+    select <include refid="Vo_Column_List"/> from weixin_ma_subscript_user_record order by id desc
+  </select>
+  <select id="getById" resultMap="weixinMaSubscriptUserRecordMap">
+    select <include refid="Vo_Column_List"/> from weixin_ma_subscript_user_record where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_ma_subscript_user_record (`id`,`template_id`,`user_id`,
+                                                 `open_id`,`bussiness_id`,`send_status`,`send_type`)
+    values (#{weixinMaSubscriptUserRecord.id},#{weixinMaSubscriptUserRecord.templateId},#{weixinMaSubscriptUserRecord.userId},
+            #{weixinMaSubscriptUserRecord.openId},#{weixinMaSubscriptUserRecord.bussinessId},#{weixinMaSubscriptUserRecord.sendStatus},#{weixinMaSubscriptUserRecord.sendType});
+  </insert>
+  <update id="update">
+    update weixin_ma_subscript_user_record
+    <set>
+      <if test="weixinMaSubscriptUserRecord.templateId != null">
+        `template_id` = #{weixinMaSubscriptUserRecord.templateId},
+      </if>
+      <if test="weixinMaSubscriptUserRecord.userId != null">
+        `user_id` = #{weixinMaSubscriptUserRecord.userId},
+      </if>
+      <if test="weixinMaSubscriptUserRecord.openId != null">
+        `open_id` = #{weixinMaSubscriptUserRecord.openId},
+      </if>
+      <if test="weixinMaSubscriptUserRecord.bussinessId != null">
+        `bussiness_id` = #{weixinMaSubscriptUserRecord.bussinessId},
+      </if>
+      <if test="weixinMaSubscriptUserRecord.sendType != null">
+        `send_status` = #{weixinMaSubscriptUserRecord.sendType},
+      </if>
+    </set>
+    where id = #{weixinMaSubscriptUserRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_ma_subscript_user_record where id = #{id}
+  </delete>
+
+    <select id="getByTemplateId" resultType="com.mall4j.cloud.api.biz.vo.WeixinMaSubscriptUserRecordVO">
+      select * from weixin_ma_subscript_user_record where template_id = #{templateId} and send_status = 0
+    </select>
+
+    <select id="getByTemplateIdAndBusIds" resultType="com.mall4j.cloud.api.biz.vo.WeixinMaSubscriptUserRecordVO">
+        select
+               *
+        from
+             weixin_ma_subscript_user_record
+        where template_id = #{templateId} and send_status = 0  and bussiness_id in
+        <foreach collection="lists" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="getUserRecordByUserRecordIds" resultType="com.mall4j.cloud.api.biz.vo.WeixinMaSubscriptUserRecordVO">
+        select
+               *
+        from
+            weixin_ma_subscript_user_record where id in
+        <foreach collection="userRecordIds" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getByTemplateIdAndBusId" resultType="com.mall4j.cloud.api.biz.vo.WeixinMaSubscriptUserRecordVO">
+        SELECT
+            *
+        FROM
+            weixin_ma_subscript_user_record
+        WHERE
+            template_id = #{templateId} and send_status = 0  and bussiness_id like CONCAT(#{bussinessId},'%')
+    </select>
+
+    <update id="sendMessage">
+        update weixin_ma_subscript_user_record
+        set send_status = 1
+        where id = #{id} and (send_status = 0 or send_status = 2)
+    </update>
+
+  <update id="sendMessageUpdateStatus">
+        update weixin_ma_subscript_user_record
+        set send_status = 2
+        where id = #{id} and send_status = 0
+    </update>
+
+    <update id="cancelUserSubscriptRecord">
+        update weixin_ma_subscript_user_record
+        set send_status = 1
+        where user_id = #{userId} and send_type = #{sendType} and bussiness_id = #{bussinessId}
+    </update>
+
+    <select id="getByTemplateIdAndBegTimeAndEndTime" resultType="com.mall4j.cloud.api.biz.vo.WeixinMaSubscriptUserRecordVO">
+        select * from weixin_ma_subscript_user_record where template_id = #{templateId}
+                                                        and create_time between #{beginTime} and #{endTime}
+                                                        and send_status = 0
+    </select>
+
+</mapper>

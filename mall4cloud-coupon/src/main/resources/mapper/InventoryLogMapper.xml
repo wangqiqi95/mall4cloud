@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.InventoryLogMapper">
+
+
+    <select id="list" resultType="com.mall4j.cloud.coupon.vo.InventoryListVO">
+        select c.name as couponName,
+               il.num as num,
+               il.create_code as createCode,
+               il.create_name as createName,
+               il.create_time as createTime
+        from inventory_log il
+                 left join t_coupon c on il.coupon_id = c.id
+        where il.activity_id = #{activityId}
+    </select>
+</mapper>

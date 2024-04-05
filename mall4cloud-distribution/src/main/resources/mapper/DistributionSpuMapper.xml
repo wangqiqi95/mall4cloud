@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionSpuMapper">
+  <resultMap id="distributionSpuMap" type="com.mall4j.cloud.distribution.model.DistributionSpu">
+    <id column="distribution_spu_id" property="distributionSpuId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="state" property="state"/>
+    <result column="award_mode" property="awardMode"/>
+    <result column="parent_award_set" property="parentAwardSet"/>
+    <result column="award_numbers" property="awardNumbers"/>
+    <result column="parent_award_numbers" property="parentAwardNumbers"/>
+    <result column="modifier" property="modifier"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `distribution_spu_id`,`create_time`,`update_time`,`shop_id`,`spu_id`,`state`,`award_mode`,`parent_award_set`,`award_numbers`,`parent_award_numbers`,`modifier`
+  </sql>
+  <select id="list" resultMap="distributionSpuMap">
+    select <include refid="Vo_Column_List"/> from distribution_spu order by distribution_spu_id desc
+  </select>
+  <select id="getBySpuId" resultType="com.mall4j.cloud.api.distribution.vo.DistributionSpuVO">
+    select <include refid="Vo_Column_List"/> from distribution_spu where spu_id = #{spuId}
+  </select>
+  <select id="getByDistributionSpuId" resultType="com.mall4j.cloud.api.distribution.vo.DistributionSpuVO">
+    select <include refid="Vo_Column_List"/> from distribution_spu where distribution_spu_id = #{distributionSpuId}
+  </select>
+  <select id="countBySpuIdAndState" resultType="java.lang.Integer">
+    select count(*) from distribution_spu where spu_id = #{spuId} and `state` = #{state}
+  </select>
+  <insert id="save">
+    insert into distribution_spu (`distribution_spu_id`,`shop_id`,`spu_id`,`state`,`award_mode`,`parent_award_set`,`award_numbers`,`parent_award_numbers`,`modifier`)
+    values (#{distributionSpu.distributionSpuId},#{distributionSpu.shopId},#{distributionSpu.spuId},#{distributionSpu.state},#{distributionSpu.awardMode},#{distributionSpu.parentAwardSet},#{distributionSpu.awardNumbers},#{distributionSpu.parentAwardNumbers},#{distributionSpu.modifier});
+  </insert>
+  <update id="update">
+    update distribution_spu
+    <set>
+      <if test="distributionSpu.shopId != null">
+        `shop_id` = #{distributionSpu.shopId},
+      </if>
+      <if test="distributionSpu.spuId != null">
+        `spu_id` = #{distributionSpu.spuId},
+      </if>
+      <if test="distributionSpu.state != null">
+        `state` = #{distributionSpu.state},
+      </if>
+      <if test="distributionSpu.awardMode != null">
+        `award_Mode` = #{distributionSpu.awardMode},
+      </if>
+      <if test="distributionSpu.parentAwardSet != null">
+        `parent_award_set` = #{distributionSpu.parentAwardSet},
+      </if>
+      <if test="distributionSpu.awardNumbers != null">
+        `award_numbers` = #{distributionSpu.awardNumbers},
+      </if>
+      <if test="distributionSpu.parentAwardNumbers != null">
+        `parent_award_numbers` = #{distributionSpu.parentAwardNumbers},
+      </if>
+      <if test="distributionSpu.modifier != null">
+        `modifier` = #{distributionSpu.modifier},
+      </if>
+    </set>
+    where distribution_spu_id = #{distributionSpu.distributionSpuId}
+  </update>
+  <update id="changeStateByDistributionId">
+    update distribution_spu set `state` = #{newState} where distribution_spu_id = #{distributionSpuId}
+    <if test="oldState != null">
+      and `state` = #{oldState}
+    </if>
+  </update>
+  <delete id="deleteById">
+    delete from distribution_spu where distribution_spu_id = #{distributionSpuId}
+  </delete>
+  <delete id="deleteByIdAndShopId">
+    delete from distribution_spu
+    <where>
+      and distribution_spu_id = #{distributionSpuId}
+      <if test="shopId != null">
+        and shop_id = #{shopId}
+      </if>
+    </where>
+  </delete>
+
+  <select id="getByStateAndSpuIds" resultMap="distributionSpuMap">
+    select <include refid="Vo_Column_List"/> from distribution_spu
+    where spu_id in (
+    <foreach collection="spuIds" separator="," item="spuId">
+      #{spuId}
+    </foreach>
+    )
+    <if test="state != null">
+      and state = #{state}
+    </if>
+  </select>
+</mapper>

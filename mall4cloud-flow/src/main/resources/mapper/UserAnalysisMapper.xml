@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.flow.mapper.UserAnalysisMapper">
+  <resultMap id="userAnalysisMap" type="com.mall4j.cloud.flow.model.UserAnalysis">
+    <id column="user_analysis_id" property="userAnalysisId" />
+    <result column="create_date" property="createDate"/>
+    <result column="user_id" property="userId"/>
+    <result column="province_id" property="provinceId"/>
+    <result column="plus_shop_cart" property="plusShopCart"/>
+    <result column="place_order_amount" property="placeOrderAmount"/>
+    <result column="pay_amount" property="payAmount"/>
+    <result column="visit_nums" property="visitNums"/>
+    <result column="user_type" property="userType"/>
+    <result column="system_type" property="systemType"/>
+  </resultMap>
+  <resultMap id="userAnalysisAndSpuMap" type="com.mall4j.cloud.flow.model.UserAnalysis">
+    <id column="user_analysis_id" property="userAnalysisId" />
+    <result column="create_date" property="createDate"/>
+    <result column="user_id" property="userId"/>
+    <result column="province_id" property="provinceId"/>
+    <result column="plus_shop_cart" property="plusShopCart"/>
+    <result column="place_order_amount" property="placeOrderAmount"/>
+    <result column="pay_amount" property="payAmount"/>
+    <result column="visit_nums" property="visitNums"/>
+    <result column="click_nums" property="clickNums"/>
+    <result column="user_type" property="userType"/>
+    <result column="system_type" property="systemType"/>
+    <collection property="spuIds" ofType="java.lang.Long">
+      <id column="spu_id"/>
+    </collection>
+  </resultMap>
+  <resultMap id="userAnalysisVOMap" type="com.mall4j.cloud.flow.vo.UserAnalysisVO">
+    <id column="user_analysis_id" property="userAnalysisId" />
+    <result column="create_date" property="createDate"/>
+    <result column="user_id" property="userId"/>
+    <result column="province_id" property="provinceId"/>
+    <result column="plus_shop_cart" property="plusShopCart"/>
+    <result column="place_order_amount" property="placeOrderAmount"/>
+    <result column="pay_amount" property="payAmount"/>
+    <result column="visit_nums" property="visitNums"/>
+    <result column="user_type" property="userType"/>
+    <result column="system_type" property="systemType"/>
+    <collection property="spuIdList" ofType="java.lang.Long">
+      <id column="spu_id"/>
+    </collection>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `user_analysis_id`,`create_date`,`user_id`,`province_id`,`plus_shop_cart`,`place_order_amount`,`pay_amount`,`visit_nums`,`user_type`,`system_type`
+  </sql>
+  <sql id="timeType">
+    <if test="flowAnalysisDTO.timeType != 2 and flowAnalysisDTO.timeType != 3">
+      create_date
+    </if>
+    <if test="flowAnalysisDTO.timeType == 2">
+      WEEK(create_date, 1)
+    </if>
+    <if test="flowAnalysisDTO.timeType == 3">
+      MONTH(create_date)
+    </if>
+  </sql>
+  <select id="list" resultMap="userAnalysisMap">
+    select <include refid="Vo_Column_List"/> from user_analysis order by user_analysis_id desc
+  </select>
+  <select id="getByUserAnalysisId" resultMap="userAnalysisMap">
+    select <include refid="Vo_Column_List"/> from user_analysis where user_analysis_id = #{userAnalysisId}
+  </select>
+  <insert id="save">
+    insert into user_analysis (`create_date`,`user_id`,`province_id`,`plus_shop_cart`,`place_order_amount`,`pay_amount`,`visit_nums`,`user_type`,`system_type`)
+    values (#{userAnalysis.createDate},#{userAnalysis.userId},#{userAnalysis.provinceId},#{userAnalysis.plusShopCart},#{userAnalysis.placeOrderAmount},#{userAnalysis.payAmount},#{userAnalysis.visitNums},#{userAnalysis.userType},#{userAnalysis.systemType});
+  </insert>
+  <update id="update">
+    update user_analysis
+    <set>
+      <if test="userAnalysis.createDate != null">
+        `create_date` = #{userAnalysis.createDate},
+      </if>
+      <if test="userAnalysis.userId != null">
+        `user_id` = #{userAnalysis.userId},
+      </if>
+      <if test="userAnalysis.provinceId != null">
+        `province_id` = #{userAnalysis.provinceId},
+      </if>
+      <if test="userAnalysis.plusShopCart != null">
+        `plus_shop_cart` = #{userAnalysis.plusShopCart},
+      </if>
+      <if test="userAnalysis.placeOrderAmount != null">
+        `place_order_amount` = #{userAnalysis.placeOrderAmount},
+      </if>
+      <if test="userAnalysis.payAmount != null">
+        `pay_amount` = #{userAnalysis.payAmount},
+      </if>
+      <if test="userAnalysis.visitNums != null">
+        `visit_nums` = #{userAnalysis.visitNums},
+      </if>
+      <if test="userAnalysis.userType != null">
+        `user_type` = #{userAnalysis.userType},
+      </if>
+      <if test="userAnalysis.systemType != null">
+        `system_type` = #{userAnalysis.systemType},
+      </if>
+    </set>
+    where user_analysis_id = #{userAnalysis.userAnalysisId}
+  </update>
+  <delete id="deleteById">
+    delete from user_analysis where user_analysis_id = #{userAnalysisId}
+  </delete>
+
+  <select id="listByDate" resultMap="userAnalysisAndSpuMap">
+    SELECT ua.user_analysis_id,ua.create_date,ua.user_id,ua.province_id,ua.plus_shop_cart,ua.place_order_amount,ua.pay_amount,ua.visit_nums,
+           ua.click_nums,ua.user_type,ua.system_type,uvpa.spu_id
+    FROM user_analysis ua
+    JOIN user_visit_prod_analysis uvpa ON ua.user_analysis_id = uvpa.user_analysis_id
+    WHERE ua.create_date = #{date} AND ua.user_id in
+    <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+      #{userId}
+    </foreach>
+  </select>
+    <select id="listUserAnalysisByData" resultMap="userAnalysisVOMap">
+      SELECT ua.user_analysis_id,ua.create_date,ua.user_id,ua.province_id,ua.plus_shop_cart,ua.place_order_amount,ua.pay_amount,ua.visit_nums,
+             ua.click_nums,ua.user_type,ua.system_type,uvpa.spu_id
+      FROM user_analysis ua
+      JOIN user_visit_prod_analysis uvpa ON ua.user_analysis_id = uvpa.user_analysis_id
+      WHERE ua.create_date &gt;= #{startTime} AND ua.create_date &lt; #{endTime}
+    </select>
+
+    <insert id="saveBatch" useGeneratedKeys="true" keyProperty="userAnalysisId">
+    insert into user_analysis (`create_date`,`user_id`,`province_id`,`plus_shop_cart`,`place_order_amount`,`pay_amount`,`visit_nums`,`click_nums`,`user_type`,`system_type`)
+    values
+    <foreach collection="list" item="userAnalysis" separator=",">
+      (#{userAnalysis.createDate},#{userAnalysis.userId},#{userAnalysis.provinceId},#{userAnalysis.plusShopCart},#{userAnalysis.placeOrderAmount},#{userAnalysis.payAmount},#{userAnalysis.visitNums},#{userAnalysis.clickNums},#{userAnalysis.userType},#{userAnalysis.systemType})
+    </foreach>
+  </insert>
+
+  <update id="updateBatch">
+    <foreach collection="list" item="userAnalysis">
+      update user_analysis
+      <set>
+        <if test="userAnalysis.userId != null">
+          `user_id` = #{userAnalysis.userId},
+        </if>
+        <if test="userAnalysis.placeOrderAmount != null">
+            `place_order_amount` = #{userAnalysis.placeOrderAmount},
+        </if>
+          <if test="userAnalysis.payAmount != null">
+              `pay_amount` = #{userAnalysis.payAmount},
+          </if>
+          <if test="userAnalysis.visitNums != null">
+              `visit_nums` = #{userAnalysis.visitNums},
+          </if>
+          <if test="userAnalysis.clickNums != null">
+              `click_nums` = #{userAnalysis.clickNums},
+          </if>
+          <if test="userAnalysis.plusShopCart != null">
+              `plus_shop_cart` = #{userAnalysis.plusShopCart},
+          </if>
+          <if test="userAnalysis.userType != null">
+          `user_type` = #{userAnalysis.userType},
+        </if>
+      </set>
+      where user_analysis_id = #{userAnalysis.userAnalysisId};
+    </foreach>
+  </update>
+
+  <delete id="deleteBatch">
+    delete from user_analysis where user_analysis_id in
+    <foreach collection="userAnalysisIds" item="userAnalysisId" open="(" close=")" separator=",">
+      #{userAnalysisId}
+    </foreach>
+  </delete>
+
+  <select id="getFlowAnalysisData" resultType="com.mall4j.cloud.flow.vo.FlowAnalysisVO">
+    (
+        SELECT 1 AS new_data,COUNT(*) AS user_nums, COUNT(IF(f.user_type = 0, 1, NULL)) AS new_user_nums,
+                SUM(f.place_order_amount) AS place_order_amount,COUNT(IF(f.place_order_amount &gt; 0, 1, NULL)) AS place_order_user,
+                SUM(f.pay_amount) AS pay_amount,COUNT(IF(f.pay_amount &gt; 0, 1, NULL)) AS pay_user,SUM(f.visit_nums) AS visit_nums,
+                SUM(f.click_nums) AS click_nums,SUM(IF(f.plus_shop_cart &gt; 0, 1, NULL)) AS plus_shop_cart_user,
+                COUNT(IF(f.visit_nums = 1, 1, NULL)) AS loss_user
+        FROM
+        (
+               SELECT SUM(place_order_amount) AS place_order_amount,SUM(pay_amount) AS pay_amount,SUM(visit_nums) AS visit_nums,
+                      SUM(click_nums) AS click_nums,SUM(plus_shop_cart) AS plus_shop_cart,MIN(user_type) AS user_type
+               FROM user_analysis
+               WHERE create_date &gt;= #{flowAnalysisDTO.startTime} AND create_date &lt; #{flowAnalysisDTO.endTime}
+               <if test="flowAnalysisDTO.systemType != null ">
+                 AND system_type = #{flowAnalysisDTO.systemType}
+               </if>
+               GROUP BY user_id
+        ) AS f
+    )
+    UNION
+    (
+        SELECT 0 AS new_data,COUNT(*) AS user_nums, COUNT(IF(f.user_type = 0, 1, NULL)) AS new_user_nums,
+                SUM(f.place_order_amount) AS place_order_amount,COUNT(IF(f.place_order_amount &gt; 0, 1, NULL)) AS place_order_user,
+                SUM(f.pay_amount) AS pay_amount,COUNT(IF(f.pay_amount &gt; 0, 1, NULL)) AS pay_user,SUM(f.visit_nums) AS visit_nums,
+                SUM(f.click_nums) AS click_nums,SUM(IF(f.plus_shop_cart &gt; 0, 1, NULL)) AS plus_shop_cart_user,
+                COUNT(IF(f.visit_nums = 1, 1, NULL)) AS loss_user
+        FROM
+        (
+                SELECT SUM(place_order_amount) AS place_order_amount,SUM(pay_amount) AS pay_amount,SUM(visit_nums) AS visit_nums,
+                SUM(click_nums) AS click_nums,SUM(plus_shop_cart) AS plus_shop_cart,MIN(user_type) AS user_type
+                FROM user_analysis
+                WHERE create_date &gt;= #{oldStartTime} AND create_date &lt; #{flowAnalysisDTO.startTime}
+                <if test="flowAnalysisDTO.systemType != null ">
+                  AND system_type = #{flowAnalysisDTO.systemType}
+                </if>
+                GROUP BY user_id
+        ) AS f
+    )
+
+  </select>
+
+  <select id="flowTrend" resultType="com.mall4j.cloud.flow.vo.FlowAnalysisVO">
+    SELECT f.create_date
+          <if test="flowAnalysisDTO.timeType != 2 and flowAnalysisDTO.timeType != 3">
+              AS `day`
+          </if>
+          ,
+          COUNT(*) AS user_nums, COUNT(IF(f.user_type = 0, 1, NULL)) AS new_user_nums,
+          SUM(f.place_order_amount) AS place_order_amount,COUNT(IF(f.place_order_amount &gt; 0, 1, NULL)) AS place_order_user,
+          SUM(f.pay_amount) AS pay_amount,COUNT(IF(f.pay_amount &gt; 0, 1, NULL)) AS pay_user,SUM(f.visit_nums) AS visit_nums,
+          SUM(f.click_nums) AS click_nums,SUM(IF(f.plus_shop_cart &gt; 0, 1, NULL)) AS plus_shop_cart_user,
+          COUNT(IF(f.visit_nums = 1, 1, NULL)) AS loss_user
+    FROM (
+          SELECT <include refid="timeType"/> as create_date,user_id,SUM(place_order_amount) AS place_order_amount,SUM(pay_amount) AS pay_amount,SUM(visit_nums) AS visit_nums,
+                SUM(click_nums) AS click_nums,SUM(plus_shop_cart) AS plus_shop_cart,MIN(user_type) AS user_type
+          FROM user_analysis
+          WHERE create_date &gt;= #{flowAnalysisDTO.startTime} AND create_date &lt; #{flowAnalysisDTO.endTime}
+          <if test="flowAnalysisDTO.systemType != null ">
+           AND system_type = #{flowAnalysisDTO.systemType}
+          </if>
+          GROUP BY <include refid="timeType"/>,user_id
+    ) AS f
+    GROUP BY f.create_date
+  </select>
+
+  <select id="flowSour" resultType="com.mall4j.cloud.flow.vo.FlowAnalysisVO">
+      SELECT f.system_type,COUNT(*) AS user_nums, COUNT(f.new_user_num) AS new_user_nums,
+      SUM(f.place_order_amount) AS place_order_amount,COUNT(IF(f.place_order_amount &gt; 0, 1, NULL)) AS place_order_user,
+      SUM(f.pay_amount) AS pay_amount,COUNT(IF(f.pay_amount &gt; 0, 1, NULL)) AS pay_user,SUM(f.visit_nums) AS visit_nums,
+      SUM(f.click_nums) AS click_nums,SUM(IF(f.plus_shop_cart &gt; 0, 1, NULL)) AS plus_shop_cart_user,
+      COUNT(IF(f.visit_nums = 1, 1, NULL)) AS loss_user
+      FROM
+      (
+          SELECT system_type,SUM(place_order_amount) AS place_order_amount,SUM(pay_amount) AS pay_amount,SUM(visit_nums) AS visit_nums,
+          SUM(click_nums) AS click_nums,SUM(plus_shop_cart) AS plus_shop_cart, if(MIN(user_type) = 0, 1, null) AS new_user_num
+          FROM user_analysis
+          WHERE create_date &gt;= #{flowAnalysisDTO.startTime} AND create_date &lt; #{flowAnalysisDTO.endTime}
+          <if test="flowAnalysisDTO.systemType != null ">
+              AND system_type = #{flowAnalysisDTO.systemType}
+          </if>
+          GROUP BY system_type, user_id
+      ) AS f
+      GROUP BY f.system_type
+      ORDER BY f.system_type ASC
+  </select>
+
+  <select id="systemTypeNums" resultType="com.mall4j.cloud.flow.vo.SystemVO">
+      (
+              SELECT s.system_type, COUNT(*) AS user_nums FROM
+              (
+                      SELECT system_type,user_id
+                      FROM user_analysis
+                      WHERE create_date &gt;= #{flowAnalysisDTO.startTime} AND create_date &lt; #{flowAnalysisDTO.endTime}
+                      GROUP BY system_type,user_id
+              ) AS s
+              GROUP BY s.system_type
+      )
+      UNION ALL
+      (
+              SELECT 0 AS system_type, COUNT(*) AS user_nums FROM
+              (
+                      SELECT user_id
+                      FROM user_analysis
+                      WHERE create_date &gt;= #{flowAnalysisDTO.startTime} AND create_date &lt; #{flowAnalysisDTO.endTime}
+                      GROUP BY user_id
+              ) AS s
+      )
+
+  </select>
+    <select id="listUserAccessDataByProvinceAndDate" resultType="com.mall4j.cloud.flow.vo.UserAnalysisVO">
+        SELECT
+            ua.province_id,
+            ifnull(sum( ua.place_order_amount ), 0) AS place_order_amount,
+            ifnull(count( DISTINCT ua.user_id ), 0) AS prod_visit_user,
+            ifnull(sum( ua.pay_amount ), 0) AS pay_amount,
+            ifnull(sum( ua.visit_nums ), 0) AS visit_nums,
+            ifnull(sum( ua.click_nums ), 0) AS click_nums,
+            ifnull(sum( ua.plus_shop_cart ), 0) AS plus_shop_cart,
+            ifnull(count( DISTINCT uvpa.spu_id ), 0) AS prod_visit_nums
+        FROM
+            user_analysis ua
+                LEFT JOIN user_visit_prod_analysis uvpa ON ua.user_analysis_id = uvpa.user_analysis_id
+        <where>
+            <if test="flowAnalysisDTO.startTime != null">
+                AND ua.create_date &gt;= #{flowAnalysisDTO.startTime}
+            </if>
+            <if test="flowAnalysisDTO.endTime != null">
+                AND ua.create_date &lt;= #{flowAnalysisDTO.endTime}
+            </if>
+        </where>
+        GROUP BY
+            ua.province_id
+    </select>
+    <select id="listUserAnalysisByUserId" resultMap="userAnalysisVOMap">
+        SELECT ua.user_analysis_id,ua.create_date,ua.user_id,ua.province_id,ua.plus_shop_cart,ua.place_order_amount,ua.pay_amount,ua.visit_nums,
+               ua.click_nums,ua.user_type,ua.system_type,uvpa.spu_id
+        FROM user_analysis ua
+                 JOIN user_visit_prod_analysis uvpa ON ua.user_analysis_id = uvpa.user_analysis_id
+        WHERE ua.user_id = #{userId} ORDER BY ua.user_analysis_id DESC
+    </select>
+</mapper>

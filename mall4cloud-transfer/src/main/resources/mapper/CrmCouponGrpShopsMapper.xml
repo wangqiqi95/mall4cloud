@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.CrmCouponGrpShopsMapper">
+    <resultMap id="crmCouponGrpShopsMap" type="com.mall4j.cloud.transfer.model.CrmCouponGrpShops">
+        <id column="Id" property="id"/>
+        <result column="CopId" property="copid"/>
+        <result column="BrandId" property="brandid"/>
+        <result column="CouponGrpId" property="coupongrpid"/>
+        <result column="ShopCode" property="shopcode"/>
+        <result column="ShopType" property="shoptype"/>
+        <result column="IsExclude" property="isexclude"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `Id`
+        ,
+        `CopId`,
+        `BrandId`,
+        `CouponGrpId`,
+        `ShopCode`,
+        `ShopType`,
+        `IsExclude`
+    </sql>
+    <select id="list" resultMap="crmCouponGrpShopsMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from crm_coupon_grp_shops order by Id desc
+    </select>
+    <select id="listByCouponId" resultMap="crmCouponGrpShopsMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from crm_coupon_grp_shops_add
+        where CouponGrpId = #{couponId}
+        order by Id desc
+    </select>
+    <select id="getById" resultMap="crmCouponGrpShopsMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from crm_coupon_grp_shops where Id = #{id}
+    </select>
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into crm_coupon_grp_shops (`CopId`, `BrandId`, `CouponGrpId`, `ShopCode`, `ShopType`, `IsExclude`)
+        values (#{crmCouponGrpShops.copid}, #{crmCouponGrpShops.brandid}, #{crmCouponGrpShops.coupongrpid},
+                #{crmCouponGrpShops.shopcode}, #{crmCouponGrpShops.shoptype}, #{crmCouponGrpShops.isexclude});
+    </insert>
+    <update id="update">
+        update crm_coupon_grp_shops
+        <set>
+            <if test="crmCouponGrpShops.copid != null">
+                `CopId` = #{crmCouponGrpShops.copid},
+            </if>
+            <if test="crmCouponGrpShops.brandid != null">
+                `BrandId` = #{crmCouponGrpShops.brandid},
+            </if>
+            <if test="crmCouponGrpShops.coupongrpid != null">
+                `CouponGrpId` = #{crmCouponGrpShops.coupongrpid},
+            </if>
+            <if test="crmCouponGrpShops.shopcode != null">
+                `ShopCode` = #{crmCouponGrpShops.shopcode},
+            </if>
+            <if test="crmCouponGrpShops.shoptype != null">
+                `ShopType` = #{crmCouponGrpShops.shoptype},
+            </if>
+            <if test="crmCouponGrpShops.isexclude != null">
+                `IsExclude` = #{crmCouponGrpShops.isexclude},
+            </if>
+        </set>
+        where Id = #{crmCouponGrpShops.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from crm_coupon_grp_shops
+        where Id = #{id}
+    </delete>
+
+</mapper>

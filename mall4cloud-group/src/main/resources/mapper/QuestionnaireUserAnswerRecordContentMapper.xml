@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.QuestionnaireUserAnswerRecordContentMapper">
+  <resultMap id="questionnaireUserAnswerRecordContentMap" type="com.mall4j.cloud.group.model.QuestionnaireUserAnswerRecordContent">
+    <id column="id" property="id" />
+    <result column="user_id" property="userId"/>
+    <result column="activity_id" property="activityId"/>
+    <result column="content" property="content"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`user_id`,`activity_id`,`content`
+  </sql>
+  <select id="list" resultMap="questionnaireUserAnswerRecordContentMap">
+    select <include refid="Vo_Column_List"/> from questionnaire_user_answer_record_content order by id desc
+  </select>
+  <select id="getById" resultMap="questionnaireUserAnswerRecordContentMap">
+    select <include refid="Vo_Column_List"/> from questionnaire_user_answer_record_content where id = #{id}
+  </select>
+  <insert id="save">
+    insert into questionnaire_user_answer_record_content (`id`,`user_id`,`activity_id`,`content`)
+    values (#{questionnaireUserAnswerRecordContent.id},#{questionnaireUserAnswerRecordContent.userId},#{questionnaireUserAnswerRecordContent.activityId},#{questionnaireUserAnswerRecordContent.content});
+  </insert>
+  <update id="update">
+    update questionnaire_user_answer_record_content
+    <set>
+      <if test="questionnaireUserAnswerRecordContent.content != null">
+        `content` = #{questionnaireUserAnswerRecordContent.content},
+      </if>
+      <if test="questionnaireUserAnswerRecordContent.userId != null">
+        `user_id` = #{questionnaireUserAnswerRecordContent.userId},
+      </if>
+      <if test="questionnaireUserAnswerRecordContent.activityId != null">
+        `activity_id` = #{questionnaireUserAnswerRecordContent.activityId},
+      </if>
+    </set>
+    where id = #{questionnaireUserAnswerRecordContent.id}
+  </update>
+  <delete id="deleteById">
+    delete from questionnaire_user_answer_record_content where id = #{id}
+  </delete>
+
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionActivityShareRecordMapper">
+  <resultMap id="distributionActivityShareRecordMap" type="com.mall4j.cloud.distribution.model.DistributionActivityShareRecord">
+    <id column="id" property="id" />
+    <result column="activity_id" property="activityId"/>
+    <result column="activity_type" property="activityType"/>
+    <result column="activity_name" property="activityName"/>
+    <result column="share_num" property="shareNum"/>
+    <result column="browse_num" property="browseNum"/>
+    <result column="browse_user_num" property="browseUserNum"/>
+    <result column="purchase_num" property="purchaseNum"/>
+    <result column="purchase_user_num" property="purchaseUserNum"/>
+    <result column="buy_num" property="buyNum"/>
+    <result column="buy_user_num" property="buyUserNum"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`activity_id`,`activity_type`,`activity_name`,`share_num`,`browse_num`,`browse_user_num`,`purchase_num`,`purchase_user_num`,`buy_num`,`buy_user_num`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionActivityShareRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_activity_share_record
+    <where>
+      activity_id is not null and activity_type is not null
+      <if test="distributionActivityShareRecord.activityId != null">
+        and activity_id = #{distributionActivityShareRecord.activityId}
+      </if>
+      <if test="distributionActivityShareRecord.activityName != null and distributionActivityShareRecord.activityName != ''">
+        and activity_name like concat('%',#{distributionActivityShareRecord.activityName},'%')
+      </if>
+      <if test="distributionActivityShareRecord.activityType != null">
+        and activity_type = #{distributionActivityShareRecord.activityType}
+      </if>
+      <if test="distributionActivityShareRecord.queryStartDate != null">
+        and create_time >= #{distributionActivityShareRecord.queryStartDate}
+      </if>
+      <if test="distributionActivityShareRecord.queryEndDate != null">
+        and #{distributionActivityShareRecord.queryEndDate} >= create_time
+      </if>
+    </where>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="distributionActivityShareRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_activity_share_record where id = #{id}
+  </select>
+  <select id="getByActivity" resultMap="distributionActivityShareRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_activity_share_record
+    where activity_id = #{activityId}
+    and activity_type = #{activityType}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into distribution_activity_share_record (`activity_id`,`activity_type`,`activity_name`,`share_num`,`browse_num`,`browse_user_num`,`purchase_num`,`purchase_user_num`,`buy_num`,`buy_user_num`)
+    values (#{distributionActivityShareRecord.activityId},#{distributionActivityShareRecord.activityType},#{distributionActivityShareRecord.activityName},#{distributionActivityShareRecord.shareNum},#{distributionActivityShareRecord.browseNum},#{distributionActivityShareRecord.browseUserNum},#{distributionActivityShareRecord.purchaseNum},#{distributionActivityShareRecord.purchaseUserNum},#{distributionActivityShareRecord.buyNum},#{distributionActivityShareRecord.buyUserNum});
+  </insert>
+  <update id="update">
+    update distribution_activity_share_record
+    <set>
+      <if test="distributionActivityShareRecord.activityId != null">
+        `activity_id` = #{distributionActivityShareRecord.activityId},
+      </if>
+      <if test="distributionActivityShareRecord.activityType != null">
+        `activity_type` = #{distributionActivityShareRecord.activityType},
+      </if>
+      <if test="distributionActivityShareRecord.activityName != null">
+        `activity_name` = #{distributionActivityShareRecord.activityName},
+      </if>
+      <if test="distributionActivityShareRecord.shareNum != null">
+        `share_num` = #{distributionActivityShareRecord.shareNum},
+      </if>
+      <if test="distributionActivityShareRecord.browseNum != null">
+        `browse_num` = #{distributionActivityShareRecord.browseNum},
+      </if>
+      <if test="distributionActivityShareRecord.browseUserNum != null">
+        `browse_user_num` = #{distributionActivityShareRecord.browseUserNum},
+      </if>
+      <if test="distributionActivityShareRecord.purchaseNum != null">
+        `purchase_num` = #{distributionActivityShareRecord.purchaseNum},
+      </if>
+      <if test="distributionActivityShareRecord.purchaseUserNum != null">
+        `purchase_user_num` = #{distributionActivityShareRecord.purchaseUserNum},
+      </if>
+      <if test="distributionActivityShareRecord.buyNum != null">
+        `buy_num` = #{distributionActivityShareRecord.buyNum},
+      </if>
+      <if test="distributionActivityShareRecord.buyUserNum != null">
+        `buy_user_num` = #{distributionActivityShareRecord.buyUserNum},
+      </if>
+    </set>
+    where id = #{distributionActivityShareRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_activity_share_record where id = #{id}
+  </delete>
+
+</mapper>

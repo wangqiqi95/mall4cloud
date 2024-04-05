@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.CouponPackActivityMapper">
+
+    <update id="addStock">
+        update coupon_pack_activity
+        set initial_coupon_stock = initial_coupon_stock + #{stock},
+            cur_coupon_stock     = cur_coupon_stock + #{stock}
+        where id = #{id}
+    </update>
+    <update id="reduceStock">
+        update coupon_pack_activity
+        set cur_coupon_stock = cur_coupon_stock + -1
+        where id = #{id}
+    </update>
+    <select id="couponPackList" resultType="com.mall4j.cloud.coupon.vo.CouponPackListVO">
+        select
+        DISTINCT
+        cpa.id as id,
+        cpa.activity_name as activityName,
+        cpa.activity_begin_time as activityBeginTime,
+        cpa.activity_end_time as activityEndTime,
+        cpa.is_all_shop as isAllShop,
+        (select count(1) from coupon_pack_shop c where c.activity_id = cpa.id) as applyShopNum,
+        cpa.activity_banner_url as activityBannerUrl,
+        cpa.initial_coupon_stock as initialCouponStock,
+        cpa.cur_coupon_stock as curCouponStock,
+        cpa.coupon_ids as couponIds,
+        cpa.weight as weight,
+        cpa.status as status,
+        cpa.create_time as createTime,
+        cpa.create_user_name as createUserName
+        from coupon_pack_activity cpa left join coupon_pack_shop cps on cpa.id = cps.activity_id
+        where cpa.deleted = 0
+        <if test="shopIds != null">
+            and (cps.shop_id in (#{shopIds}) or cpa.is_all_shop = 1)
+        </if>
+        <if test="status == 0">
+            and cpa.status = 0
+        </if>
+        <if test="status == 2">
+            and cpa.activity_begin_time &lt;= now() and cpa.activity_end_time &gt; now() and cpa.status = 1
+        </if>
+        <if test="status == 3">
+            and cpa.activity_begin_time &gt; now() and cpa.status = 1
+        </if>
+        <if test="status == 4">
+            and cpa.activity_end_time &lt; now() and cpa.status = 1
+        </if>
+        <if test="activityName != null">
+            and cpa.activity_name like concat('%',#{activityName},'%')
+        </if>
+        order by cpa.create_time desc
+    </select>
+
+
+    <select id="couponPackActivityList" resultType="com.mall4j.cloud.coupon.vo.CouponPackListVO">
+        select
+        DISTINCT
+        cpa.id as id,
+        cpa.activity_name as activityName,
+        cpa.activity_begin_time as activityBeginTime,
+        cpa.activity_end_time as activityEndTime,
+        cpa.is_all_shop as isAllShop,
+        (select count(1) from coupon_pack_shop c where c.activity_id = cpa.id) as applyShopNum,
+        cpa.activity_banner_url as activityBannerUrl,
+        cpa.initial_coupon_stock as initialCouponStock,
+        cpa.cur_coupon_stock as curCouponStock,
+        cpa.coupon_ids as couponIds,
+        cpa.weight as weight,
+        cpa.status as status,
+        cpa.create_time as createTime,
+        cpa.create_user_name as createUserName
+        from coupon_pack_activity cpa left join coupon_pack_shop cps on cpa.id = cps.activity_id
+        where cpa.deleted = 0
+        and cpa.status != 4
+        <if test="status == 0">
+            and cpa.status = 0
+        </if>
+        <if test="status == 2">
+            and cpa.activity_begin_time &lt;= now() and cpa.activity_begin_time &gt; now() and cpa.status = 1
+        </if>
+        <if test="status == 3">
+            and cpa.activity_begin_time &gt; now() and cpa.status = 1
+        </if>
+        <if test="activityName != null">
+            and cpa.activity_name like concat('%',#{activityName},'%')
+        </if>
+        <if test="activityBeginTime != null">
+            and cpa.activity_begin_time &lt;= #{activityEndTime} and cpa.activity_end_time &gt;=#{activityBeginTime}
+        </if>
+        order by cpa.create_time desc
+    </select>
+
+    <select id="activityReportDetail" resultType="com.mall4j.cloud.coupon.vo.ActivityReportDetailVO">
+        SELECT
+        c.id AS id,
+        c.NAME AS NAME,
+        ( SELECT count( 0 ) FROM t_coupon_user WHERE activity_source = #{activitySource} AND activity_id = #{activityId} AND coupon_id = c.id ) AS receiveNum,
+        ( SELECT count( 0 ) FROM t_coupon_user WHERE STATUS = 1 AND NOW() > user_end_time  AND activity_source = #{activitySource} AND activity_id = #{activityId} AND coupon_id = c.id ) AS overdueNum,
+        ( SELECT count( 0 ) FROM t_coupon_user WHERE STATUS = 2 AND activity_source = #{activitySource} AND activity_id = #{activityId} AND coupon_id = c.id  ) AS writeOffNum,
+        ( SELECT ifnull(sum(order_amount),0)/100 FROM t_coupon_user WHERE STATUS = 2 AND activity_source = #{activitySource} AND activity_id = #{activityId} AND coupon_id = c.id  ) AS activityIncome
+        FROM t_coupon c LEFT JOIN coupon_pack_activity p on p.id = #{activityId}
+        <where>
+            c.id = #{couponId}
+            <if test="couponInfo != null and couponInfo != ''">
+                and (c.id = #{couponInfo} or c.name = #{couponInfo})
+            </if>
+        </where>
+    </select>
+</mapper>

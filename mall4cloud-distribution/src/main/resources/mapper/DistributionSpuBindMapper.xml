@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionSpuBindMapper">
+  <resultMap id="distributionSpuBindMap" type="com.mall4j.cloud.distribution.model.DistributionSpuBind">
+    <id column="id" property="id" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="distribution_user_id" property="distributionUserId"/>
+    <result column="user_id" property="userId"/>
+    <result column="bind_time" property="bindTime"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="state" property="state"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`create_time`,`update_time`,`distribution_user_id`,`user_id`,`bind_time`,`spu_id`,`state`
+  </sql>
+  <select id="list" resultMap="distributionSpuBindMap">
+    select <include refid="Vo_Column_List"/> from distribution_spu_bind order by id desc
+  </select>
+  <select id="getById" resultMap="distributionSpuBindMap">
+    select <include refid="Vo_Column_List"/> from distribution_spu_bind where id = #{id}
+  </select>
+  <insert id="save">
+      insert into distribution_spu_bind (`distribution_user_id`,`user_id`,`bind_time`,`spu_id`,`state`)
+      values
+      (#{distributionSpuBind.distributionUserId},#{distributionSpuBind.userId},#{distributionSpuBind.bindTime},#{distributionSpuBind.spuId},#{distributionSpuBind.state});
+  </insert>
+  <update id="update">
+    update distribution_spu_bind
+    <set>
+      <if test="distributionSpuBind.distributionUserId != null">
+        `distribution_user_id` = #{distributionSpuBind.distributionUserId},
+      </if>
+      <if test="distributionSpuBind.userId != null">
+        `user_id` = #{distributionSpuBind.userId},
+      </if>
+      <if test="distributionSpuBind.bindTime != null">
+        `bind_time` = #{distributionSpuBind.bindTime},
+      </if>
+      <if test="distributionSpuBind.spuId != null">
+          `spu_id` = #{distributionSpuBind.spuId},
+      </if>
+      <if test="distributionSpuBind.state != null">
+        `state` = #{distributionSpuBind.state},
+      </if>
+    </set>
+    where id = #{distributionSpuBind.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_spu_bind where id = #{id}
+  </delete>
+  <update id="updateStateByDistributionUserId">
+    update distribution_spu_bind
+    set `state` = #{state}
+    where distribution_user_id = #{distributionUserId}
+  </update>
+</mapper>

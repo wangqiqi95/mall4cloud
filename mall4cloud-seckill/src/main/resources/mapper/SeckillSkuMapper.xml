@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.seckill.mapper.SeckillSkuMapper">
+    <resultMap id="seckillSkuMap" type="com.mall4j.cloud.seckill.model.SeckillSku">
+        <id column="seckill_sku_id" property="seckillSkuId"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="seckill_id" property="seckillId"/>
+        <result column="seckill_stocks" property="seckillStocks"/>
+        <result column="seckill_price" property="seckillPrice"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `seckill_sku_id`,
+        `sku_id`,
+        `seckill_id`,
+        `seckill_stocks`,
+        `seckill_price`
+    </sql>
+    <select id="list" resultType="com.mall4j.cloud.seckill.vo.SeckillSkuVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from seckill_sku
+        order by seckill_sku_id desc
+    </select>
+    <select id="getBySeckillSkuId" resultType="com.mall4j.cloud.seckill.vo.SeckillSkuVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from seckill_sku
+        where seckill_sku_id = #{seckillSkuId}
+    </select>
+
+    <select id="selectListBySeckillId" resultType="com.mall4j.cloud.seckill.vo.SeckillSkuVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from seckill_sku
+        where seckill_id = #{seckillId}
+    </select>
+
+    <insert id="saveBatch">
+        insert into seckill_sku (`sku_id`, `seckill_id`, `seckill_stocks`, `seckill_price`) values
+        <foreach collection="seckillSkuList" item="seckillSku" separator=",">
+            (#{seckillSku.skuId}, #{seckillSku.seckillId}, #{seckillSku.seckillStocks}, #{seckillSku.seckillPrice})
+        </foreach>
+    </insert>
+    <update id="update">
+        update seckill_sku
+        <set>
+            <if test="seckillSku.skuId != null">
+                `sku_id` = #{seckillSku.skuId},
+            </if>
+            <if test="seckillSku.seckillId != null">
+                `seckill_id` = #{seckillSku.seckillId},
+            </if>
+            <if test="seckillSku.seckillStocks != null">
+                `seckill_stocks` = #{seckillSku.seckillStocks},
+            </if>
+            <if test="seckillSku.seckillPrice != null">
+                `seckill_price` = #{seckillSku.seckillPrice},
+            </if>
+        </set>
+        where seckill_sku_id = #{seckillSku.seckillSkuId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from seckill_sku
+        where seckill_sku_id = #{seckillSkuId}
+    </delete>
+
+    <update id="updateStocks">
+        update seckill_sku
+        set seckill_stocks = seckill_stocks - #{count}
+        where seckill_sku_id = #{seckillSkuId}
+          and seckill_stocks &gt;= #{count}
+    </update>
+
+    <update id="returnStocksByOrderId">
+        UPDATE seckill_sku ss JOIN (
+                SELECT so.seckill_sku_id, so.prod_count
+                FROM seckill_order so
+                             JOIN
+                             seckill s ON s.seckill_id = so.seckill_id and so.state = 0
+                                     AND so.order_id = #{orderId}) t
+                ON ss.seckill_sku_id = t.seckill_sku_id
+        set ss.seckill_stocks = ss.seckill_stocks + t.prod_count
+    </update>
+</mapper>

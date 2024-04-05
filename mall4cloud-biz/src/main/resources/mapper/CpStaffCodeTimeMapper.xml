@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpStaffCodeTimeMapper">
+  <resultMap id="cpStaffCodeTimeMap" type="com.mall4j.cloud.biz.model.cp.CpStaffCodeTime">
+    <id column="id" property="id" />
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="status" property="status"/>
+    <result column="is_delete" property="isDelete"/>
+    <result column="source_id" property="sourceId"/>
+    <result column="source_from" property="sourceFrom"/>
+    <result column="time_cycle" property="timeCycle"/>
+    <result column="time_start" property="timeStart"/>
+    <result column="time_end" property="timeEnd"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`create_by`,`create_time`,`status`,`is_delete`,`source_id`,`source_from`,`time_cycle`,`time_start`,`time_end`
+  </sql>
+
+  <resultMap id="timeAndStaffMap" type="com.mall4j.cloud.biz.dto.cp.CpStaffCodeTimeDTO"
+             extends="com.mall4j.cloud.biz.mapper.cp.CpStaffCodeTimeMapper.cpStaffCodeTimeMap">
+    <collection property="staffList" ofType="com.mall4j.cloud.biz.dto.cp.StaffCodeRefDTO">
+      <id column="rel_id" property="relId"/>
+      <result column="staff_id" property="staffId"/>
+      <result column="staff_name" property="staffName"/>
+      <result column="user_id" property="userId"/>
+      <result column="type" property="type"/>
+    </collection>
+  </resultMap>
+
+  <select id="list" resultMap="cpStaffCodeTimeMap">
+    select <include refid="Vo_Column_List"/> from cp_staff_code_time order by id desc
+  </select>
+  <select id="getById" resultMap="cpStaffCodeTimeMap">
+    select <include refid="Vo_Column_List"/> from cp_staff_code_time where id = #{id}
+  </select>
+
+  <select id="selectStaffTimesBySourceId" resultMap="timeAndStaffMap">
+    select ctime.id,
+           ctime.time_cycle,
+           ctime.time_start,
+           ctime.time_end,
+           ctime.source_from,
+           rel.ID as rel_id,
+           rel.STAFF_ID,
+           rel.STAFF_NAME,
+           rel.user_id,
+           rel.type
+    from cp_staff_code_time ctime
+    left join cp_staff_code_ref rel on ctime.id=rel.code_time_id
+    where ctime.is_delete=0 and rel.is_delete=0
+    and ctime.source_id=#{sourceId}
+  </select>
+
+  <delete id="deleteBySourceId">
+    delete from cp_staff_code_time where source_id = #{sourceId}
+  </delete>
+
+</mapper>

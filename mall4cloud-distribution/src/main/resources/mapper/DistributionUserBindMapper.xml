@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionUserBindMapper">
+  <resultMap id="distributionUserBindMap" type="com.mall4j.cloud.distribution.model.DistributionUserBind">
+    <id column="bind_id" property="bindId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="distribution_user_id" property="distributionUserId"/>
+    <result column="user_id" property="userId"/>
+    <result column="state" property="state"/>
+    <result column="invalid_reason" property="invalidReason"/>
+    <result column="bind_time" property="bindTime"/>
+    <result column="invalid_time" property="invalidTime"/>
+  </resultMap>
+  <resultMap id="distributionUserBindVOMap" type="com.mall4j.cloud.distribution.vo.DistributionUserBindVO" extends="distributionUserBindMap">
+    <result column="nick_name" property="nickName"/>
+    <result column="user_nick_name" property="userNickName"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `bind_id`,`create_time`,`update_time`,`distribution_user_id`,`user_id`,`state`,`invalid_reason`,`bind_time`,`invalid_time`
+  </sql>
+  <select id="list" resultMap="distributionUserBindVOMap">
+    SELECT dub.*,du.`nick_name`
+    FROM `distribution_user_bind` dub
+    LEFT JOIN `distribution_user` du ON dub.`distribution_user_id` = du.`distribution_user_id`
+    <where>
+      <if test="distributionUserBindDTO.nickName!= null and distributionUserBindDTO.nickName!='' ">
+        and trim(replace(du.nick_name,' ','')) like trim(replace(concat('%',#{distributionUserBindDTO.nickName},'%'),' ',''))
+      </if>
+      <if test="distributionUserBindDTO.state!= null">
+        and dub.state= #{distributionUserBindDTO.state}
+      </if>
+    </where>
+    GROUP BY dub.`bind_id`
+    <if test="distributionUserBindDTO.sortParam != null and distributionUserBindDTO.sortType != null">
+      ORDER BY
+      <choose>
+        <when test="distributionUserBindDTO.sortParam == 1">
+          bind_time
+        </when>
+        <when test="distributionUserBindDTO.sortParam == 2">
+          invalid_time
+        </when>
+        <otherwise>
+          bind_id
+        </otherwise>
+      </choose>
+      <choose>
+        <when test="distributionUserBindDTO.sortType == 1">
+          ASC
+        </when>
+        <when test="distributionUserBindDTO.sortType == 2">
+          DESC
+        </when>
+        <otherwise>
+          DESC
+        </otherwise>
+      </choose>
+    </if>
+  </select>
+  <select id="getByBindId" resultMap="distributionUserBindMap">
+    select <include refid="Vo_Column_List"/> from distribution_user_bind where bind_id = #{bindId}
+  </select>
+  <insert id="save">
+    insert into distribution_user_bind (`distribution_user_id`,`user_id`,`state`,`invalid_reason`,`bind_time`,`invalid_time`)
+    values (#{distributionUserBind.distributionUserId},#{distributionUserBind.userId},#{distributionUserBind.state},#{distributionUserBind.invalidReason},#{distributionUserBind.bindTime},#{distributionUserBind.invalidTime});
+  </insert>
+  <update id="update">
+    update distribution_user_bind
+    <set>
+      <if test="distributionUserBind.distributionUserId != null">
+        `distribution_user_id` = #{distributionUserBind.distributionUserId},
+      </if>
+      <if test="distributionUserBind.userId != null">
+        `user_id` = #{distributionUserBind.userId},
+      </if>
+      <if test="distributionUserBind.state != null">
+        `state` = #{distributionUserBind.state},
+      </if>
+      <if test="distributionUserBind.invalidReason != null">
+        `invalid_reason` = #{distributionUserBind.invalidReason},
+      </if>
+      <if test="distributionUserBind.bindTime != null">
+        `bind_time` = #{distributionUserBind.bindTime},
+      </if>
+      <if test="distributionUserBind.invalidTime != null">
+        `invalid_time` = #{distributionUserBind.invalidTime},
+      </if>
+    </set>
+    where bind_id = #{distributionUserBind.bindId}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_user_bind where bind_id = #{bindId}
+  </delete>
+
+  <select id="getUserBindByUserIdAndState" resultMap="distributionUserBindMap">
+    select <include refid="Vo_Column_List"/> from distribution_user_bind
+    where `user_id` = #{userId} and `state` = #{state}
+  </select>
+
+  <select id="bindUserList" resultType="com.mall4j.cloud.distribution.vo.DistributionUserBindInfoVO">
+    select dub.`bind_id`,dub.`update_time`,dub.`user_id`,dub.`state`,dub.`invalid_reason`,dub.`bind_time`,dub.`invalid_time`
+    from
+    distribution_user_bind dub
+    left join distribution_user du on du.distribution_user_id=dub.distribution_user_id
+    where du.user_id = #{userId}  and dub.state = 1
+    order by dub.bind_time desc
+  </select>
+  <update id="updateStateAndReasonByDistributionUserId">
+    update distribution_user_bind
+    set `state` = #{state}, invalid_reason = 2,invalid_time = NOW()
+    where distribution_user_id = #{distributionUserId} and `state` = 1
+  </update>
+  <update id="updateBindUserByDistributionUserId">
+    UPDATE `distribution_user_bind`
+    SET `state` = 1,invalid_time = NULL
+    WHERE distribution_user_id = 2 AND `state` = -1 AND invalid_reason = 2
+  </update>
+</mapper>

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.TCouponUserMapper">
+    <resultMap id="tCouponUserMap" type="com.mall4j.cloud.transfer.model.TCouponUser">
+        <id column="id" property="id"/>
+        <result column="coupon_id" property="couponId"/>
+        <result column="coupon_code" property="couponCode"/>
+        <result column="coupon_source_type" property="couponSourceType"/>
+        <result column="activity_id" property="activityId"/>
+        <result column="activity_source" property="activitySource"/>
+        <result column="batch_id" property="batchId"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="user_phone" property="userPhone"/>
+        <result column="vip_code" property="vipCode"/>
+        <result column="receive_time" property="receiveTime"/>
+        <result column="user_start_time" property="userStartTime"/>
+        <result column="user_end_time" property="userEndTime"/>
+        <result column="status" property="status"/>
+        <result column="staff_id" property="staffId"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="order_amount" property="orderAmount"/>
+        <result column="coupon_amount" property="couponAmount"/>
+        <result column="write_off_user_id" property="writeOffUserId"/>
+        <result column="write_off_user_name" property="writeOffUserName"/>
+        <result column="write_off_user_code" property="writeOffUserCode"/>
+        <result column="write_off_user_phone" property="writeOffUserPhone"/>
+        <result column="write_off_shop_id" property="writeOffShopId"/>
+        <result column="write_off_shop_name" property="writeOffShopName"/>
+        <result column="write_off_time" property="writeOffTime"/>
+        <result column="wechat_pay_no" property="wechatPayNo"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="shop_name" property="shopName"/>
+        <result column="create_id" property="createId"/>
+        <result column="create_name" property="createName"/>
+        <result column="create_phone" property="createPhone"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="token" property="token"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `id`
+        ,
+        `coupon_id`,
+        `coupon_code`,
+        `coupon_source_type`,
+        `activity_id`,
+        `activity_source`,
+        `batch_id`,
+        `user_id`,
+        `user_name`,
+        `user_phone`,
+        `vip_code`,
+        `receive_time`,
+        `user_start_time`,
+        `user_end_time`,
+        `status`,
+        `staff_id`,
+        `order_no`,
+        `order_amount`,
+        `coupon_amount`,
+        `write_off_user_id`,
+        `write_off_user_name`,
+        `write_off_user_code`,
+        `write_off_user_phone`,
+        `write_off_shop_id`,
+        `write_off_shop_name`,
+        `write_off_time`,
+        `wechat_pay_no`,
+        `shop_id`,
+        `shop_name`,
+        `create_id`,
+        `create_name`,
+        `create_phone`,
+        `update_time`,
+        `token`
+    </sql>
+    <select id="list" resultMap="tCouponUserMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from t_coupon_user order by id desc
+    </select>
+    <select id="getById" resultMap="tCouponUserMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from t_coupon_user where id = #{id}
+    </select>
+    <insert id="save">
+        insert into t_coupon_user (`coupon_id`, `coupon_code`, `coupon_source_type`, `activity_id`, `activity_source`,
+                                   `batch_id`, `user_id`, `user_name`, `user_phone`, `vip_code`, `receive_time`,
+                                   `user_start_time`, `user_end_time`, `status`, `staff_id`, `order_no`, `order_amount`,
+                                   `coupon_amount`, `write_off_user_id`, `write_off_user_name`, `write_off_user_code`,
+                                   `write_off_user_phone`, `write_off_shop_id`, `write_off_shop_name`, `write_off_time`,
+                                   `wechat_pay_no`, `shop_id`, `shop_name`, `create_id`, `create_name`, `create_phone`,
+                                   `token`)
+        values (#{tCouponUser.couponId}, #{tCouponUser.couponCode}, #{tCouponUser.couponSourceType},
+                #{tCouponUser.activityId}, #{tCouponUser.activitySource}, #{tCouponUser.batchId}, #{tCouponUser.userId},
+                #{tCouponUser.userName}, #{tCouponUser.userPhone}, #{tCouponUser.vipCode}, #{tCouponUser.receiveTime},
+                #{tCouponUser.userStartTime}, #{tCouponUser.userEndTime}, #{tCouponUser.status}, #{tCouponUser.staffId},
+                #{tCouponUser.orderNo}, #{tCouponUser.orderAmount}, #{tCouponUser.couponAmount},
+                #{tCouponUser.writeOffUserId}, #{tCouponUser.writeOffUserName}, #{tCouponUser.writeOffUserCode},
+                #{tCouponUser.writeOffUserPhone}, #{tCouponUser.writeOffShopId}, #{tCouponUser.writeOffShopName},
+                #{tCouponUser.writeOffTime}, #{tCouponUser.wechatPayNo}, #{tCouponUser.shopId}, #{tCouponUser.shopName},
+                #{tCouponUser.createId}, #{tCouponUser.createName}, #{tCouponUser.createPhone}, #{tCouponUser.token});
+    </insert>
+
+    <insert id="batchSave">
+        insert into t_coupon_user_add (`coupon_id`, `coupon_code`, `coupon_source_type`, `activity_id`, `activity_source`,
+                                   `batch_id`, `user_id`, `user_name`, `user_phone`, `vip_code`, `receive_time`,
+                                   `user_start_time`, `user_end_time`, `status`, `staff_id`, `order_no`, `order_amount`,
+                                   `coupon_amount`, `write_off_user_id`, `write_off_user_name`, `write_off_user_code`,
+                                   `write_off_user_phone`, `write_off_shop_id`, `write_off_shop_name`, `write_off_time`,
+                                   `wechat_pay_no`, `shop_id`, `shop_name`, `create_id`, `create_name`, `create_phone`,
+                                   `token`)
+        values
+        <foreach collection="tCouponUsers" item="tCouponUser" separator=",">
+            (#{tCouponUser.couponId}, #{tCouponUser.couponCode}, #{tCouponUser.couponSourceType},
+            #{tCouponUser.activityId}, #{tCouponUser.activitySource}, #{tCouponUser.batchId}, #{tCouponUser.userId},
+            #{tCouponUser.userName}, #{tCouponUser.userPhone}, #{tCouponUser.vipCode}, #{tCouponUser.receiveTime},
+            #{tCouponUser.userStartTime}, #{tCouponUser.userEndTime}, #{tCouponUser.status}, #{tCouponUser.staffId},
+            #{tCouponUser.orderNo}, #{tCouponUser.orderAmount}, #{tCouponUser.couponAmount},
+            #{tCouponUser.writeOffUserId}, #{tCouponUser.writeOffUserName}, #{tCouponUser.writeOffUserCode},
+            #{tCouponUser.writeOffUserPhone}, #{tCouponUser.writeOffShopId}, #{tCouponUser.writeOffShopName},
+            #{tCouponUser.writeOffTime}, #{tCouponUser.wechatPayNo}, #{tCouponUser.shopId}, #{tCouponUser.shopName},
+            #{tCouponUser.createId}, #{tCouponUser.createName}, #{tCouponUser.createPhone}, #{tCouponUser.token})
+        </foreach>
+    </insert>
+    <update id="update">
+        update t_coupon_user
+        <set>
+            <if test="tCouponUser.couponId != null">
+                `coupon_id` = #{tCouponUser.couponId},
+            </if>
+            <if test="tCouponUser.couponCode != null">
+                `coupon_code` = #{tCouponUser.couponCode},
+            </if>
+            <if test="tCouponUser.couponSourceType != null">
+                `coupon_source_type` = #{tCouponUser.couponSourceType},
+            </if>
+            <if test="tCouponUser.activityId != null">
+                `activity_id` = #{tCouponUser.activityId},
+            </if>
+            <if test="tCouponUser.activitySource != null">
+                `activity_source` = #{tCouponUser.activitySource},
+            </if>
+            <if test="tCouponUser.batchId != null">
+                `batch_id` = #{tCouponUser.batchId},
+            </if>
+            <if test="tCouponUser.userId != null">
+                `user_id` = #{tCouponUser.userId},
+            </if>
+            <if test="tCouponUser.userName != null">
+                `user_name` = #{tCouponUser.userName},
+            </if>
+            <if test="tCouponUser.userPhone != null">
+                `user_phone` = #{tCouponUser.userPhone},
+            </if>
+            <if test="tCouponUser.vipCode != null">
+                `vip_code` = #{tCouponUser.vipCode},
+            </if>
+            <if test="tCouponUser.receiveTime != null">
+                `receive_time` = #{tCouponUser.receiveTime},
+            </if>
+            <if test="tCouponUser.userStartTime != null">
+                `user_start_time` = #{tCouponUser.userStartTime},
+            </if>
+            <if test="tCouponUser.userEndTime != null">
+                `user_end_time` = #{tCouponUser.userEndTime},
+            </if>
+            <if test="tCouponUser.status != null">
+                `status` = #{tCouponUser.status},
+            </if>
+            <if test="tCouponUser.staffId != null">
+                `staff_id` = #{tCouponUser.staffId},
+            </if>
+            <if test="tCouponUser.orderNo != null">
+                `order_no` = #{tCouponUser.orderNo},
+            </if>
+            <if test="tCouponUser.orderAmount != null">
+                `order_amount` = #{tCouponUser.orderAmount},
+            </if>
+            <if test="tCouponUser.couponAmount != null">
+                `coupon_amount` = #{tCouponUser.couponAmount},
+            </if>
+            <if test="tCouponUser.writeOffUserId != null">
+                `write_off_user_id` = #{tCouponUser.writeOffUserId},
+            </if>
+            <if test="tCouponUser.writeOffUserName != null">
+                `write_off_user_name` = #{tCouponUser.writeOffUserName},
+            </if>
+            <if test="tCouponUser.writeOffUserCode != null">
+                `write_off_user_code` = #{tCouponUser.writeOffUserCode},
+            </if>
+            <if test="tCouponUser.writeOffUserPhone != null">
+                `write_off_user_phone` = #{tCouponUser.writeOffUserPhone},
+            </if>
+            <if test="tCouponUser.writeOffShopId != null">
+                `write_off_shop_id` = #{tCouponUser.writeOffShopId},
+            </if>
+            <if test="tCouponUser.writeOffShopName != null">
+                `write_off_shop_name` = #{tCouponUser.writeOffShopName},
+            </if>
+            <if test="tCouponUser.writeOffTime != null">
+                `write_off_time` = #{tCouponUser.writeOffTime},
+            </if>
+            <if test="tCouponUser.wechatPayNo != null">
+                `wechat_pay_no` = #{tCouponUser.wechatPayNo},
+            </if>
+            <if test="tCouponUser.shopId != null">
+                `shop_id` = #{tCouponUser.shopId},
+            </if>
+            <if test="tCouponUser.shopName != null">
+                `shop_name` = #{tCouponUser.shopName},
+            </if>
+            <if test="tCouponUser.createId != null">
+                `create_id` = #{tCouponUser.createId},
+            </if>
+            <if test="tCouponUser.createName != null">
+                `create_name` = #{tCouponUser.createName},
+            </if>
+            <if test="tCouponUser.createPhone != null">
+                `create_phone` = #{tCouponUser.createPhone},
+            </if>
+            <if test="tCouponUser.token != null">
+                `token` = #{tCouponUser.token},
+            </if>
+        </set>
+        where id = #{tCouponUser.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from t_coupon_user
+        where id = #{id}
+    </delete>
+
+</mapper>

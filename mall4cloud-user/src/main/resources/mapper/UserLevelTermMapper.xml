@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserLevelTermMapper">
+  <resultMap id="userLevelTermMap" type="com.mall4j.cloud.user.model.UserLevelTerm">
+    <id column="level_term_id" property="levelTermId" />
+    <result column="user_level_id" property="userLevelId"/>
+    <result column="term_type" property="termType"/>
+    <result column="need_amount" property="needAmount"/>
+    <result column="status" property="status"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `level_term_id`,`create_time`,`user_level_id`,`term_type`,`need_amount`,`status`
+  </sql>
+  <select id="list" resultMap="userLevelTermMap">
+    select <include refid="Vo_Column_List"/> from user_level_term order by level_term_id desc
+  </select>
+  <select id="getByLevelTermId" resultMap="userLevelTermMap">
+    select <include refid="Vo_Column_List"/> from user_level_term where level_term_id = #{levelTermId}
+  </select>
+  <insert id="save">
+    insert into user_level_term (`user_level_id`,`term_type`,`need_amount`,`status`)
+    values (#{userLevelTerm.userLevelId},#{userLevelTerm.termType},#{userLevelTerm.needAmount},#{userLevelTerm.status});
+  </insert>
+  <update id="update">
+    update user_level_term
+    <set>
+      <if test="userLevelTerm.userLevelId != null">
+        `user_level_id` = #{userLevelTerm.userLevelId},
+      </if>
+      <if test="userLevelTerm.needAmount != null">
+        `need_amount` = #{userLevelTerm.needAmount},
+      </if>
+      <if test="userLevelTerm.termType != null">
+        `term_type` = #{userLevelTerm.termType},
+      </if>
+      <if test="userLevelTerm.status != null">
+        `status` = #{userLevelTerm.status},
+      </if>
+    </set>
+    where level_term_id = #{userLevelTerm.levelTermId}
+  </update>
+  <insert id="saveBatch">
+    insert into user_level_term (`user_level_id`,`term_type`,`need_amount`,`status`)
+    values
+    <foreach collection="userLevelTerms" item="userLevelTerm" separator=",">
+      (#{userLevelTerm.userLevelId},#{userLevelTerm.termType},#{userLevelTerm.needAmount},#{userLevelTerm.status})
+    </foreach>
+  </insert>
+  <update id="updateBatch">
+    <foreach collection="userLevelTerms" item="userLevelTerm">
+      update user_level_term
+      <set>
+        <if test="userLevelTerm.userLevelId != null">
+          `user_level_id` = #{userLevelTerm.userLevelId},
+        </if>
+        <if test="userLevelTerm.termType != null">
+          `term_type` = #{userLevelTerm.termType},
+        </if>
+        <if test="userLevelTerm.needAmount != null">
+          `need_amount` = #{userLevelTerm.needAmount},
+        </if>
+        <if test="userLevelTerm.status != null">
+          `status` = #{userLevelTerm.status},
+        </if>
+      </set>
+      where level_term_id = #{userLevelTerm.levelTermId}
+    </foreach>
+  </update>
+  <delete id="deleteBatch">
+    delete from user_level_term where level_term_id in
+        <foreach collection="userLevelTermIds" item="userLevelTermId" open="(" close=")" separator=",">
+          #{userLevelTermId}
+        </foreach>
+  </delete>
+  <delete id="deleteById">
+    delete from user_level_term where level_term_id = #{levelTermId}
+  </delete>
+  <select id="getListByUserLevelId" resultMap="userLevelTermMap">
+    select <include refid="Vo_Column_List"/> from user_level_term where user_level_id = #{userLevelId}
+  </select>
+  <select id="getAmountAndTypeByUserLevelId" resultType="com.mall4j.cloud.user.vo.UserLevelTermVO">
+    select term_type,need_amount,`status`,user_level_id,level_term_id from user_level_term where user_level_id = #{userLevelId} and status = 1
+  </select>
+  <select id="getMonthAmount" resultType="java.lang.Integer">
+    select need_amount from user_level_term where user_level_id = #{userLevelId} and term_type = 0 and status = 1
+  </select>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionWithdrawProcessMapper">
+  <resultMap id="distributionWithdrawProcessMap" type="com.mall4j.cloud.distribution.model.DistributionWithdrawProcess">
+    <id column="id" property="id" />
+    <result column="batch_name" property="batchName"/>
+    <result column="success_quantity" property="successQuantity"/>
+    <result column="fail_quantity" property="failQuantity"/>
+    <result column="import_date" property="importDate"/>
+    <result column="execute_status" property="executeStatus"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`batch_name`,`success_quantity`,`fail_quantity`,`import_date`,`execute_status`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionWithdrawProcessMap">
+    select <include refid="Vo_Column_List"/> from distribution_withdraw_process
+    <where>
+      <if test="distributionWithdrawProcessDTO.batchName != null and distributionWithdrawProcessDTO.batchName != ''">
+        and batch_name = #{distributionWithdrawProcessDTO.batchName}
+      </if>
+      <if test="distributionWithdrawProcessDTO.executeStatus != null">
+        and execute_status = #{distributionWithdrawProcessDTO.executeStatus}
+      </if>
+      <if test="distributionWithdrawProcessDTO.importStartDate != null">
+        and create_time >= #{distributionWithdrawProcessDTO.importStartDate}
+      </if>
+      <if test="distributionWithdrawProcessDTO.importEndDate != null">
+        and #{distributionWithdrawProcessDTO.importEndDate} >= create_time
+      </if>
+    </where>
+    order by id desc
+  </select>
+  <select id="getById" resultMap="distributionWithdrawProcessMap">
+    select <include refid="Vo_Column_List"/> from distribution_withdraw_process where id = #{id}
+  </select>
+  <insert id="save">
+    insert into distribution_withdraw_process (`batch_name`,`success_quantity`,`fail_quantity`,`import_date`,`execute_status`)
+    values (#{distributionWithdrawProcess.batchName},#{distributionWithdrawProcess.successQuantity},#{distributionWithdrawProcess.failQuantity},#{distributionWithdrawProcess.importDate},#{distributionWithdrawProcess.executeStatus});
+  </insert>
+  <update id="update">
+    update distribution_withdraw_process
+    <set>
+      <if test="distributionWithdrawProcess.batchName != null">
+        `batch_name` = #{distributionWithdrawProcess.batchName},
+      </if>
+      <if test="distributionWithdrawProcess.successQuantity != null">
+        `success_quantity` = #{distributionWithdrawProcess.successQuantity},
+      </if>
+      <if test="distributionWithdrawProcess.failQuantity != null">
+        `fail_quantity` = #{distributionWithdrawProcess.failQuantity},
+      </if>
+      <if test="distributionWithdrawProcess.importDate != null">
+        `import_date` = #{distributionWithdrawProcess.importDate},
+      </if>
+      <if test="distributionWithdrawProcess.executeStatus != null">
+        `execute_status` = #{distributionWithdrawProcess.executeStatus},
+      </if>
+    </set>
+    where id = #{distributionWithdrawProcess.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_withdraw_process where id = #{id}
+  </delete>
+
+</mapper>

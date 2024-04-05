@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.MicroPageBurialPointRecordMapper">
+  <resultMap id="microPageBurialPointRecordMap" type="com.mall4j.cloud.biz.model.MicroPageBurialPointRecord">
+    <id column="record_id" property="recordId" />
+    <result column="union_id" property="unionId"/>
+    <result column="renovation_id" property="renovationId"/>
+    <result column="short_key" property="shortKey"/>
+    <result column="nike_name" property="nikeName"/>
+    <result column="notes_name" property="notesName"/>
+    <result column="mobile" property="mobile"/>
+    <result column="browse_time" property="browseTime"/>
+    <result column="browse_duration" property="browseDuration"/>
+    <result column="is_deleted" property="isDeleted"/>
+  </resultMap>
+
+  <resultMap id="voMap" type="com.mall4j.cloud.biz.vo.MicroPageBurialPointRecordVO">
+    <id column="record_id" property="recordId" />
+    <result column="renovation_id" property="renovationId"/>
+    <result column="nike_name" property="nikeName"/>
+    <result column="notes_name" property="notesName"/>
+    <result column="mobile" property="mobile"/>
+    <result column="browse_time" property="browseTime"/>
+    <result column="browse_duration" property="browseDuration"/>
+  </resultMap>
+
+  <resultMap id="statisticsMap" type="com.mall4j.cloud.biz.model.MicroPageBurialPointStatistics">
+    <id column="record_id" property="recordId" />
+    <result column="union_id" property="unionId"/>
+    <result column="browse_time" property="browseTime"/>
+  </resultMap>
+
+  <select id="selectBurialPointRecordPage" resultType="com.mall4j.cloud.biz.vo.MicroPageBurialPointRecordVO" resultMap="voMap">
+    select
+      record_id, renovation_id, nike_name, notes_name, mobile, browse_time, browse_duration
+    from
+      micro_page_burial_point_record
+    where
+      is_deleted = 0
+      <if test="params.renovationId != null">
+        and renovation_id = #{params.renovationId}
+      </if>
+      <if test="params.nikeName != null and params.nikeName != ''">
+        and nike_name like #{params.nikeName}
+      </if>
+      <if test="params.notesName != null and params.notesName != ''">
+        and notes_name like #{params.notesName}
+      </if>
+      <if test="params.mobile != null and params.mobile != ''">
+        and mobile like #{params.mobile}
+      </if>
+      <if test="params.startTime != null and params.endTime != null">
+        and browse_time between #{params.startTime} and #{params.endTime}
+      </if>
+    order by
+        browse_time desc
+  </select>
+
+  <select id="selectBurialPointRecords" resultType="com.mall4j.cloud.biz.model.MicroPageBurialPointStatistics" resultMap="statisticsMap">
+    select
+        record_id, union_id, browse_time
+    from
+      micro_page_burial_point_record
+    where
+      is_deleted = 0
+      <if test="params.renovationId != null">
+        and renovation_id = #{params.renovationId}
+      </if>
+      <if test="params.startTime != null and params.endTime != null">
+        and browse_time between #{params.startTime} and #{params.endTime}
+      </if>
+  </select>
+
+  <select id="selectCountByUnionId" resultType="java.lang.Integer">
+    select count(*) from micro_page_burial_point_record where is_deleted = 0 and renovation_id = #{renovationId} and union_id = #{unionId}
+  </select>
+
+</mapper>

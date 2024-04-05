@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.TimeLimitedDiscountActivityMapper">
+  <resultMap id="timeLimitedDiscountActivityMap" type="com.mall4j.cloud.group.model.TimeLimitedDiscountActivity">
+    <id column="id" property="id" />
+    <result column="activity_name" property="activityName"/>
+    <result column="activity_begin_time" property="activityBeginTime"/>
+    <result column="activity_end_time" property="activityEndTime"/>
+    <result column="is_all_shop" property="isAllShop"/>
+    <result column="weight" property="weight"/>
+    <result column="status" property="status"/>
+    <result column="deleted" property="deleted"/>
+    <result column="create_time" property="createTime"/>
+    <result column="create_user_id" property="createUserId"/>
+    <result column="create_user_name" property="createUserName"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="update_user_id" property="updateUserId"/>
+    <result column="update_user_name" property="updateUserName"/>
+    <result column="type" property="type"/>
+    <result column="can_use_coupon" property="canUseCoupon"/>
+    <result column="can_use_discount" property="canUseDiscount"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`activity_name`,`activity_begin_time`,`activity_end_time`,`is_all_shop`,`weight`,`status`,`deleted`,`create_time`,`create_user_id`,`create_user_name`,`update_time`,`update_user_id`,`update_user_name`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.group.vo.TimeLimitedDiscountActivityPageVO">
+    select
+           distinct
+      da.id as id,
+      da.activity_name as activityName,
+      da.activity_begin_time as activityBeginTime,
+      da.activity_end_time as activityEndTime,
+      da.is_all_shop as isAllShop,
+      (select count(1) from time_limited_discount_shop d where d.activity_id = da.id) as applyShopNum,
+      (select count(1) from time_limited_discount_spu d where d.activity_id = da.id) as spuCount,
+      da.weight as weight,
+      da.status as status,
+      da.check_status as check_status,
+      da.create_time as createTime,
+      da.create_user_name as createUserName,
+      da.type as type,
+      da.can_use_coupon as can_use_coupon,
+      da.can_use_discount as can_use_discount
+     from time_limited_discount_activity da
+     where 1=1
+      <if test="shopIds != null">
+          and (da.is_all_shop = 1 or da.id in (select activity_id from time_limited_discount_shop where shop_id in (#{shopIds}) ))
+      </if>
+      <if test="checkStatus !=null">
+          and da.check_status = #{checkStatus}
+      </if>
+      <if test="status == 0">
+          and da.status = 0
+      </if>
+      <if test="status == 3">
+          and da.activity_begin_time &lt; now() and da.activity_end_time &gt; now() and da.status = 1
+      </if>
+      <if test="status == 2">
+          and da.activity_begin_time &gt; now() and da.status = 1
+      </if>
+
+      <if test="status == 4">
+          and da.activity_end_time &lt; now() and da.status = 1
+      </if>
+      <if test="activityName != null">
+          and da.activity_name like '%${activityName}%'
+      </if>
+      <if test="type != null">
+          and da.type = #{type}
+      </if>
+    order by id desc
+  </select>
+  <select id="getById" resultType="com.mall4j.cloud.group.vo.TimeLimitedDiscountActivityVO">
+      select
+           da.id as id,
+           da.activity_name as activityName,
+           da.activity_begin_time as activityBeginTime,
+           da.activity_end_time as activityEndTime,
+           da.is_all_shop as isAllShop,
+          (select count(1) from time_limited_discount_shop d where d.activity_id = da.id) as applyShopNum,
+           da.weight as weight,
+           da.status as status,
+           da.check_status as check_status,
+           da.create_time as createTime,
+           da.create_user_name as createUserName,
+           da.type as type,
+           da.can_use_coupon as can_use_coupon,
+           da.can_use_discount as can_use_discount
+      from time_limited_discount_activity da
+      where da.id = #{id}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into time_limited_discount_activity (`activity_name`,`activity_begin_time`,`activity_end_time`,
+                                                `is_all_shop`,`weight`,`status`,`deleted`,`create_user_id`,
+                                                `create_user_name`,`update_user_id`,`update_user_name`,
+                                                `type`,`can_use_coupon`,`can_use_discount`)
+    values (#{timeLimitedDiscountActivity.activityName},#{timeLimitedDiscountActivity.activityBeginTime},
+            #{timeLimitedDiscountActivity.activityEndTime},#{timeLimitedDiscountActivity.isAllShop},#{timeLimitedDiscountActivity.weight},
+            #{timeLimitedDiscountActivity.status},#{timeLimitedDiscountActivity.deleted},#{timeLimitedDiscountActivity.createUserId},
+            #{timeLimitedDiscountActivity.createUserName},#{timeLimitedDiscountActivity.updateUserId},#{timeLimitedDiscountActivity.updateUserName},
+            #{timeLimitedDiscountActivity.type},#{timeLimitedDiscountActivity.canUseCoupon},#{timeLimitedDiscountActivity.canUseDiscount});
+  </insert>
+  <update id="update">
+    update time_limited_discount_activity
+    <set>
+      <if test="timeLimitedDiscountActivity.activityName != null">
+        `activity_name` = #{timeLimitedDiscountActivity.activityName},
+      </if>
+      <if test="timeLimitedDiscountActivity.activityBeginTime != null">
+        `activity_begin_time` = #{timeLimitedDiscountActivity.activityBeginTime},
+      </if>
+      <if test="timeLimitedDiscountActivity.activityEndTime != null">
+        `activity_end_time` = #{timeLimitedDiscountActivity.activityEndTime},
+      </if>
+      <if test="timeLimitedDiscountActivity.isAllShop != null">
+        `is_all_shop` = #{timeLimitedDiscountActivity.isAllShop},
+      </if>
+      <if test="timeLimitedDiscountActivity.weight != null">
+        `weight` = #{timeLimitedDiscountActivity.weight},
+      </if>
+      <if test="timeLimitedDiscountActivity.status != null">
+        `status` = #{timeLimitedDiscountActivity.status},
+      </if>
+      <if test="timeLimitedDiscountActivity.deleted != null">
+        `deleted` = #{timeLimitedDiscountActivity.deleted},
+      </if>
+      <if test="timeLimitedDiscountActivity.createUserId != null">
+        `create_user_id` = #{timeLimitedDiscountActivity.createUserId},
+      </if>
+      <if test="timeLimitedDiscountActivity.createUserName != null">
+        `create_user_name` = #{timeLimitedDiscountActivity.createUserName},
+      </if>
+      <if test="timeLimitedDiscountActivity.updateUserId != null">
+        `update_user_id` = #{timeLimitedDiscountActivity.updateUserId},
+      </if>
+      <if test="timeLimitedDiscountActivity.updateUserName != null">
+        `update_user_name` = #{timeLimitedDiscountActivity.updateUserName},
+      </if>
+        <if test="timeLimitedDiscountActivity.checkStatus != null">
+            `check_status` = #{timeLimitedDiscountActivity.checkStatus},
+        </if>
+        <if test="timeLimitedDiscountActivity.type != null">
+            `type` = #{timeLimitedDiscountActivity.type},
+        </if>
+        <if test="timeLimitedDiscountActivity.canUseCoupon != null">
+            `can_use_coupon` = #{timeLimitedDiscountActivity.canUseCoupon},
+        </if>
+        <if test="timeLimitedDiscountActivity.checkStatus != null">
+            `can_use_discount` = #{timeLimitedDiscountActivity.canUseDiscount},
+        </if>
+    </set>
+    where id = #{timeLimitedDiscountActivity.id}
+  </update>
+  <delete id="deleteById">
+    delete from time_limited_discount_activity where id = #{id}
+  </delete>
+
+    <update id="enable">
+        update time_limited_discount_activity
+        set
+        status = 1
+        where id = #{id} and status = 0
+    </update>
+    <update id="disable">
+        update time_limited_discount_activity
+        set
+            status = 0
+        where id = #{id} and status = 1
+    </update>
+
+    <select id="currentActivity" resultType="com.mall4j.cloud.group.vo.TimeLimitedDiscountActivityVO">
+        select
+            da.id as id,
+            da.activity_name as activityName,
+            da.activity_begin_time as activityBeginTime,
+            da.activity_end_time as activityEndTime,
+            da.is_all_shop as isAllShop,
+            da.weight as weight,
+            da.status as status,
+            da.create_time as createTime,
+            da.create_user_name as createUserName,
+            da.can_use_coupon as friendlyCouponUseFlag,
+            da.can_use_discount as friendlyDiscountFlag
+        from
+            time_limited_discount_activity da
+        where (NOW() BETWEEN da.activity_begin_time and da.activity_end_time)
+          and da.status = 1 and (da.is_all_shop =1 or id in (select activity_id from time_limited_discount_shop where shop_id = #{storeId}))
+        <if test="checkStatus!=null">
+            and da.check_status = #{checkStatus}
+        </if>
+        <if test="type!=null">
+            and da.type = #{type}
+        </if>
+    </select>
+
+    <select id="currentActivityBySpuId" resultType="com.mall4j.cloud.api.group.feign.vo.TimeDiscountActivityVO">
+        SELECT
+        ds.activity_id,
+        ds.spu_id,
+        da.can_use_coupon AS friendlyCouponUseFlag,
+        da.can_use_discount AS friendlyDiscountFlag
+        FROM
+        time_limited_discount_spu ds
+        LEFT JOIN time_limited_discount_activity da ON ds.activity_id = da.id
+        WHERE
+        ( NOW() BETWEEN da.activity_begin_time AND da.activity_end_time )
+        AND da.`status` = 1
+        AND (
+        da.is_all_shop = 1
+        OR da.id IN ( SELECT activity_id FROM time_limited_discount_shop WHERE shop_id = 1 ))
+        AND da.check_status = 1
+        AND da.type = 2
+        AND ds.spu_id IN
+        <foreach collection="spuIds" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <update id="updateCheckStatusBatch">
+        <foreach collection="checkDTOS" separator=";" item="checkDTO">
+            update time_limited_discount_activity
+            set check_status = #{checkDTO.checkStatus},
+                check_by = #{checkDTO.checkBy},
+                check_time=now()
+            where id=#{checkDTO.id}
+        </foreach>
+    </update>
+
+</mapper>

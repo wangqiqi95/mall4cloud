@@ -1,0 +1,989 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SkuMapper">
+    <resultMap id="skuMap" type="com.mall4j.cloud.product.model.Sku">
+        <id column="sku_id" property="skuId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="spu_id" property="spuId"/>
+        <result column="img_url" property="imgUrl"/>
+        <result column="price_fee" property="priceFee"/>
+        <result column="market_price_fee" property="marketPriceFee"/>
+        <result column="status" property="status"/>
+        <result column="party_code" property="partyCode"/>
+        <result column="model_id" property="modelId"/>
+        <result column="weight" property="weight"/>
+        <result column="volume" property="volume"/>
+        <result column="score_fee" property="scoreFee"/>
+    </resultMap>
+    <resultMap id="skuVOMap" type="com.mall4j.cloud.common.product.vo.SkuVO">
+        <result column="sku_id" property="skuId"/>
+        <result column="sku_code" property="skuCode"/>
+        <result column="price_code" property="priceCode"/>
+        <result column="channel_name" property="channelName"/>
+        <result column="spu_id" property="spuId"/>
+        <result column="img_url" property="imgUrl"/>
+        <result column="price_fee" property="priceFee"/>
+        <result column="market_price_fee" property="marketPriceFee"/>
+        <result column="protect_price" property="protectPrice"/>
+        <result column="status" property="status"/>
+        <result column="score_fee" property="scoreFee"/>
+        <result column="party_code" property="partyCode"/>
+        <result column="model_id" property="modelId"/>
+        <result column="weight" property="weight"/>
+        <result column="volume" property="volume"/>
+        <result column="style_code" property="styleCode"/>
+<!--        <result column="name" property="skuName"/>-->
+        <result column="sku_name" property="skuName"/>
+        <result column="sku_code" property="skuCode"/>
+        <result column="store_sku_stock" property="storeSkuStock"/>
+        <result column="store_protect_price" property="storeProtectPrice"/>
+        <result column="sku_protect_price" property="skuProtectPrice"/>
+<!--        <collection property="skuLangList" ofType="com.mall4j.cloud.common.product.vo.SkuLangVO">-->
+<!--            <id column="lang" property="lang"/>-->
+
+<!--        </collection>-->
+    </resultMap>
+    <resultMap id="skuAndAttrVOMap" type="com.mall4j.cloud.common.product.vo.SkuVO"
+               extends="com.mall4j.cloud.product.mapper.SkuMapper.skuMap">
+        <result column="stock" property="stock"/>
+        <result column="name" property="skuName"/>
+        <result column="sku_code" property="skuCode"/>
+        <result column="intscode" property="intscode"/>
+        <result column="price_code" property="priceCode"/>
+        <result column="store_stock" property="storeStock"/>
+        <result column="store_sku_stock" property="storeSkuStock"/>
+        <result column="store_protect_price" property="storeProtectPrice"/>
+        <result column="sku_protect_price" property="skuProtectPrice"/>
+        <collection property="spuSkuAttrValues" ofType="com.mall4j.cloud.common.product.vo.SpuSkuAttrValueVO">
+            <id column="spu_sku_attr_id" property="spuSkuAttrId"/>
+            <result column="attr_id" property="attrId"/>
+            <result column="attr_value_id" property="attrValueId"/>
+            <result column="attr_name" property="attrName"/>
+            <result column="attr_value_name" property="attrValueName"/>
+        </collection>
+    </resultMap>
+    <resultMap id="excelSkuAndAttrVOMap" type="com.mall4j.cloud.common.product.vo.SkuVO"
+               extends="com.mall4j.cloud.product.mapper.SkuMapper.skuMap">
+        <result column="stock" property="stock"/>
+        <result column="name" property="skuName"/>
+        <result column="sku_code" property="skuCode"/>
+        <result column="intscode" property="intscode"/>
+        <result column="price_code" property="priceCode"/>
+        <result column="party_code" property="partyCode"/>
+        <result column="model_id" property="modelId"/>
+        <result column="store_stock" property="storeStock"/>
+        <result column="spu_code" property="spuCode"/>
+        <result column="spu_name" property="spuName"/>
+        <result column="selling_point" property="sellingPoint"/>
+        <collection property="spuSkuAttrValues" ofType="com.mall4j.cloud.common.product.vo.SpuSkuAttrValueVO">
+            <id column="spu_sku_attr_id" property="spuSkuAttrId"/>
+            <result column="attr_id" property="attrId"/>
+            <result column="attr_value_id" property="attrValueId"/>
+            <result column="attr_name" property="attrName"/>
+            <result column="attr_value_name" property="attrValueName"/>
+        </collection>
+<!--        <collection property="skuLangList" ofType="com.mall4j.cloud.common.product.vo.SkuLangVO">-->
+<!--            <result column="lang" property="lang"/>-->
+<!--            <result column="skuName" property="sku_name"/>-->
+<!--            <result column="attrs" property="attrs"/>-->
+<!--        </collection>-->
+    </resultMap>
+    <resultMap id="spuAndSkuOrderDetailMap" type="com.mall4j.cloud.common.product.vo.SkuAddrVO">
+        <result column="sku_id" property="skuId"/>
+        <result column="spu_id" property="spuId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="delivery_template_id" property="deliveryTemplateId"/>
+        <result column="weight" property="weight"/>
+        <result column="volume" property="volume"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        sku
+        .
+        `sku_id`
+        ,sku.`create_time`,sku.`update_time`,sku.`spu_id`,sku.`img_url`,sku.`price_fee`,sku.`market_price_fee`,sku.`status`
+    ,sku.weight,sku.volume,sku.score_fee,sku.party_code,sku.model_id
+    </sql>
+
+    <select id="listSkuWithAttrBySpuId" resultMap="skuAndAttrVOMap">
+        SELECT sku.`sku_id`,
+               sku.`create_time`,
+               sku.`update_time`,
+               sku.`spu_id`,
+               sku.`img_url`,
+               sku.`status`,
+               sku.weight,
+               sku.volume,
+               sku.score_fee,
+               sku.party_code,
+               sku.model_id,
+               sku.price_code,
+               sku.sku_code,
+               sku.intscode,
+               sku.`name`,
+               sku.protect_price AS sku_protect_price,
+               sav.spu_sku_attr_id,
+               sav.`attr_id`,
+               sav.`attr_name`,
+               sav.`attr_value_id`,
+               sav.`attr_value_name`,
+               sst.stock as stock,
+               ss.stock  as store_stock,
+                CASE
+                    WHEN  temp.stock > 0 THEN
+                    temp.stock
+                    ELSE 0
+                    END   AS store_sku_stock,
+                CASE
+                    WHEN  temp.stock > 0 THEN
+                    temp.protect_price
+                    ELSE sku.protect_price
+                    END   AS store_protect_price,
+               CASE
+                   WHEN  temp.stock > 0 THEN
+                       temp.price_fee
+                   ELSE sku.price_fee
+                   END   AS price_fee,
+
+               CASE
+                   WHEN  temp.stock > 0 THEN
+                       temp.market_price_fee
+                   ELSE sku.market_price_fee
+                   END   AS market_price_fee
+        FROM sku
+                 left join  (
+            SELECT
+                ss.sku_id,ss.price_code,
+                sum(ss.stock) as stock,
+                ss.price_fee,
+                ss.market_price_fee,
+                ss.protect_price
+            FROM
+                sku_store ss
+            where ss.spu_id=#{spuId} and ss.store_id=#{storeId} and ss.status=1
+            GROUP BY ss.price_code
+        )temp on sku.price_code=temp.price_code and sku.`status`=1
+                 LEFT JOIN `spu_sku_attr_value` sav ON sav.`sku_id` = sku.`sku_id` and sav.`status` != -1
+								 LEFT JOIN `sku_store` ss
+        ON ss.sku_id = sku.sku_id AND ss.store_id = #{storeId} and ss.status=1
+            LEFT JOIN `sku_stock` sst ON sst.sku_id = sku.sku_id
+        WHERE sku.`spu_id` = #{spuId} and sku.status=1
+        order by sav.spu_sku_attr_id asc
+    </select>
+
+    <select id="listSkcWithAttrBySpuId" resultType="com.mall4j.cloud.common.product.vo.SkcVO">
+        SELECT sku.`sku_id`,
+               sku.`spu_id`,
+               sku.`img_url`,
+               sku.`status`,
+               sku.weight,
+               sku.volume,
+               sku.score_fee,
+               sku.party_code,
+               sku.model_id,
+               sku.price_code,
+               sst.stock as stock,
+               ss.stock  as store_stock,
+               CASE
+                   WHEN  temp.stock > 0 THEN
+                       temp.stock
+                   ELSE 0
+                   END   AS store_sku_stock,
+               CASE
+                   WHEN  temp.stock > 0 THEN
+                       temp.protect_price
+                   ELSE 0
+                   END   AS store_protect_price,
+               CASE
+                   WHEN  temp.stock > 0 THEN
+                       temp.price_fee
+                   ELSE sku.price_fee
+                   END   AS price_fee,
+               CASE
+                   WHEN  temp.stock > 0 THEN
+                       temp.market_price_fee
+                   ELSE sku.market_price_fee
+                   END   AS market_price_fee
+        FROM sku
+                 left join  (
+            SELECT
+                ss.sku_id,ss.price_code,
+                sum(ss.stock) as stock,
+                ss.price_fee,
+                ss.market_price_fee,
+                ss.protect_price
+            FROM
+                sku_store ss
+            where ss.spu_id=#{spuId} and ss.store_id=#{storeId} and ss.status=1
+            GROUP BY ss.price_code
+        )temp on sku.price_code=temp.price_code and sku.`status`=1
+                 LEFT JOIN `spu_sku_attr_value` sav ON sav.`sku_id` = sku.`sku_id` and sav.`status` != -1
+								 LEFT JOIN `sku_store` ss
+        ON ss.sku_id = sku.sku_id AND ss.store_id = #{storeId} and ss.status=1
+            LEFT JOIN `sku_stock` sst ON sst.sku_id = sku.sku_id
+        WHERE sku.`spu_id` = #{spuId} and sku.status=1
+        GROUP BY sku.price_code
+    </select>
+
+<!--    <select id="listSkuWithAttrBySpuId" resultMap="skuAndAttrVOMap">-->
+<!--        SELECT sku.`sku_id`,-->
+<!--               sku.`create_time`,-->
+<!--               sku.`update_time`,-->
+<!--               sku.`spu_id`,-->
+<!--               sku.`img_url`,-->
+<!--               CASE-->
+
+<!--                   WHEN ss.price_fee IS NULL THEN-->
+<!--                       sku.price_fee-->
+<!--                   ELSE ss.price_fee-->
+<!--                   END   AS price_fee,-->
+<!--               CASE-->
+
+<!--                   WHEN ss.market_price_fee IS NULL THEN-->
+<!--                       sku.market_price_fee-->
+<!--                   ELSE ss.market_price_fee-->
+<!--                   END   AS market_price_fee,-->
+<!--               sku.`status`,-->
+<!--               sku.weight,-->
+<!--               sku.volume,-->
+<!--               sku.score_fee,-->
+<!--               sku.party_code,-->
+<!--               sku.model_id,-->
+<!--               sku.price_code,-->
+<!--               sku.sku_code,-->
+<!--               sku.intscode,-->
+<!--               sku.`name`,-->
+<!--               sav.spu_sku_attr_id,-->
+<!--               sav.`attr_id`,-->
+<!--               sav.`attr_name`,-->
+<!--               sav.`attr_value_id`,-->
+<!--               sav.`attr_value_name`,-->
+<!--               sst.stock as stock,-->
+<!--               ss.stock  as store_stock-->
+<!--        FROM sku-->
+<!--                 LEFT JOIN `sku_lang` sl-->
+<!--                           ON sl.`sku_id` = sku.`sku_id`-->
+<!--                 LEFT JOIN `spu_sku_attr_value` sav ON sav.`sku_id` = sku.`sku_id` and sav.`status` != -1-->
+<!--            LEFT JOIN `sku_store` ss-->
+<!--        ON ss.sku_id = sku.sku_id AND ss.store_id = #{storeId} and ss.status=1-->
+<!--            LEFT JOIN `sku_stock` sst ON sst.sku_id = sku.sku_id-->
+<!--        WHERE sku.`spu_id` = #{spuId} and sku.status=1-->
+<!--    </select>-->
+
+    <insert id="saveSku">
+        insert into sku (`spu_id`, `img_url`, `price_fee`, `market_price_fee`, `status`)
+        values (#{sku.spuId}, #{sku.imgUrl}, #{sku.priceFee}, #{sku.marketPriceFee}, #{sku.status});
+    </insert>
+
+    <insert id="saveSkuBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="skuId">
+        insert into sku
+        (`spu_id`,`img_url`,`price_fee`,`market_price_fee`,`score_fee`,`party_code`,`model_id`,`status`,`weight`,`volume`,`name`)
+        values
+        <foreach collection="skuList" item="sku" separator=",">
+            (#{sku.spuId},#{sku.imgUrl},#{sku.priceFee},#{sku.marketPriceFee},#{sku.scoreFee},#{sku.partyCode},#{sku.modelId},#{sku.status},#{sku.weight},#{sku.volume},,#{sku.name})
+        </foreach>
+    </insert>
+
+    <update id="updateSku">
+        update sku
+        <set>
+            <if test="sku.spuId != null">
+                `spu_id` = #{sku.spuId},
+            </if>
+            <if test="sku.imgUrl != null">
+                `img_url` = #{sku.imgUrl},
+            </if>
+            <if test="sku.priceFee != null">
+                `price_fee` = #{sku.priceFee},
+            </if>
+            <if test="sku.marketPriceFee != null">
+                `market_price_fee` = #{sku.marketPriceFee},
+            </if>
+            <if test="sku.scoreFee != null">
+                `score_fee` = #{sku.scoreFee},
+            </if>
+            <if test="sku.status != null">
+                `status` = #{sku.status},
+            </if>
+        </set>
+        where sku_id = #{sku.skuId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from sku
+        where sku_id = #{skuId}
+    </delete>
+
+    <update id="updateBySpuId">
+        update sku
+        set status = -1
+        where spu_id = #{spuId}
+    </update>
+
+    <update id="updateSkuBatch">
+        <foreach collection="skus" separator=";" item="sku">
+            update sku
+            <set>
+                `img_url` = #{sku.imgUrl},
+                <!--                <if test="sku.priceFee != null">
+                                    `price_fee` = #{sku.priceFee},
+                                </if>-->
+                <!--                <if test="sku.activityPrice != null">-->
+                <!--                    `activity_price` = #{sku.activityPrice},-->
+                <!--                </if>-->
+                <!--                <if test="sku.marketPriceFee != null">-->
+                <!--                    `market_price_fee` = #{sku.marketPriceFee},-->
+                <!--                </if>-->
+                <!--                <if test="sku.scoreFee != null">-->
+                <!--                    `score_fee` = #{sku.scoreFee},-->
+                <!--                </if>-->
+                <!--                <if test="sku.partyCode != null">-->
+                <!--                    `party_code` = #{sku.partyCode},-->
+                <!--                </if>-->
+                <!--                <if test="sku.modelId != null">-->
+                <!--                    `model_id` = #{sku.modelId},-->
+                <!--                </if>-->
+                <if test="sku.status != null">
+                    `status` = #{sku.status},
+                </if>
+                <if test="sku.name != null and sku.name != ''">
+                    `name` = #{sku.name},
+                </if>
+                <!--                <if test="sku.weight != null">-->
+                <!--                    `weight` = #{sku.weight},-->
+                <!--                </if>-->
+                <!--                <if test="sku.volume != null">-->
+                <!--                    `volume` = #{sku.volume},-->
+                <!--                </if>-->
+            </set>
+            where sku_id = #{sku.skuId}
+        </foreach>
+    </update>
+
+    <update id="updateSkuBatchByPriceCode">
+        <foreach collection="skus" separator=";" item="sku">
+            update sku
+            <set>
+                `update_time` = now(),
+                <if test="sku.priceFee != null">
+                    `price_fee` = #{sku.priceFee},
+                </if>
+                <if test="sku.priceFee != null">
+                    `activity_price` = #{sku.priceFee},
+                </if>
+                <if test="sku.priceFee != null">
+                    `ph_price` = #{sku.priceFee},
+                </if>
+                <if test="sku.status != null">
+                    `status` = #{sku.status},
+                </if>
+            </set>
+            where price_code = #{sku.priceCode}
+        </foreach>
+    </update>
+
+    <select id="getSkuBySkuId" resultMap="skuVOMap">
+        select sku.`sku_id`
+             , sku.`spu_id`
+             , sku.`sku_code`
+             , sku.`img_url`
+             , sku.`price_fee`
+             , sku.`market_price_fee`
+             , sku.`status`
+             , sku.weight
+             , sku.volume
+             , sku.score_fee
+             , sku.party_code
+             , sku.model_id
+             , sku.`name` as sku_name
+        from sku sku
+        where sku.sku_id = #{skuId}
+    </select>
+    <select id="getSkuBySkuCode" resultMap="skuVOMap">
+        select sku.`sku_id`
+             , sku.`spu_id`
+             , sku.`img_url`
+             , sku.`price_fee`
+             , sku.`market_price_fee`
+             , sku.`status`
+             , sku.weight
+             , sku.volume
+             , sku.score_fee
+             , sku.party_code
+             , sku.model_id
+             , sku.name as sku_name
+        from sku sku
+        where sku.sku_code = #{skuCode}
+    </select>
+
+    <select id="getSkuBySkuPriceCode" resultMap="skuVOMap">
+        select sku.`sku_id`
+             , sku.`spu_id`
+             , sku.`img_url`
+             , sku.`price_fee`
+             , sku.`market_price_fee`
+             , sku.`status`
+             , sku.weight
+             , sku.volume
+             , sku.score_fee
+             , sku.party_code
+             , sku.model_id
+             , sku.protect_price
+        from sku sku
+        where sku.price_code = #{priceCode} limit 1
+    </select>
+
+    <select id="excelSkuList" resultMap="excelSkuAndAttrVOMap">
+        SELECT
+        sku.`sku_id`,
+        sku.`create_time`,
+        sku.`update_time`,
+        sku.`spu_id`,
+        sku.`img_url`,
+        CASE
+
+        WHEN ss.price_fee IS NULL THEN
+        sku.price_fee
+        ELSE ss.price_fee
+        END AS price_fee,
+        CASE
+
+        WHEN ss.market_price_fee IS NULL THEN
+        sku.market_price_fee
+        ELSE ss.market_price_fee
+        END AS market_price_fee,
+        sku.`status`,
+        sku.weight,
+        sku.volume,
+        sku.score_fee,
+        sku.party_code,
+        sku.model_id,
+        sku.price_code,
+        sku.sku_code,
+        sku.intscode,
+        sku.`name`,
+        /*sav.spu_sku_attr_id,
+        sav.`attr_id`,
+        sav.`attr_name`,
+        sav.`attr_value_id`,
+        sav.`attr_value_name`,*/
+        CASE
+        WHEN ss.stock IS NULL THEN
+        sst.stock
+        ELSE ss.stock
+        END AS stock
+        FROM sku
+        /*LEFT JOIN `spu_sku_attr_value` sav ON sav.`sku_id` = sku.`sku_id`*/
+        LEFT JOIN `sku_store` ss ON ss.sku_id = sku.sku_id and ss.status=1 AND ss.store_id = #{storeId}
+        LEFT JOIN `sku_stock` sst ON sst.sku_id = sku.sku_id
+        WHERE sku.status != -1 AND sku.spu_id IN
+        <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+            #{spuId}
+        </foreach>
+        <if test="pageAdapter!=null">
+            LIMIT #{pageAdapter.begin} , #{pageAdapter.size}
+        </if>
+    </select>
+
+
+    <select id="excelMainShopAllSkuList" resultMap="excelSkuAndAttrVOMap">
+        SELECT
+        sku.`sku_id`,
+        sku.`create_time`,
+        sku.`update_time`,
+        sku.`spu_id`,
+        sku.`img_url`,
+        CASE
+
+        WHEN ss.price_fee IS NULL THEN
+        sku.price_fee
+        ELSE ss.price_fee
+        END AS price_fee,
+        CASE
+
+        WHEN ss.market_price_fee IS NULL THEN
+        sku.market_price_fee
+        ELSE ss.market_price_fee
+        END AS market_price_fee,
+        sku.`status`,
+        sku.weight,
+        sku.volume,
+        sku.score_fee,
+        sku.party_code,
+        sku.model_id,
+        sku.price_code,
+        sku.sku_code,
+        sku.intscode,
+        sku.`name`,
+        sst.actual_stock,
+        sst.lock_stock,
+        sst.stock
+        FROM sku
+        LEFT JOIN `sku_store` ss ON ss.sku_id = sku.sku_id and ss.status=1 AND ss.store_id = #{storeId}
+        LEFT JOIN `sku_stock` sst ON sst.sku_id = sku.sku_id
+        WHERE  sku.spu_id IN
+        <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+            #{spuId}
+        </foreach>
+        <if test="pageAdapter!=null">
+            LIMIT #{pageAdapter.begin} , #{pageAdapter.size}
+        </if>
+    </select>
+
+    <!--    <select id="excelSkuList" resultMap="excelSkuAndAttrVOMap">-->
+    <!--        SELECT-->
+    <!--        sku.spu_id,sku.sku_id,sku.name,sku.sku_code,sl.lang,sl.sku_name,sku.price_fee,sku.market_price_fee,sku.party_code,sku.model_id,sku.weight,sku.volume,-->
+    <!--        stock.stock,ssav.spu_sku_attr_id,ssavl.attr_name,ssavl.attr_value_name,ssavl.lang attr_lang-->
+    <!--        FROM sku sku-->
+    <!--        LEFT JOIN sku_lang sl ON sku.sku_id = sl.sku_id-->
+    <!--        LEFT JOIN sku_stock stock ON stock.sku_id = sku.sku_id-->
+    <!--        LEFT JOIN spu_sku_attr_value ssav ON sku.sku_id = ssav.sku_id AND ssav.status != -1-->
+    <!--        LEFT JOIN spu_sku_attr_value_lang ssavl ON ssavl.spu_sku_attr_id = ssav.spu_sku_attr_id-->
+    <!--        WHERE sku.status != -1 AND sku.spu_id IN-->
+    <!--        <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">-->
+    <!--            #{spuId}-->
+    <!--        </foreach>-->
+    <!--    </select>-->
+
+    <select id="listSkuPriceByIds" resultMap="skuVOMap">
+        select sku_id,price_fee from sku where sku_id in
+        <foreach collection="skuIds" item="skuId" open="(" close=")" separator=",">
+            #{skuId}
+        </foreach>
+    </select>
+
+    <select id="listSkuCodeByIds" resultMap="skuVOMap">
+        select sku_id,sku_code,price_fee,market_price_fee,price_code,protect_price AS sku_protect_price from sku where sku_id in
+        <foreach collection="skuIds" item="skuId" open="(" close=")" separator=",">
+            #{skuId}
+        </foreach>
+    </select>
+
+    <select id="listSpuDetailByIds" resultMap="spuAndSkuOrderDetailMap">
+        select s.spu_id, s.shop_id, s.delivery_template_id, sk.volume, sk.weight, sk.sku_id
+        from sku sk
+        join spu s on s.spu_id = sk.spu_id
+        where sk.sku_id in
+        <foreach collection="skuIds" item="skuId" open="(" close=")" separator=",">
+            #{skuId}
+        </foreach>
+    </select>
+
+    <select id="getSkuBySkuIdAndStoreId" resultMap="skuVOMap">
+        select sku.`sku_id`,
+               sku.`spu_id`,
+               sku.`img_url`,
+               sku.`status`,
+               sku.weight,
+               sku.volume,
+               sku.score_fee,
+               sku.party_code,
+               sku.model_id,
+               sku.name as sku_name,
+               sku.style_code,
+               sku.price_code,
+               sku.channel_name,
+               sku.protect_price AS sku_protect_price,
+                CASE
+                    WHEN  temp.stock > 0 THEN
+                    temp.stock
+                    ELSE 0
+                    END   AS store_sku_stock,
+                CASE
+                    WHEN  temp.stock > 0 THEN
+                    temp.protect_price
+                    ELSE sku.protect_price
+                    END   AS store_protect_price,
+               CASE
+                   WHEN temp.stock > 0 THEN
+                       temp.price_fee ELSE sku.price_fee
+                   END AS price_fee,
+               CASE
+                   WHEN temp.stock > 0 THEN
+                       temp.market_price_fee ELSE sku.market_price_fee
+                   END AS market_price_fee
+        from sku sku
+            LEFT JOIN (
+            SELECT
+                ss.sku_id,ss.price_code,
+                sum(ss.stock) as stock,
+                ss.price_fee,
+                ss.market_price_fee,
+                ss.protect_price
+            FROM
+                sku_store ss
+            where ss.spu_id=#{spuId} and ss.store_id=#{storeId} and ss.status=1
+            GROUP BY ss.price_code
+        ) temp ON sku.price_code = temp.price_code
+        where sku.sku_id = #{skuId}
+    </select>
+
+<!--    <select id="getSkuBySkuIdAndStoreId" resultMap="skuVOMap">-->
+<!--        select sku.`sku_id`,-->
+<!--               sku.`spu_id`,-->
+<!--               sku.`img_url`,-->
+<!--               CASE-->
+
+<!--                   WHEN ss.price_fee IS NULL THEN-->
+<!--                       sku.price_fee-->
+<!--                   ELSE ss.price_fee-->
+<!--                   END  AS price_fee,-->
+<!--               CASE-->
+
+<!--                   WHEN ss.market_price_fee IS NULL THEN-->
+<!--                       sku.market_price_fee-->
+<!--                   ELSE ss.market_price_fee-->
+<!--                   END  AS market_price_fee,-->
+<!--               sku.`status`,-->
+<!--               sku.weight,-->
+<!--               sku.volume,-->
+<!--               sku.score_fee,-->
+<!--               sku.party_code,-->
+<!--               sku.model_id,-->
+<!--               sku.name as skuName,-->
+<!--               sku.style_code-->
+
+<!--        from sku sku-->
+<!--                 left join sku_store ss on sku.sku_id = ss.sku_id and ss.store_id = #{storeId} and ss.status = 1-->
+<!--                and ss.stock>0-->
+
+<!--        where sku.sku_id = #{skuId}-->
+<!--    </select>-->
+    <resultMap id="skuCodeVOMap" type="com.mall4j.cloud.api.product.vo.SkuCodeVO">
+        <result column="spu_id" property="spuId"/>
+        <result column="spu_code" property="spuCode"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="sku_code" property="skuCode"/>
+    </resultMap>
+    <select id="getCodeBySkuId" resultMap="skuCodeVOMap">
+        select sp.spu_id, sp.spu_code, sk.sku_id, sk.sku_code, sk.price_code
+        from sku sk
+                 left join spu sp on sk.spu_id = sp.spu_id
+        where sk.sku_id = #{skuId}
+    </select>
+    <resultMap id="skuDetailMap" type="com.mall4j.cloud.common.product.vo.SkuVO">
+        <result column="sku_id" property="skuId"/>
+        <result column="spu_id" property="spuId"/>
+        <result column="img_url" property="imgUrl"/>
+        <result column="price_fee" property="priceFee"/>
+        <result column="market_price_fee" property="marketPriceFee"/>
+        <result column="status" property="status"/>
+        <result column="score_fee" property="scoreFee"/>
+        <result column="name" property="skuName"/>
+        <result column="price_code" property="priceCode"/>
+        <result column="channel_name" property="channelName"/>
+        <result column="stock" property="stock"/>
+        <result column="channels_stock" property="channelsStock"/>
+        <result column="store_sku_stock" property="storeSkuStock"/>
+        <result column="store_protect_price" property="storeProtectPrice"/>
+        <result column="sku_protect_price" property="skuProtectPrice"/>
+        <collection property="spuSkuAttrValues" ofType="com.mall4j.cloud.common.product.vo.SpuSkuAttrValueVO">
+            <id column="spu_sku_attr_id" property="spuSkuAttrId"/>
+            <result column="attr_name" property="attrName"/>
+            <result column="attr_value_name" property="attrValueName"/>
+        </collection>
+    </resultMap>
+
+    <select id="getSpuSkuInfo" resultMap="skuDetailMap">
+        select
+            sku.`sku_id`,
+            sku.`create_time`,
+            sku.`update_time`,
+            sku.`spu_id`,
+            sku.`img_url`,
+            sku.`status`,
+            sku.score_fee,
+            sku.`name`,
+            sav.`attr_name`,
+            sav.`spu_sku_attr_id`,
+            sav.`attr_value_name`,
+            sst.stock as stock,
+            sst.channels_stock AS channels_stock,
+            sku.price_code,
+            sku.sku_code,
+            sku.channel_name,
+            sku.protect_price as sku_protect_price,
+            CASE
+                WHEN  temp.stock > 0 THEN
+                temp.stock
+                ELSE 0
+                END   AS store_sku_stock,
+            CASE
+                WHEN  temp.stock > 0 THEN
+                temp.protect_price
+                ELSE sku.protect_price
+                END   AS store_protect_price,
+            CASE
+                WHEN  temp.stock > 0 THEN
+                    temp.price_fee
+                ELSE sku.price_fee
+                END   AS price_fee,
+
+            CASE
+                WHEN  temp.stock > 0 THEN
+                    temp.market_price_fee
+                ELSE sku.market_price_fee
+                END   AS market_price_fee
+
+        from
+            sku  left join  (
+                SELECT
+                    ss.sku_id,ss.price_code,
+                    sum(ss.stock) as stock,
+                    ss.price_fee,
+                    ss.market_price_fee,
+                    ss.protect_price
+                FROM
+                    sku_store ss
+                where ss.spu_id=#{spuId} and ss.store_id=#{storeId} and ss.status=1
+                GROUP BY ss.price_code
+            )temp on sku.price_code=temp.price_code and sku.`status`=1
+
+                 LEFT JOIN `spu_sku_attr_value` sav ON sav.`sku_id` = sku.`sku_id` and sav.`status` != -1
+        LEFT JOIN `sku_stock` sst ON sst.sku_id = sku.sku_id
+        WHERE sku.`spu_id` = #{spuId} and sku.`status` = 1
+        order by sav.spu_sku_attr_id asc
+    </select>
+
+<!--    <select id="getSpuSkuInfo" resultMap="skuDetailMap">-->
+<!--        SELECT sku.`sku_id`,-->
+<!--               sku.`create_time`,-->
+<!--               sku.`update_time`,-->
+<!--               sku.`spu_id`,-->
+<!--               sku.`img_url`,-->
+<!--               CASE-->
+
+<!--                   WHEN ss.price_fee IS NOT NULL and ss.stock > 0 THEN-->
+<!--                       ss.price_fee-->
+<!--                   ELSE sku.price_fee-->
+<!--                   END   AS price_fee,-->
+<!--               CASE-->
+
+<!--                   WHEN ss.market_price_fee IS NOT NULL and ss.stock > 0 THEN-->
+<!--                       ss.market_price_fee-->
+<!--                   ELSE sku.market_price_fee-->
+<!--                   END   AS market_price_fee,-->
+<!--               sku.`status`,-->
+<!--               sku.score_fee,-->
+<!--               sku.`name`,-->
+<!--               sav.`attr_name`,-->
+<!--               sav.`spu_sku_attr_id`,-->
+<!--               sav.`attr_value_name`,-->
+<!--               sst.stock as stock-->
+<!--        FROM sku-->
+<!--                 LEFT JOIN `spu_sku_attr_value` sav ON sav.`sku_id` = sku.`sku_id` and sav.`status` != -1-->
+<!--                 LEFT JOIN `sku_store` ss-->
+<!--        ON ss.sku_id = sku.sku_id AND ss.store_id = #{storeId} and ss.status=1-->
+<!--            LEFT JOIN `sku_stock` sst ON sst.sku_id = sku.sku_id-->
+<!--        WHERE sku.`spu_id` = #{spuId}-->
+<!--          and sku.`status` = 1-->
+<!--    </select>-->
+
+
+<!--    <select id="getSpuSkuInfo" resultMap="skuDetailMap">-->
+<!--        SELECT sku.`sku_id`,-->
+<!--               sku.`create_time`,-->
+<!--               sku.`update_time`,-->
+<!--               sku.`spu_id`,-->
+<!--               sku.`img_url`,-->
+<!--               CASE-->
+
+<!--                   WHEN ss.price_fee IS NOT NULL and (ss.stock is not null or ss.stock != 0) THEN-->
+<!--                       ss.price_fee-->
+<!--                   ELSE sku.price_fee-->
+<!--                   END   AS price_fee,-->
+<!--               CASE-->
+
+<!--                   WHEN ss.market_price_fee IS NOT NULL and (ss.stock is not null or ss.stock != 0) THEN-->
+<!--                       ss.market_price_fee-->
+<!--                   ELSE sku.market_price_fee-->
+<!--                   END   AS market_price_fee,-->
+<!--               sku.`status`,-->
+<!--               sku.score_fee,-->
+<!--               sku.`name`,-->
+<!--               sav.`attr_name`,-->
+<!--               sav.`spu_sku_attr_id`,-->
+<!--               sav.`attr_value_name`,-->
+<!--               sst.stock as stock-->
+<!--        FROM sku-->
+<!--                 LEFT JOIN `spu_sku_attr_value` sav ON sav.`sku_id` = sku.`sku_id` and sav.`status` != -1-->
+<!--                 LEFT JOIN `sku_store` ss-->
+<!--        ON ss.sku_id = sku.sku_id AND ss.store_id = #{storeId} and ss.status=1-->
+<!--            LEFT JOIN `sku_stock` sst ON sst.sku_id = sku.sku_id-->
+<!--        WHERE sku.`spu_id` = #{spuId}-->
+<!--          and sku.`status` = 1-->
+<!--    </select>-->
+
+    <select id="getSkuByCode" resultMap="skuVOMap">
+        select *
+        from sku
+        where sku_code = #{code}
+    </select>
+
+    <select id="getSkcByCode" resultMap="skuVOMap">
+        select *
+        from sku
+        where status=1 and price_code = #{code}
+    </select>
+
+    <select id="getSkuBySpuId" resultMap="skuVOMap">
+        select *
+        from sku
+        where status=1 and spu_id = #{spuId}
+    </select>
+    <select id="getAppSkuBySkuIdList" resultType="java.lang.Long">
+        SELECT
+        sku_id
+        FROM
+        sku
+        WHERE
+        STATUS = 1
+        AND spu_id IN
+        <foreach collection="spuIdList" open="(" separator="," close=")" item="spuId">
+            #{spuId}
+        </foreach>
+    </select>
+
+    <select id="getSkuByPriceCode" resultType="com.mall4j.cloud.product.model.Sku">
+        SELECT
+        *
+        FROM
+        sku
+        WHERE
+        price_code=#{priceCode}
+    </select>
+
+    <select id="getAppSkuPriceBySkuIdList" resultType="com.mall4j.cloud.product.dto.SkuPriceDTO">
+        SELECT
+            sku.sku_id,
+            sku.spu_id,
+            sku.price_code,
+            sku.channel_name,
+            sku.protect_price AS sku_protect_price,
+            CASE
+                WHEN  temp.stock > 0 THEN
+                temp.stock
+                ELSE 0
+                END   AS store_sku_stock,
+            CASE
+                WHEN  temp.stock > 0 THEN
+                    temp.protect_price
+                ELSE sku.protect_price
+                END   AS store_protect_price,
+            CASE
+                WHEN  temp.stock > 0 THEN
+                    temp.price_fee
+                ELSE sku.price_fee
+                END   AS price_fee,
+
+            CASE
+                WHEN  temp.stock > 0 THEN
+                    temp.market_price_fee
+                ELSE sku.market_price_fee
+                END   AS market_price_fee
+        FROM
+            sku left join (
+                SELECT
+                    ss.sku_id,ss.price_code,
+                    sum(ss.stock) as stock,
+                    ss.price_fee,
+                    ss.market_price_fee,
+                    ss.protect_price
+                FROM
+                    sku_store ss
+                where  ss.store_id=#{storeId} and ss.status=1 and ss.spu_id IN
+                    <foreach collection="spuIdList" open="(" separator="," close=")" item="spuId">
+                        #{spuId}
+                    </foreach>
+                GROUP BY ss.price_code
+            )temp on sku.price_code=temp.price_code and sku.`status`=1
+        WHERE
+            sku.`status` = 1
+          AND sku.spu_id IN
+                <foreach collection="spuIdList" open="(" separator="," close=")" item="spuId">
+                    #{spuId}
+                </foreach>
+    </select>
+
+<!--    <select id="getAppSkuPriceBySkuIdList" resultType="com.mall4j.cloud.product.dto.SkuPriceDTO">-->
+<!--        SELECT-->
+<!--        sku.sku_id,-->
+<!--        sku.spu_id,-->
+<!--        case when ss.price_fee is not null-->
+<!--        then ss.price_fee-->
+<!--        else-->
+<!--        sku.price_fee-->
+<!--        end as price_fee-->
+<!--        FROM-->
+<!--        sku left join sku_store ss on sku.sku_id = ss.sku_id and ss.store_id = #{storeId} and ss.status=1-->
+<!--        and ss.stock>0-->
+<!--        WHERE-->
+<!--        sku.`status` = 1-->
+<!--        AND sku.spu_id IN-->
+<!--        <foreach collection="spuIdList" open="(" separator="," close=")" item="spuId">-->
+<!--            #{spuId}-->
+<!--        </foreach>-->
+<!--    </select>-->
+
+    <select id="getSpuSkuVos" resultType="com.mall4j.cloud.product.vo.SpuSkuVo">
+        SELECT
+            sku.market_price_fee,
+            sku.price_fee,
+            sku.price_code,
+            spu.spu_id,
+            spu.spu_code,
+            spu.channel_name,
+            spu.channel_discount
+        FROM
+            sku
+                JOIN spu ON sku.spu_id = spu.spu_id  and spu.channel_name = #{channelName}
+                AND spu.`status` = 1
+        WHERE
+            sku.`status` = 1
+        GROUP BY sku.price_code
+    </select>
+
+    <select id="getCancelChannelPirceSkus" resultType="com.mall4j.cloud.product.model.Sku">
+        SELECT
+            sku.*,
+               spu.spu_code
+        FROM
+            sku
+                join spu on sku.spu_id=spu.spu_id
+        WHERE
+            sku.channel_price > 0
+          and (ISNULL(spu.channel_name) or spu.channel_name!=#{channelName})
+        GROUP BY sku.sku_code
+    </select>
+
+    <select id="getPriceFeeErrorSkus" resultType="com.mall4j.cloud.product.vo.SkuVo">
+        select * from (
+        SELECT
+        sku.sku_id,
+        sku.spu_id,
+        sku.price_fee,
+        sku.market_price_fee,
+        sku.past_market_price_fee,
+        ( sku.market_price_fee * #{discount} ) as discount_price,
+        sku.sku_code,
+        sku.price_code,
+        spu.spu_code
+        from sku
+        join spu on spu.spu_id=sku.spu_id and spu.`status`=1
+        WHERE
+        sku.status =1
+        )temp
+        where  temp.price_fee &lt;  temp.discount_price
+    </select>
+
+    <select id="getSkuIdListingList" resultType="long">
+        SELECT
+            sku_id
+        FROM
+            sku a
+                LEFT JOIN spu b ON a.spu_id = b.spu_id
+        WHERE
+            b.`status` = 1
+    </select>
+</mapper>

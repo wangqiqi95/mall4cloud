@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.MallFxOrderCommssionDtlMapper">
+  <resultMap id="mallFxOrderCommssionDtlMap" type="com.mall4j.cloud.transfer.model.MallFxOrderCommssionDtl">
+    <id column="Id" property="id" />
+    <result column="CopId" property="copid"/>
+    <result column="BrandId" property="brandid"/>
+    <result column="OcId" property="ocid"/>
+    <result column="OrderId" property="orderid"/>
+    <result column="OrderSaveType" property="ordersavetype"/>
+    <result column="OrderDtlId" property="orderdtlid"/>
+    <result column="ItemId" property="itemid"/>
+    <result column="ItemName" property="itemname"/>
+    <result column="ItemNo" property="itemno"/>
+    <result column="ImgUrl" property="imgurl"/>
+    <result column="BarId" property="barid"/>
+    <result column="BarCode" property="barcode"/>
+    <result column="Quantity" property="quantity"/>
+    <result column="SalePrice" property="saleprice"/>
+    <result column="RealPayAmount" property="realpayamount"/>
+    <result column="Commission" property="commission"/>
+    <result column="PreCommission" property="precommission"/>
+    <result column="DedCommission" property="dedcommission"/>
+    <result column="Rate" property="rate"/>
+    <result column="RateType" property="ratetype"/>
+    <result column="CaculateArgs" property="caculateargs"/>
+    <result column="CreateDate" property="createdate"/>
+    <result column="LastModifiedDate" property="lastmodifieddate"/>
+    <result column="PromotionSource" property="promotionsource"/>
+    <result column="PSId" property="psid"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `Id`,`CopId`,`BrandId`,`OcId`,`OrderId`,`OrderSaveType`,`OrderDtlId`,`ItemId`,`ItemName`,`ItemNo`,`ImgUrl`,`BarId`,`BarCode`,`Quantity`,`SalePrice`,`RealPayAmount`,`Commission`,`PreCommission`,`DedCommission`,`Rate`,`RateType`,`CaculateArgs`,`CreateDate`,`LastModifiedDate`,`PromotionSource`,`PSId`
+  </sql>
+  <select id="list" resultMap="mallFxOrderCommssionDtlMap">
+    select <include refid="Vo_Column_List"/> from mall_fx_order_commssion_dtl order by Id desc
+  </select>
+  <select id="getById" resultMap="mallFxOrderCommssionDtlMap">
+    select <include refid="Vo_Column_List"/> from mall_fx_order_commssion_dtl where Id = #{id}
+  </select>
+  <insert id="save">
+    insert into mall_fx_order_commssion_dtl (`CopId`,`BrandId`,`OcId`,`OrderId`,`OrderSaveType`,`OrderDtlId`,`ItemId`,`ItemName`,`ItemNo`,`ImgUrl`,`BarId`,`BarCode`,`Quantity`,`SalePrice`,`RealPayAmount`,`Commission`,`PreCommission`,`DedCommission`,`Rate`,`RateType`,`CaculateArgs`,`CreateDate`,`LastModifiedDate`,`PromotionSource`,`PSId`)
+    values (#{mallFxOrderCommssionDtl.copid},#{mallFxOrderCommssionDtl.brandid},#{mallFxOrderCommssionDtl.ocid},#{mallFxOrderCommssionDtl.orderid},#{mallFxOrderCommssionDtl.ordersavetype},#{mallFxOrderCommssionDtl.orderdtlid},#{mallFxOrderCommssionDtl.itemid},#{mallFxOrderCommssionDtl.itemname},#{mallFxOrderCommssionDtl.itemno},#{mallFxOrderCommssionDtl.imgurl},#{mallFxOrderCommssionDtl.barid},#{mallFxOrderCommssionDtl.barcode},#{mallFxOrderCommssionDtl.quantity},#{mallFxOrderCommssionDtl.saleprice},#{mallFxOrderCommssionDtl.realpayamount},#{mallFxOrderCommssionDtl.commission},#{mallFxOrderCommssionDtl.precommission},#{mallFxOrderCommssionDtl.dedcommission},#{mallFxOrderCommssionDtl.rate},#{mallFxOrderCommssionDtl.ratetype},#{mallFxOrderCommssionDtl.caculateargs},#{mallFxOrderCommssionDtl.createdate},#{mallFxOrderCommssionDtl.lastmodifieddate},#{mallFxOrderCommssionDtl.promotionsource},#{mallFxOrderCommssionDtl.psid});
+  </insert>
+  <update id="update">
+    update mall_fx_order_commssion_dtl
+    <set>
+      <if test="mallFxOrderCommssionDtl.copid != null">
+        `CopId` = #{mallFxOrderCommssionDtl.copid},
+      </if>
+      <if test="mallFxOrderCommssionDtl.brandid != null">
+        `BrandId` = #{mallFxOrderCommssionDtl.brandid},
+      </if>
+      <if test="mallFxOrderCommssionDtl.ocid != null">
+        `OcId` = #{mallFxOrderCommssionDtl.ocid},
+      </if>
+      <if test="mallFxOrderCommssionDtl.orderid != null">
+        `OrderId` = #{mallFxOrderCommssionDtl.orderid},
+      </if>
+      <if test="mallFxOrderCommssionDtl.ordersavetype != null">
+        `OrderSaveType` = #{mallFxOrderCommssionDtl.ordersavetype},
+      </if>
+      <if test="mallFxOrderCommssionDtl.orderdtlid != null">
+        `OrderDtlId` = #{mallFxOrderCommssionDtl.orderdtlid},
+      </if>
+      <if test="mallFxOrderCommssionDtl.itemid != null">
+        `ItemId` = #{mallFxOrderCommssionDtl.itemid},
+      </if>
+      <if test="mallFxOrderCommssionDtl.itemname != null">
+        `ItemName` = #{mallFxOrderCommssionDtl.itemname},
+      </if>
+      <if test="mallFxOrderCommssionDtl.itemno != null">
+        `ItemNo` = #{mallFxOrderCommssionDtl.itemno},
+      </if>
+      <if test="mallFxOrderCommssionDtl.imgurl != null">
+        `ImgUrl` = #{mallFxOrderCommssionDtl.imgurl},
+      </if>
+      <if test="mallFxOrderCommssionDtl.barid != null">
+        `BarId` = #{mallFxOrderCommssionDtl.barid},
+      </if>
+      <if test="mallFxOrderCommssionDtl.barcode != null">
+        `BarCode` = #{mallFxOrderCommssionDtl.barcode},
+      </if>
+      <if test="mallFxOrderCommssionDtl.quantity != null">
+        `Quantity` = #{mallFxOrderCommssionDtl.quantity},
+      </if>
+      <if test="mallFxOrderCommssionDtl.saleprice != null">
+        `SalePrice` = #{mallFxOrderCommssionDtl.saleprice},
+      </if>
+      <if test="mallFxOrderCommssionDtl.realpayamount != null">
+        `RealPayAmount` = #{mallFxOrderCommssionDtl.realpayamount},
+      </if>
+      <if test="mallFxOrderCommssionDtl.commission != null">
+        `Commission` = #{mallFxOrderCommssionDtl.commission},
+      </if>
+      <if test="mallFxOrderCommssionDtl.precommission != null">
+        `PreCommission` = #{mallFxOrderCommssionDtl.precommission},
+      </if>
+      <if test="mallFxOrderCommssionDtl.dedcommission != null">
+        `DedCommission` = #{mallFxOrderCommssionDtl.dedcommission},
+      </if>
+      <if test="mallFxOrderCommssionDtl.rate != null">
+        `Rate` = #{mallFxOrderCommssionDtl.rate},
+      </if>
+      <if test="mallFxOrderCommssionDtl.ratetype != null">
+        `RateType` = #{mallFxOrderCommssionDtl.ratetype},
+      </if>
+      <if test="mallFxOrderCommssionDtl.caculateargs != null">
+        `CaculateArgs` = #{mallFxOrderCommssionDtl.caculateargs},
+      </if>
+      <if test="mallFxOrderCommssionDtl.createdate != null">
+        `CreateDate` = #{mallFxOrderCommssionDtl.createdate},
+      </if>
+      <if test="mallFxOrderCommssionDtl.lastmodifieddate != null">
+        `LastModifiedDate` = #{mallFxOrderCommssionDtl.lastmodifieddate},
+      </if>
+      <if test="mallFxOrderCommssionDtl.promotionsource != null">
+        `PromotionSource` = #{mallFxOrderCommssionDtl.promotionsource},
+      </if>
+      <if test="mallFxOrderCommssionDtl.psid != null">
+        `PSId` = #{mallFxOrderCommssionDtl.psid},
+      </if>
+    </set>
+    where Id = #{mallFxOrderCommssionDtl.id}
+  </update>
+  <delete id="deleteById">
+    delete from mall_fx_order_commssion_dtl where Id = #{id}
+  </delete>
+
+</mapper>

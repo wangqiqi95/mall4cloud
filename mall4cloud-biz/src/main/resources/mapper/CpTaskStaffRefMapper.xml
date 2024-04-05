@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.TaskStaffRefMapper">
+  <resultMap id="taskStaffRefMap" type="com.mall4j.cloud.biz.model.cp.CpTaskStaffRef">
+    <id column="id" property="id" />
+    <result column="STAFF_ID" property="staffId"/>
+    <result column="USER_ID" property="userId"/>
+    <result column="STAFF_NAME" property="staffName"/>
+    <result column="TYPE" property="type"/>
+    <result column="TASK_ID" property="taskId"/>
+    <result column="is_delete" property="isDelete"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="create_by" property="createBy"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="status" property="status"/>
+    <result column="send_user_count" property="sendUserCount"/>
+    <result column="msg_id" property="msgId"/>
+    <result column="fail_list" property="failList"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`STAFF_ID`,`USER_ID`,`STAFF_NAME`,`TYPE`,`TASK_ID`,`is_delete`,`create_time`,`update_time`,`create_by`,`update_by`,`status`,`send_user_count`,`msg_id`,`fail_list`
+  </sql>
+  <select id="list" resultMap="taskStaffRefMap">
+    select <include refid="Vo_Column_List"/> from cp_task_staff_ref order by id desc
+  </select>
+
+  <select id="listByTaskId" resultMap="taskStaffRefMap">
+    select <include refid="Vo_Column_List"/> from cp_task_staff_ref  WHERE is_delete=0 and TYPE = #{type} AND TASK_ID = #{taskId}
+  </select>
+
+
+  <select id="getById" resultMap="taskStaffRefMap">
+    select <include refid="Vo_Column_List"/> from cp_task_staff_ref where id = #{id}
+  </select>
+  <delete id="deleteById">
+    delete from cp_task_staff_ref where id = #{id}
+  </delete>
+  <!-- 根据任务id删除员工的关联关系 -->
+  <delete id="deleteByTaskId">
+    update cp_task_staff_ref set is_delete=1 where TASK_ID = #{taskId} and TYPE = #{type}
+  </delete>
+
+
+  <select id="selectTaskRefeshList" resultType="com.mall4j.cloud.biz.vo.cp.CpTaskStaffRefVO">
+    select sr.id,
+       sr.STAFF_ID,
+       sr.USER_ID,
+       sr.TASK_ID,
+       sr.send_user_count,
+        sr.msg_id
+<!--       task.msg_id-->
+    from cp_task_staff_ref sr
+             left join cp_group_create_task task on sr.TASK_ID = task.ID
+    where sr.is_delete = 0
+      and task.is_delete = 0
+      and task.is_replay = 0
+      and task.SEND_STATUS = 1
+      and sr.status = 0
+  </select>
+
+  <select id="waitMatterCountByStaffId" resultType="java.lang.Integer">
+    select count(1)
+    from cp_task_staff_ref
+    where is_delete=0
+    and STAFF_ID=#{staffId}
+    and TASK_ID in(select id from cp_group_create_task where is_delete=0)
+  </select>
+
+</mapper>

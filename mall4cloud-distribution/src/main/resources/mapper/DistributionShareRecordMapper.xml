@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionShareRecordMapper">
+  <resultMap id="distributionShareRecordMap" type="com.mall4j.cloud.distribution.model.DistributionShareRecord">
+    <id column="id" property="id" />
+    <result column="share_id" property="shareId"/>
+    <result column="share_type" property="shareType"/>
+    <result column="activity_id" property="activityId"/>
+    <result column="activity_type" property="activityType"/>
+    <result column="activity_name" property="activityName"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`share_id`,`share_type`,`activity_id`,`activity_type`,`activity_name`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionShareRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_share_record order by id desc
+  </select>
+  <select id="getById" resultMap="distributionShareRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_share_record where id = #{id}
+  </select>
+  <select id="countByActivityAndDate" resultType="java.lang.Integer">
+    select count(id) from distribution_share_record
+    where activity_id = #{activityId}
+    and activity_type = #{activityType}
+    and create_time between #{startDate} and #{endDate}
+  </select>
+    <select id="countByShareActivityAndDate" resultType="java.lang.Integer">
+      select count(id) from distribution_share_record
+    where activity_id = #{activityId}
+    and activity_type = #{activityType}
+    and share_id = #{shareId}
+    <if test="startDate != null and endDate != null">
+      and create_time between #{startDate} and #{endDate}
+    </if>
+    </select>
+    <select id="listStaffByActivity" resultType="com.mall4j.cloud.distribution.vo.DistributionShareRecordVO">
+      select share_id as shareId, count(id) as totalNum from distribution_share_record
+      where activity_id = #{activityId}
+      and activity_type = #{activityType}
+      <if test="startDate != null and endDate != null">
+        and create_time between #{startDate} and #{endDate}
+      </if>
+      group by share_id
+    </select>
+    <insert id="save">
+    insert into distribution_share_record (`share_id`,`share_type`,`activity_id`,`activity_type`,`activity_name`)
+    values (#{distributionShareRecord.shareId},#{distributionShareRecord.shareType},#{distributionShareRecord.activityId},#{distributionShareRecord.activityType},#{distributionShareRecord.activityName});
+  </insert>
+  <update id="update">
+    update distribution_share_record
+    <set>
+      <if test="distributionShareRecord.shareId != null">
+        `share_id` = #{distributionShareRecord.shareId},
+      </if>
+      <if test="distributionShareRecord.shareType != null">
+        `share_type` = #{distributionShareRecord.shareType},
+      </if>
+      <if test="distributionShareRecord.activityId != null">
+        `activity_id` = #{distributionShareRecord.activityId},
+      </if>
+      <if test="distributionShareRecord.activityType != null">
+        `activity_type` = #{distributionShareRecord.activityType},
+      </if>
+    </set>
+    where id = #{distributionShareRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_share_record where id = #{id}
+  </delete>
+
+</mapper>

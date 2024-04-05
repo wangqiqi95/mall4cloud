@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpStaffCodeRefMapper">
+  <resultMap id="staffCodeRefMap" type="com.mall4j.cloud.biz.model.cp.CpStaffCodeRef">
+    <id column="id" property="id" />
+    <result column="CODE_ID" property="codeId"/>
+    <result column="STAFF_ID" property="staffId"/>
+    <result column="USER_ID" property="userId"/>
+    <result column="STAFF_NAME" property="staffName"/>
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `id`,`CODE_ID`,`STAFF_ID`,STAFF_NAME,USER_ID
+  </sql>
+  <select id="listByCodeId" resultMap="staffCodeRefMap">
+    select <include refid="Vo_Column_List"/> from cp_staff_code_ref  where is_delete=0 and CODE_ID = #{codeId}
+  </select>
+
+  <select id="listByCode" resultMap="staffCodeRefMap">
+    select <include refid="Vo_Column_List"/> from cp_staff_code_ref  where is_delete=0 and CODE_ID = #{codeId} and type=#{type}
+  </select>
+
+  <insert id="save"  useGeneratedKeys="true" keyProperty="id" keyColumn="ID" >
+    insert into cp_staff_code_ref (`CODE_ID`,`STAFF_ID`,STAFF_NAME,USER_ID)
+    values (#{et.codeId},#{et.staffId},#{et.staffName},#{et.userId});
+  </insert>
+  <delete id="deleteByCodeId">
+    delete from cp_staff_code_ref where CODE_ID = #{codeId}
+  </delete>
+
+  <select id="getStaffCodeRefByStaffId" resultType="com.mall4j.cloud.biz.model.cp.CpStaffCodeRef">
+      select * from cp_staff_code_ref where STAFF_ID=#{staffId} limit 1
+  </select>
+
+</mapper>

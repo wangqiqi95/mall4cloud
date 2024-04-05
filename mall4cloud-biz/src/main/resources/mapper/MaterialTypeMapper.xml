@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.MaterialTypeMapper">
+  <resultMap id="materialTypeMap" type="com.mall4j.cloud.biz.model.cp.MaterialType">
+    <id column="ID" property="id" />
+    <result column="TYPE_NAME" property="typeName"/>
+    <result column="PARENT_ID" property="parentId"/>
+    <result column="IS_SHOW" property="isShow"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="UPDATE_TIME" property="updateTime"/>
+    <result column="FLAG" property="flag"/>
+    <result column="STATUS" property="status"/>
+    <result column="IS_TOP" property="isTop"/>
+  </resultMap>
+
+  <resultMap id="materialTypeVOMap" extends="materialTypeMap" type="com.mall4j.cloud.biz.vo.cp.MaterialTypeVO">
+    <collection property="children" ofType="com.mall4j.cloud.biz.model.cp.MaterialType" column="ID" select="listChildren" />
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `ID`,`TYPE_NAME`,`PARENT_ID`,`IS_SHOW`,`CREATE_TIME`,`UPDATE_TIME`,`FLAG`,`STATUS`,`IS_TOP`
+  </sql>
+  <select id="list" resultMap="materialTypeMap">
+    select <include refid="Vo_Column_List"/> from CP_MATERIAL_TYPE order by ID desc
+  </select>
+  <select id="getById" resultMap="materialTypeMap">
+    SELECT <include refid="Vo_Column_List"/>
+    FROM CP_MATERIAL_TYPE
+    WHERE ID = #{id}
+    ORDER BY IS_TOP DESC, UPDATE_TIME DESC
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="ID" >
+    insert into CP_MATERIAL_TYPE (`TYPE_NAME`,`PARENT_ID`,`IS_SHOW`,`CREATE_TIME`,`UPDATE_TIME`,`FLAG`,`STATUS`,`IS_TOP`)
+    values (#{materialType.typeName},#{materialType.parentId},#{materialType.isShow},#{materialType.createTime},#{materialType.updateTime},#{materialType.flag},#{materialType.status},#{materialType.isTop});
+  </insert>
+  <update id="update">
+    update CP_MATERIAL_TYPE
+    <set>
+      <if test="materialType.typeName != null">
+        `TYPE_NAME` = #{materialType.typeName},
+      </if>
+      <if test="materialType.parentId != null">
+        `PARENT_ID` = #{materialType.parentId},
+      </if>
+      <if test="materialType.isShow != null">
+        `IS_SHOW` = #{materialType.isShow},
+      </if>
+      <if test="materialType.createTime != null">
+        `CREATE_TIME` = #{materialType.createTime},
+      </if>
+      <if test="materialType.updateTime != null">
+        `UPDATE_TIME` = #{materialType.updateTime},
+      </if>
+      <if test="materialType.flag != null">
+        `FLAG` = #{materialType.flag},
+      </if>
+      <if test="materialType.status != null">
+        `STATUS` = #{materialType.status},
+      </if>
+      <if test="materialType.isTop != null">
+        `IS_TOP` = #{materialType.isTop},
+      </if>
+    </set>
+    where ID = #{materialType.id}
+  </update>
+  <delete id="deleteById">
+    delete from CP_MATERIAL_TYPE where  ID = #{id} or  PARENT_ID = #{id}
+  </delete>
+
+  <!-- 查询一级分类 -->
+  <select id="listParent" resultMap="materialTypeMap">
+    select <include refid="Vo_Column_List"/> from CP_MATERIAL_TYPE
+      where (PARENT_ID is null or PARENT_ID =0)
+      AND STATUS =1
+      AND FLAG = 0
+    ORDER BY IS_TOP DESC, UPDATE_TIME DESC
+  </select>
+
+  <!-- 查询二级分类 -->
+  <select id="listChildren" resultMap="materialTypeMap">
+    select <include refid="Vo_Column_List"/> from CP_MATERIAL_TYPE
+      where  STATUS =1
+      AND FLAG = 0
+      <if test="parentId != null"> AND  PARENT_ID = #{parentId} </if>
+    ORDER BY IS_TOP DESC, UPDATE_TIME DESC
+  </select>
+
+  <!-- 返回一级类型 包含 子类型的list -->
+  <select id="listParentContainChildren" resultMap="materialTypeVOMap">
+    select <include refid="Vo_Column_List"/> from CP_MATERIAL_TYPE
+      where (PARENT_ID is null or PARENT_ID =0)
+      AND STATUS =1
+      AND FLAG = 0
+    ORDER BY IS_TOP DESC, UPDATE_TIME DESC
+  </select>
+
+  <select id="checkMaterial" resultType="java.lang.Integer">
+    SELECT ID
+    FROM CP_MATERIAL_TYPE
+    WHERE STATUS = 1
+    AND FLAG = 0
+    <if test="parentId != null">
+        AND PARENT_ID = #{parentId}
+    </if>
+    ORDER BY IS_TOP DESC, UPDATE_TIME DESC
+  </select>
+
+</mapper>

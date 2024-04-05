@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinMaSubscriptUserBussinessRecordMapper">
+
+    <insert id="save">
+        insert into weixin_ma_subscript_user_bussiness_record (`user_record_id`,`bussiness_record_no`)
+        values(#{bussinessRecord.userRecordId},#{bussinessRecord.bussinessRecordNo})
+    </insert>
+
+    <select id="getUserBusRecordByUserRecordId" resultType="com.mall4j.cloud.biz.model.WeixinMaSubscriptUserBussinessRecord">
+        SELECT
+            br.id AS id,
+            br.user_record_id AS userRecordId,
+            br.bussiness_record_no AS bussinessRecordNo
+        FROM
+            weixin_ma_subscript_user_bussiness_record br
+                LEFT JOIN weixin_ma_subscript_user_record ur ON ur.id = br.user_record_id
+        WHERE
+                br.bussiness_record_no = (
+                SELECT
+                    bussiness_record_no
+                FROM
+                    weixin_ma_subscript_user_bussiness_record
+                WHERE
+                    user_record_id = #{userRecordId}
+            )
+    </select>
+
+    <select id="getUserRecordByUserIdAndBusIds" resultType="com.mall4j.cloud.biz.model.WeixinMaSubscriptUserBussinessRecord">
+
+        SELECT
+        br.id AS id,
+        br.user_record_id AS userRecordId,
+        br.bussiness_record_no AS bussinessRecordNo
+        FROM
+        weixin_ma_subscript_user_bussiness_record br
+        LEFT JOIN weixin_ma_subscript_user_record ur ON ur.id = br.user_record_id
+        WHERE
+        ur.`user_id` = #{userId}
+        AND ur.`send_status` = 0
+        AND ur.`bussiness_id` IN
+        <foreach collection="bussinessIdList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

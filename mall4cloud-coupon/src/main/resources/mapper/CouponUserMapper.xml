@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.CouponUserMapper">
+    <resultMap id="couponUserMap" type="com.mall4j.cloud.coupon.model.CouponUser">
+        <id column="coupon_user_id" property="couponUserId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="coupon_id" property="couponId"/>
+        <result column="user_id" property="userId"/>
+        <result column="receive_time" property="receiveTime"/>
+        <result column="user_start_time" property="userStartTime"/>
+        <result column="user_end_time" property="userEndTime"/>
+        <result column="status" property="status"/>
+        <result column="is_delete" property="isDelete"/>
+    </resultMap>
+
+    <resultMap id="CouponAndCouponUserMap" type="com.mall4j.cloud.coupon.vo.CouponUserVO">
+        <id column="coupon_user_id" property="couponUserId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="coupon_id" property="couponId"/>
+        <result column="user_id" property="userId"/>
+        <result column="receive_time" property="receiveTime"/>
+        <result column="user_start_time" property="userStartTime"/>
+        <result column="user_end_time" property="userEndTime"/>
+        <result column="status" property="status"/>
+        <result column="is_delete" property="isDelete"/>
+        <association property="couponVO" javaType="com.mall4j.cloud.coupon.vo.CouponVO">
+            <id column="coupon_id" property="couponId" />
+            <result column="shop_id" property="shopId"/>
+            <result column="coupon_name" property="couponName"/>
+            <result column="sub_title" property="subTitle"/>
+            <result column="coupon_type" property="couponType"/>
+            <result column="suitable_prod_type" property="suitableProdType"/>
+            <result column="get_way" property="getWay"/>
+            <result column="valid_time_type" property="validTimeType"/>
+            <result column="cash_condition" property="cashCondition"/>
+            <result column="reduce_amount" property="reduceAmount"/>
+            <result column="coupon_discount" property="couponDiscount"/>
+            <result column="start_time" property="startTime"/>
+            <result column="end_time" property="endTime"/>
+            <result column="after_receive_days" property="afterReceiveDays"/>
+            <result column="valid_days" property="validDays"/>
+            <result column="total_stock" property="totalStock"/>
+            <result column="stocks" property="stocks"/>
+            <result column="limit_num" property="limitNum"/>
+            <result column="status" property="status"/>
+            <result column="puton_status" property="putonStatus"/>
+        </association>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `coupon_user_id`,
+        `create_time`,
+        `update_time`,
+        `coupon_id`,
+        `user_id`,
+        `receive_time`,
+        `user_start_time`,
+        `user_end_time`,
+        `status`,
+        `is_delete`
+    </sql>
+    <select id="list" resultType="com.mall4j.cloud.coupon.vo.CouponUserVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from coupon_user
+        order by coupon_user_id desc
+    </select>
+    <select id="getByCouponUserId" resultType="com.mall4j.cloud.coupon.vo.CouponUserVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from coupon_user
+        where coupon_user_id = #{couponUserId}
+    </select>
+    <insert id="save">
+        insert into coupon_user (`coupon_id`, `user_id`, `receive_time`, `user_start_time`, `user_end_time`, `status`,
+                                 `is_delete`)
+        values (#{couponUser.couponId}, #{couponUser.userId}, #{couponUser.receiveTime}, #{couponUser.userStartTime},
+                #{couponUser.userEndTime}, #{couponUser.status}, #{couponUser.isDelete});
+    </insert>
+    <update id="update">
+        update coupon_user
+        <set>
+            <if test="couponUser.couponId != null">
+                `coupon_id` = #{couponUser.couponId},
+            </if>
+            <if test="couponUser.userId != null">
+                `user_id` = #{couponUser.userId},
+            </if>
+            <if test="couponUser.receiveTime != null">
+                `receive_time` = #{couponUser.receiveTime},
+            </if>
+            <if test="couponUser.userStartTime != null">
+                `user_start_time` = #{couponUser.userStartTime},
+            </if>
+            <if test="couponUser.userEndTime != null">
+                `user_end_time` = #{couponUser.userEndTime},
+            </if>
+            <if test="couponUser.status != null">
+                `status` = #{couponUser.status},
+            </if>
+            <if test="couponUser.isDelete != null">
+                `is_delete` = #{couponUser.isDelete},
+            </if>
+        </set>
+        where coupon_user_id = #{couponUser.couponUserId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from coupon_user
+        where coupon_user_id = #{couponUserId}
+    </delete>
+
+    <select id="getUserHasCouponCount" resultType="int">
+        SELECT COUNT(*)
+        FROM coupon_user
+        WHERE coupon_id = #{couponId}
+          and user_id = #{userId}
+    </select>
+
+    <insert id="saveBatch">
+        insert into coupon_user (`coupon_id`, `user_id`, `receive_time`, `user_start_time`, `user_end_time`,
+        `status`, `is_delete`) values
+        <foreach collection="couponUsers" item="couponUser" separator=",">
+             (#{couponUser.couponId}, #{couponUser.userId}, #{couponUser.receiveTime},
+            #{couponUser.userStartTime}, #{couponUser.userEndTime}, #{couponUser.status},
+            #{couponUser.isDelete})
+        </foreach>
+    </insert>
+
+    <select id="getCouponCountForUser" resultType="int">
+        SELECT COUNT(*)
+        FROM coupon_user
+        WHERE coupon_id = #{couponId}
+          AND user_id = #{userId}
+    </select>
+
+    <update id="deleteUserCouponByCouponId">
+        UPDATE coupon_user cu
+        SET cu.is_delete =1
+        WHERE cu.user_id = #{userId}
+          AND cu.coupon_user_id = #{couponUserId}
+    </update>
+    <update id="batchUpdateUserCouponStatus">
+        UPDATE coupon_user
+        SET `status` = #{status}
+        WHERE coupon_user_id IN
+        <foreach collection="userCouponIds" item="userCouponId" open="(" close=")" separator=",">
+            #{userCouponId}
+        </foreach>
+    </update>
+    <select id="getCouponCountByStatus" resultType="java.util.Map">
+        SELECT
+            COUNT(CASE WHEN cu.status = 1 THEN 1 ELSE NULL END) AS 'allCount', -- 全部
+            COUNT(CASE WHEN c.shop_id = 0 AND cu.status = 1 THEN 1 ELSE NULL END) AS 'platformCount',-- 平台券
+            COUNT(CASE WHEN c.shop_id != 0 AND cu.status = 1 THEN 1 ELSE NULL END) AS 'multishopCount' -- 店铺券
+        FROM coupon_user cu
+        INNER JOIN coupon c ON c.`coupon_id` = cu.`coupon_id` AND c.puton_status NOT IN (2,3)
+        WHERE cu.`user_id` = #{userId} AND cu.`is_delete` = 0
+    </select>
+    <select id="listByAndShopIdOrSpuId" resultType="com.mall4j.cloud.coupon.dto.CouponUserCountDTO">
+        SELECT coupon_id, COUNT(coupon_user_id) receive_num, COUNT(IF(`status` = 1 AND is_delete = 0, 1, NULL)) num
+        FROM coupon_user
+        WHERE user_id = #{userId} AND coupon_id IN
+        <foreach collection="couponIds" item="couponId" open="(" close=")" separator=",">
+            #{couponId}
+        </foreach>
+        GROUP BY coupon_id
+    </select>
+
+    <select id="countCanUseCoupon" resultType="java.lang.Integer">
+        SELECT COUNT(CASE WHEN cu.status = 1 THEN 1 ELSE NULL END) FROM coupon_user cu WHERE cu.`user_id` = #{userId}
+        AND cu.`is_delete` = 0
+    </select>
+    <select id="countCouponUserByUserId" resultType="com.mall4j.cloud.api.coupon.vo.CouponUserCountDataVO">
+        SELECT
+	    COUNT( CASE WHEN cu.status = 0 THEN 1 ELSE NULL END ) AS couponExpiredNums,
+        COUNT( CASE WHEN cu.status = 1 THEN 1 ELSE NULL END ) AS couponUsableNums,
+        COUNT( CASE WHEN cu.status = 2 THEN 1 ELSE NULL END ) AS couponUsedNums
+        FROM coupon_user cu
+        WHERE cu.user_id = #{userId} AND cu.is_delete = 0
+    </select>
+
+    <select id="getPageByUserId" parameterType="com.mall4j.cloud.coupon.dto.CouponUserDTO" resultMap="CouponAndCouponUserMap">
+        SELECT
+        cu.`coupon_user_id`, cu.`status`, cu.`receive_time`, cu.`user_start_time`, cu.`user_end_time`,
+        c.`coupon_name`, c.`coupon_type`, c.`cash_condition`, c.`reduce_amount`, c.`coupon_discount`
+        FROM `coupon_user` cu
+        LEFT JOIN `coupon` c ON c.coupon_id = cu.coupon_id
+        <where>
+            cu.user_id = #{couponUserDTO.userId} AND cu.is_delete = 0
+            <if test="couponUserDTO.status != null">
+                AND cu.status = #{couponUserDTO.status}
+            </if>
+        </where>
+        ORDER BY cu.receive_time DESC
+    </select>
+
+    <update id="reductionCoupon">
+        UPDATE coupon_user set  status = 1 where coupon_user_id = #{userCouponId}
+    </update>
+
+    <delete id="deleteUnValidTimeCoupons">
+        delete from coupon_user where user_end_time &lt; #{date} and status = 0
+    </delete>
+
+    <update id="updateStatusByTime">
+        update coupon_user set status = 0 where user_end_time &lt; NOW()
+    </update>
+
+    <select id="countMemberCouponByParam" resultType="long">
+        SELECT DISTINCT(cu.user_id)
+        FROM `coupon_user` cu LEFT JOIN `coupon` tc ON cu.coupon_id = tc.coupon_id
+        <where>
+            <if test="shopId != null and shopId != 0">
+                AND tc.shop_id = #{shopId}
+            </if>
+            <if test="startTime != null and endTime != null">
+                AND (cu.receive_time <![CDATA[ >= ]]> #{startTime} AND cu.receive_time <![CDATA[ <= ]]> #{endTime})
+            </if>
+        </where>
+    </select>
+
+    <select id="getByCouponIdsAndUserIds" resultMap="couponUserMap">
+        SELECT * FROM `coupon_user`
+        WHERE is_delete = 0 AND `status` = 1 AND
+        user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+        AND coupon_id IN
+        <foreach collection="couponIds" item="couponId" open="(" close=")" separator=",">
+            #{couponId}
+        </foreach>
+    </select>
+
+    <update id="batchDeleteUserCoupon">
+        UPDATE coupon_user cu
+        SET cu.is_delete =1,cu.update_time = #{now}
+        WHERE  cu.coupon_user_id IN
+        <foreach collection="couponUserIds" item="couponUserId" open="(" close=")" separator=",">
+            #{couponUserId}
+        </foreach>
+    </update>
+
+    <select id="getCouponsCountForUsers" resultType="com.mall4j.cloud.coupon.dto.CouponUserCountDTO">
+        SELECT user_id,coupon_id,COUNT(coupon_id) as num
+        FROM coupon_user
+        WHERE is_delete = 0 and user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+         AND coupon_id IN
+        <foreach collection="couponIds" item="couponId" open="(" close=")" separator=",">
+            #{couponId}
+        </foreach>
+        GROUP BY user_id,coupon_id
+    </select>
+
+</mapper>

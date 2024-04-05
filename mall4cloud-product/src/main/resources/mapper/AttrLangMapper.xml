@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.AttrLangMapper">
+  <resultMap id="attrLangMap" type="com.mall4j.cloud.product.model.AttrLang">
+    <id column="attr_id" property="attrId" />
+    <result column="lang" property="lang"/>
+    <result column="name" property="name"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `attr_id`,`lang`,`name`
+  </sql>
+  <select id="list" resultMap="attrLangMap">
+    select <include refid="Vo_Column_List"/> from attr_lang order by attr_id desc
+  </select>
+  <select id="getByAttrId" resultMap="attrLangMap">
+    select <include refid="Vo_Column_List"/> from attr_lang where attr_id = #{attrId}
+  </select>
+  <insert id="save">
+    insert into attr_lang (`lang`,`name`)
+    values (#{attrLang.lang},#{attrLang.name});
+  </insert>
+  <update id="update">
+    update attr_lang
+    <set>
+      <if test="attrLang.lang != null">
+        `lang` = #{attrLang.lang},
+      </if>
+      <if test="attrLang.name != null">
+        `name` = #{attrLang.name},
+      </if>
+    </set>
+    where attr_id = #{attrLang.attrId}
+  </update>
+  <delete id="deleteById">
+    delete from attr_lang where attr_id = #{attrId}
+  </delete>
+
+  <insert id="batchSave">
+    insert into attr_lang (`attr_id`,`lang`,`name`,`desc`) values
+    <foreach collection="attrLangList" item="attrLang" separator=",">
+      (#{attrLang.attrId},#{attrLang.lang},#{attrLang.name},#{attrLang.desc})
+    </foreach>
+  </insert>
+
+  <select id="listByAttrId" resultMap="attrLangMap">
+    select <include refid="Vo_Column_List"/> from attr_lang where attr_id = #{attrId}
+  </select>
+
+  <update id="batchUpdate">
+    <foreach collection="attrLangList" item="attrLang">
+      update attr_lang
+      <set>
+        <if test="attrLang.name != null">
+          `name` = #{attrLang.name},
+        </if>
+        <if test="attrLang.desc != null">
+          `desc` = #{attrLang.desc},
+        </if>
+      </set>
+      where attr_id = #{attrLang.attrId} and `lang` = #{attrLang.lang};
+    </foreach>
+  </update>
+
+  <delete id="batchDelete">
+    delete from attr_lang where attr_id = #{attrId} and lang in
+    <foreach collection="langList" item="lang" open="(" close=")" separator=",">
+      #{lang}
+    </foreach>
+  </delete>
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.platform.mapper.TzTagMapper">
+  <resultMap id="tzTagMap" type="com.mall4j.cloud.platform.model.TzTag">
+    <id column="tag_id" property="tagId" />
+    <result column="tag_code" property="tagCode"/>
+    <result column="tag_name" property="tagName"/>
+    <result column="status" property="status"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+
+  <select id="listByParam" resultType="com.mall4j.cloud.platform.vo.TzTagVO">
+    select
+      tag.*
+    from
+      tz_tag tag
+    <if test="paramDTO.staffIds!=null and paramDTO.staffIds.size>0">
+      left join tz_tag_staff tstaff on tag.tag_id=tstaff.tag_id and tstaff.del_flag=0
+    </if>
+    <if test="paramDTO.storeIds!=null and paramDTO.storeIds.size>0">
+      left join tz_tag_store tstore on tag.tag_id=tstore.tag_id and tstore.del_flag=0
+    </if>
+    where
+      tag.del_flag=0
+      <if test="paramDTO.status!=null">
+        and tag.status=#{paramDTO.status}
+      </if>
+      <if test="paramDTO.tagName!=null and paramDTO.tagName!=''">
+        and tag.tag_name like concat('%', #{paramDTO.tagName}, '%')
+      </if>
+      <if test="paramDTO.staffIds!=null and paramDTO.staffIds.size>0">
+        and tstaff.staff_id in
+        <foreach collection="paramDTO.staffIds" item="staffId" index="index" open="(" separator="," close=")">
+          #{staffId}
+        </foreach>
+      </if>
+      <if test="paramDTO.storeIds!=null and paramDTO.storeIds.size>0">
+        and tstore.store_id in
+        <foreach collection="paramDTO.storeIds" item="storeId" index="index" open="(" separator="," close=")">
+          #{storeId}
+        </foreach>
+      </if>
+      group by tag.tag_id
+      order by tag.create_time desc,tag.tag_id desc
+  </select>
+
+</mapper>

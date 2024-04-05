@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.ElPriceProdMapper">
+  <resultMap id="elPriceProdMap" type="com.mall4j.cloud.product.model.ElPriceProd">
+    <id column="id" property="id" />
+    <result column="el_id" property="elId"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="sku_id" property="skuId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`el_id`,`spu_id`,`sku_id`
+  </sql>
+  <select id="getList" resultType="com.mall4j.cloud.product.vo.ElPriceProdVO">
+    SELECT
+      prod.*,
+      spu.name as spu_name,
+      spu.price_fee as price_fee,
+      spu.main_img_url,
+      spu.img_urls
+    FROM
+      `el_price_prod` prod
+        left join spu on spu.spu_id=prod.spu_id
+    where
+     1=1
+    <if test="elId != null and elId != ''">
+      and prod.el_id = #{elId}
+    </if>
+    <if test="prodName != null and prodName != ''">
+      and spu.name LIKE CONCAT('%',#{prodName},'%')
+    </if>
+    group by prod.spu_id
+  </select>
+  <select id="getById" resultMap="elPriceProdMap">
+    select <include refid="Vo_Column_List"/> from el_price_prod where id = #{id}
+  </select>
+  <insert id="save">
+    insert into el_price_prod (`id`,`el_id`,`spu_id`,`sku_id`)
+    values (#{elPriceProd.id},#{elPriceProd.elId},#{elPriceProd.spuId},#{elPriceProd.skuId});
+  </insert>
+  <insert id="saveBatch">
+    insert into el_price_prod (`el_id`,`spu_id`,`sku_id`) values
+    <foreach collection="elPriceProds" item="elPriceProd" separator=",">
+       (#{elPriceProd.elId},#{elPriceProd.spuId},#{elPriceProd.skuId})
+    </foreach>
+  </insert>
+  <update id="update">
+    update el_price_prod
+    <set>
+      <if test="elPriceProd.elId != null">
+        `el_id` = #{elPriceProd.elId},
+      </if>
+      <if test="elPriceProd.spuId != null">
+        `spu_id` = #{elPriceProd.spuId},
+      </if>
+      <if test="elPriceProd.skuId != null">
+        `sku_id` = #{elPriceProd.skuId},
+      </if>
+    </set>
+    where id = #{elPriceProd.id}
+  </update>
+  <delete id="deleteById">
+    delete from el_price_prod where id = #{id}
+  </delete>
+
+  <delete id="deleteByIds">
+    delete from el_price_prod where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </delete>
+
+  <delete id="deleteByElId">
+    delete from el_price_prod where el_id = #{elId}
+  </delete>
+    <select id="checkSkuIds" resultType="java.lang.String">
+        select a.sku_id from
+        el_price_prod a left join el_price_tag b on a.el_id = b.id
+        where b.is_deleted = 0 and a.sku_id in
+        <foreach collection="skuIds" item="skuId" open="(" close=")" separator=",">
+            #{skuId}
+        </foreach>
+    </select>
+
+  <select id="getElSpuList" resultType="com.mall4j.cloud.product.model.ElPriceProd">
+    select * from el_price_prod where 1=1
+    <if test="spuIds!=null and spuIds.size>0">
+      and spu_id in
+      <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+        #{spuId}
+      </foreach>
+    </if>
+
+  </select>
+
+</mapper>

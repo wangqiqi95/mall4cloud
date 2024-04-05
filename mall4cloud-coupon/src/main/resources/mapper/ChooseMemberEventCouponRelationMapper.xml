@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.coupon.mapper.ChooseMemberEventCouponRelationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.coupon.model.ChooseMemberEventCouponRelation">
+        <id column="event_coupon_relation_id" property="eventCouponRelationId" />
+        <result column="event_id" property="eventId" />
+        <result column="coupon_id" property="couponId" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        event_coupon_relation_id, event_id, coupon_id, create_time
+    </sql>
+
+    <insert id="insertBatch">
+        insert into t_choose_member_event_coupon_relation (event_id,coupon_id) values
+        <foreach collection="relationList" item="relation" separator="," close=";">
+            (#{relation.eventId},#{relation.couponId})
+        </foreach>
+    </insert>
+
+    <select id="checkCouponToShop" resultType="java.lang.Integer">
+        SELECT
+            count(1)
+        FROM
+            t_choose_member_event_coupon_relation relation
+                LEFT JOIN t_choose_member_event member_event ON relation.event_id = member_event.choose_member_event_id
+        WHERE
+            relation.coupon_id = #{couponId}
+          AND member_event.exchange_type = 0
+    </select>
+    
+    <select id="getTheCouponListByEventId" resultType="com.mall4j.cloud.coupon.vo.MemberEventCouponVO">
+        SELECT
+            relation.event_coupon_relation_id as relationId,
+            relation.coupon_id,
+            coupon.NAME,
+            coupon.type,
+            coupon.source_type,
+            coupon.amount_limit_num,
+            coupon.status,
+            coupon.start_time,
+            coupon.end_time
+        FROM
+            t_choose_member_event_coupon_relation relation
+                INNER JOIN t_coupon coupon ON relation.coupon_id = coupon.id
+        WHERE
+            relation.event_id = #{eventId}
+    </select>
+
+</mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.channels.ChannelsFreightTemplateMapper">
+
+    <resultMap type="com.mall4j.cloud.biz.model.channels.ChannelsFreightTemplate" id="ChannelsFreightTemplateMap">
+        <result property="id" column="id"/>
+        <result property="transportId" column="transport_id"/>
+        <result property="transName" column="trans_name"/>
+        <result property="wxTemplateId" column="wx_template_id"/>
+        <result property="wxTemplateName" column="wx_template_name"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="list" resultType="com.mall4j.cloud.biz.vo.channels.ChannelsFreightVO">
+        SELECT
+            cft.id,
+            cft.transport_id AS transportId,
+            cft.trans_name AS transName,
+            cft.wx_template_id AS wxTemplateId,
+            cft.wx_template_name AS wxTemplateName,
+            cft.create_by AS createBy,
+            cft.create_time AS createTime,
+            cft.update_by AS updateBy,
+            cft.update_time AS updateTime
+        FROM
+            `channels_freight_template` cft
+        WHERE
+            cft.is_deleted = 0
+            <if test="templateName != null and templateName != '' ">
+                and ( cft.trans_name like concat('%',#{templateName},'%') or  cft.wx_template_name like concat('%',#{templateName},'%') )
+            </if>
+    </select>
+
+</mapper>

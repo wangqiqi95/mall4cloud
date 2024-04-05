@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SpuLangMapper">
+  <resultMap id="spuLangMap" type="com.mall4j.cloud.product.model.SpuLang">
+    <id column="spu_id" property="spuId" />
+    <result column="lang" property="lang"/>
+    <result column="spu_name" property="spuName"/>
+    <result column="selling_point" property="sellingPoint"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `spu_id`,`lang`,`spu_name`,`selling_point`,`content`
+  </sql>
+  <select id="list" resultMap="spuLangMap">
+    select <include refid="Vo_Column_List"/> from spu_lang order by spu_id desc
+  </select>
+  <select id="getBySpuId" resultMap="spuLangMap">
+    select <include refid="Vo_Column_List"/> from spu_lang where spu_id = #{spuId}
+  </select>
+    <insert id="save">
+    insert into spu_lang (`lang`,`spu_name`,`selling_point`)
+    values (#{spuLang.lang},#{spuLang.spuName},#{spuLang.sellingPoint});
+  </insert>
+  <update id="batchUpdate">
+    <foreach collection="spuLangList" item="spuLang">
+      update spu_lang
+      <set>
+        <if test="spuLang.spuName != null">
+          `spu_name` = #{spuLang.spuName},
+        </if>
+        <if test="spuLang.sellingPoint != null">
+          `selling_point` = #{spuLang.sellingPoint},
+        </if>
+      </set>
+      where spu_id = #{spuLang.spuId} and lang = #{spuLang.lang};
+    </foreach>
+  </update>
+  <delete id="deleteById">
+    delete from spu_lang where spu_id = #{spuId}
+  </delete>
+
+  <insert id="batchSave">
+    <foreach collection="spuLangList" item="spuLang">
+      insert into spu_lang (`spu_id`,`lang`,`spu_name`,`selling_point`)
+      values (#{spuLang.spuId},#{spuLang.lang},#{spuLang.spuName},#{spuLang.sellingPoint});
+    </foreach>
+  </insert>
+
+  <delete id="deleteBatchBySpuIdAndLang">
+    delete from spu_lang where spu_id = #{spuId} and lang in
+    <foreach collection="langList" item="lang" open="(" close=")" separator=",">
+      #{lang}
+    </foreach>
+  </delete>
+
+  <select id="listLangId" resultType="java.lang.Integer">
+    select lang from spu_lang where spu_id = #{spuId}
+  </select>
+</mapper>

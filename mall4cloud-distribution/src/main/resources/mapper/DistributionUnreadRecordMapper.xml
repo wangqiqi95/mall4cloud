@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionUnreadRecordMapper">
+  <resultMap id="distributionUnreadRecordMap" type="com.mall4j.cloud.distribution.model.DistributionUnreadRecord">
+    <id column="id" property="id" />
+    <result column="identity_type" property="identityType"/>
+    <result column="user_id" property="userId"/>
+    <result column="unread_browse_num" property="unreadBrowseNum"/>
+    <result column="unread_purchase_num" property="unreadPurchaseNum"/>
+    <result column="unread_buy_num" property="unreadBuyNum"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`identity_type`,`user_id`,`unread_browse_num`,`unread_purchase_num`,`unread_buy_num`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionUnreadRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_unread_record order by id desc
+  </select>
+  <select id="getById" resultMap="distributionUnreadRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_unread_record where id = #{id}
+  </select>
+  <select id="getByUser" resultMap="distributionUnreadRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_unread_record
+    where identity_type = #{identityType}
+    and user_id = #{userId}
+  </select>
+  <insert id="save">
+    insert into distribution_unread_record (`identity_type`,`user_id`,`unread_browse_num`,`unread_purchase_num`,`unread_buy_num`)
+    values (#{distributionUnreadRecord.identityType},#{distributionUnreadRecord.userId},#{distributionUnreadRecord.unreadBrowseNum},#{distributionUnreadRecord.unreadPurchaseNum},#{distributionUnreadRecord.unreadBuyNum});
+  </insert>
+  <update id="update">
+    update distribution_unread_record
+    <set>
+      <if test="distributionUnreadRecord.identityType != null">
+        `identity_type` = #{distributionUnreadRecord.identityType},
+      </if>
+      <if test="distributionUnreadRecord.userId != null">
+        `user_id` = #{distributionUnreadRecord.userId},
+      </if>
+      <if test="distributionUnreadRecord.unreadBrowseNum != null">
+        `unread_browse_num` = #{distributionUnreadRecord.unreadBrowseNum},
+      </if>
+      <if test="distributionUnreadRecord.unreadPurchaseNum != null">
+        `unread_purchase_num` = #{distributionUnreadRecord.unreadPurchaseNum},
+      </if>
+      <if test="distributionUnreadRecord.unreadBuyNum != null">
+        `unread_buy_num` = #{distributionUnreadRecord.unreadBuyNum},
+      </if>
+    </set>
+    where id = #{distributionUnreadRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_unread_record where id = #{id}
+  </delete>
+
+</mapper>

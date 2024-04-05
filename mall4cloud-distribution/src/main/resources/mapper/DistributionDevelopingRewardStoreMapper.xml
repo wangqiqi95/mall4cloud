@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionDevelopingRewardStoreMapper">
+  <resultMap id="distributionDevelopingRewardStoreMap" type="com.mall4j.cloud.distribution.model.DistributionDevelopingRewardStore">
+    <id column="id" property="id" />
+    <result column="developing_reward_id" property="developingRewardId"/>
+    <result column="store_id" property="storeId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`developing_reward_id`,`store_id`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionDevelopingRewardStoreMap">
+    select <include refid="Vo_Column_List"/> from distribution_developing_reward_store order by id desc
+  </select>
+  <select id="getById" resultMap="distributionDevelopingRewardStoreMap">
+    select <include refid="Vo_Column_List"/> from distribution_developing_reward_store where id = #{id}
+  </select>
+  <select id="listByRewardId" resultMap="distributionDevelopingRewardStoreMap">
+    select <include refid="Vo_Column_List"/> from distribution_developing_reward_store
+    where developing_reward_id = #{rewardId}
+  </select>
+  <select id="listByStoreId" resultMap="distributionDevelopingRewardStoreMap">
+    select <include refid="Vo_Column_List"/> from distribution_developing_reward_store
+    where store_id = #{storeId}
+  </select>
+  <insert id="save">
+    insert into distribution_developing_reward_store (`developing_reward_id`,`store_id`)
+    values (#{distributionDevelopingRewardStore.developingRewardId},#{distributionDevelopingRewardStore.storeId});
+  </insert>
+  <update id="update">
+    update distribution_developing_reward_store
+    <set>
+      <if test="distributionDevelopingRewardStore.developingRewardId != null">
+        `developing_reward_id` = #{distributionDevelopingRewardStore.developingRewardId},
+      </if>
+      <if test="distributionDevelopingRewardStore.storeId != null">
+        `store_id` = #{distributionDevelopingRewardStore.storeId},
+      </if>
+    </set>
+    where id = #{distributionDevelopingRewardStore.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_developing_reward_store where id = #{id}
+  </delete>
+  <delete id="deleteByRewardIdNotInStoreIds">
+    delete from distribution_developing_reward_store
+    where developing_reward_id = #{rewardId}
+    and store_id in
+    <foreach collection="storeIds" item="storeId" open="(" close=")" separator=",">
+      #{storeId}
+    </foreach>
+  </delete>
+  <delete id="deleteByRewardId">
+    delete from distribution_developing_reward_store
+    where developing_reward_id = #{rewardId}
+  </delete>
+
+</mapper>

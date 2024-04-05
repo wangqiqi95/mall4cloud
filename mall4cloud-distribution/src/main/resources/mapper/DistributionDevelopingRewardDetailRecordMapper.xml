@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionDevelopingRewardDetailRecordMapper">
+  <resultMap id="distributionDevelopingRewardDetailRecordMap" type="com.mall4j.cloud.distribution.model.DistributionDevelopingRewardDetailRecord">
+    <id column="id" property="id" />
+    <result column="developing_reward_id" property="developingRewardId"/>
+    <result column="developing_reward_detail_id" property="developingRewardDetailId"/>
+    <result column="user_id" property="userId"/>
+    <result column="user_name" property="userName"/>
+    <result column="mobile" property="mobile"/>
+    <result column="apply_time" property="applyTime"/>
+    <result column="pass" property="pass"/>
+    <result column="pass_time" property="passTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`developing_reward_id`,`developing_reward_detail_id`,`user_id`,`user_name`,`mobile`,`apply_time`,`pass`,`pass_time`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="distributionDevelopingRewardDetailRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_developing_reward_detail_record order by id desc
+  </select>
+  <select id="getById" resultMap="distributionDevelopingRewardDetailRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_developing_reward_detail_record where id = #{id}
+  </select>
+  <select id="getByUserId" resultMap="distributionDevelopingRewardDetailRecordMap">
+    select <include refid="Vo_Column_List"/> from distribution_developing_reward_detail_record where user_id = #{userId}
+  </select>
+    <select id="countRewardDetailRecordByRewardAndDetail" resultType="java.lang.Integer">
+      select count(id) from distribution_developing_reward_detail_record
+      where developing_reward_id = #{rewardId}
+      and developing_reward_detail_id = #{detailId}
+    </select>
+    <insert id="save">
+    insert into distribution_developing_reward_detail_record (`developing_reward_id`,`developing_reward_detail_id`,`user_id`,`user_name`,`mobile`,`apply_time`,`pass`,`pass_time`)
+    values (#{distributionDevelopingRewardDetailRecord.developingRewardId},#{distributionDevelopingRewardDetailRecord.developingRewardDetailId},#{distributionDevelopingRewardDetailRecord.userId},#{distributionDevelopingRewardDetailRecord.userName},#{distributionDevelopingRewardDetailRecord.mobile},#{distributionDevelopingRewardDetailRecord.applyTime},#{distributionDevelopingRewardDetailRecord.pass},#{distributionDevelopingRewardDetailRecord.passTime});
+  </insert>
+  <update id="update">
+    update distribution_developing_reward_detail_record
+    <set>
+      <if test="distributionDevelopingRewardDetailRecord.developingRewardId != null">
+        `developing_reward_id` = #{distributionDevelopingRewardDetailRecord.developingRewardId},
+      </if>
+      <if test="distributionDevelopingRewardDetailRecord.developingRewardDetailId != null">
+        `developing_reward_detail_id` = #{distributionDevelopingRewardDetailRecord.developingRewardDetailId},
+      </if>
+      <if test="distributionDevelopingRewardDetailRecord.userId != null">
+        `user_id` = #{distributionDevelopingRewardDetailRecord.userId},
+      </if>
+      <if test="distributionDevelopingRewardDetailRecord.userName != null">
+        `user_name` = #{distributionDevelopingRewardDetailRecord.userName},
+      </if>
+      <if test="distributionDevelopingRewardDetailRecord.mobile != null">
+        `mobile` = #{distributionDevelopingRewardDetailRecord.mobile},
+      </if>
+      <if test="distributionDevelopingRewardDetailRecord.applyTime != null">
+        `apply_time` = #{distributionDevelopingRewardDetailRecord.applyTime},
+      </if>
+      <if test="distributionDevelopingRewardDetailRecord.pass != null">
+        `pass` = #{distributionDevelopingRewardDetailRecord.pass},
+      </if>
+      <if test="distributionDevelopingRewardDetailRecord.passTime != null">
+        `pass_time` = #{distributionDevelopingRewardDetailRecord.passTime},
+      </if>
+    </set>
+    where id = #{distributionDevelopingRewardDetailRecord.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_developing_reward_detail_record where id = #{id}
+  </delete>
+
+</mapper>

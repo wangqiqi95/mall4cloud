@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.GroupTeamMapper">
+  <resultMap id="groupTeamMap" type="com.mall4j.cloud.group.model.GroupTeam">
+    <id column="group_team_id" property="groupTeamId" />
+    <result column="shop_id" property="shopId"/>
+    <result column="group_activity_id" property="groupActivityId"/>
+    <result column="group_spu_id" property="groupSpuId"/>
+    <result column="join_num" property="joinNum"/>
+    <result column="status" property="status"/>
+    <result column="total_price" property="totalPrice"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="share_user_id" property="shareUserId"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `group_team_id`,`shop_id`,`group_activity_id`,`group_spu_id`,`join_num`,`status`,`total_price`,`start_time`,`end_time`,`create_time`,`share_user_id`,`update_time`
+  </sql>
+  <select id="list" resultMap="groupTeamMap">
+    select <include refid="Vo_Column_List"/> from group_team order by group_team_id desc
+  </select>
+  <select id="getByGroupTeamId" resultType="com.mall4j.cloud.group.vo.GroupTeamVO">
+    select <include refid="Vo_Column_List"/> from group_team where group_team_id = #{groupTeamId}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="groupTeamId">
+    insert into group_team (`shop_id`,`group_activity_id`,`group_spu_id`,`join_num`,`status`,`total_price`,`start_time`,`end_time`,`share_user_id`)
+    values (#{groupTeam.shopId},#{groupTeam.groupActivityId},#{groupTeam.groupSpuId},#{groupTeam.joinNum},#{groupTeam.status},#{groupTeam.totalPrice},#{groupTeam.startTime},#{groupTeam.endTime},#{groupTeam.shareUserId});
+  </insert>
+  <update id="update">
+    update group_team
+    <set>
+      <if test="groupTeam.shopId != null">
+        `shop_id` = #{groupTeam.shopId},
+      </if>
+      <if test="groupTeam.groupActivityId != null">
+        `group_activity_id` = #{groupTeam.groupActivityId},
+      </if>
+      <if test="groupTeam.groupSpuId != null">
+        `group_spu_id` = #{groupTeam.groupSpuId},
+      </if>
+      <if test="groupTeam.joinNum != null">
+        `join_num` = #{groupTeam.joinNum},
+      </if>
+      <if test="groupTeam.status != null">
+        `status` = #{groupTeam.status},
+      </if>
+      <if test="groupTeam.totalPrice != null">
+        `total_price` = #{groupTeam.totalPrice},
+      </if>
+      <if test="groupTeam.startTime != null">
+        `start_time` = #{groupTeam.startTime},
+      </if>
+      <if test="groupTeam.endTime != null">
+        `end_time` = #{groupTeam.endTime},
+      </if>
+      <if test="groupTeam.shareUserId != null">
+        `share_user_id` = #{groupTeam.shareUserId},
+      </if>
+    </set>
+    where group_team_id = #{groupTeam.groupTeamId}
+  </update>
+  <delete id="deleteById">
+    delete from group_team where group_team_id = #{groupTeamId}
+  </delete>
+
+
+  <select id="listJoinGroup" resultType="com.mall4j.cloud.group.vo.app.AppGroupTeamVO">
+    SELECT
+    gt.*,
+    ga.group_number AS group_number
+    FROM group_team gt
+    INNER JOIN group_order go ON go.group_team_id = gt.group_team_id AND go.identity_type = 1
+    INNER JOIN group_activity ga ON gt.group_activity_id = ga.group_activity_id
+    WHERE gt.group_activity_id = #{groupActivityId} AND gt.`status` = 1 AND gt.start_time &lt;= NOW() AND gt.end_time &gt;= NOW()
+    ORDER BY gt.start_time DESC LIMIT #{showSize}
+  </select>
+
+
+  <select id="getAppGroupTeam" resultType="com.mall4j.cloud.group.vo.app.AppGroupTeamVO">
+    SELECT gt.*,ga.group_number AS group_number FROM group_team gt
+    LEFT JOIN group_activity ga ON gt.group_activity_id = ga.group_activity_id
+    WHERE gt.group_team_id = #{groupTeamId}
+  </select>
+
+  <update id="cancelGroupTeam">
+    update group_team set status = 3 where group_team_id = #{groupTeamId} and status = 0
+  </update>
+
+  <update id="updateToSuccess">
+    update group_team set status = 2,join_num = #{groupTeam.joinNum}, total_price = #{groupTeam.totalPrice} where group_team_id = #{groupTeam.groupTeamId} and status = 1
+  </update>
+
+  <update id="updateToUnSuccess">
+    update group_team set status = 3  where group_team_id = #{groupTeamId} and status = 1
+  </update>
+</mapper>

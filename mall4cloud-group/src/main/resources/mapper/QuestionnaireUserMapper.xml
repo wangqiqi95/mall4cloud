@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.QuestionnaireUserMapper">
+  <resultMap id="questionnaireUserMap" type="com.mall4j.cloud.group.model.QuestionnaireUser">
+    <id column="id" property="id" />
+    <result column="activity_id" property="activityId"/>
+    <result column="user_id" property="userId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`activity_id`,`user_id`
+  </sql>
+  <select id="list" resultMap="questionnaireUserMap">
+    select <include refid="Vo_Column_List"/> from questionnaire_user order by id desc
+  </select>
+  <select id="getById" resultMap="questionnaireUserMap">
+    select <include refid="Vo_Column_List"/> from questionnaire_user where id = #{id}
+  </select>
+  <insert id="save">
+    insert into questionnaire_user (`activity_id`,`user_id`)
+    values (#{questionnaireUser.activityId},#{questionnaireUser.userId});
+  </insert>
+  <insert id="saveBatch">
+    insert into questionnaire_user (`activity_id`,`user_id`) values
+    <foreach collection="questionnaireUsers" item="questionnaireUser" separator=",">
+      (#{questionnaireUser.activityId},#{questionnaireUser.userId})
+    </foreach>
+  </insert>
+  <update id="update">
+    update questionnaire_user
+    <set>
+      <if test="questionnaireUser.activityId != null">
+        `activity_id` = #{questionnaireUser.activityId},
+      </if>
+      <if test="questionnaireUser.userId != null">
+        `user_id` = #{questionnaireUser.userId},
+      </if>
+    </set>
+    where id = #{questionnaireUser.id}
+  </update>
+  <delete id="deleteById">
+    delete from questionnaire_user where id = #{id}
+  </delete>
+
+  <delete id="deleteByActivityId">
+    delete from questionnaire_user where activity_id = #{activityId}
+  </delete>
+
+</mapper>

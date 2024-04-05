@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.LotteryDrawActivityMapper">
+    <resultMap id="censusMap" type="com.mall4j.cloud.group.vo.LotteryDrawActivityCensusVO">
+        <id property="id" column="id"/>
+        <result property="activityBeginTime" column="activityBeginTime"/>
+        <result property="activityEndTime" column="activityEndTime"/>
+        <result property="activityName" column="activityName"/>
+        <result property="prizeGrantTotal" column="prizeGrantTotal"/>
+        <result property="gameType" column="gameType"/>
+        <result property="drawNum" column="drawNum"/>
+        <result property="drawTimes" column="drawTimes"/>
+        <result property="awardNum" column="awardNum"/>
+        <collection property="prizes" ofType="com.mall4j.cloud.group.vo.PrizeCensusVO">
+            <id column="pid" property="id"/>
+            <result property="prizeType" column="prizeType"/>
+            <result property="pointNum" column="pointNum"/>
+            <result property="couponId" column="couponId"/>
+            <result property="prizeNum" column="prizeNum"/>
+            <result property="prizeName" column="prizeName"/>
+            <result property="todayReceiveNum" column="todayReceiveNum"/>
+            <result property="totalReceiveNum" column="totalReceiveNum"/>
+        </collection>
+    </resultMap>
+    <select id="lotteryDrawList" resultType="com.mall4j.cloud.group.vo.LotteryDrawListVO">
+        select
+        DISTINCT
+        lda.id as id,
+        lda.activity_name as activityName,
+        lda.activity_begin_time as activityBeginTime,
+        lda.activity_end_time as activityEndTime,
+        lda.is_all_shop as isAllShop,
+        ldag.game_type as gameType,
+        (select count(1) from lottery_draw_activity_shop d where d.activity_id = lda.id) as applyShopNum,
+        lda.status as status,
+        lda.create_time as createTime,
+        lda.create_user_name as createUserName
+        from lottery_draw_activity lda
+        left join lottery_draw_activity_shop ldas on lda.id = ldas.activity_id
+        left join lottery_draw_activity_game ldag on lda.id = ldag.lottery_draw_id
+        where lda.deleted = 0
+        <if test="shopIds != null">
+            and (ldas.shop_id in (#{shopIds}) or lda.is_all_shop = 1)
+        </if>
+        <if test="status == 0">
+            and lda.status = 0
+        </if>
+        <if test="status == 2">
+            and lda.activity_begin_time &lt;= now() and lda.activity_end_time &gt; now() and lda.status = 1
+        </if>
+        <if test="status == 3">
+            and lda.activity_begin_time &gt; now() and lda.status = 1
+        </if>
+        <if test="status == 4">
+            and lda.activity_end_time &lt; now() and lda.status = 1
+        </if>
+        <if test="activityName != null">
+            and lda.activity_name like concat('%',#{activityName},'%')
+        </if>
+        <if test="gameType != null">
+            and ldag.game_type = #{gameType}
+        </if>
+        order by lda.create_time desc
+    </select>
+    <select id="census" resultMap="censusMap">
+        select
+        lda.id as id,
+        lda.activity_name as activityName,
+        lda.activity_begin_time as activityBeginTime,
+        lda.activity_end_time as activityEndTime,
+        lda.prize_grant_total as prizeGrantTotal,
+        ldag.game_type as gameType,
+        (select count(distinct r.user_id) from lottery_draw_activity_award_record r where r.lottery_draw_id = #{id}) as drawNum,
+        (select count(distinct r.user_id) from lottery_draw_activity_award_record r where r.lottery_draw_id = #{id} and r.award_type in(1,2,3)) as awardNum,
+        (select count(1) from lottery_draw_activity_award_record r where r.lottery_draw_id = lda.id) as drawTimes,
+        ldap.id as pid,
+        ldap.prize_type as prizeType,
+        ldap.prize_name as prizeName,
+        ldap.prize_init_stock as prizeNum,
+        ldap.point_num as pointNum,
+        ldap.coupon_id as couponId,
+        (select count(1) from lottery_draw_activity_award_record d where d.lottery_draw_prize_id = ldap.id and to_days(award_time) = to_days(now())) as todayReceiveNum,
+        (select count(1) from lottery_draw_activity_award_record d where d.lottery_draw_prize_id = ldap.id) as totalReceiveNum
+        from lottery_draw_activity lda left join lottery_draw_activity_prize ldap on lda.id = ldap.lottery_draw_id
+        left join lottery_draw_activity_game ldag on lda.id = ldag.lottery_draw_id
+        where lda.id = #{id}
+    </select>
+</mapper>

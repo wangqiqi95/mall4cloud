@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.MallFxCashRequestMapper">
+  <resultMap id="mallFxCashRequestMap" type="com.mall4j.cloud.transfer.model.MallFxCashRequest">
+    <id column="Id" property="id" />
+    <result column="CopId" property="copid"/>
+    <result column="BrandId" property="brandid"/>
+    <result column="FxId" property="fxid"/>
+    <result column="FxType" property="fxtype"/>
+    <result column="Amount" property="amount"/>
+    <result column="Status" property="status"/>
+    <result column="Remark" property="remark"/>
+    <result column="RequestNo" property="requestno"/>
+    <result column="RequestTime" property="requesttime"/>
+    <result column="AuditUser" property="audituser"/>
+    <result column="AuditTime" property="audittime"/>
+    <result column="TransferUser" property="transferuser"/>
+    <result column="TransferTime" property="transfertime"/>
+    <result column="TransNo" property="transno"/>
+    <result column="TradeType" property="tradetype"/>
+    <result column="TradeErrorCode" property="tradeerrorcode"/>
+    <result column="RequestSource" property="requestsource"/>
+    <result column="CommissionType" property="commissiontype"/>
+    <result column="PointsPercent" property="pointspercent"/>
+    <result column="VipBonusId" property="vipbonusid"/>
+    <result column="ServiceFeePoint" property="servicefeepoint"/>
+    <result column="CashPayType" property="cashpaytype"/>
+    <result column="TransferType" property="transfertype"/>
+    <result column="YiShiTransferStatus" property="yishitransferstatus"/>
+    <result column="BankCardNo" property="bankcardno"/>
+    <result column="IsModifyBankCardNo" property="ismodifybankcardno"/>
+    <result column="NextExcuteTime" property="nextexcutetime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `Id`,`CopId`,`BrandId`,`FxId`,`FxType`,`Amount`,`Status`,`Remark`,`RequestNo`,`RequestTime`,`AuditUser`,`AuditTime`,`TransferUser`,`TransferTime`,`TransNo`,`TradeType`,`TradeErrorCode`,`RequestSource`,`CommissionType`,`PointsPercent`,`VipBonusId`,`ServiceFeePoint`,`CashPayType`,`TransferType`,`YiShiTransferStatus`,`BankCardNo`,`IsModifyBankCardNo`,`NextExcuteTime`
+  </sql>
+  <select id="list" resultMap="mallFxCashRequestMap">
+    select <include refid="Vo_Column_List"/> from mall_fx_cash_request order by Id desc
+  </select>
+  <select id="getById" resultMap="mallFxCashRequestMap">
+    select <include refid="Vo_Column_List"/> from mall_fx_cash_request where Id = #{id}
+  </select>
+  <insert id="save">
+    insert into mall_fx_cash_request (`CopId`,`BrandId`,`FxId`,`FxType`,`Amount`,`Status`,`Remark`,`RequestNo`,`RequestTime`,`AuditUser`,`AuditTime`,`TransferUser`,`TransferTime`,`TransNo`,`TradeType`,`TradeErrorCode`,`RequestSource`,`CommissionType`,`PointsPercent`,`VipBonusId`,`ServiceFeePoint`,`CashPayType`,`TransferType`,`YiShiTransferStatus`,`BankCardNo`,`IsModifyBankCardNo`,`NextExcuteTime`)
+    values (#{mallFxCashRequest.copid},#{mallFxCashRequest.brandid},#{mallFxCashRequest.fxid},#{mallFxCashRequest.fxtype},#{mallFxCashRequest.amount},#{mallFxCashRequest.status},#{mallFxCashRequest.remark},#{mallFxCashRequest.requestno},#{mallFxCashRequest.requesttime},#{mallFxCashRequest.audituser},#{mallFxCashRequest.audittime},#{mallFxCashRequest.transferuser},#{mallFxCashRequest.transfertime},#{mallFxCashRequest.transno},#{mallFxCashRequest.tradetype},#{mallFxCashRequest.tradeerrorcode},#{mallFxCashRequest.requestsource},#{mallFxCashRequest.commissiontype},#{mallFxCashRequest.pointspercent},#{mallFxCashRequest.vipbonusid},#{mallFxCashRequest.servicefeepoint},#{mallFxCashRequest.cashpaytype},#{mallFxCashRequest.transfertype},#{mallFxCashRequest.yishitransferstatus},#{mallFxCashRequest.bankcardno},#{mallFxCashRequest.ismodifybankcardno},#{mallFxCashRequest.nextexcutetime});
+  </insert>
+  <update id="update">
+    update mall_fx_cash_request
+    <set>
+      <if test="mallFxCashRequest.copid != null">
+        `CopId` = #{mallFxCashRequest.copid},
+      </if>
+      <if test="mallFxCashRequest.brandid != null">
+        `BrandId` = #{mallFxCashRequest.brandid},
+      </if>
+      <if test="mallFxCashRequest.fxid != null">
+        `FxId` = #{mallFxCashRequest.fxid},
+      </if>
+      <if test="mallFxCashRequest.fxtype != null">
+        `FxType` = #{mallFxCashRequest.fxtype},
+      </if>
+      <if test="mallFxCashRequest.amount != null">
+        `Amount` = #{mallFxCashRequest.amount},
+      </if>
+      <if test="mallFxCashRequest.status != null">
+        `Status` = #{mallFxCashRequest.status},
+      </if>
+      <if test="mallFxCashRequest.remark != null">
+        `Remark` = #{mallFxCashRequest.remark},
+      </if>
+      <if test="mallFxCashRequest.requestno != null">
+        `RequestNo` = #{mallFxCashRequest.requestno},
+      </if>
+      <if test="mallFxCashRequest.requesttime != null">
+        `RequestTime` = #{mallFxCashRequest.requesttime},
+      </if>
+      <if test="mallFxCashRequest.audituser != null">
+        `AuditUser` = #{mallFxCashRequest.audituser},
+      </if>
+      <if test="mallFxCashRequest.audittime != null">
+        `AuditTime` = #{mallFxCashRequest.audittime},
+      </if>
+      <if test="mallFxCashRequest.transferuser != null">
+        `TransferUser` = #{mallFxCashRequest.transferuser},
+      </if>
+      <if test="mallFxCashRequest.transfertime != null">
+        `TransferTime` = #{mallFxCashRequest.transfertime},
+      </if>
+      <if test="mallFxCashRequest.transno != null">
+        `TransNo` = #{mallFxCashRequest.transno},
+      </if>
+      <if test="mallFxCashRequest.tradetype != null">
+        `TradeType` = #{mallFxCashRequest.tradetype},
+      </if>
+      <if test="mallFxCashRequest.tradeerrorcode != null">
+        `TradeErrorCode` = #{mallFxCashRequest.tradeerrorcode},
+      </if>
+      <if test="mallFxCashRequest.requestsource != null">
+        `RequestSource` = #{mallFxCashRequest.requestsource},
+      </if>
+      <if test="mallFxCashRequest.commissiontype != null">
+        `CommissionType` = #{mallFxCashRequest.commissiontype},
+      </if>
+      <if test="mallFxCashRequest.pointspercent != null">
+        `PointsPercent` = #{mallFxCashRequest.pointspercent},
+      </if>
+      <if test="mallFxCashRequest.vipbonusid != null">
+        `VipBonusId` = #{mallFxCashRequest.vipbonusid},
+      </if>
+      <if test="mallFxCashRequest.servicefeepoint != null">
+        `ServiceFeePoint` = #{mallFxCashRequest.servicefeepoint},
+      </if>
+      <if test="mallFxCashRequest.cashpaytype != null">
+        `CashPayType` = #{mallFxCashRequest.cashpaytype},
+      </if>
+      <if test="mallFxCashRequest.transfertype != null">
+        `TransferType` = #{mallFxCashRequest.transfertype},
+      </if>
+      <if test="mallFxCashRequest.yishitransferstatus != null">
+        `YiShiTransferStatus` = #{mallFxCashRequest.yishitransferstatus},
+      </if>
+      <if test="mallFxCashRequest.bankcardno != null">
+        `BankCardNo` = #{mallFxCashRequest.bankcardno},
+      </if>
+      <if test="mallFxCashRequest.ismodifybankcardno != null">
+        `IsModifyBankCardNo` = #{mallFxCashRequest.ismodifybankcardno},
+      </if>
+      <if test="mallFxCashRequest.nextexcutetime != null">
+        `NextExcuteTime` = #{mallFxCashRequest.nextexcutetime},
+      </if>
+    </set>
+    where Id = #{mallFxCashRequest.id}
+  </update>
+  <delete id="deleteById">
+    delete from mall_fx_cash_request where Id = #{id}
+  </delete>
+
+</mapper>

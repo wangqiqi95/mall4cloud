@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.platform.mapper.OfflineHandleEventItemMapper">
+  <resultMap id="offlineHandleEventItemMap" type="com.mall4j.cloud.platform.model.OfflineHandleEventItem">
+    <id column="event_item_id" property="eventItemId" />
+    <result column="create_time" property="createTime"/>
+    <result column="event_id" property="eventId"/>
+    <result column="reapply_reason" property="reapplyReason"/>
+    <result column="refuse_reason" property="refuseReason"/>
+    <result column="reapply_time" property="reapplyTime"/>
+    <result column="audit_time" property="auditTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `event_item_id`,`create_time`,`event_id`,`reapply_reason`,`refuse_reason`,`reapply_time`,`audit_time`
+  </sql>
+  <delete id="deleteByEventIds">
+    delete from offline_handle_event_item where event_id in
+    <foreach collection="eventIds" item="eventId" open="(" close=")" separator=",">
+      #{eventId}
+    </foreach>
+  </delete>
+  <select id="list" resultType="com.mall4j.cloud.api.platform.vo.OfflineHandleEventItemVO">
+    select <include refid="Vo_Column_List"/> from offline_handle_event_item order by event_item_id desc
+  </select>
+  <select id="getByEventItemId" resultType="com.mall4j.cloud.api.platform.vo.OfflineHandleEventItemVO">
+    select <include refid="Vo_Column_List"/> from offline_handle_event_item where event_item_id = #{eventItemId}
+  </select>
+  <insert id="save">
+    insert into offline_handle_event_item (`event_id`,`reapply_reason`)
+    values (#{offlineHandleEventItem.eventId},#{offlineHandleEventItem.reapplyReason});
+  </insert>
+  <update id="update">
+    update offline_handle_event_item
+    <set>
+      <if test="offlineHandleEventItem.eventId != null">
+        `event_id` = #{offlineHandleEventItem.eventId},
+      </if>
+      <if test="offlineHandleEventItem.reapplyReason != null">
+        `reapply_reason` = #{offlineHandleEventItem.reapplyReason},
+      </if>
+      <if test="offlineHandleEventItem.refuseReason != null">
+        `refuse_reason` = #{offlineHandleEventItem.refuseReason},
+      </if>
+      <if test="offlineHandleEventItem.reapplyTime != null">
+        `reapply_time` = #{offlineHandleEventItem.reapplyTime},
+      </if>
+      <if test="offlineHandleEventItem.auditTime != null">
+        `audit_time` = #{offlineHandleEventItem.auditTime},
+      </if>
+    </set>
+    where event_item_id = #{offlineHandleEventItem.eventItemId}
+  </update>
+  <select id="getNewOfflineHandleEventItem" resultMap="offlineHandleEventItemMap">
+    SELECT * FROM offline_handle_event_item WHERE event_item_id = (SELECT MAX(event_item_id) FROM offline_handle_event_item WHERE event_id = #{eventId})
+  </select>
+</mapper>

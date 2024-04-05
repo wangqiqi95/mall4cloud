@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.GroupSkuMapper">
+  <resultMap id="groupSkuMap" type="com.mall4j.cloud.group.model.GroupSku">
+    <id column="group_sku_id" property="groupSkuId" />
+    <result column="group_activity_id" property="groupActivityId"/>
+    <result column="sku_id" property="skuId"/>
+    <result column="act_price" property="actPrice"/>
+    <result column="sell_num" property="sellNum"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `group_sku_id`,`group_activity_id`,`sku_id`,`act_price`,`sell_num`
+  </sql>
+  <select id="list" resultMap="groupSkuMap">
+    select <include refid="Vo_Column_List"/> from group_sku order by group_sku_id desc
+  </select>
+  <select id="getByGroupSkuId" resultMap="groupSkuMap">
+    select <include refid="Vo_Column_List"/> from group_sku where group_sku_id = #{groupSkuId}
+  </select>
+  <insert id="save">
+    insert into group_sku (`group_activity_id`,`sku_id`,`act_price`,`sell_num`)
+    values (#{groupSku.groupActivityId},#{groupSku.skuId},#{groupSku.actPrice},#{groupSku.sellNum});
+  </insert>
+  <update id="update">
+    update group_sku
+    <set>
+      <if test="groupSku.actPrice != null">
+        `act_price` = #{groupSku.actPrice},
+      </if>
+    </set>
+    where group_sku_id = #{groupSku.groupSkuId}
+  </update>
+  <delete id="deleteById">
+    delete from group_sku where group_sku_id = #{groupSkuId}
+  </delete>
+
+  <insert id="batchSave">
+    insert into group_sku (`group_activity_id`,`sku_id`,`act_price`) values
+    <foreach collection="groupSkuList" item="groupSku" separator=",">
+      (#{groupSku.groupActivityId},#{groupSku.skuId},#{groupSku.actPrice})
+    </foreach>
+  </insert>
+
+  <delete id="removeGroupSkuByGroupActivityId">
+    delete from group_sku where group_activity_id = #{groupActivityId}
+  </delete>
+
+  <update id="batchUpdate">
+    <foreach collection="groupSkuList" item="groupSku">
+      update group_sku
+      <set>
+        <if test="groupSku.actPrice != null">
+          `act_price` = #{groupSku.actPrice},
+        </if>
+      </set>
+      where group_activity_id = #{groupSku.groupActivityId} and sku_id = #{groupSku.skuId};
+    </foreach>
+  </update>
+
+  <select id="listByGroupActivityId" resultType="com.mall4j.cloud.group.vo.GroupSkuVO">
+    select `group_sku_id`,`group_sku_id`,`sku_id`,`act_price`,`sell_num` from group_sku
+    where group_activity_id = #{groupActivityId}
+    order by group_sku_id desc
+  </select>
+</mapper>

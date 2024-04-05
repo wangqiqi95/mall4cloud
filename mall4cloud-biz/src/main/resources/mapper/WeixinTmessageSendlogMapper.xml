@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinTmessageSendlogMapper">
+  <resultMap id="weixinTmessageSendlogMap" type="com.mall4j.cloud.biz.model.WeixinTmessageSendlog">
+    <id column="id" property="id" />
+    <result column="open_id" property="openId"/>
+    <result column="task_id" property="taskId"/>
+    <result column="msg_id" property="msgId"/>
+    <result column="template_id" property="templateId"/>
+    <result column="data_json" property="dataJson"/>
+    <result column="status" property="status"/>
+    <result column="app_id" property="appId"/>
+    <result column="tmessage_id" property="tmessageId"/>
+    <result column="ma_app_id" property="maAppId"/>
+    <result column="miniprogram" property="miniprogram"/>
+    <result column="pagepath" property="pagepath"/>
+    <result column="wx_status" property="wxStatus"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`open_id`,`task_id`,`msg_id`,`template_id`,`data_json`,`status`,`app_id`,`tmessage_id`,`ma_app_id`,`miniprogram`,`pagepath`,`wx_status`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinTmessageSendlogMap">
+    select <include refid="Vo_Column_List"/> from weixin_tmessage_sendlog order by id desc
+  </select>
+  <select id="getById" resultMap="weixinTmessageSendlogMap">
+    select <include refid="Vo_Column_List"/> from weixin_tmessage_sendlog where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_tmessage_sendlog (`id`,`open_id`,`task_id`,`msg_id`,`template_id`,`data_json`,`status`,`app_id`,`tmessage_id`,`ma_app_id`,`miniprogram`,`pagepath`,`wx_status`,`create_by`,`create_time`,`del_flag`)
+    values (#{weixinTmessageSendlog.id},#{weixinTmessageSendlog.openId},#{weixinTmessageSendlog.taskId},#{weixinTmessageSendlog.msgId},#{weixinTmessageSendlog.templateId},#{weixinTmessageSendlog.dataJson},#{weixinTmessageSendlog.status},#{weixinTmessageSendlog.appId},#{weixinTmessageSendlog.tmessageId},#{weixinTmessageSendlog.maAppId},#{weixinTmessageSendlog.miniprogram},#{weixinTmessageSendlog.pagepath},#{weixinTmessageSendlog.wxStatus},#{weixinTmessageSendlog.createBy},#{weixinTmessageSendlog.createTime},#{weixinTmessageSendlog.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_tmessage_sendlog
+    <set>
+      <if test="weixinTmessageSendlog.openId != null">
+        `open_id` = #{weixinTmessageSendlog.openId},
+      </if>
+      <if test="weixinTmessageSendlog.taskId != null">
+        `task_id` = #{weixinTmessageSendlog.taskId},
+      </if>
+      <if test="weixinTmessageSendlog.msgId != null">
+        `msg_id` = #{weixinTmessageSendlog.msgId},
+      </if>
+      <if test="weixinTmessageSendlog.templateId != null">
+        `template_id` = #{weixinTmessageSendlog.templateId},
+      </if>
+      <if test="weixinTmessageSendlog.dataJson != null">
+        `data_json` = #{weixinTmessageSendlog.dataJson},
+      </if>
+      <if test="weixinTmessageSendlog.status != null">
+        `status` = #{weixinTmessageSendlog.status},
+      </if>
+      <if test="weixinTmessageSendlog.appId != null">
+        `app_id` = #{weixinTmessageSendlog.appId},
+      </if>
+      <if test="weixinTmessageSendlog.appId != null">
+        `tmessage_id` = #{weixinTmessageSendlog.tmessageId},
+      </if>
+      <if test="weixinTmessageSendlog.appId != null">
+        `ma_app_id` = #{weixinTmessageSendlog.maAppId},
+      </if>
+      <if test="weixinTmessageSendlog.miniprogram != null">
+        `miniprogram` = #{weixinTmessageSendlog.miniprogram},
+      </if>
+      <if test="weixinTmessageSendlog.pagepath != null">
+        `pagepath` = #{weixinTmessageSendlog.pagepath},
+      </if>
+      <if test="weixinTmessageSendlog.wxStatus != null">
+        `wx_status` = #{weixinTmessageSendlog.wxStatus},
+      </if>
+      <if test="weixinTmessageSendlog.updateBy != null">
+        `update_by` = #{weixinTmessageSendlog.updateBy},
+      </if>
+      <if test="weixinTmessageSendlog.updateTime != null">
+        `update_time` = #{weixinTmessageSendlog.updateTime},
+      </if>
+      <if test="weixinTmessageSendlog.delFlag != null">
+        `del_flag` = #{weixinTmessageSendlog.delFlag},
+      </if>
+    </set>
+    where id = #{weixinTmessageSendlog.id}
+  </update>
+
+  <update id="updateWxStatus">
+    update weixin_tmessage_sendlog
+    <set>
+      <if test="weixinTmessageSendlog.wxStatus != null">
+        `wx_status` = #{weixinTmessageSendlog.wxStatus},
+      </if>
+      <if test="weixinTmessageSendlog.updateBy != null">
+        `update_by` = #{weixinTmessageSendlog.updateBy},
+      </if>
+      <if test="weixinTmessageSendlog.updateTime != null">
+        `update_time` = #{weixinTmessageSendlog.updateTime},
+      </if>
+      <if test="weixinTmessageSendlog.delFlag != null">
+        `del_flag` = #{weixinTmessageSendlog.delFlag},
+      </if>
+    </set>
+    where msg_id = #{weixinTmessageSendlog.msgId}
+  </update>
+
+  <delete id="deleteById">
+    delete from weixin_tmessage_sendlog where id = #{id}
+  </delete>
+
+</mapper>

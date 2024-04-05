@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.chat.KeyCustomMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.mall4j.cloud.biz.model.chat.KeyCustom" id="KeyCustomMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="keyValue" column="key_value"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id,name,key_value
+    </sql>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="param.id">
+        insert into key_custom (`name`,`key_value`)
+        values (#{param.name},#{param.keyValue})
+    </insert>
+
+    <select id="getByName" resultType="com.mall4j.cloud.biz.model.chat.KeyCustom">
+        select id,name,key_value from key_custom where name = #{param.name} and key_value= #{param.keyValue}
+    </select>
+
+    <select id="getByIds" resultType="com.mall4j.cloud.biz.model.chat.KeyCustom">
+        select id,
+        name,
+        key_value
+        from key_custom where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

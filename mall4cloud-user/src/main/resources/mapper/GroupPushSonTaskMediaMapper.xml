@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.user.mapper.GroupPushSonTaskMediaMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.user.model.GroupPushSonTaskMedia">
+        <id column="son_task_media_id" property="sonTaskMediaId" />
+        <result column="group_push_son_task_id" property="groupPushSonTaskId" />
+        <result column="media" property="media" />
+        <result column="type" property="type" />
+        <result column="create_user_id" property="createUserId" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        son_task_media_id, group_push_son_task_id, media, type, create_user_id, create_time
+    </sql>
+
+    <insert id="insertBatch">
+        insert into t_group_push_son_task_media (group_push_son_task_id,group_push_task_id, media, type, create_user_id) values
+        <foreach collection="mediaList" item="media" separator="," close=";">
+            (#{media.groupPushSonTaskId},#{media.groupPushTaskId},#{media.media},#{media.type},#{media.createUserId})
+        </foreach>
+    </insert>
+
+    <select id="sonTaskMediaList" resultType="com.mall4j.cloud.user.vo.TaskSonMediaVO">
+        SELECT
+            group_push_son_task_id AS sonTaskId,
+            son_task_media_id AS mediaId,
+            type,
+            media
+        FROM `t_group_push_son_task_media`
+        WHERE group_push_son_task_id = #{sonTaskId}
+    </select>
+
+    <update id="updateBatch">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update t_group_push_son_task_media
+            <set>
+                media= #{item.media},
+                type = #{item.type}
+            </set>
+            where son_task_media_id = #{item.sonTaskMediaId}
+        </foreach>
+    </update>
+
+    <select id="selectMediaListBySonTaskId" resultType="com.mall4j.cloud.user.vo.GroupPushSonTaskMediaVO">
+        SELECT
+            son_task_media_id,group_push_son_task_id,media,type
+        FROM
+            t_group_push_son_task_media
+        WHERE
+            group_push_son_task_id = #{sonTaskId}
+    </select>
+
+</mapper>

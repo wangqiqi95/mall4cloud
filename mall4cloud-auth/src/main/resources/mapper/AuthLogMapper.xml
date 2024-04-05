@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.auth.mapper.AuthLogMapper">
+  <resultMap id="BaseResultMap" type="com.mall4j.cloud.auth.model.AuthLog">
+    <!--@mbg.generated-->
+    <!--@Table auth_log-->
+    <id column="id" property="id" />
+    <result column="create_time" property="createTime" />
+    <result column="update_time" property="updateTime" />
+    <result column="user_id" property="userId" />
+    <result column="app_type" property="appType" />
+    <result column="login_ip" property="loginIp" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, create_time, update_time, user_id, app_type, login_ip
+  </sql>
+</mapper>

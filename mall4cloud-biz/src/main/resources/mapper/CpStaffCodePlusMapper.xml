@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CpStaffCodePlusMapper">
+  <resultMap id="staffCodeMap" type="com.mall4j.cloud.biz.model.cp.CpStaffCodePlus">
+    <id column="ID" property="id" />
+    <result column="CODE_NAME" property="codeName"/>
+    <result column="CODE_TYPE" property="codeType"/>
+    <result column="TAGS" property="tags"/>
+    <result column="AUTH_TYPE" property="authType"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="CREATE_BY" property="createBy"/>
+    <result column="CREATE_NAME" property="createName"/>
+    <result column="UPDATE_BY" property="updateBy"/>
+    <result column="UPDATE_NAME" property="updateName"/>
+    <result column="UPDATE_TIME" property="updateTime"/>
+    <result column="STATUS" property="status"/>
+    <result column="SLOGAN" property="slogan"/>
+    <result column="flag" property="flag"/>
+    <result column="config_id" property="configId"/>
+    <result column="state" property="state"/>
+    <result column="QR_CODE" property="qrCode"/>
+    <result column="origin" property="origin"/>
+    <result column="auto_remark_state" property="autoRemarkState"/>
+    <result column="reception_type" property="receptionType"/>
+    <result column="code_style" property="codeStyle"/>
+    <result column="auto_remark" property="autoRemark"/>
+    <result column="welcome_type" property="welcomeType"/>
+    <result column="remarks" property="remarks"/>
+    <result column="drainage_url" property="drainageUrl"/>
+    <result column="drainage_path" property="drainagePath"/>
+    <result column="welcome_time_state" property="welcomeTimeState"/>
+    <result column="group_id" property="groupId"/>
+    <result column="auto_description_state" property="autoDescriptionState"/>
+    <result column="auto_description" property="autoDescription"/>
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `ID`,`CODE_NAME`,`CODE_TYPE`,`TAGS`,`AUTH_TYPE`,`CREATE_TIME`,`CREATE_BY`,`CREATE_NAME`,`UPDATE_BY`,`UPDATE_NAME`,`UPDATE_TIME`,`STATUS`,`SLOGAN`,`flag`,`config_id`,`state`,`QR_CODE`,`origin`,`auto_remark_state`,`reception_type`,`code_style`,`auto_remark`,`welcome_type`,`remarks`,`drainage_url`,`drainage_path`,`welcome_time_state`,`group_id`
+    ,`auto_description_state`,`auto_description`
+  </sql>
+
+  <resultMap id="staffCodeVoMap" extends="staffCodeMap" type="com.mall4j.cloud.biz.vo.cp.StaffCodePlusVO">
+  </resultMap>
+
+  <select id="list" resultType="com.mall4j.cloud.biz.vo.cp.StaffCodePlusVO">
+    select
+    M.`ID`,
+    M.`CODE_NAME`,
+    M.`CODE_TYPE`,
+    M.`TAGS`,
+    M.`AUTH_TYPE`,
+    M.`CREATE_TIME`,
+    M.`CREATE_BY`,
+    M.`CREATE_NAME`,
+    M.`UPDATE_BY`,
+    M.`UPDATE_NAME`,
+    M.`UPDATE_TIME`,
+    M.`STATUS`,
+    M.`SLOGAN`,
+    M.`flag`,
+    M.`config_id`,
+    M.`state`,
+    M.`QR_CODE`,
+    M.`origin`,
+    M.`auto_remark_state`,
+    M.`auto_description_state`,
+    M.`auto_description`,
+    M.`reception_type`,
+    M.`code_style`,
+    M.`auto_remark`,
+    M.`welcome_type`,
+    M.`remarks`,
+    M.`drainage_url`,
+    M.`drainage_path`,
+    M.`welcome_time_state`,
+    M.`group_id`,
+    channel.id as code_channel_id
+    from cp_staff_code M
+        left join cp_code_channel channel on M.id=channel.source_id and channel.source_from=0
+      where M.FLAG = 0
+        <if test="et.createName != null and et.createName != ''  "> AND M.create_name like CONCAT('%', #{et.createName},'%')   </if>
+        <if test="et.remarks != null and et.remarks != 'null'  "> AND M.remarks like CONCAT('%', #{et.remarks},'%')   </if>
+        <if test="et.codeName != null and et.codeName != 'null'  "> AND M.CODE_NAME like CONCAT('%', #{et.codeName},'%')   </if>
+        <if test="et.createTimeStart != null and et.createTimeStart !='' "> AND M.CREATE_TIME >=STR_TO_DATE(#{et.createTimeStart},"%Y-%m-%d")  </if>
+        <if test="et.createTimeEnd != null and et.createTimeEnd !='' "> AND M.CREATE_TIME <![CDATA[< ]]>STR_TO_DATE(#{et.createTimeEnd},"%Y-%m-%d")+1  </if>
+        <if test="et.groupIds!=null and et.groupIds.size()>0">
+          and M.group_id in
+          <foreach collection="et.groupIds" item="groupId" open="(" close=")" separator=",">
+            #{groupId}
+          </foreach>
+        </if>
+        <if test="et.staffIdList != null">
+          AND M.id IN (select f.CODE_ID from cp_staff_code_ref f where f.STAFF_ID  in
+            <foreach collection="et.staffIdList" item="staffId" open="(" close=")" separator=",">
+              #{staffId}
+            </foreach>
+          )
+        </if>
+      order by M.create_time desc
+  </select>
+
+  <select id="selectByStaffIdAndState" resultMap="staffCodeMap">
+    select cc.`id`,cc.`CODE_NAME`,cc.`CODE_TYPE`,cc.AUTH_TYPE,TAGS,cc.`SLOGAN`
+        from  cp_staff_code cc
+        JOIN cp_staff_code_ref cf on cc.ID = cf.CODE_ID
+    where cf.STAFF_ID =#{staffId}
+      and cc.`STATUS`=1
+      and cc.flag=0
+      and cc.state= #{state}
+  </select>
+
+
+  <select id="getById" resultMap="staffCodeMap">
+    select <include refid="Vo_Column_List"/> from cp_staff_code where id = #{id}
+  </select>
+
+  <delete id="deleteById">
+    delete from cp_staff_code where id = #{id}
+  </delete>
+
+
+  <select id="selectByStaffId" resultMap="staffCodeMap">
+    select cc.`id`,cc.`CODE_NAME`,cc.`CODE_TYPE`,cc.AUTH_TYPE,TAGS,cc.`SLOGAN`,cc.QR_CODE
+    from  cp_staff_code cc
+            JOIN cp_staff_code_ref cf on cc.ID = cf.CODE_ID
+    where cf.STAFF_ID =#{staffId}
+      and cc.`STATUS`=1
+      and cc.`CODE_TYPE` in (0,1)
+      and cc.flag=0
+  </select>
+
+
+
+</mapper>

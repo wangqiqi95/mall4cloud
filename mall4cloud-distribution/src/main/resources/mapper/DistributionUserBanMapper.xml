@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionUserBanMapper">
+  <resultMap id="distributionUserBanMap" type="com.mall4j.cloud.distribution.model.DistributionUserBan">
+    <id column="ban_id" property="banId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="distribution_user_id" property="distributionUserId"/>
+    <result column="ban_reason" property="banReason"/>
+    <result column="remarks" property="remarks"/>
+    <result column="state" property="state"/>
+    <result column="modifier" property="modifier"/>
+  </resultMap>
+  <resultMap id="distributionUserBanVOMap" type="com.mall4j.cloud.distribution.vo.DistributionUserBanVO" extends="distributionUserBanMap">
+    <result column="nick_name" property="nickName"/>
+    <result column="user_mobile" property="userMobile"/>
+    <result column="modifier_name" property="modifierName"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `ban_id`,`create_time`,`update_time`,`distribution_user_id`,`ban_reason`,`remarks`,`state`,`modifier`
+  </sql>
+  <select id="list" resultMap="distributionUserBanVOMap">
+    SELECT dub.*,du.`nick_name`,du.`user_mobile`
+    FROM `distribution_user_ban` dub
+    LEFT JOIN `distribution_user` du ON dub.`distribution_user_id` = du.`distribution_user_id`
+    <where>
+      <if test="distributionUserBanDTO.userMobile!= null and distributionUserBanDTO.userMobile!='' ">
+        and trim(replace(du.user_mobile,' ','')) like trim(replace(concat('%',#{distributionUserBanDTO.userMobile},'%'),' ',''))
+      </if>
+      <if test="distributionUserBanDTO.state!= null">
+        and dub.state= #{distributionUserBanDTO.state}
+      </if>
+      <if test="distributionUserBanDTO.banReason!= null">
+        and dub.ban_reason= #{distributionUserBanDTO.banReason}
+      </if>
+    </where>
+    GROUP BY dub.`ban_id`
+    <if test="distributionUserBanDTO.sortParam != null and distributionUserBanDTO.sortType != null">
+      ORDER BY
+      <choose>
+        <when test="distributionUserBanDTO.sortParam == 1">
+          create_time
+        </when>
+        <otherwise>
+          ban_id
+        </otherwise>
+      </choose>
+      <choose>
+        <when test="distributionUserBanDTO.sortType == 1">
+          ASC
+        </when>
+        <when test="distributionUserBanDTO.sortType == 2">
+          DESC
+        </when>
+        <otherwise>
+          DESC
+        </otherwise>
+      </choose>
+    </if>
+  </select>
+  <select id="getByBanId" resultMap="distributionUserBanMap">
+    select <include refid="Vo_Column_List"/> from distribution_user_ban where ban_id = #{banId}
+  </select>
+  <select id="getLatestBanInfoByDistributionUserId" resultType="com.mall4j.cloud.distribution.vo.DistributionUserBanVO">
+    SELECT
+      dub.ban_id, dub.ban_reason, dub.remarks, dub.state
+    FROM
+      distribution_user_ban dub
+    WHERE
+        dub.ban_id = (
+        SELECT
+          MAX( dub.ban_id ) AS ban_id
+        FROM
+          distribution_user_ban dub
+        WHERE
+          dub.distribution_user_id = #{distributionUserId})
+  </select>
+  <insert id="save">
+    insert into distribution_user_ban (`distribution_user_id`,`ban_reason`,`remarks`,`state`,`modifier`)
+    values (#{distributionUserBan.distributionUserId},#{distributionUserBan.banReason},#{distributionUserBan.remarks},#{distributionUserBan.state},#{distributionUserBan.modifier});
+  </insert>
+  <update id="update">
+    update distribution_user_ban
+    <set>
+      <if test="distributionUserBan.distributionUserId != null">
+        `distribution_user_id` = #{distributionUserBan.distributionUserId},
+      </if>
+      <if test="distributionUserBan.banReason != null">
+        `ban_reason` = #{distributionUserBan.banReason},
+      </if>
+      <if test="distributionUserBan.remarks != null">
+        `remarks` = #{distributionUserBan.remarks},
+      </if>
+      <if test="distributionUserBan.state != null">
+        `state` = #{distributionUserBan.state},
+      </if>
+      <if test="distributionUserBan.modifier != null">
+        `modifier` = #{distributionUserBan.modifier},
+      </if>
+    </set>
+    where ban_id = #{distributionUserBan.banId}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_user_ban where ban_id = #{banId}
+  </delete>
+
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.delivery.mapper.SameCityMapper">
+  <resultMap id="sameCityMap" type="com.mall4j.cloud.delivery.model.SameCity">
+    <id column="samecity_id" property="samecityId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="position_info" property="positionInfo"/>
+    <result column="charge_type" property="chargeType"/>
+    <result column="start_fee" property="startFee"/>
+    <result column="delivery_fee" property="deliveryFee"/>
+    <result column="default_distance" property="defaultDistance"/>
+    <result column="over_distance" property="overDistance"/>
+    <result column="over_distance_fee" property="overDistanceFee"/>
+    <result column="free_weight" property="freeWeight"/>
+    <result column="over_weight" property="overWeight"/>
+    <result column="over_weight_fee" property="overWeightFee"/>
+    <result column="status" property="status"/>
+    <result column="lng" property="lng"/>
+    <result column="lat" property="lat"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `samecity_id`,`create_time`,`update_time`,`shop_id`,`position_info`,`charge_type`,`start_fee`,`delivery_fee`,`default_distance`,`over_distance`,`over_distance_fee`,`free_weight`,`over_weight`,`over_weight_fee`,`status`,`lng`,`lat`
+  </sql>
+  <select id="getByShopId" resultMap="sameCityMap">
+    select <include refid="Vo_Column_List"/> from same_city where samecity_id = #{shopId}
+  </select>
+  <insert id="save">
+    insert into same_city (`shop_id`,`position_info`,`charge_type`,`start_fee`,`delivery_fee`,`default_distance`,`over_distance`,`over_distance_fee`,`free_weight`,`over_weight`,`over_weight_fee`,`status`,`lng`,`lat`)
+    values (#{sameCity.shopId},#{sameCity.positionInfo},#{sameCity.chargeType},#{sameCity.startFee},#{sameCity.deliveryFee},#{sameCity.defaultDistance},#{sameCity.overDistance},#{sameCity.overDistanceFee},#{sameCity.freeWeight},#{sameCity.overWeight},#{sameCity.overWeightFee},#{sameCity.status},#{sameCity.lng},#{sameCity.lat});
+  </insert>
+  <update id="updateByShopId">
+    update same_city
+    <set>
+      <if test="sameCity.shopId != null">
+        `shop_id` = #{sameCity.shopId},
+      </if>
+      <if test="sameCity.positionInfo != null">
+        `position_info` = #{sameCity.positionInfo},
+      </if>
+      <if test="sameCity.chargeType != null">
+        `charge_type` = #{sameCity.chargeType},
+      </if>
+      <if test="sameCity.startFee != null">
+        `start_fee` = #{sameCity.startFee},
+      </if>
+      <if test="sameCity.deliveryFee != null">
+        `delivery_fee` = #{sameCity.deliveryFee},
+      </if>
+      <if test="sameCity.defaultDistance != null">
+        `default_distance` = #{sameCity.defaultDistance},
+      </if>
+      <if test="sameCity.overDistance != null">
+        `over_distance` = #{sameCity.overDistance},
+      </if>
+      <if test="sameCity.overDistanceFee != null">
+        `over_distance_fee` = #{sameCity.overDistanceFee},
+      </if>
+      <if test="sameCity.freeWeight != null">
+        `free_weight` = #{sameCity.freeWeight},
+      </if>
+      <if test="sameCity.overWeight != null">
+        `over_weight` = #{sameCity.overWeight},
+      </if>
+      <if test="sameCity.overWeightFee != null">
+        `over_weight_fee` = #{sameCity.overWeightFee},
+      </if>
+      <if test="sameCity.status != null">
+        `status` = #{sameCity.status},
+      </if>
+      <if test="sameCity.lng != null">
+        `lng` = #{sameCity.lng},
+      </if>
+      <if test="sameCity.lat != null">
+        `lat` = #{sameCity.lat},
+      </if>
+    </set>
+    where shop_id = #{sameCity.shopId}
+  </update>
+
+</mapper>

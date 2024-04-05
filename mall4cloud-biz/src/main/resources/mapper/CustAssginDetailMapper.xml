@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.CustAssginDetailMapper">
+  <resultMap id="custAssginDetailMap" type="com.mall4j.cloud.biz.model.cp.CpCustAssginDetail">
+    <id column="ID" property="id" />
+    <result column="CUST_ID" property="custId"/>
+    <result column="CUST_NAME" property="custName"/>
+    <result column="RESIGN_ID" property="resignId"/>
+    <result column="STAUS" property="staus"/>
+    <result column="FLAG" property="flag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `ID`,`CUST_ID`,`CUST_NAME`,`RESIGN_ID`,`STAUS`,`FLAG`
+  </sql>
+  <select id="list" resultMap="custAssginDetailMap">
+    select <include refid="Vo_Column_List"/> from CP_CUST_ASSGIN_DETAIL order by ID desc
+  </select>
+  <select id="getById" resultMap="custAssginDetailMap">
+    select <include refid="Vo_Column_List"/> from CP_CUST_ASSGIN_DETAIL where ID = #{id}
+  </select>
+  <insert id="save">
+    insert into CP_CUST_ASSGIN_DETAIL (`CUST_ID`,`CUST_NAME`,`RESIGN_ID`,`STAUS`,`FLAG`)
+    values (#{custAssginDetail.custId},#{custAssginDetail.custName},#{custAssginDetail.resignId},#{custAssginDetail.staus},#{custAssginDetail.flag});
+  </insert>
+  <update id="update">
+    update CP_CUST_ASSGIN_DETAIL
+    <set>
+      <if test="custAssginDetail.custId != null">
+        `CUST_ID` = #{custAssginDetail.custId},
+      </if>
+      <if test="custAssginDetail.custName != null">
+        `CUST_NAME` = #{custAssginDetail.custName},
+      </if>
+      <if test="custAssginDetail.resignId != null">
+        `RESIGN_ID` = #{custAssginDetail.resignId},
+      </if>
+      <if test="custAssginDetail.staus != null">
+        `STAUS` = #{custAssginDetail.staus},
+      </if>
+      <if test="custAssginDetail.flag != null">
+        `FLAG` = #{custAssginDetail.flag},
+      </if>
+    </set>
+    where ID = #{custAssginDetail.id}
+  </update>
+  <delete id="deleteById">
+    delete from CP_CUST_ASSGIN_DETAIL where ID = #{id}
+  </delete>
+
+</mapper>

@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.platform.mapper.TzStoreMapper">
+    <resultMap id="tzStoreMap" type="com.mall4j.cloud.platform.model.TzStore">
+        <id column="store_id" property="storeId"/>
+        <result column="org_id" property="orgId"/>
+        <result column="station_name" property="stationName"/>
+        <result column="storenature" property="storenature"/>
+        <result column="slc_name" property="slcName"/>
+        <result column="type" property="type"/>
+        <result column="pic" property="pic"/>
+        <result column="phone_prefix" property="phonePrefix"/>
+        <result column="phone" property="phone"/>
+        <result column="status" property="status"/>
+        <result column="store_invite_type" property="storeInviteType"/>
+        <result column="push_el_status" property="pushElStatus"/>
+        <result column="invite_status" property="inviteStatus"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="province_id" property="provinceId"/>
+        <result column="province" property="province"/>
+        <result column="city_id" property="cityId"/>
+        <result column="city" property="city"/>
+        <result column="area_id" property="areaId"/>
+        <result column="area" property="area"/>
+        <result column="addr" property="addr"/>
+        <result column="lng" property="lng"/>
+        <result column="lat" property="lat"/>
+        <result column="store_code" property="storeCode"/>
+        <result column="is_show" property="isShow"/>
+        <result column="qw_code" property="qwCode"/>
+        <result column="email" property="email"/>
+        <result column="linkman" property="linkman"/>
+        <result column="first_start_time" property="firstStartTime"/>
+        <result column="first_end_time" property="firstEndTime"/>
+        <result column="open_day" property="openDay"/>
+        <result column="shop_groups" property="shopGroups"/>
+        <result column="shop_ares" property="shopAres"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `store_id`
+        ,`org_id`,`station_name`,`type`,`pic`,`phone_prefix`,`phone`,`status`,`create_time`,`update_time`,`province_id`,`province`,`city_id`,`city`,`area_id`,`area`,`addr`,`lng`,`lat`,`store_code`,
+        `is_show`,`qw_code`,`email`,`linkman`,`first_start_time`,`first_end_time`,`invite_status`,`push_el_status`,`storenature`,`slc_name`,`store_invite_type`
+    </sql>
+
+    <select id="list" parameterType="com.mall4j.cloud.platform.dto.StorePageQueryDTO"
+            resultType="com.mall4j.cloud.platform.vo.SelectStoreVO">
+        select
+        `store_id`,`store_code`,`station_name`,addr,ROUND(IFNULL(st_distance(point(#{et.lng},#{et.lat}),point(lng,lat))*111195/1000,0),2)
+        as storeDistance,`lng`,`lat`
+        from tz_store
+        where is_deleted = 0
+        and status = 1
+        and is_show = 1
+        and ( !ISNULL(lat) and !ISNULL(lng) )
+        <if test="et.keyword != null and et.keyword != '' ">
+            and concat(station_name,store_code) like concat('%',#{et.keyword},'%')
+        </if>
+        <if test="et.address != null and et.address != '' ">
+            and addr like concat('%',#{et.address},'%')
+        </if>
+        <if test="et.cityId != null   ">
+            and city_id = #{et.cityId}
+        </if>
+        <if test="et.provinceId != null   ">
+            and province_id = #{et.provinceId}
+        </if>
+        <if test="et.areaId != null   ">
+            and area_id = #{et.areaId}
+        </if>
+        <if test="et.cityName != null   ">
+            and city like concat('%',#{et.cityName},'%')
+        </if>
+        <if test="et.storeIds != null and et.storeIds.size >0  ">
+            and store_id in
+            <foreach collection="et.storeIds" item="storeId" index="index" open="(" separator="," close=")">
+                #{storeId}
+            </foreach>
+        </if>
+        <if test="et.slcNames != null and et.slcNames.size() > 0">
+            and ( ISNULL(slc_name) or slc_name not in
+            <foreach collection="et.slcNames" item="slcName" index="index" open="("
+                     separator="," close=")">
+                #{slcName}
+            </foreach>
+            )
+        </if>
+        order by storeDistance asc,store_id desc
+    </select>
+    <select id="getByStoreId" resultMap="tzStoreMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from tz_store where store_id = #{storeId}
+    </select>
+    <select id="getByStoreCode" resultMap="tzStoreMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from tz_store
+        where 1=1 and is_deleted = 0
+        <if test="storeName != null and storeName!='' ">
+            and station_name = #{storeName}
+        </if>
+        <if test="storeCode != null and storeCode!='' ">
+            and store_code = #{storeCode}
+        </if>
+    </select>
+    <insert id="save">
+        insert into tz_store (`org_id`, `station_name`, `type`, `pic`, `phone_prefix`, `phone`, `status`, `province_id`,
+                              `province`, `city_id`, `city`, `area_id`, `area`, `addr`, `lng`, `lat`, `store_code`,
+                              `is_show`, `qw_code`, `email`, `linkman`, `first_start_time`, `first_end_time`, open_day,
+                              `push_el_status`,`storenature`)
+        values (#{tzStore.orgId}, #{tzStore.stationName}, #{tzStore.type}, #{tzStore.pic}, #{tzStore.phonePrefix},
+                #{tzStore.phone}, #{tzStore.status}, #{tzStore.provinceId}, #{tzStore.province}, #{tzStore.cityId},
+                #{tzStore.city}, #{tzStore.areaId}, #{tzStore.area}, #{tzStore.addr}, #{tzStore.lng}, #{tzStore.lat},
+                #{tzStore.storeCode}, #{tzStore.isShow}, #{tzStore.qwCode}, #{tzStore.email}, #{tzStore.linkman},
+                #{tzStore.firstStartTime}, #{tzStore.firstEndTime}, #{tzStore.openDay},#{tzStore.pushElStatus},#{tzStore.storenature});
+    </insert>
+    <update id="update">
+        update tz_store
+        <set>
+            <if test="tzStore.orgId != null">
+                `org_id` = #{tzStore.orgId},
+            </if>
+            <if test="tzStore.stationName != null">
+                `station_name` = #{tzStore.stationName},
+            </if>
+            <if test="tzStore.type != null">
+                `type` = #{tzStore.type},
+            </if>
+            <if test="tzStore.pic != null">
+                `pic` = #{tzStore.pic},
+            </if>
+            <if test="tzStore.phonePrefix != null">
+                `phone_prefix` = #{tzStore.phonePrefix},
+            </if>
+            <if test="tzStore.phone != null">
+                `phone` = #{tzStore.phone},
+            </if>
+            <if test="tzStore.status != null">
+                `status` = #{tzStore.status},
+            </if>
+            <if test="tzStore.provinceId != null">
+                `province_id` = #{tzStore.provinceId},
+            </if>
+            <if test="tzStore.province != null">
+                `province` = #{tzStore.province},
+            </if>
+            <if test="tzStore.cityId != null">
+                `city_id` = #{tzStore.cityId},
+            </if>
+            <if test="tzStore.city != null">
+                `city` = #{tzStore.city},
+            </if>
+            <if test="tzStore.areaId != null">
+                `area_id` = #{tzStore.areaId},
+            </if>
+            <if test="tzStore.area != null">
+                `area` = #{tzStore.area},
+            </if>
+            <if test="tzStore.addr != null">
+                `addr` = #{tzStore.addr},
+            </if>
+            <if test="tzStore.lng != null">
+                `lng` = #{tzStore.lng},
+            </if>
+            <if test="tzStore.lat != null">
+                `lat` = #{tzStore.lat},
+            </if>
+            <if test="tzStore.storeCode != null">
+                `store_code` = #{tzStore.storeCode},
+            </if>
+            <if test="tzStore.isShow != null">
+                `is_show` = #{tzStore.isShow},
+            </if>
+            <if test="tzStore.qwCode != null">
+                `qw_code` = #{tzStore.qwCode},
+            </if>
+            <if test="tzStore.email != null">
+                `email` = #{tzStore.email},
+            </if>
+            <if test="tzStore.linkman != null">
+                `linkman` = #{tzStore.linkman},
+            </if>
+            <if test="tzStore.firstStartTime != null">
+                `first_start_time` = #{tzStore.firstStartTime},
+            </if>
+            <if test="tzStore.firstEndTime != null">
+                `first_end_time` = #{tzStore.firstEndTime},
+            </if>
+            <if test="tzStore.inviteStatus != null">
+                `invite_status` = #{tzStore.inviteStatus},
+            </if>
+            <if test="tzStore.openDay != null">
+                `open_day` = #{tzStore.openDay},
+            </if>
+            <if test="tzStore.pushElStatus != null">
+                `push_el_status` = #{tzStore.pushElStatus},
+            </if>
+            <if test="tzStore.storenature != null">
+                `storenature` = #{tzStore.storenature},
+            </if>
+        </set>
+        where store_id = #{tzStore.storeId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from tz_store
+        where store_id = #{storeId}
+    </delete>
+
+    <delete id="logicDeleteById">
+        update tz_store
+        set is_deleted = 1
+        where org_id = #{orgId}
+    </delete>
+
+    <!--<include refid="Vo_Column_List"/>-->
+    <select id="listByParam" parameterType="com.mall4j.cloud.platform.dto.StoreQueryParamDTO" resultMap="tzStoreMap">
+        select
+        s.*
+        from tz_store s
+        LEFT JOIN organization o1 ON s.org_id = o1.org_id and o1.type =4 and o1.is_deleted=0
+        <if test="storeQueryParamDTO.tagIdList != null and storeQueryParamDTO.tagIdList.size() > 0 ">
+            left join tz_tag_store tagstore on tagstore.store_id=s.store_id
+            left join tz_tag tag on tag.tag_id=tagstore.tag_id
+        </if>
+        <where>
+            1=1 and s.is_deleted = 0
+            <if test="storeQueryParamDTO.cityId != null">
+                and s.city_id = #{storeQueryParamDTO.cityId}
+            </if>
+            <if test="storeQueryParamDTO.storeType != null">
+                and s.type = #{storeQueryParamDTO.storeType}
+            </if>
+            <if test="storeQueryParamDTO.storenature != null">
+                and s.storenature = #{storeQueryParamDTO.storenature}
+            </if>
+            <if test="storeQueryParamDTO.storeStatus != null">
+                and s.`status` = #{storeQueryParamDTO.storeStatus}
+            </if>
+            <if test="storeQueryParamDTO.inviteStatus != null">
+                and s.`invite_status` = #{storeQueryParamDTO.inviteStatus}
+            </if>
+            <if test="storeQueryParamDTO.keyword != null">
+                and concat(s.station_name,s.store_code) like concat('%',#{storeQueryParamDTO.keyword},'%')
+            </if>
+            <if test="storeQueryParamDTO.storeType != null">
+                and s.`type` = #{storeQueryParamDTO.storeType}
+            </if>
+            <if test="storeQueryParamDTO.pushElStatus != null">
+                and s.`push_el_status` = #{storeQueryParamDTO.pushElStatus}
+            </if>
+            <if test="storeQueryParamDTO.isShow != null">
+                and s.`is_show` = #{storeQueryParamDTO.isShow}
+            </if>
+            <if test="storeQueryParamDTO.storeInviteType != null">
+                and s.`store_invite_type` = #{storeQueryParamDTO.storeInviteType}
+            </if>
+            <if test="storeQueryParamDTO.slcNameList != null and storeQueryParamDTO.slcNameList.size() > 0 ">
+                and s.slc_name in
+                <foreach collection="storeQueryParamDTO.slcNameList" item="slcName" index="index" open="("
+                         separator="," close=")">
+                    #{slcName}
+                </foreach>
+            </if>
+            <if test="storeQueryParamDTO.limitOrgIdList != null and  storeQueryParamDTO.limitOrgIdList.size() > 0 ">
+                and s.org_id in
+                <foreach collection="storeQueryParamDTO.limitOrgIdList" item="orgId" index="index" open="("
+                         separator="," close=")">
+                    #{orgId}
+                </foreach>
+            </if>
+            <if test="storeQueryParamDTO.limitOrgIdStoreIdList != null and  storeQueryParamDTO.limitOrgIdStoreIdList.size() > 0 ">
+                and ( s.org_id in
+                <foreach collection="storeQueryParamDTO.limitOrgIdStoreIdList" item="orgId" index="index" open="("
+                         separator="," close=")">
+                    #{orgId}
+                </foreach>
+                or s.store_id in
+                <foreach collection="storeQueryParamDTO.limitOrgIdStoreIdList" item="storeId" index="index" open="("
+                         separator="," close=")">
+                    #{storeId}
+                </foreach>
+                )
+            </if>
+            <if test="storeQueryParamDTO.existedStoreIdList != null and storeQueryParamDTO.existedStoreIdList.size() > 0 ">
+                and s.store_id not in
+                <foreach collection="storeQueryParamDTO.existedStoreIdList" item="storeId" index="index" open="("
+                         separator="," close=")">
+                    #{storeId}
+                </foreach>
+            </if>
+            <if test="storeQueryParamDTO.storeIdList != null and storeQueryParamDTO.storeIdList.size() > 0 ">
+                and s.store_id in
+                <foreach collection="storeQueryParamDTO.storeIdList" item="storeId" index="index" open="("
+                         separator="," close=")">
+                    #{storeId}
+                </foreach>
+            </if>
+            <if test="storeQueryParamDTO.tagIdList != null and storeQueryParamDTO.tagIdList.size() > 0 ">
+                and tagstore.tag_id in
+                <foreach collection="storeQueryParamDTO.tagIdList" item="tagId" index="index" open="("
+                         separator="," close=")">
+                    #{tagId}
+                </foreach>
+                and tag.`status`=1 and tag.del_flag=0 and tagstore.del_flag=0
+            </if>
+            <if test="storeQueryParamDTO.storeCodeList != null and storeQueryParamDTO.storeCodeList.size() > 0 ">
+                and s.store_code in
+                <foreach collection="storeQueryParamDTO.storeCodeList" item="storeCode" index="index" open="("
+                         separator="," close=")">
+                    #{storeCode}
+                </foreach>
+            </if>
+        </where>
+        group by s.store_id
+        order by s.store_id desc
+    </select>
+    <select id="selectedList" resultType="com.mall4j.cloud.api.platform.vo.SelectedStoreVO">
+        select station_name as stationName,store_code as storeCode,store_id as storeId from tz_store
+        <where>
+            1=1 and is_deleted = 0
+            <if test="storeSelectedParamDTO.keyword != null and storeSelectedParamDTO.keyword != ''">
+                and concat(station_name,store_code) like concat('%',#{storeSelectedParamDTO.keyword},'%')
+            </if>
+            <if test="storeSelectedParamDTO.storeIdList != null and storeSelectedParamDTO.storeIdList.size() > 0">
+                and store_id in
+                <foreach collection="storeSelectedParamDTO.storeIdList" item="storeId" index="index" open="("
+                         separator="," close=")">
+                    #{storeId}
+                </foreach>
+            </if>
+        </where>
+        order by store_id desc
+    </select>
+    <select id="getByOrgId" resultMap="tzStoreMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from tz_store where org_id = #{orgId}
+    </select>
+    <select id="listByStoreCode" resultMap="tzStoreMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from tz_store where store_code in
+        <foreach collection="storeCodeList" item="storeCode" index="index" open="(" separator="," close=")">
+            #{storeCode}
+        </foreach>
+    </select>
+    <select id="getTzStoreByStoreCode" resultType="com.mall4j.cloud.platform.model.TzStore">
+        select
+        <include refid="Vo_Column_List"/>
+        from tz_store where store_code = #{storeCode}
+    </select>
+    <select id="getTzStoreByStoreNames" resultType="com.mall4j.cloud.platform.model.TzStore">
+        select
+        <include refid="Vo_Column_List"/>
+        from tz_store
+        <where>
+            station_name in
+            <foreach collection="storeNames" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+    <insert id="saveBatch">
+        insert into tz_store (`org_id`, `station_name`, `type`, `pic`, `phone_prefix`, `phone`, `status`, `province_id`,
+        `province`, `city_id`, `city`, `area_id`, `area`, `addr`, `lng`, `lat`, `store_code`,
+        `is_show`, `qw_code`, `email`, `linkman`, `first_start_time`, `first_end_time`,`create_time`,`slc_name`,`store_invite_type`)
+        values
+        <foreach collection="addStoreList" item="tzStore" separator=",">
+            (#{tzStore.orgId}, #{tzStore.stationName}, #{tzStore.type}, #{tzStore.pic}, #{tzStore.phonePrefix},
+            #{tzStore.phone}, #{tzStore.status}, #{tzStore.provinceId}, #{tzStore.province}, #{tzStore.cityId},
+            #{tzStore.city}, #{tzStore.areaId}, #{tzStore.area}, #{tzStore.addr}, #{tzStore.lng}, #{tzStore.lat},
+            #{tzStore.storeCode}, #{tzStore.isShow}, #{tzStore.qwCode}, #{tzStore.email}, #{tzStore.linkman},
+            #{tzStore.firstStartTime}, #{tzStore.firstEndTime}, #{tzStore.createTime}, #{tzStore.slcName}, #{tzStore.storeInviteType})
+        </foreach>
+    </insert>
+    <select id="getStoreCodeByStoreId" resultType="java.lang.String">
+        select store_code
+        from tz_store
+        where store_id = #{storeId}
+    </select>
+    <select id="listByInsider" resultType="com.mall4j.cloud.api.platform.vo.SelectedStoreVO">
+        select station_name as stationName,store_code as storeCode,store_id as storeId,
+        pic,phone,province_id,province,city_id,city,area_id ,area,addr,
+        ROUND(IFNULL(st_distance(point(#{insiderDTO.lng},#{insiderDTO.lat}),point(lng,lat))*111195/1000,0),2) as
+        storeDistance,`lng`,`lat`
+        from tz_store
+        <where>
+            1=1 and is_deleted = 0
+            and status = 1
+            and is_show = 1
+            and ( !ISNULL(lat) and !ISNULL(lng) )
+            <if test="insiderDTO.keyword != null and insiderDTO.keyword != '' ">
+                and concat(station_name,store_code) like concat('%',#{insiderDTO.keyword},'%')
+            </if>
+            <if test="insiderDTO.cityId != null   ">
+                and city_id = #{insiderDTO.cityId}
+            </if>
+            <if test="insiderDTO.provinceId != null   ">
+                and province_id = #{insiderDTO.provinceId}
+            </if>
+            <if test="insiderDTO.areaId != null">
+                and area_id = #{insiderDTO.areaId}
+            </if>
+            <if test="insiderDTO.cityName != null and insiderDTO.cityName != ''">
+                and city like concat('%',#{insiderDTO.cityName},'%')
+            </if>
+            <if test="insiderDTO.storeIdList != null and insiderDTO.storeIdList.size() > 0">
+                and store_id in
+                <foreach collection="insiderDTO.storeIdList" item="storeId" index="index" open="("
+                         separator="," close=")">
+                    #{storeId}
+                </foreach>
+            </if>
+            <if test="insiderDTO.storeCodeList != null and insiderDTO.storeCodeList.size() > 0">
+                and store_code in
+                <foreach collection="insiderDTO.storeCodeList" item="storeCode" index="index" open="("
+                         separator="," close=")">
+                    #{storeCode}
+                </foreach>
+            </if>
+            <if test="insiderDTO.slcNames != null and insiderDTO.slcNames.size() > 0">
+                and ( ISNULL(slc_name) or slc_name not in
+                <foreach collection="insiderDTO.slcNames" item="slcName" index="index" open="("
+                         separator="," close=")">
+                    #{slcName}
+                </foreach>
+                )
+            </if>
+        </where>
+        order by storeDistance asc,store_id desc
+    </select>
+
+
+    <select id="soldListByParam" parameterType="com.mall4j.cloud.platform.dto.StoreQueryParamDTO"
+            resultMap="tzStoreMap">
+        select
+        s.*
+        from tz_store s
+        LEFT JOIN organization o1 ON s.org_id = o1.org_id and o1.type =4 and o1.is_deleted=0
+        <where>
+            1=1 and s.is_deleted = 0
+            <if test="storeQueryParamDTO.cityId != null">
+                and s.city_id = #{storeQueryParamDTO.cityId}
+            </if>
+            <if test="storeQueryParamDTO.storeType != null">
+                and s.type = #{storeQueryParamDTO.storeType}
+            </if>
+            <if test="storeQueryParamDTO.storeStatus != null">
+                and s.`status` = #{storeQueryParamDTO.storeStatus}
+            </if>
+            <if test="storeQueryParamDTO.inviteStatus != null">
+                and s.`invite_status` = #{storeQueryParamDTO.inviteStatus}
+            </if>
+            <if test="storeQueryParamDTO.keyword != null">
+                and concat(s.station_name,s.store_code) like concat('%',#{storeQueryParamDTO.keyword},'%')
+            </if>
+            <if test="storeQueryParamDTO.storeType != null">
+                and s.`type` = #{storeQueryParamDTO.storeType}
+            </if>
+            <if test="storeQueryParamDTO.limitOrgIdList != null and  storeQueryParamDTO.limitOrgIdList.size() > 0 ">
+                and o1.org_id in
+                <foreach collection="storeQueryParamDTO.limitOrgIdList" item="orgId" index="index" open="("
+                         separator="," close=")">
+                    #{orgId}
+                </foreach>
+                or o1.parent_id in
+                <foreach collection="storeQueryParamDTO.limitOrgIdList" item="orgId" index="index" open="("
+                         separator="," close=")">
+                    #{orgId}
+                </foreach>
+            </if>
+            <if test="storeQueryParamDTO.existedStoreIdList != null and storeQueryParamDTO.existedStoreIdList.size() > 0 ">
+                and s.store_id not in
+                <foreach collection="storeQueryParamDTO.existedStoreIdList" item="storeId" index="index" open="("
+                         separator="," close=")">
+                    #{storeId}
+                </foreach>
+            </if>
+            <if test="storeQueryParamDTO.storeIdList != null and storeQueryParamDTO.storeIdList.size() > 0 ">
+                and s.store_id in
+                <foreach collection="storeQueryParamDTO.storeIdList" item="storeId" index="index" open="("
+                         separator="," close=")">
+                    #{storeId}
+                </foreach>
+            </if>
+        </where>
+        order by s.store_id desc
+    </select>
+    <select id="listByOrgIdAndKeyWord" resultMap="tzStoreMap">
+        SELECT s.*
+        FROM tz_store s
+        LEFT JOIN organization o ON s.org_id = o.org_id
+        WHERE o.path LIKE concat(
+        #{path},
+        '%')
+        <if test="keyword != null and keyword != ''">
+            and concat(s.station_name,s.store_code) like concat('%',#{keyword},'%')
+        </if>
+    </select>
+
+    <update id="updateBatch">
+        <foreach collection="storeList" item="store" separator=";">
+            update tz_store
+            <set>
+                <if test="store.status != null">
+                    `status` = #{store.status},
+                </if>
+                <if test="store.type != null">
+                    `type` = #{store.type},
+                </if>
+                <if test="store.addr != null and store.addr !=''">
+                    `addr`=#{store.addr},
+                </if>
+                <if test="store.lat != null and store.lat !=''">
+                    `lat`=#{store.lat},
+                </if>
+                <if test="store.lng != null and store.lng !=''">
+                    `lng`=#{store.lng},
+                </if>
+                <if test="store.storenature != null and store.storenature !=''">
+                    `storenature`=#{store.storenature},
+                </if>
+                <if test="store.slcName != null and store.slcName !=''">
+                    `slc_name`=#{store.slcName},
+                </if>
+                <if test="store.stationName != null and store.stationName !=''">
+                    `station_name`=#{store.stationName},
+                </if>
+                update_time = now()
+            </set>
+            where store_id = #{store.storeId}
+        </foreach>
+    </update>
+
+
+    <update id="updateShows">
+        <foreach collection="stores" item="store" separator=";">
+            UPDATE tz_store
+            SET is_show =  #{store.isShow},
+                update_time=now()
+            WHERE store_id = #{store.storeId}
+        </foreach>
+    </update>
+
+    <select id="listByStoreLatLng" parameterType="com.mall4j.cloud.platform.dto.StoreQueryParamDTO" resultMap="tzStoreMap">
+        select * from tz_store t where (t.lng is null or t.lng = 0 ) and t.addr is not null and t.addr != '';
+    </select>
+
+</mapper>

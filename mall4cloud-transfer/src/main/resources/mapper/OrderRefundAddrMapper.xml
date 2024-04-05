@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.OrderRefundAddrMapper">
+    <resultMap id="orderRefundAddrMap" type="com.mall4j.cloud.transfer.model.OrderRefundAddr">
+        <id column="refund_addr_id" property="refundAddrId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="refund_id" property="refundId"/>
+        <result column="user_id" property="userId"/>
+        <result column="delivery_company_id" property="deliveryCompanyId"/>
+        <result column="delivery_name" property="deliveryName"/>
+        <result column="delivery_no" property="deliveryNo"/>
+        <result column="consignee_name" property="consigneeName"/>
+        <result column="consignee_mobile" property="consigneeMobile"/>
+        <result column="consignee_telephone" property="consigneeTelephone"/>
+        <result column="consignee_post_code" property="consigneePostCode"/>
+        <result column="consignee_addr" property="consigneeAddr"/>
+        <result column="sender_mobile" property="senderMobile"/>
+        <result column="sender_remarks" property="senderRemarks"/>
+        <result column="imgs" property="imgs"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `refund_addr_id`
+        ,
+        `create_time`,
+        `update_time`,
+        `shop_id`,
+        `refund_id`,
+        `user_id`,
+        `delivery_company_id`,
+        `delivery_name`,
+        `delivery_no`,
+        `consignee_name`,
+        `consignee_mobile`,
+        `consignee_telephone`,
+        `consignee_post_code`,
+        `consignee_addr`,
+        `sender_mobile`,
+        `sender_remarks`,
+        `imgs`
+    </sql>
+    <select id="list" resultMap="orderRefundAddrMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_refund_addr order by refund_addr_id desc
+    </select>
+    <select id="getByRefundAddrId" resultMap="orderRefundAddrMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from order_refund_addr where refund_addr_id = #{refundAddrId}
+    </select>
+    <insert id="save">
+        insert into order_refund_addr (`shop_id`, `refund_id`, `user_id`, `delivery_company_id`, `delivery_name`,
+                                       `delivery_no`, `consignee_name`, `consignee_mobile`, `consignee_telephone`,
+                                       `consignee_post_code`, `consignee_addr`, `sender_mobile`, `sender_remarks`,
+                                       `imgs`)
+        values (#{orderRefundAddr.shopId}, #{orderRefundAddr.refundId}, #{orderRefundAddr.userId},
+                #{orderRefundAddr.deliveryCompanyId}, #{orderRefundAddr.deliveryName}, #{orderRefundAddr.deliveryNo},
+                #{orderRefundAddr.consigneeName}, #{orderRefundAddr.consigneeMobile},
+                #{orderRefundAddr.consigneeTelephone}, #{orderRefundAddr.consigneePostCode},
+                #{orderRefundAddr.consigneeAddr}, #{orderRefundAddr.senderMobile}, #{orderRefundAddr.senderRemarks},
+                #{orderRefundAddr.imgs});
+    </insert>
+    <insert id="batchSave">
+        insert into order_refund_addr (`shop_id`, `refund_id`, `user_id`, `delivery_company_id`, `delivery_name`,
+                                       `delivery_no`, `consignee_name`, `consignee_mobile`, `consignee_telephone`,
+                                       `consignee_post_code`, `consignee_addr`, `sender_mobile`, `sender_remarks`,
+                                       `imgs`)
+        values
+        <foreach collection="orderRefundAddrs" item="orderRefundAddr" separator=",">
+            (#{orderRefundAddr.shopId}, #{orderRefundAddr.refundId}, #{orderRefundAddr.userId},
+            #{orderRefundAddr.deliveryCompanyId}, #{orderRefundAddr.deliveryName}, #{orderRefundAddr.deliveryNo},
+            #{orderRefundAddr.consigneeName}, #{orderRefundAddr.consigneeMobile},
+            #{orderRefundAddr.consigneeTelephone}, #{orderRefundAddr.consigneePostCode},
+            #{orderRefundAddr.consigneeAddr}, #{orderRefundAddr.senderMobile}, #{orderRefundAddr.senderRemarks},
+            #{orderRefundAddr.imgs})
+        </foreach>
+    </insert>
+    <update id="update">
+        update order_refund_addr
+        <set>
+            <if test="orderRefundAddr.shopId != null">
+                `shop_id` = #{orderRefundAddr.shopId},
+            </if>
+            <if test="orderRefundAddr.refundId != null">
+                `refund_id` = #{orderRefundAddr.refundId},
+            </if>
+            <if test="orderRefundAddr.userId != null">
+                `user_id` = #{orderRefundAddr.userId},
+            </if>
+            <if test="orderRefundAddr.deliveryCompanyId != null">
+                `delivery_company_id` = #{orderRefundAddr.deliveryCompanyId},
+            </if>
+            <if test="orderRefundAddr.deliveryName != null">
+                `delivery_name` = #{orderRefundAddr.deliveryName},
+            </if>
+            <if test="orderRefundAddr.deliveryNo != null">
+                `delivery_no` = #{orderRefundAddr.deliveryNo},
+            </if>
+            <if test="orderRefundAddr.consigneeName != null">
+                `consignee_name` = #{orderRefundAddr.consigneeName},
+            </if>
+            <if test="orderRefundAddr.consigneeMobile != null">
+                `consignee_mobile` = #{orderRefundAddr.consigneeMobile},
+            </if>
+            <if test="orderRefundAddr.consigneeTelephone != null">
+                `consignee_telephone` = #{orderRefundAddr.consigneeTelephone},
+            </if>
+            <if test="orderRefundAddr.consigneePostCode != null">
+                `consignee_post_code` = #{orderRefundAddr.consigneePostCode},
+            </if>
+            <if test="orderRefundAddr.consigneeAddr != null">
+                `consignee_addr` = #{orderRefundAddr.consigneeAddr},
+            </if>
+            <if test="orderRefundAddr.senderMobile != null">
+                `sender_mobile` = #{orderRefundAddr.senderMobile},
+            </if>
+            <if test="orderRefundAddr.senderRemarks != null">
+                `sender_remarks` = #{orderRefundAddr.senderRemarks},
+            </if>
+            <if test="orderRefundAddr.imgs != null">
+                `imgs` = #{orderRefundAddr.imgs},
+            </if>
+        </set>
+        where refund_addr_id = #{orderRefundAddr.refundAddrId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from order_refund_addr
+        where refund_addr_id = #{refundAddrId}
+    </delete>
+
+</mapper>

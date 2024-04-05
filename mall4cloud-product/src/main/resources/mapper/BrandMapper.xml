@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress ALL -->
+<mapper namespace="com.mall4j.cloud.product.mapper.BrandMapper">
+  <resultMap id="brandMap" type="com.mall4j.cloud.product.model.Brand">
+    <id column="brand_id" property="brandId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="img_url" property="imgUrl"/>
+    <result column="first_letter" property="firstLetter"/>
+    <result column="seq" property="seq"/>
+    <result column="status" property="status"/>
+    <result column="shop_id" property="shopId"/>
+  </resultMap>
+  <resultMap id="brandVOMap" type="com.mall4j.cloud.common.product.vo.BrandVO">
+    <id column="brand_id" property="brandId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="img_url" property="imgUrl"/>
+    <result column="first_letter" property="firstLetter"/>
+    <result column="seq" property="seq"/>
+    <result column="is_top" property="isTop"/>
+    <result column="status" property="status"/>
+    <collection property="brandLangList" ofType="com.mall4j.cloud.common.product.vo.BrandLangVO">
+      <id column="lang" property="lang"/>
+      <result column="name" property="name"/>
+      <result column="desc" property="desc"/>
+    </collection>
+  </resultMap>
+  <resultMap id="brandAppVOMap" type="com.mall4j.cloud.common.product.vo.app.BrandAppVO">
+    <result column="brand_id" property="brandId"/>
+    <result column="img_url" property="imgUrl"/>
+    <result column="first_letter" property="firstLetter"/>
+    <collection property="langList" ofType="com.mall4j.cloud.common.product.vo.BrandLangVO">
+      <id column="lang" property="lang"/>
+      <result column="name" property="name"/>
+      <result column="desc" property="desc"/>
+    </collection>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `brand_id`,`create_time`,`update_time`,,`img_url`,`first_letter`,`seq`,`is_top`,`status`,`shop_id`
+  </sql>
+  <select id="list" resultMap="brandVOMap">
+    select b.*,bl.lang,bl.name,bl.`desc`
+    from
+    (
+        select brand_id,create_time,update_time,img_url,first_letter,seq,is_top,status
+        from brand
+        <where>
+          <if test="brandDTO.status != null">
+            and status = #{brandDTO.status}
+          </if>
+          <if test="brandDTO.isTop != null">
+            and is_top = #{brandDTO.isTop}
+          </if>
+          <if test="brandDTO.shopId != null">
+            and shop_id = #{brandDTO.shopId}
+          </if>
+          <if test="brandDTO.firstLetter != null and brandDTO.firstLetter != ''">
+            and first_letter = #{brandDTO.firstLetter}
+          </if>
+          <if test="brandDTO.name != null and brandDTO.name != ''">
+            and brand_id in (select distinct brand_id from brand_lang where `name` like concat('%',#{brandDTO.name},'%'))
+          </if>
+        </where>
+        limit #{page.begin}, #{page.size}
+    ) b
+    JOIN brand_lang bl on b.brand_id = bl.brand_id
+    order by b.update_time desc
+  </select>
+  <select id="listTotal" resultType="java.lang.Long">
+    select count(brand_id)
+    from brand
+    <where>
+      <if test="brandDTO.name != null">
+        brand_id in (select distinct brand_id from brand_lang where name like concat('%',#{brandDTO.name},'%'))
+      </if>
+      <if test="brandDTO.status != null">
+        and status = #{brandDTO.status}
+      </if>
+      <if test="brandDTO.isTop != null">
+        and is_top = #{brandDTO.isTop}
+      </if>
+      <if test="brandDTO.shopId != null">
+        and shop_id = #{brandDTO.shopId}
+      </if>
+      <if test="brandDTO.firstLetter != null and brandDTO.firstLetter != ''">
+        and first_letter = #{brandDTO.firstLetter}
+      </if>
+    </where>
+  </select>
+  <select id="getByBrandId" resultMap="brandVOMap">
+    SELECT b.brand_id,b.img_url
+    FROM brand b
+    WHERE b.brand_id = #{brandId}
+  </select>
+
+  <insert id="save" useGeneratedKeys="true" keyProperty="brandId">
+    insert into brand (`img_url`,`first_letter`,`seq`,`is_top`,`status`,`shop_id`)
+    values (#{brand.imgUrl},#{brand.firstLetter},#{brand.seq},#{brand.isTop},#{brand.status},#{brand.shopId});
+  </insert>
+  <insert id="insertBatch">
+    <foreach collection="brandList" item="brand">
+      insert into brand (`img_url`,`first_letter`,`seq`,`is_top`,`status`,`shop_id`)
+      values (#{brand.imgUrl},#{brand.firstLetter},#{brand.seq},#{brand.isTop},#{brand.status},#{brand.shopId});
+    </foreach>
+  </insert>
+  <insert id="insertBatchByBrandShopList" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="brandId">
+    insert into brand (`img_url`,`status`,`shop_id`,`first_letter`,`seq`,`is_top`) values
+    <foreach collection="brandList" item="brand" separator=",">
+      (#{brand.imgUrl},#{brand.status},#{brand.shopId},#{brand.firstLetter},#{brand.seq},#{brand.isTop})
+    </foreach>
+  </insert>
+
+  <update id="update">
+    update brand
+    set
+      <if test="brand.name != null">
+        `name` = #{brand.name},
+      </if>
+      <if test="brand.imgUrl != null">
+        `img_url` = #{brand.imgUrl},
+      </if>
+      <if test="brand.firstLetter != null">
+        `first_letter` = #{brand.firstLetter},
+      </if>
+      <if test="brand.seq != null">
+        `seq` = #{brand.seq},
+      </if>
+      <if test="brand.isTop != null">
+        `is_top` = #{brand.isTop},
+      </if>
+      <if test="brand.status != null">
+        `status` = #{brand.status},
+      </if>
+      <if test="brand.shopId != null">
+        `shop_id` = #{brand.shopId},
+      </if>
+      <if test="brand.spuCount != null">
+        `spu_count` = #{brand.spuCount},
+      </if>
+    update_time = NOW()
+    where brand_id = #{brand.brandId}
+  </update>
+  <delete id="deleteById">
+    delete from brand where brand_id = #{brandId}
+  </delete>
+  <delete id="deleteBatchByShopId">
+    delete from brand where shop_id = #{shopId}
+  </delete>
+
+  <select id="getUseNum" resultType="int">
+    SELECT COUNT(*) FROM spu WHERE brand_id = #{brandId} AND `status` = #{status}
+  </select>
+
+  <update id="updateBrandStatus">
+    UPDATE brand SET `status` = #{brand.status} WHERE `brand_id` = #{brand.brandId};
+  </update>
+  <select id="listByCategory" resultMap="brandAppVOMap">
+    SELECT b.brand_id,b.img_url,bl.name,bl.lang
+    FROM brand b
+    JOIN brand_lang bl ON b.brand_id = bl.brand_id and b.status = 1
+    JOIN category_brand AS cb ON b.brand_id = cb.brand_id
+    AND cb.category_id IN
+    (
+      SELECT category_id FROM category
+      WHERE parent_id IN (SELECT category_id FROM category WHERE parent_id = #{categoryId})
+    )
+    GROUP BY b.brand_id
+    LIMIT 8
+  </select>
+
+  <update id="batchUpdateSpuCount">
+    <foreach collection="brandIds" item="brandId">
+      UPDATE brand SET spu_count = (SELECT COUNT(*) FROM spu WHERE brand_id = #{brandId} AND `status` = 1) WHERE brand_id = #{brandId};
+    </foreach>
+  </update>
+
+  <select id="brandAppPage" resultMap="brandAppVOMap">
+    select b.*,bl.name,bl.lang
+    from (
+      select brand_id,img_url,first_letter from brand
+      where status = 1
+      <if test="brand.spuCount != null and brand.spuCount > 0">
+        and spu_count &gt;= #{brand.spuCount}
+      </if>
+      order by update_time desc
+      limit #{page.begin}, #{page.size}
+    ) b
+    JOIN brand_lang bl on b.brand_id = bl.brand_id
+  </select>
+
+  <select id="brandAppTotal" resultType="java.lang.Long">
+    select count(*) from brand
+    where status = 1
+    <if test="brand.spuCount != null and brand.spuCount > 0">
+      and spu_count &gt;= #{brand.spuCount}
+    </if>
+    order by update_time desc
+  </select>
+
+  <select id="appList" resultMap="brandAppVOMap">
+    select b.brand_id,b.img_url,b.first_letter,bl.name,bl.lang
+    from brand b
+    JOIN brand_lang bl on b.brand_id = bl.brand_id
+    where b.status = 1
+      <if test="brand.isTop != null">
+        and b.is_top = #{brand.isTop}
+      </if>
+      <if test="brand.spuCount != null and brand.spuCount > 0">
+        and b.spu_count &gt;= #{brand.spuCount}
+      </if>
+    order by b.update_time desc
+  </select>
+  <select id="listByName" resultType="com.mall4j.cloud.common.product.vo.BrandVO">
+    SELECT
+      b.brand_id,b.img_url,b.first_letter,b.seq,b.is_top,b.status,bl.lang,bl.name,bl.desc
+    FROM
+      brand b
+    JOIN brand_lang bl ON b.brand_id = bl.brand_id AND bl.lang = #{lang} AND bl.`name` LIKE concat("%",#{name},"%")
+  </select>
+  <select id="listByIds" resultType="com.mall4j.cloud.common.product.vo.BrandVO">
+    SELECT
+      b.brand_id,b.img_url,b.first_letter,b.seq,b.is_top,b.status,bl.lang,bl.name,bl.desc
+    FROM
+      brand b
+    JOIN brand_lang bl ON b.brand_id = bl.brand_id AND bl.lang = 1
+    WHERE b.brand_id IN
+    <foreach collection="brandIdList" item="brandId" open="(" close=")" separator=",">
+      #{brandId}
+    </foreach>
+  </select>
+  <select id="listByShopId" resultType="com.mall4j.cloud.common.product.vo.BrandVO">
+    SELECT
+      b.brand_id,b.img_url,b.first_letter,b.seq,b.is_top,b.status,bl.lang,bl.name,bl.desc
+    FROM
+      brand b
+        JOIN brand_lang bl ON b.brand_id = bl.brand_id AND bl.lang = 1
+    WHERE b.shop_id = #{shopId}
+  </select>
+  <select id="listSigningByShopIdAndBrandNameAndCategoryId" resultMap="brandVOMap">
+    SELECT DISTINCT b.brand_id,b.img_url,b.first_letter,b.seq,b.is_top,b.status,bl.lang,bl.name,bl.desc
+    FROM brand_shop as bs
+    JOIN brand b ON b.brand_id = bs.brand_id
+    JOIN brand_lang bl on bl.brand_id = b.brand_id
+    WHERE b.status = 1 AND bs.shop_id = #{shopId}
+    <if test="brandName != null and brandName != ''">
+      AND b.brand_id in (SELECT DISTINCT brand_id FROM brand_lang WHERE name LIKE concat("%",#{brandName},"%"))
+    </if>
+  </select>
+  <update id="updateShopIdAndStatusByShopId">
+    UPDATE brand SET shop_id = #{newShopId}, status = #{status} WHERE shop_id = #{oldShopId}
+  </update>
+
+  <select id="listBrandIdBySpuIds" resultType="java.lang.Long">
+    SELECT DISTINCT brand_id FROM spu WHERE spu_id IN
+    <foreach collection="spuIds" item="spuId" open="(" close=")" separator=",">
+      #{spuId}
+    </foreach>
+  </select>
+  <select id="listByParams" resultMap="brandVOMap">
+    SELECT b.brand_id,b.img_url,b.first_letter,b.seq,b.is_top,b.status,bl.lang,bl.name,bl.desc
+    FROM brand b
+    JOIN brand_lang bl ON b.brand_id = bl.brand_id
+    <where>
+      <if test="brandDTO.shopId != null and brandDTO.shopId != ''">
+        AND b.shop_id = #{brandDTO}
+      </if>
+      <if test="brandDTO.name != null and brandDTO.name != ''">
+        AND bl.name LIKE concat("%", #{brandDTO.name}, "%")
+      </if>
+      <if test="brandDTO.status != null and brandDTO.status != ''">
+        AND b.status = #{brandDTO.status}
+      </if>
+    </where>
+  </select>
+</mapper>

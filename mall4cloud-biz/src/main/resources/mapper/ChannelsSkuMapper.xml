@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.channels.ChannelsSkuMapper">
+  <resultMap id="channelsSkuMap" type="com.mall4j.cloud.biz.model.channels.ChannelsSku">
+    <id column="id" property="id" />
+    <result column="spu_id" property="spuId"/>
+    <result column="channels_spu_id" property="channelsSpuId"/>
+    <result column="sku_id" property="skuId"/>
+    <result column="out_sku_id" property="outSkuId"/>
+    <result column="thumb_img" property="thumbImg"/>
+    <result column="deliver_method" property="deliverMethod"/>
+    <result column="desc_info" property="descInfo"/>
+    <result column="conver_img_url" property="converImgUrl"/>
+    <result column="price" property="price"/>
+    <result column="warning_stock" property="warningStock"/>
+    <result column="channels_warning_stock" property="channelsWarningStock"/>
+    <result column="stock_num" property="stockNum"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="delete_time" property="deleteTime"/>
+    <result column="sku_code" property="skuCode"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`spu_id`,`channels_spu_id`,`sku_id`,`out_sku_id`,`thumb_img`,`deliver_method`,`desc_info`,`conver_img_url`,`price`,`warning_stock`,`channels_warning_stock`,`stock_num`,`create_time`,`update_time`,`delete_time`,`sku_code`
+  </sql>
+  <select id="list" resultMap="channelsSkuMap">
+    select <include refid="Vo_Column_List"/> from channels_sku order by id desc
+  </select>
+
+  <select id="getById" resultMap="channelsSkuMap">
+    select <include refid="Vo_Column_List"/> from channels_sku where id = #{id}
+  </select>
+
+  <select id="selectChannelsSpuSkuExcelVO"
+          resultType="com.mall4j.cloud.biz.vo.channels.excel.ChannelsSpuSkuExcelVO">
+    select
+        spu.spu_id AS spuId,
+        spu.spu_code AS spuCode,
+        spu.title AS spuTitle,
+        spu.status AS spuStatus,
+        spu.deliver_method AS deliverMethod,
+        spu.in_winodws AS isInWindow,
+        sku.sku_code AS skuCode,
+        sku.price AS price,
+        sku.stock_num AS stock
+    from channels_sku sku
+    left join channels_spu spu on spu.id = sku.channels_spu_id
+    where 
+        1 = 1
+        and sku.channels_spu_id in 
+            <foreach collection="channelsSpuIds" item="channelsSpuId" open="(" close=")" separator=",">
+              #{channelsSpuId}
+            </foreach>
+    ${lastSql}
+  </select>
+
+
+  <update id="updateStockBySkuId">
+        UPDATE channels_sku SET stock_num = stock_num + #{stock} WHERE id = #{channelsSkuId}
+  </update>
+
+  <update id="setZeroStockBySkuId">
+        UPDATE channels_sku SET stock_num = 0 WHERE id = #{channelsSkuId}
+  </update>
+
+    <update id="reduceChannelsStockBySkuId">
+        UPDATE channels_sku SET stock_num = stock_num - #{stock} WHERE sku_id = #{skuId} AND stock_num >= #{stock}
+    </update>
+
+    <update id="updateStockByProductSkuId">
+        UPDATE channels_sku SET stock_num = #{stock} WHERE sku_id = #{skuId}
+    </update>
+
+    <delete id="deleteById">
+        delete from channels_sku where id = #{id}
+    </delete>
+
+</mapper>

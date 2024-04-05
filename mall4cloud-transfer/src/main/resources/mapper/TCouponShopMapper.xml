@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.TCouponShopMapper">
+  <resultMap id="tCouponShopMap" type="com.mall4j.cloud.transfer.model.TCouponShop">
+    <id column="id" property="id" />
+    <result column="coupon_id" property="couponId"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="shop_code" property="shopCode"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`coupon_id`,`shop_id`,`shop_code`
+  </sql>
+  <select id="list" resultMap="tCouponShopMap">
+    select <include refid="Vo_Column_List"/> from t_coupon_shop order by id desc
+  </select>
+  <select id="getById" resultMap="tCouponShopMap">
+    select <include refid="Vo_Column_List"/> from t_coupon_shop where id = #{id}
+  </select>
+  <insert id="save">
+    insert into t_coupon_shop (`coupon_id`,`shop_id`,`shop_code`)
+    values (#{tCouponShop.couponId},#{tCouponShop.shopId},#{tCouponShop.shopCode});
+  </insert>
+  <update id="update">
+    update t_coupon_shop
+    <set>
+      <if test="tCouponShop.couponId != null">
+        `coupon_id` = #{tCouponShop.couponId},
+      </if>
+      <if test="tCouponShop.shopId != null">
+        `shop_id` = #{tCouponShop.shopId},
+      </if>
+      <if test="tCouponShop.shopCode != null">
+        `shop_code` = #{tCouponShop.shopCode},
+      </if>
+    </set>
+    where id = #{tCouponShop.id}
+  </update>
+  <delete id="deleteById">
+    delete from t_coupon_shop where id = #{id}
+  </delete>
+
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.PayActivityMapper">
+
+    <select id="payActivityList" resultType="com.mall4j.cloud.group.vo.PayActivityListVO">
+        select
+        DISTINCT
+        pa.id as id,
+        pa.activity_name as activityName,
+        pa.activity_begin_time as activityBeginTime,
+        pa.activity_end_time as activityEndTime,
+        pa.is_all_shop as isAllShop,
+        (select count(1) from pay_activity_shop d where d.activity_id = pa.id) as applyShopNum,
+        (select sum(c.order_amount) from pay_activity_record c where c.activity_id = pa.id) as participationAmount,
+        pa.activity_point_switch as activityPointSwitch,
+        pa.activity_point_number as activityPointNumber,
+        pa.activity_coupon_switch as activityCouponSwitch,
+        pa.activity_coupon_id as activityCouponId,
+        pa.weight as weight,
+        pa.status as status,
+        pa.create_time as createTime,
+        pa.create_user_name as createUserName
+        from pay_activity pa left join pay_activity_shop pas on pa.id = pas.activity_id
+        where pa.deleted = 0
+        <if test="shopIds != null">
+            and (pas.shop_id in (#{shopIds}) or pa.is_all_shop = 1)
+        </if>
+        <if test="status == 0">
+            and pa.status = 0
+        </if>
+        <if test="status == 2">
+            and pa.activity_begin_time &lt;= now() and pa.activity_end_time &gt; now() and pa.status = 1
+        </if>
+        <if test="status == 3">
+            and pa.activity_begin_time &gt; now() and pa.status = 1
+        </if>
+        <if test="status == 4">
+            and pa.activity_end_time &lt; now() and pa.status = 1
+        </if>
+        <if test="activityName != null">
+            and pa.activity_name like concat('%',#{activityName},'%')
+        </if>
+        order by pa.create_time desc
+    </select>
+    <select id="selectFirstActivity" resultType="com.mall4j.cloud.group.model.PayActivity">
+        select
+        pa.id as id,
+        pa.activity_name as activityName,
+        pa.activity_begin_time as activityBeginTime,
+        pa.activity_end_time as activityEndTime,
+        pa.activity_pic_url as activityPicUrl,
+        pa.is_all_shop as isAllShop,
+        pa.activity_point_switch as activityPointSwitch,
+        pa.activity_point_number as activityPointNumber,
+        pa.activity_coupon_switch as activityCouponSwitch,
+        pa.activity_coupon_id as activityCouponId,
+        pa.weight as weight,
+        pa.status as status,
+        pa.create_time as createTime,
+        pa.create_user_name as createUserName
+        from pay_activity pa left join pay_activity_shop pas on pa.id = pas.activity_id
+        where pa.deleted = 0
+            and (pas.shop_id = #{shopId} or pa.is_all_shop = 1)
+            and pa.activity_begin_time &lt;= now() and pa.activity_end_time &gt; now() and pa.status = 1
+        order by pa.weight asc,pa.create_time desc limit 1
+    </select>
+</mapper>

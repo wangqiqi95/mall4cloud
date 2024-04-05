@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinNewsTemplateMapper">
+  <resultMap id="weixinNewsTemplateMap" type="com.mall4j.cloud.biz.model.WeixinNewsTemplate">
+    <id column="id" property="id" />
+    <result column="template_name" property="templateName"/>
+    <result column="template_type" property="templateType"/>
+    <result column="from_type" property="fromType"/>
+    <result column="media_id" property="mediaId"/>
+    <result column="app_id" property="appId"/>
+    <result column="upload_type" property="uploadType"/>
+    <result column="upload_time" property="uploadTime"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`template_name`,`template_type`,`from_type`,`media_id`,`app_id`,`upload_type`,`upload_time`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinNewsTemplateMap">
+    select <include refid="Vo_Column_List"/> from weixin_news_template order by id desc
+  </select>
+  <select id="getById" resultMap="weixinNewsTemplateMap">
+    select <include refid="Vo_Column_List"/> from weixin_news_template where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_news_template (`id`,`template_name`,`template_type`,`from_type`,`media_id`,`app_id`,`upload_type`,`upload_time`,`create_by`,`create_time`,`del_flag`)
+    values (#{weixinNewsTemplate.id},#{weixinNewsTemplate.templateName},#{weixinNewsTemplate.templateType},#{weixinNewsTemplate.fromType},#{weixinNewsTemplate.mediaId},#{weixinNewsTemplate.appId},#{weixinNewsTemplate.uploadType},#{weixinNewsTemplate.uploadTime},#{weixinNewsTemplate.createBy},#{weixinNewsTemplate.createTime},#{weixinNewsTemplate.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_news_template
+    <set>
+      <if test="weixinNewsTemplate.templateName != null">
+        `template_name` = #{weixinNewsTemplate.templateName},
+      </if>
+      <if test="weixinNewsTemplate.templateType != null">
+        `template_type` = #{weixinNewsTemplate.templateType},
+      </if>
+      <if test="weixinNewsTemplate.fromType != null">
+        `from_type` = #{weixinNewsTemplate.fromType},
+      </if>
+      <if test="weixinNewsTemplate.mediaId != null">
+        `media_id` = #{weixinNewsTemplate.mediaId},
+      </if>
+      <if test="weixinNewsTemplate.appId != null">
+        `app_id` = #{weixinNewsTemplate.appId},
+      </if>
+      <if test="weixinNewsTemplate.uploadType != null">
+        `upload_type` = #{weixinNewsTemplate.uploadType},
+      </if>
+      <if test="weixinNewsTemplate.uploadTime != null">
+        `upload_time` = #{weixinNewsTemplate.uploadTime},
+      </if>
+      <if test="weixinNewsTemplate.createBy != null">
+        `create_by` = #{weixinNewsTemplate.createBy},
+      </if>
+      <if test="weixinNewsTemplate.updateBy != null">
+        `update_by` = #{weixinNewsTemplate.updateBy},
+      </if>
+      <if test="weixinNewsTemplate.delFlag != null">
+        `del_flag` = #{weixinNewsTemplate.delFlag},
+      </if>
+    </set>
+    where id = #{weixinNewsTemplate.id}
+  </update>
+  <delete id="deleteById">
+    delete from weixin_news_template where id = #{id}
+  </delete>
+
+</mapper>

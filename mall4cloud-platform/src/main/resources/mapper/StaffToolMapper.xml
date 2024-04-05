@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.platform.mapper.StaffToolMapper">
+  <resultMap id="staffToolMap" type="com.mall4j.cloud.platform.model.StaffTool">
+    <id column="id" property="id" />
+    <result column="staff_id" property="staffId"/>
+    <result column="tool_data" property="toolData"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`staff_id`,`tool_data`,`create_time`,`update_time`
+  </sql>
+  <select id="list" resultMap="staffToolMap">
+    select <include refid="Vo_Column_List"/> from staff_tool order by id desc
+  </select>
+  <select id="getById" resultMap="staffToolMap">
+    select <include refid="Vo_Column_List"/> from staff_tool where id = #{id}
+  </select>
+  <select id="getStaffToolByStaff" resultType="com.mall4j.cloud.platform.model.StaffTool">
+    select <include refid="Vo_Column_List"/> from staff_tool where staff_id = #{staffId}
+  </select>
+  <insert id="save">
+    insert into staff_tool (`staff_id`,`tool_data`)
+    values (#{staffTool.staffId},#{staffTool.toolData});
+  </insert>
+  <update id="update">
+    update staff_tool
+    <set>
+      <if test="staffTool.staffId != null">
+        `staff_id` = #{staffTool.staffId},
+      </if>
+      <if test="staffTool.toolData != null">
+        `tool_data` = #{staffTool.toolData},
+      </if>
+    </set>
+    where id = #{staffTool.id}
+  </update>
+  <update id="updateByStaff">
+    update staff_tool
+    <set>
+      <if test="staffTool.toolData != null">
+        `tool_data` = #{staffTool.toolData},
+      </if>
+    </set>
+    where staff_id = #{staffTool.staffId}
+  </update>
+  <delete id="deleteById">
+    delete from staff_tool where id = #{id}
+  </delete>
+
+</mapper>

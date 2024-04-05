@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.chat.UserSessionAgreeMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.mall4j.cloud.biz.model.chat.AgreeInfo" id="UserSessionAgreeMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="exteranalOpenId" column="exteranal_open_id"/>
+        <result property="agreeStatus" column="agree_status"/>
+        <result property="statusChangeTime" column="status_change_time"/>
+        <result property="changeTime" column="change_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id,user_id,exteranal_open_id,agree_status,status_change_time,change_time
+    </sql>
+    
+    <select id="list" resultType="com.mall4j.cloud.biz.vo.chat.SessionAgreeVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+            `cp_user_session_agree`
+        <where>
+             1=1
+            <if test="param.agreeStatus != null and param.agreeStatus != ''">
+                and agree_status = #{param.agreeStatus}
+            </if>
+            <if test="param.startTime != null and param.endTime != null">
+                and DATE_FORMAT(change_time,'%Y-%m-%d %H:%i:%s') >= #{param.startTime}
+                and DATE_FORMAT(change_time,'%Y-%m-%d %H:%i:%s') &lt;= #{param.endTime}
+            </if>
+            <if test="param.exteranalOpenIds != null and param.exteranalOpenIds.size>0">
+                and exteranal_open_id IN
+                <foreach collection="param.exteranalOpenIds" item="exteranalOpenId" separator="," open="(" close=")">
+                    #{exteranalOpenId}
+                </foreach>
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="agree.id">
+        insert into cp_user_session_agree (`user_id`,`exteranal_open_id`,`agree_status`,`status_change_time`,`change_time`
+        values (#{agree.userId},#{agree.exteranalOpenId},#{agree.agreeStatus},#{agree.statusChangeTime},#{agree.changeTime})
+    </insert>
+
+    <insert id="batchInsert" parameterType="com.mall4j.cloud.biz.model.chat.AgreeInfo">
+        insert into cp_user_session_agree
+        (`user_id`,
+        `exteranal_open_id`,
+        `agree_status`,
+        `status_change_time`,
+        `change_time`,
+        `create_time`,
+        `update_time`
+        )
+        values
+        <foreach collection="agreeInfo" item="item" separator=",">
+            (#{item.userId},
+            #{item.exteranalOpenId},
+            #{item.agreeStatus},
+            #{item.statusChangeTime},
+            #{item.changeTime},
+            now(),
+            now()
+            )
+
+        </foreach>
+    </insert>
+
+    <select id="agreeMonCount" resultType="com.mall4j.cloud.biz.vo.chat.SessionAgreeVO">
+        select DATE_FORMAT(change_time,'%Y-%m') mon,count(1) agreeCount from cp_user_session_agree cusa
+        where agree_status ='Agree'
+        <if test="param.startTime != null and param.endTime != null">
+            and DATE_FORMAT(change_time,'%Y-%m-%d %H:%i:%s') >= #{param.startTime}
+            and DATE_FORMAT(change_time,'%Y-%m-%d %H:%i:%s') &lt;= #{param.endTime}
+        </if>
+        <if test="param.userId != null">
+            and user_id = #{param.userId}
+        </if>
+        group by DATE_FORMAT(change_time,'%Y-%m')
+    </select>
+
+    <select id="agreeProportion" resultType="com.mall4j.cloud.biz.vo.chat.SessionAgreeVO">
+        select agree_status ,count(1) agreeCount from cp_user_session_agree cusa
+        <where>
+            1=1
+            <if test="param.userId != null">
+                and  user_id = #{param.userId}
+            </if>
+            <if test="param.startTime != null and param.endTime != null">
+                and DATE_FORMAT(change_time,'%Y-%m-%d %H:%i:%s') >= #{param.startTime}
+                and DATE_FORMAT(change_time,'%Y-%m-%d %H:%i:%s') &lt;= #{param.endTime}
+            </if>
+        </where>
+        group by agree_status
+    </select>
+
+    <select id="agreeSum" resultType="com.mall4j.cloud.biz.vo.chat.SessionAgreeVO">
+        select count(1) agreeSum from cp_user_session_agree cusa where agree_status ='Agree'
+        <if test="param.userId != null">
+            and  user_id = #{param.userId}
+        </if>
+        <if test="param.startTime != null and param.endTime != null">
+            and DATE_FORMAT(change_time,'%Y-%m-%d %H:%i:%s') >= #{param.startTime}
+            and DATE_FORMAT(change_time,'%Y-%m-%d %H:%i:%s') &lt;= #{param.endTime}
+        </if>
+    </select>
+
+    <select id="getAgree" resultType="com.mall4j.cloud.biz.model.chat.AgreeInfo">
+        select
+        <include refid="Base_Column_List"/>
+        FROM
+        `cp_user_session_agree`
+        <where>
+            1=1
+            <if test="userId != null and userId.size>0">
+                and exteranal_open_id IN
+                <foreach collection="userId" item="id" separator="," open="(" close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="staffId != null and staffId.size>0">
+                and user_id IN
+                <foreach collection="staffId" item="id" separator="," open="(" close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <update id="batchUpdate">
+        <foreach collection="agreeInfo" item="agree" separator=";">
+            update cp_user_session_agree
+            <set>
+                <if test="agree.agreeStatus != null">
+                    `agree_status` = #{agree.agreeStatus},
+                </if>
+                <if test="agree.changeTime != null">
+                    `change_time` = #{agree.changeTime},
+                </if>
+                update_time = now()
+            </set>
+            where id = #{agree.id}
+        </foreach>
+    </update>
+
+</mapper>

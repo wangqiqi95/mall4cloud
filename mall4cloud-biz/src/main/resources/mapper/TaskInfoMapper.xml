@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.biz.mapper.TaskInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.biz.model.TaskInfo">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+            <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+            <result property="delFlag" column="del_flag" jdbcType="TINYINT"/>
+            <result property="taskName" column="task_name" jdbcType="VARCHAR"/>
+            <result property="taskType" column="task_type" jdbcType="TINYINT"/>
+            <result property="shareType" column="share_type" jdbcType="TINYINT"/>
+            <result property="taskClientType" column="task_client_type" jdbcType="TINYINT"/>
+            <result property="taskClientGroupType" column="task_client_group_type" jdbcType="TINYINT"/>
+            <result property="allocatedQuantity" column="allocated_quantity" jdbcType="INTEGER"/>
+            <result property="implementationType" column="implementation_type" jdbcType="TINYINT"/>
+            <result property="speechSkills" column="speech_skills" jdbcType="VARCHAR"/>
+            <result property="companyId" column="company_id" jdbcType="VARCHAR"/>
+            <result property="taskStoreType" column="task_store_type" jdbcType="TINYINT"/>
+            <result property="taskShoppingGuideType" column="task_shopping_guide_type" jdbcType="TINYINT"/>
+            <result property="taskTarget" column="task_target" jdbcType="VARCHAR"/>
+            <result property="taskTargetScale" column="task_target_scale" jdbcType="DECIMAL"/>
+            <result property="taskFrequency" column="task_frequency" jdbcType="TINYINT"/>
+            <result property="visitResultsType" column="visit_results_type" jdbcType="TINYINT"/>
+            <result property="taskStatus" column="task_status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,create_time,update_time,
+        create_by,update_by,del_flag,
+        task_name,task_type,share_type,
+        task_client_type,task_client_group_type,allocated_quantity,
+        implementation_type,speech_skills,company_id,
+        task_store_type,task_shopping_guide_type,task_target,
+        task_target_scale,task_frequency,visit_results_type,
+        task_status
+    </sql>
+</mapper>

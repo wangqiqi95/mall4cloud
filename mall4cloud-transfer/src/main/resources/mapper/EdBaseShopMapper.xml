@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.EdBaseShopMapper">
+  <resultMap id="edBaseShopMap" type="com.mall4j.cloud.transfer.model.EdBaseShop">
+    <id column="Id" property="id" />
+    <result column="CopId" property="copid"/>
+    <result column="BrandId" property="brandid"/>
+    <result column="Code" property="code"/>
+    <result column="Name" property="name"/>
+    <result column="AltName" property="altname"/>
+    <result column="ChannelType" property="channeltype"/>
+    <result column="Category" property="category"/>
+    <result column="ServiceTel" property="servicetel"/>
+    <result column="ServiceTel2" property="servicetel2"/>
+    <result column="Contact" property="contact"/>
+    <result column="Country" property="country"/>
+    <result column="Province" property="province"/>
+    <result column="City" property="city"/>
+    <result column="County" property="county"/>
+    <result column="Address" property="address"/>
+    <result column="Longitude" property="longitude"/>
+    <result column="Latitude" property="latitude"/>
+    <result column="Area" property="area"/>
+    <result column="OpenDate" property="opendate"/>
+    <result column="OpenPeople" property="openpeople"/>
+    <result column="BusiZoneId" property="busizoneid"/>
+    <result column="IsDelete" property="isdelete"/>
+    <result column="LogoUrl" property="logourl"/>
+    <result column="Remark" property="remark"/>
+    <result column="DianPingId" property="dianpingid"/>
+    <result column="IsFree" property="isfree"/>
+    <result column="IsActive" property="isactive"/>
+    <result column="TagIds" property="tagids"/>
+    <result column="WxPoiState" property="wxpoistate"/>
+    <result column="WxPoiId" property="wxpoiid"/>
+    <result column="WxPoiCheckMsg" property="wxpoicheckmsg"/>
+    <result column="WxSceneQr" property="wxsceneqr"/>
+    <result column="WxCardQr" property="wxcardqr"/>
+    <result column="WxCardRgUrlQr" property="wxcardrgurlqr"/>
+    <result column="CreateUser" property="createuser"/>
+    <result column="CreateDate" property="createdate"/>
+    <result column="LastModifiedUser" property="lastmodifieduser"/>
+    <result column="LastModifiedDate" property="lastmodifieddate"/>
+    <result column="MallIsActive" property="mallisactive"/>
+    <result column="OrgType" property="orgtype"/>
+    <result column="IsPosActive" property="isposactive"/>
+    <result column="IsRetailActive" property="isretailactive"/>
+    <result column="ShopType" property="shoptype"/>
+    <result column="PosShopTypeId" property="posshoptypeid"/>
+    <result column="RetailShopTypeId" property="retailshoptypeid"/>
+    <result column="CrmShopTypeId" property="crmshoptypeid"/>
+    <result column="MallShopTypeId" property="mallshoptypeid"/>
+    <result column="IsVirtualShop" property="isvirtualshop"/>
+    <result column="OffShelvesDate" property="offshelvesdate"/>
+    <result column="QRCodePath" property="qrcodepath"/>
+    <result column="ShopClass" property="shopclass"/>
+    <result column="SaleTagIds" property="saletagids"/>
+    <result column="IsMarketShop" property="ismarketshop"/>
+    <result column="FloorId" property="floorid"/>
+    <result column="HouseNum" property="housenum"/>
+    <result column="AssociateProductBrand" property="associateproductbrand"/>
+    <result column="Logo" property="logo"/>
+    <result column="MerchantCode" property="merchantcode"/>
+    <result column="MerchantName" property="merchantname"/>
+    <result column="IsNg" property="isng"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `Id`,`CopId`,`BrandId`,`Code`,`Name`,`AltName`,`ChannelType`,`Category`,`ServiceTel`,`ServiceTel2`,`Contact`,`Country`,`Province`,`City`,`County`,`Address`,`Longitude`,`Latitude`,`Area`,`OpenDate`,`OpenPeople`,`BusiZoneId`,`IsDelete`,`LogoUrl`,`Remark`,`DianPingId`,`IsFree`,`IsActive`,`TagIds`,`WxPoiState`,`WxPoiId`,`WxPoiCheckMsg`,`WxSceneQr`,`WxCardQr`,`WxCardRgUrlQr`,`CreateUser`,`CreateDate`,`LastModifiedUser`,`LastModifiedDate`,`MallIsActive`,`OrgType`,`IsPosActive`,`IsRetailActive`,`ShopType`,`PosShopTypeId`,`RetailShopTypeId`,`CrmShopTypeId`,`MallShopTypeId`,`IsVirtualShop`,`OffShelvesDate`,`QRCodePath`,`ShopClass`,`SaleTagIds`,`IsMarketShop`,`FloorId`,`HouseNum`,`AssociateProductBrand`,`Logo`,`MerchantCode`,`MerchantName`,`IsNg`
+  </sql>
+  <select id="list" resultMap="edBaseShopMap">
+    select <include refid="Vo_Column_List"/> from ed_base_shop order by Id desc
+  </select>
+  <select id="getById" resultMap="edBaseShopMap">
+    select <include refid="Vo_Column_List"/> from ed_base_shop where Id = #{id}
+  </select>
+  <insert id="save">
+    insert into ed_base_shop (`CopId`,`BrandId`,`Code`,`Name`,`AltName`,`ChannelType`,`Category`,`ServiceTel`,`ServiceTel2`,`Contact`,`Country`,`Province`,`City`,`County`,`Address`,`Longitude`,`Latitude`,`Area`,`OpenDate`,`OpenPeople`,`BusiZoneId`,`IsDelete`,`LogoUrl`,`Remark`,`DianPingId`,`IsFree`,`IsActive`,`TagIds`,`WxPoiState`,`WxPoiId`,`WxPoiCheckMsg`,`WxSceneQr`,`WxCardQr`,`WxCardRgUrlQr`,`CreateUser`,`CreateDate`,`LastModifiedUser`,`LastModifiedDate`,`MallIsActive`,`OrgType`,`IsPosActive`,`IsRetailActive`,`ShopType`,`PosShopTypeId`,`RetailShopTypeId`,`CrmShopTypeId`,`MallShopTypeId`,`IsVirtualShop`,`OffShelvesDate`,`QRCodePath`,`ShopClass`,`SaleTagIds`,`IsMarketShop`,`FloorId`,`HouseNum`,`AssociateProductBrand`,`Logo`,`MerchantCode`,`MerchantName`,`IsNg`)
+    values (#{edBaseShop.copid},#{edBaseShop.brandid},#{edBaseShop.code},#{edBaseShop.name},#{edBaseShop.altname},#{edBaseShop.channeltype},#{edBaseShop.category},#{edBaseShop.servicetel},#{edBaseShop.servicetel2},#{edBaseShop.contact},#{edBaseShop.country},#{edBaseShop.province},#{edBaseShop.city},#{edBaseShop.county},#{edBaseShop.address},#{edBaseShop.longitude},#{edBaseShop.latitude},#{edBaseShop.area},#{edBaseShop.opendate},#{edBaseShop.openpeople},#{edBaseShop.busizoneid},#{edBaseShop.isdelete},#{edBaseShop.logourl},#{edBaseShop.remark},#{edBaseShop.dianpingid},#{edBaseShop.isfree},#{edBaseShop.isactive},#{edBaseShop.tagids},#{edBaseShop.wxpoistate},#{edBaseShop.wxpoiid},#{edBaseShop.wxpoicheckmsg},#{edBaseShop.wxsceneqr},#{edBaseShop.wxcardqr},#{edBaseShop.wxcardrgurlqr},#{edBaseShop.createuser},#{edBaseShop.createdate},#{edBaseShop.lastmodifieduser},#{edBaseShop.lastmodifieddate},#{edBaseShop.mallisactive},#{edBaseShop.orgtype},#{edBaseShop.isposactive},#{edBaseShop.isretailactive},#{edBaseShop.shoptype},#{edBaseShop.posshoptypeid},#{edBaseShop.retailshoptypeid},#{edBaseShop.crmshoptypeid},#{edBaseShop.mallshoptypeid},#{edBaseShop.isvirtualshop},#{edBaseShop.offshelvesdate},#{edBaseShop.qrcodepath},#{edBaseShop.shopclass},#{edBaseShop.saletagids},#{edBaseShop.ismarketshop},#{edBaseShop.floorid},#{edBaseShop.housenum},#{edBaseShop.associateproductbrand},#{edBaseShop.logo},#{edBaseShop.merchantcode},#{edBaseShop.merchantname},#{edBaseShop.isng});
+  </insert>
+  <update id="update">
+    update ed_base_shop
+    <set>
+      <if test="edBaseShop.copid != null">
+        `CopId` = #{edBaseShop.copid},
+      </if>
+      <if test="edBaseShop.brandid != null">
+        `BrandId` = #{edBaseShop.brandid},
+      </if>
+      <if test="edBaseShop.code != null">
+        `Code` = #{edBaseShop.code},
+      </if>
+      <if test="edBaseShop.name != null">
+        `Name` = #{edBaseShop.name},
+      </if>
+      <if test="edBaseShop.altname != null">
+        `AltName` = #{edBaseShop.altname},
+      </if>
+      <if test="edBaseShop.channeltype != null">
+        `ChannelType` = #{edBaseShop.channeltype},
+      </if>
+      <if test="edBaseShop.category != null">
+        `Category` = #{edBaseShop.category},
+      </if>
+      <if test="edBaseShop.servicetel != null">
+        `ServiceTel` = #{edBaseShop.servicetel},
+      </if>
+      <if test="edBaseShop.servicetel2 != null">
+        `ServiceTel2` = #{edBaseShop.servicetel2},
+      </if>
+      <if test="edBaseShop.contact != null">
+        `Contact` = #{edBaseShop.contact},
+      </if>
+      <if test="edBaseShop.country != null">
+        `Country` = #{edBaseShop.country},
+      </if>
+      <if test="edBaseShop.province != null">
+        `Province` = #{edBaseShop.province},
+      </if>
+      <if test="edBaseShop.city != null">
+        `City` = #{edBaseShop.city},
+      </if>
+      <if test="edBaseShop.county != null">
+        `County` = #{edBaseShop.county},
+      </if>
+      <if test="edBaseShop.address != null">
+        `Address` = #{edBaseShop.address},
+      </if>
+      <if test="edBaseShop.longitude != null">
+        `Longitude` = #{edBaseShop.longitude},
+      </if>
+      <if test="edBaseShop.latitude != null">
+        `Latitude` = #{edBaseShop.latitude},
+      </if>
+      <if test="edBaseShop.area != null">
+        `Area` = #{edBaseShop.area},
+      </if>
+      <if test="edBaseShop.opendate != null">
+        `OpenDate` = #{edBaseShop.opendate},
+      </if>
+      <if test="edBaseShop.openpeople != null">
+        `OpenPeople` = #{edBaseShop.openpeople},
+      </if>
+      <if test="edBaseShop.busizoneid != null">
+        `BusiZoneId` = #{edBaseShop.busizoneid},
+      </if>
+      <if test="edBaseShop.isdelete != null">
+        `IsDelete` = #{edBaseShop.isdelete},
+      </if>
+      <if test="edBaseShop.logourl != null">
+        `LogoUrl` = #{edBaseShop.logourl},
+      </if>
+      <if test="edBaseShop.remark != null">
+        `Remark` = #{edBaseShop.remark},
+      </if>
+      <if test="edBaseShop.dianpingid != null">
+        `DianPingId` = #{edBaseShop.dianpingid},
+      </if>
+      <if test="edBaseShop.isfree != null">
+        `IsFree` = #{edBaseShop.isfree},
+      </if>
+      <if test="edBaseShop.isactive != null">
+        `IsActive` = #{edBaseShop.isactive},
+      </if>
+      <if test="edBaseShop.tagids != null">
+        `TagIds` = #{edBaseShop.tagids},
+      </if>
+      <if test="edBaseShop.wxpoistate != null">
+        `WxPoiState` = #{edBaseShop.wxpoistate},
+      </if>
+      <if test="edBaseShop.wxpoiid != null">
+        `WxPoiId` = #{edBaseShop.wxpoiid},
+      </if>
+      <if test="edBaseShop.wxpoicheckmsg != null">
+        `WxPoiCheckMsg` = #{edBaseShop.wxpoicheckmsg},
+      </if>
+      <if test="edBaseShop.wxsceneqr != null">
+        `WxSceneQr` = #{edBaseShop.wxsceneqr},
+      </if>
+      <if test="edBaseShop.wxcardqr != null">
+        `WxCardQr` = #{edBaseShop.wxcardqr},
+      </if>
+      <if test="edBaseShop.wxcardrgurlqr != null">
+        `WxCardRgUrlQr` = #{edBaseShop.wxcardrgurlqr},
+      </if>
+      <if test="edBaseShop.createuser != null">
+        `CreateUser` = #{edBaseShop.createuser},
+      </if>
+      <if test="edBaseShop.createdate != null">
+        `CreateDate` = #{edBaseShop.createdate},
+      </if>
+      <if test="edBaseShop.lastmodifieduser != null">
+        `LastModifiedUser` = #{edBaseShop.lastmodifieduser},
+      </if>
+      <if test="edBaseShop.lastmodifieddate != null">
+        `LastModifiedDate` = #{edBaseShop.lastmodifieddate},
+      </if>
+      <if test="edBaseShop.mallisactive != null">
+        `MallIsActive` = #{edBaseShop.mallisactive},
+      </if>
+      <if test="edBaseShop.orgtype != null">
+        `OrgType` = #{edBaseShop.orgtype},
+      </if>
+      <if test="edBaseShop.isposactive != null">
+        `IsPosActive` = #{edBaseShop.isposactive},
+      </if>
+      <if test="edBaseShop.isretailactive != null">
+        `IsRetailActive` = #{edBaseShop.isretailactive},
+      </if>
+      <if test="edBaseShop.shoptype != null">
+        `ShopType` = #{edBaseShop.shoptype},
+      </if>
+      <if test="edBaseShop.posshoptypeid != null">
+        `PosShopTypeId` = #{edBaseShop.posshoptypeid},
+      </if>
+      <if test="edBaseShop.retailshoptypeid != null">
+        `RetailShopTypeId` = #{edBaseShop.retailshoptypeid},
+      </if>
+      <if test="edBaseShop.crmshoptypeid != null">
+        `CrmShopTypeId` = #{edBaseShop.crmshoptypeid},
+      </if>
+      <if test="edBaseShop.mallshoptypeid != null">
+        `MallShopTypeId` = #{edBaseShop.mallshoptypeid},
+      </if>
+      <if test="edBaseShop.isvirtualshop != null">
+        `IsVirtualShop` = #{edBaseShop.isvirtualshop},
+      </if>
+      <if test="edBaseShop.offshelvesdate != null">
+        `OffShelvesDate` = #{edBaseShop.offshelvesdate},
+      </if>
+      <if test="edBaseShop.qrcodepath != null">
+        `QRCodePath` = #{edBaseShop.qrcodepath},
+      </if>
+      <if test="edBaseShop.shopclass != null">
+        `ShopClass` = #{edBaseShop.shopclass},
+      </if>
+      <if test="edBaseShop.saletagids != null">
+        `SaleTagIds` = #{edBaseShop.saletagids},
+      </if>
+      <if test="edBaseShop.ismarketshop != null">
+        `IsMarketShop` = #{edBaseShop.ismarketshop},
+      </if>
+      <if test="edBaseShop.floorid != null">
+        `FloorId` = #{edBaseShop.floorid},
+      </if>
+      <if test="edBaseShop.housenum != null">
+        `HouseNum` = #{edBaseShop.housenum},
+      </if>
+      <if test="edBaseShop.associateproductbrand != null">
+        `AssociateProductBrand` = #{edBaseShop.associateproductbrand},
+      </if>
+      <if test="edBaseShop.logo != null">
+        `Logo` = #{edBaseShop.logo},
+      </if>
+      <if test="edBaseShop.merchantcode != null">
+        `MerchantCode` = #{edBaseShop.merchantcode},
+      </if>
+      <if test="edBaseShop.merchantname != null">
+        `MerchantName` = #{edBaseShop.merchantname},
+      </if>
+      <if test="edBaseShop.isng != null">
+        `IsNg` = #{edBaseShop.isng},
+      </if>
+    </set>
+    where Id = #{edBaseShop.id}
+  </update>
+  <delete id="deleteById">
+    delete from ed_base_shop where Id = #{id}
+  </delete>
+
+</mapper>

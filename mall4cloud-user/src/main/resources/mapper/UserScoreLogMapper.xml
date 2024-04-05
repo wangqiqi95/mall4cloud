@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserScoreLogMapper">
+  <resultMap id="userScoreLogMap" type="com.mall4j.cloud.user.model.UserScoreLog">
+    <id column="log_id" property="logId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="user_id" property="userId"/>
+    <result column="source" property="source"/>
+    <result column="score" property="score"/>
+    <result column="biz_id" property="bizId"/>
+    <result column="io_type" property="ioType"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `log_id`,`create_time`,`update_time`,`user_id`,`source`,`score`,`biz_id`,`io_type`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.user.vo.UserScoreLogVO">
+    select <include refid="Vo_Column_List"/> from user_score_log where user_id = #{userId}
+    order by log_id desc
+  </select>
+  <select id="listByIoTypeAndSource" resultType="com.mall4j.cloud.user.vo.UserScoreLogVO">
+    select <include refid="Vo_Column_List"/> from user_score_log
+    where user_id = #{userId} and score > 0
+    <if test="ioType != null">
+      and io_type = #{ioType}
+    </if>
+    <if test="source != null">
+      and source = #{source}
+    </if>
+    order by log_id desc
+  </select>
+  <select id="countByUserIdAndDateTimeAndType" resultType="int">
+    select count(*) from user_score_log
+    where user_id = #{userId} and source = #{type}
+    and create_time <![CDATA[>=]]> #{beginOfDay} and create_time <![CDATA[<=]]> #{endOfDay}
+  </select>
+  <select id="getByLogId" resultType="com.mall4j.cloud.user.model.UserScoreLog">
+    select <include refid="Vo_Column_List"/> from user_score_log where log_id = #{logId}
+  </select>
+  <insert id="save">
+    insert into user_score_log (`user_id`,`source`,`score`,`biz_id`,`io_type`)
+    values (#{userScoreLog.userId},#{userScoreLog.source},#{userScoreLog.score},#{userScoreLog.bizId},#{userScoreLog.ioType});
+  </insert>
+  <insert id="saveBatch" parameterType="java.util.List">
+    insert into user_score_log (`user_id`,`source`,`score`,`biz_id`,`io_type`)
+    values
+    <foreach collection="userScoreLogs" item="userScoreLog" separator=",">
+      (#{userScoreLog.userId},#{userScoreLog.source},#{userScoreLog.score},#{userScoreLog.bizId},#{userScoreLog.ioType})
+    </foreach>
+  </insert>
+
+  <select id="getConsecutiveDays" resultType="int">
+    SELECT COUNT(1) FROM (SELECT DATE_SUB(a.create_time, INTERVAL 1 DAY) signDate,
+                                 (@i := DATE_ADD(@i, INTERVAL - 1 DAY)) today
+    FROM(SELECT create_time FROM `user_score_log` WHERE user_id = #{userId} AND source = 3 ORDER BY create_time DESC) a
+          INNER JOIN (SELECT@i := MAX(create_time) AS signMax FROM
+      `user_score_log` WHERE user_id = #{userId} AND source = 3 AND (TO_DAYS(create_time) = TO_DAYS(CURDATE())
+      OR TO_DAYS(create_time) = TO_DAYS(DATE_ADD(CURDATE(), INTERVAL - 1 DAY)
+        ))) b ON b.signMax IS NOT NULL AND TO_DAYS(DATE_ADD(@i, INTERVAL - 1 DAY)) = TO_DAYS(
+            DATE_SUB(a.create_time, INTERVAL 1 DAY))) c
+  </select>
+    <select id="getOrderScoreLog" resultType="com.mall4j.cloud.user.model.UserScoreLog">
+      SELECT <include refid="Vo_Column_List"/> FROM `user_score_log`
+      WHERE user_id = #{userId}  AND `source` = #{source} AND biz_id = #{bizId} AND io_type = #{ioType}
+    </select>
+
+    <update id="update">
+    update user_score_log
+    <set>
+      <if test="userScoreLog.userId != null">
+        `user_id` = #{userScoreLog.userId},
+      </if>
+      <if test="userScoreLog.source != null">
+        `source` = #{userScoreLog.source},
+      </if>
+      <if test="userScoreLog.score != null">
+        `score` = #{userScoreLog.score},
+      </if>
+      <if test="userScoreLog.bizId != null">
+        `biz_id` = #{userScoreLog.bizId},
+      </if>
+      <if test="userScoreLog.ioType != null">
+        `io_type` = #{userScoreLog.ioType},
+      </if>
+    </set>
+    where log_id = #{userScoreLog.logId}
+  </update>
+  <delete id="deleteById">
+    delete from user_score_log where log_id = #{logId}
+  </delete>
+  <select id="listScoreLog" resultType="com.mall4j.cloud.user.vo.UserScoreLogVO">
+    select <include refid="Vo_Column_List"/>
+    from user_score_log
+    where user_id = #{userId} and source between 10 and 11
+    order by log_id desc
+  </select>
+
+  <select id="isFriendAssistance" resultType="int">
+    SELECT
+      count(*)
+    FROM
+      user_score_log
+    WHERE
+      source IN ( 12, 13 )
+      AND user_id = #{userId}
+      AND biz_id = #{bizId}
+  </select>
+
+  <select id="pageFriendAssistance" resultType="com.mall4j.cloud.user.dto.PageFriendAssistanceRespDto">
+    SELECT
+      a.`log_id`,
+      a.`update_time`,
+      a.`user_id`,
+      a.`source`,
+      a.`score`,
+      a.`biz_id`,
+      b.nick_name,
+      b.name,
+      b.pic
+    FROM
+        user_score_log a
+    LEFT JOIN `user` b ON a.biz_id = b.user_id
+    WHERE
+        a.user_id = #{userId}
+    AND a.source IN ( 12, 13 )
+    ORDER BY a.log_id DESC
+  </select>
+
+  <select id="countFriendAssistanceByUserId" resultType="com.mall4j.cloud.user.dto.CountFriendAssistanceRespDto">
+    SELECT
+      count(*) as inviteesNum,
+      IFNULL(sum(score),0) as scoreSum
+    FROM
+      user_score_log
+    WHERE
+      user_id = #{userId}
+      AND source IN(12,13)
+  </select>
+
+  <select id="countFriendAssistanceByBizId" resultType="int">
+    SELECT
+      count(*)
+    FROM
+      user_score_log
+    WHERE
+      biz_id = #{bizId}
+      AND source IN(12,13)
+  </select>
+</mapper>

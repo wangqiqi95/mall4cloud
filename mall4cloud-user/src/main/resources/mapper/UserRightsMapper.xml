@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserRightsMapper">
+  <resultMap id="userRightsMap" type="com.mall4j.cloud.user.model.UserRights">
+    <id column="rights_id" property="rightsId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="rights_name" property="rightsName"/>
+    <result column="icon" property="icon"/>
+    <result column="description" property="description"/>
+    <result column="details" property="details"/>
+    <result column="status" property="status"/>
+    <result column="seq" property="seq"/>
+    <result column="rights_type" property="rightsType"/>
+    <result column="rate_score" property="rateScore"/>
+    <result column="pres_score" property="presScore"/>
+    <result column="discount" property="discount"/>
+    <result column="discount_range" property="discountRange"/>
+    <result column="free_fee_type" property="freeFeeType"/>
+  </resultMap>
+  <resultMap id="userRightsVo" type="com.mall4j.cloud.user.vo.UserRightsVO">
+    <id column="rights_id" property="rightsId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="rights_name" property="rightsName"/>
+    <result column="icon" property="icon"/>
+    <result column="description" property="description"/>
+    <result column="details" property="details"/>
+    <result column="status" property="status"/>
+    <result column="seq" property="seq"/>
+    <result column="rights_type" property="rightsType"/>
+    <result column="rate_score" property="rateScore"/>
+    <result column="pres_score" property="presScore"/>
+    <result column="discount" property="discount"/>
+    <result column="discount_range" property="discountRange"/>
+    <result column="free_fee_type" property="freeFeeType"/>
+    <collection property="couponIds" ofType="java.lang.Long">
+      <id column="coupon_id"/>
+    </collection>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `rights_id`,`create_time`,`update_time`,`rights_name`,`icon`,`description`,`details`,`status`,`seq`,`rights_type`,`rate_score`,`pres_score`,`discount`,`discount_range`,`free_fee_type`
+  </sql>
+
+  <select id="list" resultType="com.mall4j.cloud.user.vo.UserRightsVO">
+    select <include refid="Vo_Column_List"/> from user_rights
+    where `status` != -1
+      <if test="userRights.status != null">
+       and `status` = #{userRights.status}
+      </if>
+      <if test="userRights.rightsType != null">
+       and `rights_type` = #{userRights.rightsType}
+      </if>
+      <if test="userRights.rightsName != null">
+        and rights_name like concat('%', #{userRights.rightsName}, '%')
+      </if>
+    order by `seq` asc
+  </select>
+
+  <select id="getByRightsId" resultMap="userRightsVo">
+    SELECT ur.*,urc.coupon_id
+    FROM user_rights ur
+    LEFT JOIN user_rights_coupon urc ON ur.rights_id = urc.rights_id
+    WHERE  ur.status != -1 AND ur.rights_id = #{rightsId}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="rightsId">
+    insert into user_rights (`rights_name`,`icon`,`description`,`details`,`status`,`seq`,`rights_type`,`rate_score`,`pres_score`,`discount`,`discount_range`,`free_fee_type`)
+    values (#{userRights.rightsName},#{userRights.icon},#{userRights.description},#{userRights.details},#{userRights.status},#{userRights.seq},#{userRights.rightsType},#{userRights.rateScore},#{userRights.presScore},#{userRights.discount},#{userRights.discountRange},#{userRights.freeFeeType});
+  </insert>
+  <update id="update">
+    update user_rights
+    <set>
+      <if test="userRights.rightsName != null">
+        `rights_name` = #{userRights.rightsName},
+      </if>
+      <if test="userRights.icon != null">
+        `icon` = #{userRights.icon},
+      </if>
+      <if test="userRights.description != null">
+        `description` = #{userRights.description},
+      </if>
+      <if test="userRights.details != null">
+        `details` = #{userRights.details},
+      </if>
+      <if test="userRights.status != null">
+        `status` = #{userRights.status},
+      </if>
+      <if test="userRights.seq != null">
+        `seq` = #{userRights.seq},
+      </if>
+      <if test="userRights.rightsType != null">
+        `rights_type` = #{userRights.rightsType},
+      </if>
+      <if test="userRights.rateScore != null">
+        `rate_score` = #{userRights.rateScore},
+      </if>
+      <if test="userRights.presScore != null">
+        `pres_score` = #{userRights.presScore},
+      </if>
+      <if test="userRights.discount != null">
+        `discount` = #{userRights.discount},
+      </if>
+      <if test="userRights.discountRange != null">
+        `discount_range` = #{userRights.discountRange},
+      </if>
+      <if test="userRights.freeFeeType != null">
+        `free_fee_type` = #{userRights.freeFeeType},
+      </if>
+    </set>
+    where rights_id = #{userRights.rightsId}
+  </update>
+  <delete id="deleteById">
+    delete from user_rights where rights_id = #{rightsId}
+  </delete>
+  <select id="getCouponIdsByRightsId" resultType="java.lang.Long">
+    SELECT urc.coupon_id
+    FROM user_rights ur
+    LEFT JOIN user_rights_coupon urc ON ur.rights_id = urc.rights_id
+    WHERE  ur.status != -1 AND ur.rights_id = #{rightsId}
+  </select>
+  <select id="countByRightsName" resultType="int">
+    select count(*) from user_rights where  rights_name = #{rightsName}
+    <if test="rightsId != null">
+      and rights_id != #{rightsId}
+    </if>
+  </select>
+  <select id="listRightsByLevelType" resultType="com.mall4j.cloud.user.vo.UserRightsVO">
+    SELECT ul.level as level ,ul.level_name as levelName,ur.rights_id,ur.rights_name,ur.description,ur.details,ur.rights_type,ur.icon FROM user_level ul
+    LEFT JOIN user_level_rights ulr ON ulr.user_level_id = ul.user_level_id
+    LEFT JOIN user_rights ur ON ulr.rights_id = ur.rights_id
+    WHERE ul.level_type = #{levelType}
+    ORDER BY ul.level ASC
+  </select>
+</mapper>

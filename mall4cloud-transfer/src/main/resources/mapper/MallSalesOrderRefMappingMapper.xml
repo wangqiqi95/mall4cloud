@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.MallSalesOrderRefMappingMapper">
+  <resultMap id="mallSalesOrderRefMappingMap" type="com.mall4j.cloud.transfer.model.MallSalesOrderRefMapping">
+    <id column="Id" property="id" />
+    <result column="CopId" property="copid"/>
+    <result column="BrandId" property="brandid"/>
+    <result column="OrderId" property="orderid"/>
+    <result column="OrderDtlId" property="orderdtlid"/>
+    <result column="ReturnId" property="returnid"/>
+    <result column="RefundId" property="refundid"/>
+    <result column="BarCode" property="barcode"/>
+    <result column="Qty" property="qty"/>
+    <result column="RefType" property="reftype"/>
+    <result column="PackageNo" property="packageno"/>
+    <result column="CreateUser" property="createuser"/>
+    <result column="CreateDate" property="createdate"/>
+    <result column="LastModifiedUser" property="lastmodifieduser"/>
+    <result column="LastModifiedDate" property="lastmodifieddate"/>
+    <result column="RefundMoney" property="refundmoney"/>
+    <result column="AmountMenory" property="amountmenory"/>
+    <result column="FinalAmount" property="finalamount"/>
+    <result column="DepositAmount" property="depositamount"/>
+    <result column="OldRefundBonus" property="oldrefundbonus"/>
+    <result column="RefundBonus" property="refundbonus"/>
+    <result column="UseIntegral" property="useintegral"/>
+    <result column="OldUseIntegral" property="olduseintegral"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `Id`,`CopId`,`BrandId`,`OrderId`,`OrderDtlId`,`ReturnId`,`RefundId`,`BarCode`,`Qty`,`RefType`,`PackageNo`,`CreateUser`,`CreateDate`,`LastModifiedUser`,`LastModifiedDate`,`RefundMoney`,`AmountMenory`,`FinalAmount`,`DepositAmount`,`OldRefundBonus`,`RefundBonus`,`UseIntegral`,`OldUseIntegral`
+  </sql>
+  <select id="list" resultMap="mallSalesOrderRefMappingMap">
+    select <include refid="Vo_Column_List"/> from mall_sales_order_ref_mapping order by Id desc
+  </select>
+    <select id="listByRefundId" resultMap="mallSalesOrderRefMappingMap">
+        select <include refid="Vo_Column_List"/> from mall_sales_order_ref_mapping where RefundId = #{refundId} order by Id desc
+    </select>
+  <select id="getById" resultMap="mallSalesOrderRefMappingMap">
+    select <include refid="Vo_Column_List"/> from mall_sales_order_ref_mapping where Id = #{id}
+  </select>
+  <insert id="save">
+    insert into mall_sales_order_ref_mapping (`CopId`,`BrandId`,`OrderId`,`OrderDtlId`,`ReturnId`,`RefundId`,`BarCode`,`Qty`,`RefType`,`PackageNo`,`CreateUser`,`CreateDate`,`LastModifiedUser`,`LastModifiedDate`,`RefundMoney`,`AmountMenory`,`FinalAmount`,`DepositAmount`,`OldRefundBonus`,`RefundBonus`,`UseIntegral`,`OldUseIntegral`)
+    values (#{mallSalesOrderRefMapping.copid},#{mallSalesOrderRefMapping.brandid},#{mallSalesOrderRefMapping.orderid},#{mallSalesOrderRefMapping.orderdtlid},#{mallSalesOrderRefMapping.returnid},#{mallSalesOrderRefMapping.refundid},#{mallSalesOrderRefMapping.barcode},#{mallSalesOrderRefMapping.qty},#{mallSalesOrderRefMapping.reftype},#{mallSalesOrderRefMapping.packageno},#{mallSalesOrderRefMapping.createuser},#{mallSalesOrderRefMapping.createdate},#{mallSalesOrderRefMapping.lastmodifieduser},#{mallSalesOrderRefMapping.lastmodifieddate},#{mallSalesOrderRefMapping.refundmoney},#{mallSalesOrderRefMapping.amountmenory},#{mallSalesOrderRefMapping.finalamount},#{mallSalesOrderRefMapping.depositamount},#{mallSalesOrderRefMapping.oldrefundbonus},#{mallSalesOrderRefMapping.refundbonus},#{mallSalesOrderRefMapping.useintegral},#{mallSalesOrderRefMapping.olduseintegral});
+  </insert>
+  <update id="update">
+    update mall_sales_order_ref_mapping
+    <set>
+      <if test="mallSalesOrderRefMapping.copid != null">
+        `CopId` = #{mallSalesOrderRefMapping.copid},
+      </if>
+      <if test="mallSalesOrderRefMapping.brandid != null">
+        `BrandId` = #{mallSalesOrderRefMapping.brandid},
+      </if>
+      <if test="mallSalesOrderRefMapping.orderid != null">
+        `OrderId` = #{mallSalesOrderRefMapping.orderid},
+      </if>
+      <if test="mallSalesOrderRefMapping.orderdtlid != null">
+        `OrderDtlId` = #{mallSalesOrderRefMapping.orderdtlid},
+      </if>
+      <if test="mallSalesOrderRefMapping.returnid != null">
+        `ReturnId` = #{mallSalesOrderRefMapping.returnid},
+      </if>
+      <if test="mallSalesOrderRefMapping.refundid != null">
+        `RefundId` = #{mallSalesOrderRefMapping.refundid},
+      </if>
+      <if test="mallSalesOrderRefMapping.barcode != null">
+        `BarCode` = #{mallSalesOrderRefMapping.barcode},
+      </if>
+      <if test="mallSalesOrderRefMapping.qty != null">
+        `Qty` = #{mallSalesOrderRefMapping.qty},
+      </if>
+      <if test="mallSalesOrderRefMapping.reftype != null">
+        `RefType` = #{mallSalesOrderRefMapping.reftype},
+      </if>
+      <if test="mallSalesOrderRefMapping.packageno != null">
+        `PackageNo` = #{mallSalesOrderRefMapping.packageno},
+      </if>
+      <if test="mallSalesOrderRefMapping.createuser != null">
+        `CreateUser` = #{mallSalesOrderRefMapping.createuser},
+      </if>
+      <if test="mallSalesOrderRefMapping.createdate != null">
+        `CreateDate` = #{mallSalesOrderRefMapping.createdate},
+      </if>
+      <if test="mallSalesOrderRefMapping.lastmodifieduser != null">
+        `LastModifiedUser` = #{mallSalesOrderRefMapping.lastmodifieduser},
+      </if>
+      <if test="mallSalesOrderRefMapping.lastmodifieddate != null">
+        `LastModifiedDate` = #{mallSalesOrderRefMapping.lastmodifieddate},
+      </if>
+      <if test="mallSalesOrderRefMapping.refundmoney != null">
+        `RefundMoney` = #{mallSalesOrderRefMapping.refundmoney},
+      </if>
+      <if test="mallSalesOrderRefMapping.amountmenory != null">
+        `AmountMenory` = #{mallSalesOrderRefMapping.amountmenory},
+      </if>
+      <if test="mallSalesOrderRefMapping.finalamount != null">
+        `FinalAmount` = #{mallSalesOrderRefMapping.finalamount},
+      </if>
+      <if test="mallSalesOrderRefMapping.depositamount != null">
+        `DepositAmount` = #{mallSalesOrderRefMapping.depositamount},
+      </if>
+      <if test="mallSalesOrderRefMapping.oldrefundbonus != null">
+        `OldRefundBonus` = #{mallSalesOrderRefMapping.oldrefundbonus},
+      </if>
+      <if test="mallSalesOrderRefMapping.refundbonus != null">
+        `RefundBonus` = #{mallSalesOrderRefMapping.refundbonus},
+      </if>
+      <if test="mallSalesOrderRefMapping.useintegral != null">
+        `UseIntegral` = #{mallSalesOrderRefMapping.useintegral},
+      </if>
+      <if test="mallSalesOrderRefMapping.olduseintegral != null">
+        `OldUseIntegral` = #{mallSalesOrderRefMapping.olduseintegral},
+      </if>
+    </set>
+    where Id = #{mallSalesOrderRefMapping.id}
+  </update>
+  <delete id="deleteById">
+    delete from mall_sales_order_ref_mapping where Id = #{id}
+  </delete>
+
+</mapper>

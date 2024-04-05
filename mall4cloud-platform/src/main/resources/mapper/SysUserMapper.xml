@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.platform.mapper.SysUserMapper">
+  <resultMap id="BaseResultMap" type="com.mall4j.cloud.platform.model.SysUser">
+    <!--@mbg.generated-->
+    <!--@Table sys_user-->
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="nick_name" property="nickName"/>
+    <result column="username" property="username"/>
+    <result column="email" property="email"/>
+    <result column="open_platform" property="openPlatform"/>
+    <result column="status" property="status"/>
+    <result column="avatar" property="avatar"/>
+    <result column="code" property="code"/>
+    <result column="phone_num" property="phoneNum"/>
+    <result column="has_account" property="hasAccount"/>
+    <result column="org_id" property="orgId"/>
+    <result column="create_by" property="createBy"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="is_delete" property="isDelete"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    `sys_user_id`,`create_time`,`update_time`,`nick_name`,`email`,`open_platform`,`status`,`avatar`,`code`,`phone_num`,`has_account`,`org_id`,`create_by`,`update_by`,`is_delete`
+  </sql>
+
+  <select id="getSimpleByUserId" resultType="com.mall4j.cloud.platform.vo.SysUserSimpleVO">
+    select nick_name, avatar  from sys_user where sys_user_id = #{userId}
+  </select>
+
+  <select id="getByUserId" resultType="com.mall4j.cloud.api.platform.vo.SysUserVO">
+    select <include refid="Base_Column_List"/>  from sys_user where sys_user_id = #{userId}
+  </select>
+  <select id="getByPhoneNum" resultType="com.mall4j.cloud.api.platform.vo.SysUserVO">
+    select sys_user_id,nick_name, avatar,`code`,phone_num,has_account,org_id  from sys_user where is_delete=0 and phone_num = #{phone}
+  </select>
+  <select id="listByShopId" resultType="com.mall4j.cloud.api.platform.vo.SysUserVO">
+    select
+    su.sys_user_id,
+    su.create_time,
+    su.update_time,
+    su.nick_name,
+    su.username,
+    su.email,
+    su.open_platform,
+    su.status,
+    su.avatar,
+    su.code,
+    su.phone_num,
+    su.has_account,
+    su.org_id,
+    su.create_by,
+    su.update_by,
+    su.is_delete
+<!--    sf.id as staff_id-->
+    from sys_user su
+<!--    left join staff sf on sf.sys_user_id=su.sys_user_id-->
+<!--    left join staff_org_rel sor on sf.id=sor.staff_id and sor.is_delete=0-->
+    <where>
+      su.is_delete=0
+<!--      and sf.is_delete=0-->
+      <if test="sysUser.nickName != null and sysUser.nickName != ''">
+        and su.nick_name like concat('%', #{sysUser.nickName}, '%')
+      </if>
+      <if test="sysUser.phoneNum != null and sysUser.phoneNum != ''">
+        and su.phone_num like concat('%', #{sysUser.phoneNum}, '%')
+      </if>
+      <if test="sysUser.status != null">
+        and su.status=#{sysUser.status}
+      </if>
+      <if test="sysUser.orgIds != null and sysUser.orgIds.size>0">
+        and su.org_id in
+        <foreach collection="sysUser.orgIds" item="orgId" open="(" close=")" separator=",">
+          #{orgId}
+        </foreach>
+      </if>
+<!--      <if test="sysUser.orgIds != null and sysUser.orgIds.size>0">-->
+<!--        and sor.org_id in-->
+<!--        <foreach collection="sysUser.orgIds" item="orgId" open="(" close=")" separator=",">-->
+<!--          #{orgId}-->
+<!--        </foreach>-->
+<!--      </if>-->
+    </where>
+    order by create_time desc
+  </select>
+  <insert id="save">
+    insert into `sys_user` ( `sys_user_id`,  `nick_name`, `avatar`, `code`, `phone_num`,has_account,org_id)
+    values (#{sysUser.sysUserId},#{sysUser.nickName},#{sysUser.avatar},#{sysUser.code},#{sysUser.phoneNum}, #{sysUser.hasAccount},#{sysUser.orgId});
+  </insert>
+  <update id="update">
+    update sys_user
+    <set>
+      <if test="sysUser.nickName != null">
+        nick_name = #{sysUser.nickName},
+      </if>
+      <if test="sysUser.avatar != null">
+        avatar = #{sysUser.avatar},
+      </if>
+      <if test="sysUser.code != null">
+        code = #{sysUser.code},
+      </if>
+      <if test="sysUser.phoneNum != null">
+        phone_num = #{sysUser.phoneNum},
+      </if>
+      <if test="sysUser.hasAccount != null">
+        has_account = #{sysUser.hasAccount},
+      </if>
+      <if test="sysUser.orgId != null">
+        org_id = #{sysUser.orgId},
+      </if>
+    </set>
+    where sys_user_id = #{sysUser.sysUserId}
+  </update>
+
+  <delete id="deleteById">
+    delete  from sys_user where sys_user_id = #{sysUserId}
+  </delete>
+
+  <select id="countNickName" resultType="int">
+    SELECT COUNT(sys_user_id) FROM `sys_user` WHERE is_delete=0 and nick_name = #{nickName}
+    <if test="sysUserId != null">
+      AND sys_user_id != #{sysUserId}
+    </if>
+  </select>
+  <select id="getUserName" resultType="com.mall4j.cloud.api.platform.vo.SysUserVO">
+    select sys_user_id,nick_name from `sys_user` where sys_user_id in
+    <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+      #{userId}
+    </foreach>
+    group by sys_user_id
+  </select>
+</mapper>

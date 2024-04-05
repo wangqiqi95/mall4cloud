@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserRechargeMapper">
+  <resultMap id="userRechargeMap" type="com.mall4j.cloud.user.model.UserRecharge">
+    <id column="recharge_id" property="rechargeId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="recharge_title" property="rechargeTitle"/>
+    <result column="recharge_amount" property="rechargeAmount"/>
+    <result column="img" property="img"/>
+    <result column="pres_amount" property="presAmount"/>
+    <result column="pres_score" property="presScore"/>
+    <result column="pres_growth" property="presGrowth"/>
+    <result column="seq" property="seq"/>
+  </resultMap>
+
+  <resultMap id="userRechargeInfoMap" type="com.mall4j.cloud.user.vo.UserRechargeVO" extends="userRechargeMap">
+
+  </resultMap>
+
+  <sql id="Vo_Column_List">
+    `recharge_id`,`create_time`,`update_time`,`recharge_title`,`recharge_amount`,`img`,`pres_amount`,`pres_score`,`pres_growth`,`seq`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.user.vo.UserRechargeVO">
+    SELECT ur.*,IFNULL((SELECT SUM(coupon_num) FROM  user_recharge_coupon urc WHERE ur.recharge_id = urc.recharge_id), 0) AS coupon_total_num
+    FROM user_recharge ur
+    order by ur.recharge_id desc
+  </select>
+  <select id="getByRechargeId" resultMap="userRechargeMap">
+    select <include refid="Vo_Column_List"/> from user_recharge where recharge_id = #{rechargeId}
+  </select>
+  <select id="getRechargeInfo" resultMap="userRechargeInfoMap">
+    SELECT ur.*,urc.coupon_id,urc.coupon_num
+    FROM user_recharge ur
+    LEFT JOIN user_recharge_coupon urc ON ur.recharge_id = urc.recharge_id
+    WHERE ur.recharge_id = #{rechargeId}
+  </select>
+
+  <insert id="save" useGeneratedKeys="true" keyProperty="rechargeId" parameterType="com.mall4j.cloud.user.model.UserRecharge">
+    insert into user_recharge (`recharge_title`,`recharge_amount`,`img`,`pres_amount`,`pres_score`,`pres_growth`,`seq`)
+    values (#{userRecharge.rechargeTitle},#{userRecharge.rechargeAmount},#{userRecharge.img},#{userRecharge.presAmount},#{userRecharge.presScore},#{userRecharge.presGrowth},#{userRecharge.seq});
+  </insert>
+  <update id="update">
+    update user_recharge
+    <set>
+      <if test="userRecharge.rechargeTitle != null">
+        `recharge_title` = #{userRecharge.rechargeTitle},
+      </if>
+      <if test="userRecharge.rechargeAmount != null">
+        `recharge_amount` = #{userRecharge.rechargeAmount},
+      </if>
+      <if test="userRecharge.img != null">
+        `img` = #{userRecharge.img},
+      </if>
+      <if test="userRecharge.presAmount != null">
+        `pres_amount` = #{userRecharge.presAmount},
+      </if>
+      <if test="userRecharge.presScore != null">
+        `pres_score` = #{userRecharge.presScore},
+      </if>
+      <if test="userRecharge.presGrowth != null">
+        `pres_growth` = #{userRecharge.presGrowth},
+      </if>
+      <if test="userRecharge.seq != null">
+        `seq` = #{userRecharge.seq},
+      </if>
+    </set>
+    where recharge_id = #{userRecharge.rechargeId}
+  </update>
+  <delete id="deleteById">
+    delete from user_recharge where recharge_id = #{rechargeId}
+  </delete>
+
+</mapper>

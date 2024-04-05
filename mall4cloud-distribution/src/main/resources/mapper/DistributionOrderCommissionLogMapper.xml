@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionOrderCommissionLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.distribution.model.DistributionOrderCommissionLog">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="identityType" column="identity_type" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="storeId" column="store_id" jdbcType="BIGINT"/>
+            <result property="orderId" column="order_id" jdbcType="BIGINT"/>
+            <result property="commissionType" column="commission_type" jdbcType="TINYINT"/>
+            <result property="commissionAmount" column="commission_amount" jdbcType="BIGINT"/>
+            <result property="commissionStatus" column="commission_status" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,identity_type,user_id,store_id,
+        order_id,commission_type,commission_amount,
+        commission_status,create_time,update_time
+    </sql>
+    <insert id="save">
+        INSERT INTO distribution_order_commission_log(`id`, `identity_type`, `user_id`, `store_id`, `order_id`, `commission_type`, `commission_amount`, `commission_status`)
+        VALUES (#{log.id}, #{log.identityType}, #{log.userId}, #{log.storeId}, #{log.orderId}, #{log.commissionType}, #{log.commissionAmount}, #{log.commissionStatus});
+    </insert>
+    <insert id="batchSave">
+        <foreach collection="logList" item="log" separator=";">
+            INSERT INTO distribution_order_commission_log(`id`, `identity_type`, `user_id`, `store_id`, `order_id`, `commission_type`, `commission_amount`, `commission_status`)
+            VALUES (#{log.id}, #{log.identityType}, #{log.userId}, #{log.storeId}, #{log.orderId}, #{log.commissionType}, #{log.commissionAmount}, #{log.commissionStatus})
+        </foreach>
+    </insert>
+    <select id="getById" resultType="com.mall4j.cloud.distribution.model.DistributionOrderCommissionLog">
+        select <include refid="Base_Column_List"/>
+        from distribution_order_commission_log
+        where id = #{id}
+    </select>
+    <select id="list" resultType="com.mall4j.cloud.distribution.model.DistributionOrderCommissionLog">
+        select <include refid="Base_Column_List"/>
+        from distribution_order_commission_log
+        <where>
+            <if test="logDTO.orderIdList != null and logDTO.orderIdList.size() > 0">
+                AND order_id IN
+                <foreach collection="logDTO.orderIdList" item="orderId" open="(" separator="," close=")">
+                    #{orderId}
+                </foreach>
+            </if>
+            <if test="logDTO.commissionType != null">
+                AND commission_type = #{logDTO.commissionType}
+            </if>
+            <if test="logDTO.commissionStatus != null">
+                AND commission_status = #{logDTO.commissionStatus}
+            </if>
+            <if test="logDTO.storeIdList != null and logDTO.storeIdList.size() > 0">
+                AND store_id IN
+                <foreach collection="logDTO.storeIdList" item="storeId" open="(" separator="," close=")">
+                    #{storeId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

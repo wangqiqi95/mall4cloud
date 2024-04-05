@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.QrcodeTicketMapper">
+  <resultMap id="qrcodeTicketMap" type="com.mall4j.cloud.biz.model.QrcodeTicket">
+    <id column="ticket_id" property="ticketId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="ticket" property="ticket"/>
+    <result column="expire_time" property="expireTime"/>
+    <result column="type" property="type"/>
+    <result column="content" property="content"/>
+    <result column="ticket_url" property="ticketUrl"/>
+  </resultMap>
+  <resultMap id="qrcodeTicketVOMap" type="com.mall4j.cloud.biz.vo.QrcodeTicketVO" extends="qrcodeTicketMap">
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `ticket_id`,`create_time`,`update_time`,`ticket`,`expire_time`,`type`,`content`,`ticket_url`
+  </sql>
+  <select id="list" resultMap="qrcodeTicketMap">
+    select <include refid="Vo_Column_List"/> from qrcode_ticket order by ticket_id desc
+  </select>
+  <select id="getByTicketId" resultMap="qrcodeTicketMap">
+    select <include refid="Vo_Column_List"/> from qrcode_ticket where ticket_id = #{ticketId}
+  </select>
+  <insert id="save">
+    insert into qrcode_ticket (`ticket`,`expire_time`,`type`,`content`,`ticket_url`)
+    values (#{qrcodeTicket.ticket},#{qrcodeTicket.expireTime},#{qrcodeTicket.type},#{qrcodeTicket.content},#{qrcodeTicket.ticketUrl});
+  </insert>
+  <update id="update">
+    update qrcode_ticket
+    <set>
+      <if test="qrcodeTicket.ticket != null">
+        `ticket` = #{qrcodeTicket.ticket},
+      </if>
+      <if test="qrcodeTicket.expireTime != null">
+        `expire_time` = #{qrcodeTicket.expireTime},
+      </if>
+      <if test="qrcodeTicket.type != null">
+        `type` = #{qrcodeTicket.type},
+      </if>
+      <if test="qrcodeTicket.content != null">
+        `content` = #{qrcodeTicket.content},
+      </if>
+      <if test="qrcodeTicket.ticketUrl != null">
+        `ticket_url` = #{qrcodeTicket.ticketUrl},
+      </if>
+    </set>
+    where ticket_id = #{qrcodeTicket.ticketId}
+  </update>
+  <delete id="deleteById">
+    delete from qrcode_ticket where ticket_id = #{ticketId}
+  </delete>
+
+  <select id="getByTicket" resultMap="qrcodeTicketVOMap">
+    select <include refid="Vo_Column_List"/> from qrcode_ticket where ticket = #{ticket}
+  </select>
+</mapper>

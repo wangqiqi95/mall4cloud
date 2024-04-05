@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionUserWalletBillMapper">
+  <resultMap id="distributionUserWalletBillMap" type="com.mall4j.cloud.distribution.model.DistributionUserWalletBill">
+    <id column="id" property="id" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="wallet_id" property="walletId"/>
+    <result column="unsettled_amount" property="unsettledAmount"/>
+    <result column="settled_amount" property="settledAmount"/>
+    <result column="invalid_amount" property="invalidAmount"/>
+    <result column="accumulate_amount" property="accumulateAmount"/>
+    <result column="remarks_en" property="remarksEn"/>
+    <result column="remarks" property="remarks"/>
+    <result column="unsettled_amount_after" property="unsettledAmountAfter"/>
+    <result column="settled_amount_after" property="settledAmountAfter"/>
+    <result column="invalid_amount_after" property="invalidAmountAfter"/>
+    <result column="accumulate_amount_after" property="accumulateAmountAfter"/>
+    <result column="type" property="type"/>
+    <result column="modifier" property="modifier"/>
+  </resultMap>
+
+  <resultMap id="walletBillMap" type="com.mall4j.cloud.distribution.vo.DistributionUserWalletBillVO" extends="distributionUserWalletBillMap">
+    <association property="distributionUserVO" javaType="com.mall4j.cloud.distribution.vo.DistributionUserVO">
+      <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+      <result column="user_mobile" jdbcType="VARCHAR" property="userMobile" />
+    </association>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`create_time`,`update_time`,`wallet_id`,`unsettled_amount`,`settled_amount`,`invalid_amount`,`accumulate_amount`,`remarks_en`,`remarks`,`unsettled_amount_after`,`settled_amount_after`,`invalid_amount_after`,`accumulate_amount_after`,`type`,`modifier`
+  </sql>
+  <select id="list" resultMap="distributionUserWalletBillMap">
+    select <include refid="Vo_Column_List"/> from distribution_user_wallet_bill order by id desc
+  </select>
+  <select id="getById" resultMap="distributionUserWalletBillMap">
+    select <include refid="Vo_Column_List"/> from distribution_user_wallet_bill where id = #{id}
+  </select>
+    <select id="walletBillPage" resultMap="walletBillMap">
+      SELECT
+              duwb.id,
+              duwb.unsettled_amount,
+              duwb.settled_amount,
+              duwb.invalid_amount,
+              duwb.accumulate_amount,
+              duwb.create_time,
+              duwb.remarks,
+              duwb.remarks_en,
+              duwb.type,
+              du.distribution_user_id,
+              du.nick_name,
+              du.user_mobile
+      FROM
+              distribution_user_wallet_bill duwb
+                      LEFT JOIN distribution_user_wallet duw ON duwb.wallet_id = duw.wallet_id
+                      LEFT JOIN distribution_user du ON du.distribution_user_id = duw.distribution_user_id
+      <where>
+        <if test="userMobile != null and userMobile != ''">
+          and du.user_mobile like concat('%',#{userMobile},'%')
+        </if>
+      </where>
+      order by duwb.create_time desc
+    </select>
+    <insert id="save">
+    insert into distribution_user_wallet_bill
+    (`wallet_id`,`unsettled_amount`,`settled_amount`,`invalid_amount`,`accumulate_amount`,`remarks_en`,`remarks`,`unsettled_amount_after`,`settled_amount_after`,`invalid_amount_after`,`accumulate_amount_after`,`type`,`modifier`)
+    values
+    (#{distributionUserWalletBill.walletId},#{distributionUserWalletBill.unsettledAmount},#{distributionUserWalletBill.settledAmount},#{distributionUserWalletBill.invalidAmount},#{distributionUserWalletBill.accumulateAmount},#{distributionUserWalletBill.remarksEn},#{distributionUserWalletBill.remarks},#{distributionUserWalletBill.unsettledAmountAfter},#{distributionUserWalletBill.settledAmountAfter},#{distributionUserWalletBill.invalidAmountAfter},#{distributionUserWalletBill.accumulateAmountAfter},#{distributionUserWalletBill.type},#{distributionUserWalletBill.modifier});
+  </insert>
+    <insert id="saveBatch">
+      insert into distribution_user_wallet_bill
+      (`wallet_id`,`unsettled_amount`,`settled_amount`,`invalid_amount`,`accumulate_amount`,`remarks_en`,`remarks`,`unsettled_amount_after`,`settled_amount_after`,`invalid_amount_after`,`accumulate_amount_after`,`type`,`modifier`)
+      values
+      <foreach collection="distributionUserWalletBills" item="distributionUserWalletBill" separator=",">
+        (#{distributionUserWalletBill.walletId},#{distributionUserWalletBill.unsettledAmount},
+        #{distributionUserWalletBill.settledAmount},#{distributionUserWalletBill.invalidAmount},
+        #{distributionUserWalletBill.accumulateAmount},#{distributionUserWalletBill.remarksEn},
+        #{distributionUserWalletBill.remarks},#{distributionUserWalletBill.unsettledAmountAfter},
+        #{distributionUserWalletBill.settledAmountAfter},#{distributionUserWalletBill.invalidAmountAfter},
+        #{distributionUserWalletBill.accumulateAmountAfter}, #{distributionUserWalletBill.type},#{distributionUserWalletBill.modifier})
+      </foreach>
+    </insert>
+    <update id="update">
+    update distribution_user_wallet_bill
+    <set>
+      <if test="distributionUserWalletBill.walletId != null">
+        `wallet_id` = #{distributionUserWalletBill.walletId},
+      </if>
+      <if test="distributionUserWalletBill.unsettledAmount != null">
+        `unsettled_amount` = #{distributionUserWalletBill.unsettledAmount},
+      </if>
+      <if test="distributionUserWalletBill.settledAmount != null">
+        `settled_amount` = #{distributionUserWalletBill.settledAmount},
+      </if>
+      <if test="distributionUserWalletBill.invalidAmount != null">
+        `invalid_amount` = #{distributionUserWalletBill.invalidAmount},
+      </if>
+      <if test="distributionUserWalletBill.accumulateAmount != null">
+        `accumulate_amount` = #{distributionUserWalletBill.accumulateAmount},
+      </if>
+      <if test="distributionUserWalletBill.remarksEn != null">
+        `remarks_en` = #{distributionUserWalletBill.remarksEn},
+      </if>
+      <if test="distributionUserWalletBill.remarks != null">
+        `remarks` = #{distributionUserWalletBill.remarks},
+      </if>
+      <if test="distributionUserWalletBill.unsettledAmountAfter != null">
+        `unsettled_amount_after` = #{distributionUserWalletBill.unsettledAmountAfter},
+      </if>
+      <if test="distributionUserWalletBill.settledAmountAfter != null">
+        `settled_amount_after` = #{distributionUserWalletBill.settledAmountAfter},
+      </if>
+      <if test="distributionUserWalletBill.invalidAmountAfter != null">
+        `invalid_amount_after` = #{distributionUserWalletBill.invalidAmountAfter},
+      </if>
+      <if test="distributionUserWalletBill.accumulateAmountAfter != null">
+        `accumulate_amount_after` = #{distributionUserWalletBill.accumulateAmountAfter},
+      </if>
+      <if test="distributionUserWalletBill.type != null">
+        `type` = #{distributionUserWalletBill.type},
+      </if>
+      <if test="distributionUserWalletBill.modifier != null">
+        `modifier` = #{distributionUserWalletBill.modifier},
+      </if>
+    </set>
+    where id = #{distributionUserWalletBill.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_user_wallet_bill where id = #{id}
+  </delete>
+
+</mapper>

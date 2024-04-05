@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.CategoryShopMapper">
+  <resultMap id="categoryShopMap" type="com.mall4j.cloud.product.model.CategoryShop">
+    <id column="category_shop_id" property="categoryShopId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="category_id" property="categoryId"/>
+    <result column="rate" property="rate"/>
+    <result column="qualifications" property="qualifications"/>
+  </resultMap>
+  <resultMap id="categoryShopVOMap" type="com.mall4j.cloud.product.vo.CategoryShopVO">
+    <id column="category_id" property="categoryId" />
+    <result column="name" property="name" />
+    <result column="parent_id" property="parentId" />
+    <result column="parent_name" property="parentName" />
+    <result column="platform_rate" property="platformRate" />
+    <result column="customize_rate" property="customizeRate" />
+    <result column="qualifications" property="qualifications" />
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `category_shop_id`,`create_time`,`update_time`,`shop_id`,`category_id`,`rate`,`qualifications`
+  </sql>
+  <select id="list" resultMap="categoryShopMap">
+    select <include refid="Vo_Column_List"/> from category_shop order by category_shop_id desc
+  </select>
+  <select id="getByCategoryShopId" resultMap="categoryShopMap">
+    select <include refid="Vo_Column_List"/> from category_shop where category_shop_id = #{categoryShopId}
+  </select>
+  <select id="listByShopId" resultMap="categoryShopVOMap">
+    SELECT
+      cs.category_shop_id,
+      cl1.name AS name,
+      c1.category_id,
+      c1.parent_id,
+      c1.status AS categoryStatus,
+      cl2.name AS parent_name,
+      c1.deduction_rate AS platform_rate,
+      cs.rate AS customize_rate,
+      cs.qualifications
+    FROM
+      `category_shop` cs
+        JOIN category c1 ON cs.category_id = c1.category_id
+        JOIN category_lang cl1 ON c1.category_id = cl1.category_id AND cl1.lang = #{lang}
+        JOIN category c2 ON c1.parent_id = c2.category_id
+        JOIN category_lang cl2 ON c2.category_id = cl2.category_id AND cl2.lang = #{lang}
+    WHERE cs.shop_id = #{shopId}
+    ORDER BY c1.status DESC, cs.category_shop_id DESC
+  </select>
+
+  <insert id="save">
+    insert into category_shop (`shop_id`,`category_id`,`rate`,`qualifications`)
+    values (#{categoryShop.shopId},#{categoryShop.categoryId},#{categoryShop.rate},#{categoryShop.qualifications});
+  </insert>
+  <insert id="saveBatch">
+    insert into category_shop (`category_shop_id`,`shop_id`,`category_id`,`rate`,`qualifications`) values
+    <foreach collection="categoryShopList" item="categoryShop" separator=",">
+        (#{categoryShop.categoryShopId},#{shopId},#{categoryShop.categoryId},#{categoryShop.rate},#{categoryShop.qualifications})
+    </foreach>
+  </insert>
+
+  <update id="update">
+    update category_shop
+    <set>
+      <if test="categoryShop.shopId != null">
+        `shop_id` = #{categoryShop.shopId},
+      </if>
+      <if test="categoryShop.categoryId != null">
+        `category_id` = #{categoryShop.categoryId},
+      </if>
+      <if test="categoryShop.rate != null">
+        `rate` = #{categoryShop.rate},
+      </if>
+      <if test="categoryShop.qualifications != null">
+        `qualifications` = #{categoryShop.qualifications},
+      </if>
+    </set>
+    where category_shop_id = #{categoryShop.categoryShopId}
+  </update>
+
+  <delete id="deleteById">
+    delete from category_shop where category_shop_id = #{categoryShopId}
+  </delete>
+  <delete id="deleteByShopId">
+    delete from category_shop where shop_id = #{shopId}
+  </delete>
+  <delete id="deleteByCategoryId">
+    delete from category_shop where category_id = #{categoryId}
+  </delete>
+  <delete id="deleteByShopIdAndCategoryId">
+    delete from category_shop where shop_id = #{shopId} and category_id = #{categoryId}
+  </delete>
+
+  <select id="listRateByShopId" resultType="com.mall4j.cloud.product.bo.CategoryRateBO">
+    select category_id,rate from category_shop where shop_id = #{shopId}
+  </select>
+  <select id="listShopIdByCategoryId" resultType="java.lang.Long">
+    select shop_id from category_shop where category_id = #{categoryId}
+  </select>
+  <select id="listShopIdByCategoryIds" resultType="java.lang.Long">
+    select shop_id from category_shop
+    where category_id in
+    <foreach collection="categoryIds" item="categoryId" open="(" close=")" separator=",">
+      #{categoryId}
+    </foreach>
+  </select>
+  <select id="getByShopIdAndCategoryId" resultType="com.mall4j.cloud.product.vo.CategoryShopVO">
+    select <include refid="Vo_Column_List"/> from category_shop where shop_id = #{shopId} and category_id = #{categoryId}
+  </select>
+  <select id="countByShopIdAndCategoryId" resultType="java.lang.Integer">
+    select count(*) from category_shop
+    <where>
+      <if test="shopId != null and shopId != ''">
+        and shop_id = #{shopId}
+      </if>
+      <if test="categoryId != null and categoryId != ''">
+        and category_id = #{categoryId}
+      </if>
+    </where>
+  </select>
+</mapper>

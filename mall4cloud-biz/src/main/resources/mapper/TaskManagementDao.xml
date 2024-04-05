@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.TaskManagementDao">
+
+    <resultMap type="com.entity.TaskManagement" id="TaskManagementMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="taskName" column="task_name" jdbcType="VARCHAR"/>
+        <result property="storeSelectionType" column="store_selection_type" jdbcType="INTEGER"/>
+        <result property="userRangeType" column="user_range_type" jdbcType="INTEGER"/>
+        <result property="taskType" column="task_type" jdbcType="INTEGER"/>
+        <result property="affiliatedCompanyType" column="affiliated_company_type" jdbcType="INTEGER"/>
+        <result property="quantityAllotted" column="quantity_allotted" jdbcType="INTEGER"/>
+        <result property="executionMode" column="execution_mode" jdbcType="INTEGER"/>
+        <result property="scriptContent" column="script_content" jdbcType="VARCHAR"/>
+        <result property="taskObjectiveRatio" column="task_objective_ratio" jdbcType="NUMERIC"/>
+        <result property="taskStartTime" column="task_start_time" jdbcType="TIMESTAMP"/>
+        <result property="taskEndTime" column="task_end_time" jdbcType="TIMESTAMP"/>
+        <result property="returnVisitResult" column="return_visit_result" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TaskManagementMap">
+        select
+          id, task_name, store_selection_type, user_range_type, task_type, affiliated_company_type, quantity_allotted, execution_mode, script_content, task_objective_ratio, task_start_time, task_end_time, return_visit_result, status, create_time, update_time
+        from task_management
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TaskManagementMap">
+        select
+          id, task_name, store_selection_type, user_range_type, task_type, affiliated_company_type, quantity_allotted, execution_mode, script_content, task_objective_ratio, task_start_time, task_end_time, return_visit_result, status, create_time, update_time
+        from task_management
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="taskName != null and taskName != ''">
+                and task_name = #{taskName}
+            </if>
+            <if test="storeSelectionType != null">
+                and store_selection_type = #{storeSelectionType}
+            </if>
+            <if test="userRangeType != null">
+                and user_range_type = #{userRangeType}
+            </if>
+            <if test="taskType != null">
+                and task_type = #{taskType}
+            </if>
+            <if test="affiliatedCompanyType != null">
+                and affiliated_company_type = #{affiliatedCompanyType}
+            </if>
+            <if test="quantityAllotted != null">
+                and quantity_allotted = #{quantityAllotted}
+            </if>
+            <if test="executionMode != null">
+                and execution_mode = #{executionMode}
+            </if>
+            <if test="scriptContent != null and scriptContent != ''">
+                and script_content = #{scriptContent}
+            </if>
+            <if test="taskObjectiveRatio != null">
+                and task_objective_ratio = #{taskObjectiveRatio}
+            </if>
+            <if test="taskStartTime != null">
+                and task_start_time = #{taskStartTime}
+            </if>
+            <if test="taskEndTime != null">
+                and task_end_time = #{taskEndTime}
+            </if>
+            <if test="returnVisitResult != null">
+                and return_visit_result = #{returnVisitResult}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from task_management
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="taskName != null and taskName != ''">
+                and task_name = #{taskName}
+            </if>
+            <if test="storeSelectionType != null">
+                and store_selection_type = #{storeSelectionType}
+            </if>
+            <if test="userRangeType != null">
+                and user_range_type = #{userRangeType}
+            </if>
+            <if test="taskType != null">
+                and task_type = #{taskType}
+            </if>
+            <if test="affiliatedCompanyType != null">
+                and affiliated_company_type = #{affiliatedCompanyType}
+            </if>
+            <if test="quantityAllotted != null">
+                and quantity_allotted = #{quantityAllotted}
+            </if>
+            <if test="executionMode != null">
+                and execution_mode = #{executionMode}
+            </if>
+            <if test="scriptContent != null and scriptContent != ''">
+                and script_content = #{scriptContent}
+            </if>
+            <if test="taskObjectiveRatio != null">
+                and task_objective_ratio = #{taskObjectiveRatio}
+            </if>
+            <if test="taskStartTime != null">
+                and task_start_time = #{taskStartTime}
+            </if>
+            <if test="taskEndTime != null">
+                and task_end_time = #{taskEndTime}
+            </if>
+            <if test="returnVisitResult != null">
+                and return_visit_result = #{returnVisitResult}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into task_management(task_name, store_selection_type, user_range_type, task_type, affiliated_company_type, quantity_allotted, execution_mode, script_content, task_objective_ratio, task_start_time, task_end_time, return_visit_result, status, create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.taskName}, #{entity.storeSelectionType}, #{entity.userRangeType}, #{entity.taskType}, #{entity.affiliatedCompanyType}, #{entity.quantityAllotted}, #{entity.executionMode}, #{entity.scriptContent}, #{entity.taskObjectiveRatio}, #{entity.taskStartTime}, #{entity.taskEndTime}, #{entity.returnVisitResult}, #{entity.status}, #{entity.createTime}, #{entity.updateTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into task_management(task_name, store_selection_type, user_range_type, task_type, affiliated_company_type, quantity_allotted, execution_mode, script_content, task_objective_ratio, task_start_time, task_end_time, return_visit_result, status, create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.taskName}, #{entity.storeSelectionType}, #{entity.userRangeType}, #{entity.taskType}, #{entity.affiliatedCompanyType}, #{entity.quantityAllotted}, #{entity.executionMode}, #{entity.scriptContent}, #{entity.taskObjectiveRatio}, #{entity.taskStartTime}, #{entity.taskEndTime}, #{entity.returnVisitResult}, #{entity.status}, #{entity.createTime}, #{entity.updateTime})
+        </foreach>
+        on duplicate key update
+        task_name = values(task_name),
+        store_selection_type = values(store_selection_type),
+        user_range_type = values(user_range_type),
+        task_type = values(task_type),
+        affiliated_company_type = values(affiliated_company_type),
+        quantity_allotted = values(quantity_allotted),
+        execution_mode = values(execution_mode),
+        script_content = values(script_content),
+        task_objective_ratio = values(task_objective_ratio),
+        task_start_time = values(task_start_time),
+        task_end_time = values(task_end_time),
+        return_visit_result = values(return_visit_result),
+        status = values(status),
+        create_time = values(create_time),
+        update_time = values(update_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update task_management
+        <set>
+            <if test="taskName != null and taskName != ''">
+                task_name = #{taskName},
+            </if>
+            <if test="storeSelectionType != null">
+                store_selection_type = #{storeSelectionType},
+            </if>
+            <if test="userRangeType != null">
+                user_range_type = #{userRangeType},
+            </if>
+            <if test="taskType != null">
+                task_type = #{taskType},
+            </if>
+            <if test="affiliatedCompanyType != null">
+                affiliated_company_type = #{affiliatedCompanyType},
+            </if>
+            <if test="quantityAllotted != null">
+                quantity_allotted = #{quantityAllotted},
+            </if>
+            <if test="executionMode != null">
+                execution_mode = #{executionMode},
+            </if>
+            <if test="scriptContent != null and scriptContent != ''">
+                script_content = #{scriptContent},
+            </if>
+            <if test="taskObjectiveRatio != null">
+                task_objective_ratio = #{taskObjectiveRatio},
+            </if>
+            <if test="taskStartTime != null">
+                task_start_time = #{taskStartTime},
+            </if>
+            <if test="taskEndTime != null">
+                task_end_time = #{taskEndTime},
+            </if>
+            <if test="returnVisitResult != null">
+                return_visit_result = #{returnVisitResult},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from task_management where id = #{id}
+    </delete>
+
+</mapper>
+

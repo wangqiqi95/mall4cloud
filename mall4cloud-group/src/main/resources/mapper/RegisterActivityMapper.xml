@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.RegisterActivityMapper">
+
+    <select id="registerActivityList" resultType="com.mall4j.cloud.group.vo.RegisterActivityListVO">
+        select
+        DISTINCT
+        ra.id as id,
+        ra.activity_name as activityName,
+        ra.activity_begin_time as activityBeginTime,
+        ra.activity_end_time as activityEndTime,
+        ra.is_all_shop as isAllShop,
+        (select count(1) from register_activity_shop d where d.activity_id = ra.id) as applyShopNum,
+        (select count(1) from user_reward_record c where c.activity_id = ra.id and c.activity_type =1) as awardNum,
+        ra.activity_point_switch as activityPointSwitch,
+        ra.activity_point_number as activityPointNumber,
+        ra.activity_coupon_switch as activityCouponSwitch,
+        ra.activity_coupon_ids as activityCouponIds,
+        ra.weight as weight,
+        ra.status as status,
+        ra.create_time as createTime,
+        ra.create_user_name as createUserName
+        from register_activity   ra left join register_activity_shop ras on ra.id = ras.activity_id
+        where ra.deleted = 0
+        <if test="shopIds != null">
+            and (ras.shop_id in (#{shopIds}) or ra.is_all_shop = 1)
+        </if>
+        <if test="activityStatus == 0">
+            and ra.status = 0
+        </if>
+        <if test="activityStatus == 2">
+            and ra.activity_begin_time &lt;= now() and ra.activity_end_time &gt; now() and ra.status = 1
+        </if>
+        <if test="activityStatus == 3">
+            and ra.activity_begin_time &gt; now() and ra.status = 1
+        </if>
+        <if test="activityStatus == 4">
+            and ra.activity_end_time &lt; now() and ra.status = 1
+        </if>
+        <if test="activityName != null">
+            and ra.activity_name like concat('%',#{activityName},'%')
+        </if>
+        order by ra.create_time desc
+    </select>
+    <select id="selectFirstActivity" resultType="com.mall4j.cloud.group.model.RegisterActivity">
+        select
+        ra.id as id,
+        ra.activity_name as activityName,
+        ra.activity_begin_time as activityBeginTime,
+        ra.activity_end_time as activityEndTime,
+        ra.is_all_shop as isAllShop,
+        ra.activity_point_switch as activityPointSwitch,
+        ra.activity_point_number as activityPointNumber,
+        ra.activity_coupon_switch as activityCouponSwitch,
+        ra.activity_coupon_ids as activityCouponIds,
+        ra.weight as weight,
+        ra.status as status,
+        ra.create_time as createTime,
+        ra.create_user_name as createUserName
+        from register_activity ra left join register_activity_shop ras on ra.id = ras.activity_id
+        where ra.deleted = 0
+            and (ras.shop_id = #{storeId} or ra.is_all_shop = 1)
+            and ra.activity_begin_time &lt;= now() and ra.activity_end_time &gt; now() and ra.status = 1
+        order by ra.weight asc,ra.create_time desc limit 1
+    </select>
+</mapper>

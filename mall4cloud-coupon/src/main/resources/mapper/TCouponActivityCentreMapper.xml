@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.coupon.mapper.TCouponActivityCentreMapper">
+  <resultMap id="tCouponActivityCentreMap" type="com.mall4j.cloud.coupon.model.TCouponActivityCentre">
+    <id column="id" property="id" />
+    <result column="coupon_id" property="couponId"/>
+    <result column="activity_id" property="activityId"/>
+    <result column="activity_source" property="activitySource"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+
+  <select id="couponList" resultType="com.mall4j.cloud.api.coupon.vo.CouponListVO">
+    select c.id as id,
+    c.name as name,
+    c.kind as kind,
+    c.type as type,
+    c.reduce_amount as reduceAmount,
+    c.coupon_discount as couponDiscount,
+    c.amount_limit_type as amountLimitType,
+    c.amount_limit_num as amountLimitNum,
+    c.commodity_limit_type as commodityLimitType,
+    c.commodity_limit_num as commodityLimitNum,
+    c.commodity_scope_type as commodityScopeType,
+    c.status as status,
+    c.start_time as startTime,
+    c.end_time as endTime,
+    c.source_type as sourceType,
+    c.crm_coupon_id as crmCouponId,
+    c.is_all_shop as isAllShop,
+    c.apply_scope_type as applyScopeType,
+    c.time_type as timeType,
+    c.after_receive_days as afterReceiveDays
+    from
+    t_coupon_activity_centre ac
+    left join t_coupon c on ac.coupon_id=c.id
+    <where>
+      ac.del_flag=0
+      and ac.activity_id=#{activityId}
+      and ac.activity_source=#{activitySource}
+      <if test="name != null">
+        and (
+        c.name like concat('%',#{name},'%')
+        or c.id like concat('%', #{name}, '%')
+        or c.crm_coupon_id like concat('%', #{name}, '%')
+        )
+      </if>
+      <if test="status != null">
+        and c.status = #{status}
+      </if>
+      <if test="kind != null">
+        and c.kind = #{kind}
+      </if>
+      <if test="sourceType != null">
+        and c.source_type = #{sourceType}
+      </if>
+      <if test="crmCouponId != null">
+        and c.crm_coupon_id = #{crmCouponId}
+      </if>
+    </where>
+    order by c.create_time desc
+  </select>
+
+</mapper>

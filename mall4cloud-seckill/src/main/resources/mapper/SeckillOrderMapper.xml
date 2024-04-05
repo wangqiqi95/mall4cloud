@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.seckill.mapper.SeckillOrderMapper">
+  <resultMap id="seckillOrderMap" type="com.mall4j.cloud.seckill.model.SeckillOrder">
+    <id column="seckill_order_id" property="seckillOrderId" />
+    <result column="seckill_id" property="seckillId"/>
+    <result column="user_id" property="userId"/>
+    <result column="order_id" property="orderId"/>
+    <result column="prod_count" property="prodCount"/>
+    <result column="create_time" property="createTime"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="state" property="state"/>
+    <result column="seckill_sku_id" property="seckillSkuId"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `seckill_order_id`,`seckill_id`,`user_id`,`order_id`,`prod_count`,`create_time`,`spu_id`,`state`,`seckill_sku_id`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.seckill.vo.SeckillOrderVO">
+    select <include refid="Vo_Column_List"/> from seckill_order order by seckill_order_id desc
+  </select>
+  <select id="getBySeckillOrderId" resultType="com.mall4j.cloud.seckill.vo.SeckillOrderVO">
+    select <include refid="Vo_Column_List"/> from seckill_order where seckill_order_id = #{seckillOrderId}
+  </select>
+  <insert id="save">
+    insert into seckill_order (`seckill_id`,`user_id`,`order_id`,`prod_count`,`create_time`,`spu_id`,`state`,`seckill_sku_id`)
+    values (#{seckillOrder.seckillId},#{seckillOrder.userId},#{seckillOrder.orderId},#{seckillOrder.prodCount},#{seckillOrder.createTime},#{seckillOrder.spuId},#{seckillOrder.state},#{seckillOrder.seckillSkuId});
+  </insert>
+  <update id="update">
+    update seckill_order
+    <set>
+      <if test="seckillOrder.seckillId != null">
+        `seckill_id` = #{seckillOrder.seckillId},
+      </if>
+      <if test="seckillOrder.userId != null">
+        `user_id` = #{seckillOrder.userId},
+      </if>
+      <if test="seckillOrder.orderId != null">
+        `order_id` = #{seckillOrder.orderId},
+      </if>
+      <if test="seckillOrder.prodCount != null">
+        `prod_count` = #{seckillOrder.prodCount},
+      </if>
+      <if test="seckillOrder.createTime != null">
+        `create_time` = #{seckillOrder.createTime},
+      </if>
+      <if test="seckillOrder.spuId != null">
+        `spu_id` = #{seckillOrder.spuId},
+      </if>
+      <if test="seckillOrder.state != null">
+        `state` = #{seckillOrder.state},
+      </if>
+      <if test="seckillOrder.seckillSkuId != null">
+        `seckill_sku_id` = #{seckillOrder.seckillSkuId},
+      </if>
+    </set>
+    where seckill_order_id = #{seckillOrder.seckillOrderId}
+  </update>
+  <delete id="deleteById">
+    delete from seckill_order where seckill_order_id = #{seckillOrderId}
+  </delete>
+
+  <select id="selectNumByUser" resultType="int">
+    SELECT ifnull(SUM(prod_count),0) FROM seckill_order WHERE seckill_id = #{seckillId} AND spu_id = #{spuId}
+    AND user_id = #{userId} AND state <![CDATA[ <> ]]>  -1
+    </select>
+
+  <select id="countByOrderId" resultType="int">
+    select count(*) from seckill_order where order_id = #{orderId}
+  </select>
+
+  <update id="cancelUnpayOrderByOrderId">
+    UPDATE seckill_order so
+    set so.state = -1
+    where order_id = #{orderId} and state = 0
+    </update>
+
+  <select id="countUnpayOrderByOrderId" resultType="int">
+    select count(*) from seckill_order where order_id = #{orderId} and state = 0
+  </select>
+
+  <update id="updateToPaySuccess">
+    update seckill_order set state =1 where order_id = #{orderId}
+  </update>
+</mapper>

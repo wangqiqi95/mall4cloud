@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.MealActivityMapper">
+    <resultMap id="detailMap" type="com.mall4j.cloud.group.vo.MealActivityVO">
+        <id column="id" property="id"/>
+        <result column="activityName" property="activityName"/>
+        <result column="activityBeginTime" property="activityBeginTime"/>
+        <result column="activityEndTime" property="activityEndTime"/>
+        <result column="isAllShop" property="isAllShop"/>
+        <result column="mealPrice" property="mealPrice"/>
+        <result column="preferenceType" property="preferenceType"/>
+        <result column="buyRepeatSwitch" property="buyRepeatSwitch"/>
+        <result column="weight" property="weight"/>
+        <result column="STATUS" property="status"/>
+        <collection property="pools" javaType="list" ofType="com.mall4j.cloud.group.vo.MealCommodityPoolVO">
+            <id column="pid" property="id"/>
+            <result column="mealId" property="mealId"/>
+            <result column="commodityPoolName" property="commodityPoolName"/>
+            <result column="commodityPoolNum" property="commodityPoolNum"/>
+            <collection property="details" javaType="list" ofType="com.mall4j.cloud.group.vo.MealCommodityPoolDetailVO">
+                <id column="did" property="id"/>
+                <result column="commodityPoolId" property="commodityPoolId"/>
+                <result column="commodityId" property="commodityId"/>
+                <result column="participationMode" property="participationMode"/>
+                <result column="barCodes" property="barCodes"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <resultMap id="infoMap" type="com.mall4j.cloud.group.vo.app.MealInfoAppVO">
+        <id column="id" property="id"/>
+        <result column="activityName" property="activityName"/>
+        <result column="mealPrice" property="mealPrice"/>
+        <result column="preferenceType" property="preferenceType"/>
+        <result column="buyRepeatSwitch" property="buyRepeatSwitch"/>
+        <collection property="pools" javaType="list" ofType="com.mall4j.cloud.group.vo.app.MealCommodityPoolAppVO">
+            <id column="pid" property="id"/>
+            <result column="mealId" property="mealId"/>
+            <result column="commodityPoolName" property="commodityPoolName"/>
+            <result column="commodityPoolNum" property="commodityPoolNum"/>
+            <collection property="details" javaType="list" ofType="com.mall4j.cloud.group.vo.app.MealCommodityPoolDetailAppVO">
+                <id column="did" property="id"/>
+                <result column="commodityPoolId" property="commodityPoolId"/>
+                <result column="commodityId" property="commodityId"/>
+                <result column="participationMode" property="participationMode"/>
+                <result column="barCodes" property="barCodes"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="detail" resultMap="detailMap">
+        SELECT
+            ma.id AS id,
+            ma.activity_name AS activityName,
+            ma.activity_begin_time AS activityBeginTime,
+            ma.activity_end_time AS activityEndTime,
+            ma.is_all_shop AS isAllShop,
+            ma.meal_price AS mealPrice,
+            ma.preference_type AS preferenceType,
+            ma.buy_repeat_switch AS buyRepeatSwitch,
+            ma.weight AS weight,
+            ma.`status` AS STATUS,
+            mcp.id AS pid,
+            mcp.meal_id AS mealId,
+            mcp.commodity_pool_name AS commodityPoolName,
+            mcp.commodity_pool_num AS commodityPoolNum,
+            mcpd.id AS did,
+            mcpd.commodity_pool_id AS commodityPoolId,
+            mcpd.commodity_id AS commodityId,
+            mcpd.participation_mode AS participationMode,
+            mcpd.bar_codes AS barCodes
+        FROM
+            meal_activity ma
+                LEFT JOIN meal_commodity_pool mcp ON ma.id = mcp.meal_id
+                LEFT JOIN meal_commodity_pool_detail mcpd ON mcp.id = mcpd.commodity_pool_id
+        where
+            ma.id = #{id}
+    </select>
+    <select id="getByActivity" resultMap="detailMap">
+        SELECT
+            ma.id AS id,
+            ma.activity_name AS activityName,
+            ma.activity_begin_time AS activityBeginTime,
+            ma.activity_end_time AS activityEndTime,
+            ma.is_all_shop AS isAllShop,
+            ma.meal_price AS mealPrice,
+            ma.preference_type AS preferenceType,
+            ma.buy_repeat_switch AS buyRepeatSwitch,
+            ma.weight AS weight,
+            ma.`status` AS STATUS,
+            mcp.id AS pid,
+            mcp.meal_id AS mealId,
+            mcp.commodity_pool_name AS commodityPoolName,
+            mcp.commodity_pool_num AS commodityPoolNum,
+            mcpd.id AS did,
+            mcpd.commodity_pool_id AS commodityPoolId,
+            mcpd.commodity_id AS commodityId,
+            mcpd.participation_mode AS participationMode,
+            mcpd.bar_codes AS barCodes
+        FROM
+            meal_activity ma
+                LEFT JOIN meal_commodity_pool mcp ON ma.id = mcp.meal_id
+                LEFT JOIN meal_commodity_pool_detail mcpd ON mcp.id = mcpd.commodity_pool_id
+        where
+            ma.status = 1 and activity_end_time > #{endTime}
+    </select>
+    <select id="info" resultMap="infoMap">
+        SELECT
+            ma.id AS id,
+            ma.activity_name AS activityName,
+            ma.is_all_shop AS isAllShop,
+            ma.meal_price AS mealPrice,
+            ma.preference_type AS preferenceType,
+            ma.buy_repeat_switch AS buyRepeatSwitch,
+            mcp.id AS pid,
+            mcp.meal_id AS mealId,
+            mcp.commodity_pool_name AS commodityPoolName,
+            mcp.commodity_pool_num AS commodityPoolNum,
+            mcpd.id AS did,
+            mcpd.commodity_pool_id AS commodityPoolId,
+            mcpd.commodity_id AS commodityId,
+            mcpd.participation_mode AS participationMode,
+            mcpd.bar_codes AS barCodes
+        FROM
+            meal_activity ma
+                LEFT JOIN meal_commodity_pool mcp ON ma.id = mcp.meal_id
+                LEFT JOIN meal_commodity_pool_detail mcpd ON mcp.id = mcpd.commodity_pool_id
+        where
+            ma.id = #{id}
+    </select>
+    <select id="mealActivityList" resultType="com.mall4j.cloud.group.vo.MealActivityListVO">
+        select
+        DISTINCT
+        ma.id as id,
+        ma.activity_name as activityName,
+        ma.activity_begin_time as activityBeginTime,
+        ma.activity_end_time as activityEndTime,
+        ma.is_all_shop as isAllShop,
+        (select count(1) from meal_activity_shop d where d.activity_id = ma.id) as applyShopNum,
+        ma.weight as weight,
+        ma.status as status,
+        ma.create_time as createTime,
+        ma.create_user_name as createUserName
+        from meal_activity ma left join meal_activity_shop mas on ma.id = mas.activity_id
+        where ma.deleted = 0
+        <if test="shopIds != null">
+            and (mas.shop_id in (#{shopIds}) or ma.is_all_shop = 1)
+        </if>
+        <if test="status == 0">
+            and ma.status = 0
+        </if>
+        <if test="status == 2">
+            and ma.activity_begin_time &lt;= now() and ma.activity_end_time &gt; now() and ma.status = 1
+        </if>
+        <if test="status == 3">
+            and ma.activity_begin_time &gt; now() and ma.status = 1
+        </if>
+        <if test="status == 4">
+            and ma.activity_end_time &lt; now() and ma.status = 1
+        </if>
+        <if test="activityName != null">
+            and ma.activity_name like concat('%',#{activityName},'%')
+        </if>
+        order by ma.create_time desc
+    </select>
+    <select id="selectFirstActivity" resultType="com.mall4j.cloud.group.model.MealActivity">
+        select
+        ma.id as id,
+        ma.activity_name as activityName,
+        ma.activity_begin_time as activityBeginTime,
+        ma.activity_end_time as activityEndTime,
+        ma.is_all_shop as isAllShop,
+        ma.weight as weight,
+        ma.status as status,
+        ma.create_time as createTime,
+        ma.create_user_name as createUserName
+        from meal_activity ma left join meal_activity_shop mas on ma.id = mas.activity_id
+        where ma.deleted = 0
+        and (mas.shop_id = #{shopId} or ma.is_all_shop = 1)
+        and ma.activity_begin_time &lt;= now() and ma.activity_end_time &gt; now() and ma.status = 1
+        order by ma.weight,ma.create_time desc limit 1
+    </select>
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.UserStaffCpRelationPhoneMapper">
+  <resultMap id="userStaffCpRelationPhoneMap" type="com.mall4j.cloud.user.model.UserStaffCpRelationPhone">
+    <id column="id" property="id" />
+    <result column="relation_id" property="relationId"/>
+    <result column="user_id" property="userId"/>
+    <result column="phone" property="phone"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`relation_id`,`user_id`,`phone`,`del_flag`
+  </sql>
+
+</mapper>

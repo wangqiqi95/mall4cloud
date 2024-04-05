@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.SendTaskMapper">
+  <resultMap id="sendTaskMap" type="com.mall4j.cloud.biz.model.cp.SendTask">
+    <id column="ID" property="id" />
+    <result column="TASK_NAME" property="taskName"/>
+    <result column="TAGS" property="tags"/>
+    <result column="SEND_STATUS" property="sendStatus"/>
+    <result column="SEND_TOTAL" property="sendTotal"/>
+    <result column="CREATE_BY" property="createBy"/>
+    <result column="CREATE_TIME" property="createTime"/>
+    <result column="UPDATE_TIME" property="updateTime"/>
+    <result column="STATUS" property="status"/>
+    <result column="CREATE_NAME" property="createName"/>
+
+    <result column="FLAG" property="flag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `ID`,`TASK_NAME`,`TAGS`,`SEND_STATUS`,`SEND_TOTAL`,`CREATE_BY`,`CREATE_TIME`  ,`UPDATE_TIME`,`STATUS`,`FLAG`,`CREATE_NAME`
+  </sql>
+  <select id="list" resultMap="sendTaskMap">
+    select <include refid="Vo_Column_List"/> from CP_SEND_TASK
+    where FLAG=0
+    <if test="et.taskName != null and et.taskName !='' "> AND TASK_NAME like CONCAT('%', #{et.taskName},'%')  </if>
+    order by ID desc
+  </select>
+  <select id="getById" resultMap="sendTaskMap">
+    select <include refid="Vo_Column_List"/> from CP_SEND_TASK where ID = #{id}
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+    insert into CP_SEND_TASK (`TASK_NAME`,`SEND_STATUS`,`SEND_TOTAL`,`CREATE_BY`,`CREATE_TIME`,`TAGS`,`UPDATE_TIME`,`STATUS`,`FLAG`,`CREATE_NAME`)
+    values (#{sendTask.taskName},#{sendTask.sendStatus},#{sendTask.sendTotal},#{sendTask.createBy},#{sendTask.createTime},#{sendTask.tags},#{sendTask.updateTime},#{sendTask.status},#{sendTask.flag},#{sendTask.createName});
+  </insert>
+  <update id="update">
+    update CP_SEND_TASK
+    <set>
+      <if test="sendTask.taskName != null">
+        `TASK_NAME` = #{sendTask.taskName},
+      </if>
+      <if test="sendTask.sendStatus != null">
+        `SEND_STATUS` = #{sendTask.sendStatus},
+      </if>
+      <if test="sendTask.sendTotal != null">
+        `SEND_TOTAL` = #{sendTask.sendTotal},
+      </if>
+      <if test="sendTask.createBy != null">
+        `CREATE_BY` = #{sendTask.createBy},
+      </if>
+      <if test="sendTask.createTime != null">
+        `CREATE_TIME` = #{sendTask.createTime},
+      </if>
+      <if test="sendTask.tags != null">
+        `TAGS` = #{sendTask.tags},
+      </if>
+      <if test="sendTask.clearTag ==1 ">
+        `TAGS` = NULL,
+      </if>
+
+      <if test="sendTask.updateTime != null">
+        `UPDATE_TIME` = #{sendTask.updateTime},
+      </if>
+      <if test="sendTask.status != null">
+        `STATUS` = #{sendTask.status},
+      </if>
+      <if test="sendTask.flag != null">
+        `FLAG` = #{sendTask.flag},
+      </if>
+    </set>
+    where ID = #{sendTask.id}
+  </update>
+  <delete id="deleteById">
+    delete from CP_SEND_TASK where ID = #{id}
+  </delete>
+
+  <!-- 更新推送-->
+  <update id="updateSendTaskCompleteSend">
+    update CP_SEND_TASK  p set p.SEND_STATUS = 1   where  not EXISTS(select 1 from CP_TASK_PUSH d where d.task_id = p.id and d.`STATUS` =0 ) and p.ID = #{id}
+  </update>
+
+
+
+</mapper>

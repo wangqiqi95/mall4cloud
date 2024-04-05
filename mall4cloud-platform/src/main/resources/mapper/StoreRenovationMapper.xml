@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.platform.mapper.StoreRenovationMapper">
+    <resultMap id="storeRenovationMap" type="com.mall4j.cloud.platform.model.StoreRenovation">
+        <id column="renovation_id" property="renovationId"/>
+        <result column="store_id" property="storeId"/>
+        <result column="name" property="name"/>
+        <result column="content" property="content"/>
+        <result column="remarks" property="remarks"/>
+        <result column="home_status" property="homeStatus"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+        <result column="create_id" property="createId"/>
+        <result column="create_name" property="createName"/>
+        <result column="update_id" property="updateId"/>
+        <result column="updare_name" property="updateName"/>
+        <result column="short_link" property="shortLink" />
+        <result column="open_number" property="openNumber" />
+        <result column="open_people" property="openPeople" />
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `renovation_id`
+        ,`store_id`,`name`,`content`,`remarks`,`home_status`,`create_time`,`update_time`
+    </sql>
+    <select id="list" resultMap="storeRenovationMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from store_renovation order by renovation_id desc
+    </select>
+    <select id="getByRenovationId" resultMap="storeRenovationMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from store_renovation where renovation_id = #{renovationId}
+    </select>
+    <insert id="save">
+        insert into store_renovation (`store_id`, `name`, `content`,`remarks`, `home_status`, `create_time`, `update_time`,
+                                      `create_id`,`create_name`,`update_id`,`update_name`,)
+        values (#{storeRenovation.storeId}, #{storeRenovation.name}, #{storeRenovation.content}, #{storeRenovation.remarks},
+                #{storeRenovation.homeStatus}, now(), now(),
+                #{storeRenovation.createId},#{storeRenovation.createName},#{storeRenovation.updateId},#{storeRenovation.updateName});
+    </insert>
+    <update id="update">
+        update store_renovation
+        <set>
+            <if test="storeRenovation.storeId != null">
+                `store_id` = #{storeRenovation.storeId},
+            </if>
+            <if test="storeRenovation.name != null">
+                `name` = #{storeRenovation.name},
+            </if>
+            <if test="storeRenovation.content != null">
+                `content` = #{storeRenovation.content},
+            </if>
+            <if test="storeRenovation.remarks != null">
+                `remarks` = #{storeRenovation.remarks},
+            </if>
+            <if test="storeRenovation.homeStatus != null">
+                `home_status` = #{storeRenovation.homeStatus},
+            </if>
+            <if test="storeRenovation.updateId != null">
+                `update_id` = #{storeRenovation.updateId},
+            </if>
+            <if test="storeRenovation.updateName != null">
+                `update_name` = #{storeRenovation.updateName},
+            </if>
+        </set>
+        where renovation_id = #{storeRenovation.renovationId}
+    </update>
+    <delete id="deleteById">
+        delete
+        from store_renovation
+        where renovation_id = #{renovationId}
+    </delete>
+
+    <select id="moduleList" resultType="com.mall4j.cloud.platform.vo.StoreRenovationMouduleVO">
+        select renovation_id , `name` ,home_status from store_renovation
+        <where>
+            <if test="paramDTO.keyword != null and paramDTO.keyword != ''">
+                and `name` like concat('%',#{paramDTO.keyword},'%')
+            </if>
+            <if test="paramDTO.homeStatus != null">
+                and `home_status` = #{paramDTO.homeStatus}
+            </if>
+        </where>
+        order by renovation_id DESC
+    </select>
+
+    <select id="getHomePage" resultMap="storeRenovationMap">
+        SELECT  sr.`renovation_id`
+        ,sr.`store_id`,sr.`name`,sr.`remarks`,sr.`home_status`,sr.`create_time`,sr.`update_time`
+        FROM store_renovation sr
+                 LEFT JOIN reno_apply ra ON sr.renovation_id = ra.reno_id and ra.is_deleted=0
+        WHERE sr.`status` = 1
+          AND sr.home_status = 1
+          and ra.store_id = #{storeId} limit 1;
+    </select>
+    <update id="updateStatus">
+        update store_renovation
+        set `status` = #{status}
+        where renovation_id = #{renovationId}
+    </update>
+    <select id="getRenovation" resultMap="storeRenovationMap">
+        select *
+        from store_renovation
+        where `status` = 1
+          and `home_status` = #{homeStatus} limit 1
+    </select>
+    <select id="listBySearchDTO" resultMap="storeRenovationMap">
+        SELECT
+        *
+        FROM
+        store_renovation sr
+        where
+        store_id = 1
+        <if test="searchDTO.status != null">
+            and `status` = #{searchDTO.status}
+        </if>
+        <if test="searchDTO.name != null">
+            and `name` like concat("%", #{searchDTO.name},"%")
+        </if>
+        <if test="searchDTO.homeStatus != null">
+            and `home_status` = #{searchDTO.homeStatus}
+        </if>
+        <if test="searchDTO.renovationId != null">
+            and `renovation_id` = #{searchDTO.renovationId}
+        </if>
+        UNION ALL
+        SELECT
+        r.*
+        FROM
+        store_renovation r
+        LEFT JOIN reno_apply ra ON r.renovation_id = ra.reno_id
+        where
+        ra.is_deleted = 0
+        <if test="searchDTO.status != null">
+            and r.`status` = #{searchDTO.status}
+        </if>
+        <if test="searchDTO.name != null">
+            and r.`name` like concat("%", #{searchDTO.name},"%")
+        </if>
+        <if test="searchDTO.homeStatus != null">
+            and r.`home_status` = #{searchDTO.homeStatus}
+        </if>
+        <if test="searchDTO.renovationId != null">
+            and r.`renovation_id` = #{searchDTO.renovationId}
+        </if>
+        <if test="searchDTO.storeId != null">
+            and ra.`store_id` = #{searchDTO.storeId}
+        </if>
+        GROUP BY r.renovation_id
+    </select>
+
+    <insert id="saveStoreRenovationItem">
+        INSERT INTO scrm_platform.store_renovation_item
+            (renovation_id, uniid, vipcode, nick_name, check_time)
+        SELECT #{renovationId} AS renovation_id,
+               t1.union_id  AS uniid,
+               t1.vipcode   AS vipcode,
+               t1.nick_name AS nikeName,
+               NOW()
+        FROM scrm_user.`user` t1
+        WHERE user_id = #{userId};
+    </insert>
+
+    <select id="selectStoreRenovationItemOfUserId" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM scrm_platform.store_renovation_item t1
+                 LEFT JOIN scrm_user.`user` t2 ON t1.uniid = t2.union_id
+        WHERE t2.user_id = #{userId};
+    </select>
+
+</mapper>

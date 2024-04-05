@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SkuLangMapper">
+  <resultMap id="skuLangMap" type="com.mall4j.cloud.product.model.SkuLang">
+    <id column="sku_id" property="skuId" />
+    <result column="lang" property="lang"/>
+    <result column="sku_name" property="skuName"/>
+    <result column="attrs" property="attrs"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `sku_id`,`lang`,`sku_name`,`attrs`
+  </sql>
+  <select id="list" resultMap="skuLangMap">
+    select <include refid="Vo_Column_List"/> from sku_lang order by sku_id desc
+  </select>
+  <select id="getBySkuId" resultMap="skuLangMap">
+    select <include refid="Vo_Column_List"/> from sku_lang where sku_id = #{skuId}
+  </select>
+  <insert id="save">
+    insert into sku_lang (`lang`,`sku_name`,`attrs`)
+    values (#{skuLang.lang},#{skuLang.skuName},#{skuLang.attrs});
+  </insert>
+  <update id="update">
+    update sku_lang
+    <set>
+      <if test="skuLang.lang != null">
+        `lang` = #{skuLang.lang},
+      </if>
+      <if test="skuLang.skuName != null">
+        `sku_name` = #{skuLang.skuName},
+      </if>
+      <if test="skuLang.attrs != null">
+        `attrs` = #{skuLang.attrs},
+      </if>
+    </set>
+    where sku_id = #{skuLang.skuId}
+  </update>
+  <delete id="deleteById">
+    delete from sku_lang where sku_id = #{skuId}
+  </delete>
+
+  <insert id="batchSave">
+    insert into sku_lang (`sku_id`,`lang`,`sku_name`,`attrs`) values
+    <foreach collection="skuLangList" item="skuLang" separator=",">
+      (#{skuLang.skuId},#{skuLang.lang},#{skuLang.skuName},#{skuLang.attrs})
+    </foreach>
+  </insert>
+</mapper>

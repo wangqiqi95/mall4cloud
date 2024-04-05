@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.cp.GroupCustInfoMapper">
+  <resultMap id="groupCustInfoMap" type="com.mall4j.cloud.biz.model.cp.CpGroupCustInfo">
+    <id column="id" property="id" />
+    <result column="group_id" property="groupId"/>
+    <result column="code_id" property="codeId"/>
+    <result column="code_source" property="codeSource"/>
+    <result column="user_id" property="userId"/>
+    <result column="cp_user_rel_id" property="cpUserRelId"/>
+    <result column="type" property="type"/>
+    <result column="join_scene" property="joinScene"/>
+    <result column="quit_scene" property="quitScene"/>
+    <result column="invitor_user_id" property="invitorUserId"/>
+    <result column="group_nickname" property="groupNickname"/>
+    <result column="name" property="name"/>
+    <result column="create_time" property="createTime"/>
+    <result column="status" property="status"/>
+    <result column="flag" property="flag"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="join_time" property="joinTime"/>
+    <result column="state" property="state"/>
+    <result column="send_status" property="sendStatus"/>
+    <result column="join_status" property="joinStatus"/>
+    <result column="staff_id" property="staffId"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="create_by" property="createBy"/>
+    <result column="is_admin" property="isAdmin"/>
+  </resultMap>
+
+
+  <sql id="Vo_Column_List">
+    `id`,`group_id`,`code_id`,`code_source`,`user_id`,`cp_user_rel_id`,`type`,`join_scene`,`quit_scene`,`invitor_user_id`,`group_nickname`,`name`,`create_time`,`status`,`flag`,`update_time`,`join_time`,`state`,`send_status`,`join_status`,`staff_id`,`update_by`,`create_by`,`is_admin`
+  </sql>
+
+  <select id="listByGroupId" resultMap="groupCustInfoMap">
+    select <include refid="Vo_Column_List"/> from cp_group_cust_info
+    WHERE FLAG = 0
+    and group_id = #{groupId}
+  </select>
+
+  <select id="list" resultType="com.mall4j.cloud.biz.vo.cp.CpGroupCustInfoVO">
+    select <include refid="Vo_Column_List"/> from cp_group_cust_info
+        WHERE FLAG = 0
+          <if test="et.groupId != null and et.groupId !='' "> and group_id = #{et.groupId}</if>
+          <if test="et.custName != null and et.custName !='' "> AND name like CONCAT('%', #{et.custName},'%')  </if>
+          <if test="et.scene != null "> AND join_scene = #{et.scene}   </if>
+          <if test="et.codeId != null "> AND code_id = #{et.codeId}   </if>
+          <if test="et.isAdmin != null "> AND is_admin = #{et.isAdmin}   </if>
+          <if test="et.joinTimeStart != null and et.joinTimeStart !='' "> AND JOIN_TIME >=STR_TO_DATE(#{et.joinTimeStart},"%Y-%m-%d")  </if>
+          <if test="et.joinTimeEnd != null and et.joinTimeEnd !='' "> AND JOIN_TIME <![CDATA[< ]]>STR_TO_DATE(#{et.joinTimeEnd},"%Y-%m-%d")+1  </if>
+    <if test="et.userQiWeiUserIds!=null and et.userQiWeiUserIds.size>0">
+      and user_id in
+      <foreach collection="et.userQiWeiUserIds" item="userQiWeiUserId" open="(" close=")" separator=",">
+        #{userQiWeiUserId}
+      </foreach>
+    </if>
+    <if test="et.invitorUserIds!=null and et.invitorUserIds.size>0">
+      and invitor_user_id in
+      <foreach collection="et.invitorUserIds" item="invitorUserId" open="(" close=")" separator=",">
+        #{invitorUserId}
+      </foreach>
+    </if>
+    <if test="et.staffIds!=null and et.staffIds.size>0">
+      and staff_id in
+      <foreach collection="et.staffIds" item="staffId" open="(" close=")" separator=",">
+        #{staffId}
+      </foreach>
+    </if>
+    order by JOIN_TIME asc
+  </select>
+
+
+  <select id="getById" resultMap="groupCustInfoMap">
+    select <include refid="Vo_Column_List"/> from cp_group_cust_info where group_id = #{groupId} and  user_id = #{userId}
+  </select>
+
+  <delete id="deleteById">
+    delete from cp_group_cust_info where  group_id = #{groupId} and  user_id = #{userId}
+  </delete>
+  <delete id="deleteByGroupId">
+    update cp_group_cust_info set flag=1,update_time=now(),update_by=#{updateBy} where  group_id = #{groupId}
+  </delete>
+
+  <select id="findCustGroupByQwUserId" resultType="com.mall4j.cloud.api.biz.vo.UserJoinCustGroupVO">
+    select
+      cgci.join_scene as joinScene,
+      ccg.GROUP_NAME as groupName,
+      ccg.id as chat_id,
+      cgci.create_time as createTime,
+      cgci.invitor_user_id as invitorUserId
+    from cp_group_cust_info cgci
+    left join cp_cust_group ccg on cgci.group_id = ccg.ID
+    where
+    cgci.FLAG=0 and cgci.status=1
+    and ccg.FLAG = 0 and ccg.STATUS = 1
+    and cgci.user_id = #{qwUserId}
+  </select>
+
+  <select id="countCustGroupByQwUserId" resultType="java.lang.Integer">
+    select
+      ifnull(count(cgci.id),0)
+    from cp_group_cust_info cgci
+    left join cp_cust_group ccg on cgci.group_id = ccg.ID
+    where
+    cgci.FLAG=0 and cgci.status=1
+    and ccg.FLAG = 0 and ccg.STATUS = 1
+    and cgci.user_id = #{qwUserId}
+  </select>
+
+
+</mapper>

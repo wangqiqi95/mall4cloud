@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.auth.mapper.AuthSocialMapper">
+  <resultMap id="authSocialMap" type="com.mall4j.cloud.auth.model.AuthSocial">
+    <id column="id" property="id" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="uid" property="uid"/>
+    <result column="temp_uid" property="tempUid"/>
+    <result column="social_type" property="socialType"/>
+    <result column="nick_name" property="nickName"/>
+    <result column="image_url" property="imageUrl"/>
+    <result column="biz_user_id" property="bizUserId"/>
+    <result column="biz_unionid" property="bizUnionid"/>
+    <result column="biz_temp_session" property="bizTempSession"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`create_time`,`update_time`,`uid`,`social_type`,`nick_name`,`image_url`,`biz_user_id`,`biz_unionid`,`temp_uid`,`biz_temp_session`
+  </sql>
+  <select id="getByBizUserIdAndType" resultType="com.mall4j.cloud.auth.model.AuthSocial">
+  	select * from auth_social where biz_user_id = #{bizUserId} and social_type = #{socialType}
+  </select>
+  <select id="getByBizUnionIdAndType" resultType="com.mall4j.cloud.auth.model.AuthSocial">
+    select * from auth_social where biz_unionid = #{bizUnionId} and social_type = #{socialType}
+  </select>
+  <insert id="save">
+    insert into auth_social (`uid`,`social_type`,`nick_name`,`image_url`,`biz_user_id`,`biz_unionid`,`temp_uid`,`biz_temp_session`)
+    values (#{authSocial.uid},#{authSocial.socialType},#{authSocial.nickName},#{authSocial.imageUrl},#{authSocial.bizUserId},#{authSocial.bizUnionid},#{authSocial.tempUid},#{authSocial.bizTempSession});
+  </insert>
+  <update id="update">
+    update auth_social
+    <set>
+      <if test="authSocial.createTime != null">
+        `create_time` = #{authSocial.createTime},
+      </if>
+      <if test="authSocial.updateTime != null">
+        `update_time` = #{authSocial.updateTime},
+      </if>
+      <if test="authSocial.uid != null">
+        `uid` = #{authSocial.uid},
+      </if>
+      <if test="authSocial.socialType != null">
+        `social_type` = #{authSocial.socialType},
+      </if>
+      <if test="authSocial.nickName != null">
+        `nick_name` = #{authSocial.nickName},
+      </if>
+      <if test="authSocial.imageUrl != null">
+        `image_url` = #{authSocial.imageUrl},
+      </if>
+      <if test="authSocial.bizUserId != null">
+        `biz_user_id` = #{authSocial.bizUserId},
+      </if>
+      <if test="authSocial.bizUnionid != null">
+        `biz_unionid` = #{authSocial.bizUnionid},
+      </if>
+      <if test="authSocial.tempUid != null">
+        `temp_uid` = #{authSocial.tempUid},
+      </if>
+      <if test="authSocial.bizTempSession != null">
+        `biz_temp_session` = #{authSocial.bizTempSession},
+      </if>
+    </set>
+    where id = #{authSocial.id}
+  </update>
+  <delete id="deleteById">
+    delete from auth_social where id = #{id}
+  </delete>
+
+  <select id="getByTempUid" resultMap="authSocialMap">
+    select * from auth_social where temp_uid = #{tempUid}
+  </select>
+  <select id="getByUid" resultMap="authSocialMap">
+    select * from auth_social where uid = #{uid}
+  </select>
+  <update id="bindUidByTempUid">
+    update auth_social set uid = #{uid} where temp_uid = #{tempUid}
+  </update>
+
+  <update id="bindUidById">
+    update auth_social set uid = #{uid} where id = #{id}
+  </update>
+
+  <select id="countByUidAndSocialType" resultType="int">
+    select count(*) from auth_social where uid = #{uid} and social_type = #{socialType}
+  </select>
+
+  <select id="getById" resultMap="authSocialMap">
+    select <include refid="Vo_Column_List"/> from auth_social where id = #{id}
+  </select>
+  <update id="updateUnionIdByUid">
+    update auth_social
+    set
+      biz_unionid = #{unionId}
+    where uid = #{uid}
+  </update>
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.OrderGiftMapper">
+
+    <select id="orderGiftList" resultType="com.mall4j.cloud.group.vo.OrderGiftListVO">
+        select
+        DISTINCT
+        og.id as id,
+        og.activity_name as activityName,
+        og.activity_begin_time as activityBeginTime,
+        og.activity_end_time as activityEndTime,
+        og.is_all_shop as isAllShop,
+        (select count(1) from order_gift_shop d where d.activity_id = og.id) as applyShopNum,
+        og.status as status,
+        og.create_time as createTime,
+        og.create_user_name as createUserName
+        from order_gift og left join order_gift_shop ogs on og.id = ogs.activity_id
+        where og.deleted = 0
+        <if test="shopIds != null">
+            and (ogs.shop_id in (#{shopIds}) or og.is_all_shop = 1)
+        </if>
+        <if test="status == 0">
+            and og.status = 0
+        </if>
+        <if test="status == 2">
+            and og.activity_begin_time &lt;= now() and og.activity_end_time &gt; now() and og.status = 1
+        </if>
+        <if test="status == 3">
+            and og.activity_begin_time &gt; now() and og.status = 1
+        </if>
+        <if test="status == 4">
+            and og.activity_end_time &lt; now() and og.status = 1
+        </if>
+        <if test="activityName != null">
+            and og.activity_name like concat('%',#{activityName},'%')
+        </if>
+        order by og.create_time desc
+    </select>
+    <select id="selectFirstActivity" resultType="com.mall4j.cloud.group.model.OrderGift">
+        select
+            og.id as id,
+            og.activity_name as activityName,
+            og.gift_limit as giftLimit
+        from order_gift og left join order_gift_shop ogs on og.id = ogs.activity_id
+        where og.deleted = 0
+        and (ogs.shop_id = #{shopId} or og.is_all_shop = 1)
+        and og.activity_begin_time &lt;= now() and og.activity_end_time &gt; now() and og.status = 1
+        and (og.apply_commodity_ids like concat(#{commodityId},',%')
+            or og.apply_commodity_ids like concat('%,',#{commodityId},',%')
+            or og.apply_commodity_ids like concat('%,',#{commodityId})
+            or og.apply_commodity_ids = #{commodityId} )
+        limit 1
+    </select>
+</mapper>

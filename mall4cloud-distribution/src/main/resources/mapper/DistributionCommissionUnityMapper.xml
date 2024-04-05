@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.distribution.mapper.DistributionCommissionUnityMapper">
+  <resultMap id="distributionCommissionUnityMap" type="com.mall4j.cloud.distribution.model.DistributionCommissionUnity">
+    <id column="id" property="id" />
+    <result column="org_id" property="orgId"/>
+    <result column="guide_rate" property="guideRate"/>
+    <result column="share_rate" property="shareRate"/>
+    <result column="develop_rate" property="developRate"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`org_id`,`guide_rate`,`share_rate`,`develop_rate`,`create_time`,`update_time`
+  </sql>
+  <select id="get" resultMap="distributionCommissionUnityMap">
+    select <include refid="Vo_Column_List"/> from distribution_commission_unity
+  </select>
+  <insert id="save">
+    insert into distribution_commission_unity (`org_id`,`guide_rate`,`share_rate`,`develop_rate`)
+    values (#{distributionCommissionUnity.orgId},#{distributionCommissionUnity.guideRate},#{distributionCommissionUnity.shareRate},#{distributionCommissionUnity.developRate});
+  </insert>
+  <update id="update">
+    update distribution_commission_unity
+    <set>
+      <if test="distributionCommissionUnity.orgId != null">
+        `org_id` = #{distributionCommissionUnity.orgId},
+      </if>
+      <if test="distributionCommissionUnity.guideRate != null">
+        `guide_rate` = #{distributionCommissionUnity.guideRate},
+      </if>
+      <if test="distributionCommissionUnity.shareRate != null">
+        `share_rate` = #{distributionCommissionUnity.shareRate},
+      </if>
+      <if test="distributionCommissionUnity.developRate != null">
+        `develop_rate` = #{distributionCommissionUnity.developRate},
+      </if>
+    </set>
+    where id = #{distributionCommissionUnity.id}
+  </update>
+  <delete id="deleteById">
+    delete from distribution_commission_unity where id = #{id}
+  </delete>
+
+</mapper>

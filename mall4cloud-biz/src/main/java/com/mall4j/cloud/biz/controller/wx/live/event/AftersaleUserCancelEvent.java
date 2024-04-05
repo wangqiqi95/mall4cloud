@@ -1,0 +1,63 @@
+package com.mall4j.cloud.biz.controller.wx.live.event;
+
+import cn.hutool.core.map.MapUtil;
+import com.mall4j.cloud.biz.wx.wx.util.WechatUtils;
+import com.mall4j.cloud.biz.wx.wx.api.live.OrderApi;
+import com.mall4j.cloud.biz.config.WxConfig;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
+
+/**
+ * 用户取消售后
+ */
+@Service
+@Slf4j
+public class AftersaleUserCancelEvent implements INotifyEvent, InitializingBean {
+
+    private static final String method = "aftersale_user_cancel";
+    @Autowired
+    OrderApi orderApi;
+    @Autowired
+    WxConfig wxConfig;
+    /**
+     *<xml>
+     *      <ToUserName>gh_abcdefg</ToUserName>
+     *      <FromUserName>oABCD</FromUserName>
+     *      <CreateTime>12344555555</CreateTime>
+     *      <MsgType>event</MsgType>
+     *      <Event>aftersale_user_cancel</Event>
+     *      <aftersale_info>
+     *           <aftersale_id>123456</aftersale_id>
+     *           <order_id>1234567</order_id>
+     *           <out_order_id>abc1234567</out_order_id>
+     *      </aftersale_info>
+     * </xml>
+     *
+     * @param postData
+     * @return
+     */
+    @Override
+    public String doEvent(String postData) throws Exception {
+        log.info("视频号取消售后回调接收请求，输入参数：{}",postData);
+        Map<String, String> resultMap = WechatUtils.xmlToMap(postData);
+
+
+        Long aftersaleId = MapUtil.getLong(resultMap, "aftersale_id");
+        String outAftersaleId = MapUtil.getStr(resultMap, "out_aftersale_id");
+
+        // 根据售后单号查询售后数据
+
+
+        return "success";
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.register(method,this);
+    }
+
+}

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SkuStockMapper">
+    <resultMap id="stockMap" type="com.mall4j.cloud.product.model.SkuStock">
+        <id column="stock_id" property="stockId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="spu_id" property="spuId"/>
+        <result column="actual_stock" property="actualStock"/>
+        <result column="lock_stock" property="lockStock"/>
+        <result column="stock" property="stock"/>
+        <result column="channels_stock" property="channelsStock"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `stock_id`,
+        `create_time`,
+        `update_time`,
+        `sku_id`,
+        `actual_stock`,
+        `lock_stock`,
+        `stock`,
+        `channels_stock`
+    </sql>
+
+    <select id="listBySkuList" resultType="com.mall4j.cloud.product.vo.SkuStockVO">
+        select
+        <include refid="Vo_Column_List"/>
+        from sku_stock where sku_id in (
+        <foreach collection="skuVOList" item="skuVO" separator=",">
+            #{skuVO.skuId}
+        </foreach>
+        )
+    </select>
+
+    <insert id="saveSkuStock">
+        insert into sku_stock (`sku_id`, `actual_stock`, `lock_stock`, `stock`, `spu_id`, `channels_stock`)
+        values (#{skuStock.skuId}, #{skuStock.actualStock}, #{skuStock.lockStock}, #{skuStock.stock},#{skuStock.spuId}, #{skuStock.channelsStock});
+    </insert>
+
+    <insert id="batchSave">
+        insert into sku_stock (`sku_id`, `actual_stock`, `lock_stock`, `stock`, `spu_id`, `channels_stock`) values
+        <foreach collection="skuStocks" item="skuStock" separator=",">
+            (#{skuStock.skuId}, #{skuStock.actualStock}, #{skuStock.lockStock}, #{skuStock.stock},#{skuStock.spuId},#{skuStock.channelsStock})
+        </foreach>
+    </insert>
+
+    <update id="updateSkuStock">
+        update sku_stock
+        <set>
+            <if test="skuStock.skuId != null">
+                `sku_id` = #{skuStock.skuId},
+            </if>
+            <if test="skuStock.actualStock != null">
+                `actual_stock` = #{skuStock.actualStock},
+            </if>
+            <if test="skuStock.lockStock != null">
+                `lock_stock` = #{skuStock.lockStock},
+            </if>
+            <if test="skuStock.stock != null">
+                "stock" = #{skuStock.stock},
+            </if>
+            <if test="skuStock.channelsStock != null">
+                "channels_stock" = #{skuStock.channelsStock},
+            </if>
+        </set>
+        where stock_id = #{skuStock.stockId}
+    </update>
+
+    <update id="updateStock">
+        <foreach collection="skuStocks" item="skuStock" separator=";">
+            UPDATE sku_stock
+            SET stock = stock + #{skuStock.stock},
+            actual_stock = actual_stock + #{skuStock.stock}
+            WHERE sku_id = #{skuStock.skuId}
+            <if test="skuStock.stock &lt; 0">
+                AND stock >= ABS(#{skuStock.stock})
+            </if>
+        </foreach>
+    </update>
+
+    <delete id="deleteById">
+        delete
+        from sku_stock
+        where stock_id = #{stockId}
+    </delete>
+
+    <delete id="deleteBySkuIds">
+        delete
+        from sku_stock where sku_id in (
+        <foreach collection="skuIds" item="skuId" separator=",">
+            #{skuId}
+        </foreach>
+        )
+    </delete>
+
+    <update id="reduceStockByOrder">
+        update sku_stock
+        set `stock`      = `stock` - #{count},
+            `lock_stock` = `lock_stock` + #{count}
+        where sku_id = #{skuId}
+          and #{count} &lt;= `stock`
+    </update>
+    <update id="addStockByOrder">
+        <foreach collection="skuWithStocks" item="skuWithStock" separator=";">
+            update sku_stock
+            set `stock` = `stock` + #{skuWithStock.count},
+            `lock_stock` = `lock_stock` - #{skuWithStock.count}
+            where sku_id  = #{skuWithStock.skuId}
+        </foreach>
+    </update>
+
+    <update id="reduceActualStockByOrder">
+        <foreach collection="skuWithStocks" item="skuWithStock" separator=";">
+            update sku_stock
+            set `actual_stock` = `actual_stock` - #{skuWithStock.count},
+            `lock_stock` = `lock_stock` - #{skuWithStock.count}
+            where sku_id = #{skuWithStock.skuId}
+        </foreach>
+    </update>
+
+    <update id="reduceEcChannelsStockByskuId">
+            update sku_stock
+            set
+                `stock` = `stock` - #{count},
+                `channels_stock` = `channels_stock` - #{count}
+            where sku_id = #{skuId}
+    </update>
+
+
+
+
+    <update id="reduceActualStockByCancelOrder">
+
+        <foreach collection="skuWithStocks" item="skuWithStock" separator=";">
+            update sku_stock
+            set `actual_stock` = `actual_stock` - #{skuWithStock.count},
+            stock = stock - #{skuWithStock.count}
+            where sku_id = #{skuWithStock.skuId}
+        </foreach>
+    </update>
+
+    <update id="reductionActualStockByCancelOrder">
+        <foreach collection="refundReductionStocks" item="skuWithStock" separator=";">
+            update sku_stock
+            set `actual_stock` = `actual_stock` + #{skuWithStock.count},
+            stock = stock + #{skuWithStock.count}
+            where sku_id = #{skuWithStock.skuId}
+        </foreach>
+    </update>
+
+    <update id="updateSkuChannelsStock">
+        update sku_stock
+        set `channels_stock` = `channels_stock` + #{stock}
+        where sku_id = #{skuId}
+    </update>
+
+    <select id="listStockBySpuId" resultType="com.mall4j.cloud.product.vo.SkuStockVO">
+        select `stock`,sku_id
+        from `sku_stock` where spu_id = #{spuId}
+    </select>
+
+    <select id="sumStockBySpuIds" resultType="com.mall4j.cloud.product.vo.SpuStockVO">
+        SELECT
+            ssk.spu_id,IFNULL(sum(ssk.stock),0) as stock
+        FROM
+            sku_stock ssk
+                JOIN sku ON ssk.sku_id = sku.sku_id
+                AND sku.`status` = 1
+        where ssk.spu_id in (
+        <foreach collection="spuIds" item="spuId" separator=",">
+            #{spuId}
+        </foreach>
+        )
+        GROUP BY ssk.spu_id
+    </select>
+</mapper>

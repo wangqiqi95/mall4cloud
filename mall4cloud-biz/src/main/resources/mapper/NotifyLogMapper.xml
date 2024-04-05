@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.NotifyLogMapper">
+  <resultMap id="notifyLogMap" type="com.mall4j.cloud.biz.model.NotifyLog">
+    <id column="log_id" property="logId" />
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="nick_name" property="nickName"/>
+    <result column="user_mobile" property="userMobile"/>
+    <result column="remind_id" property="remindId"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="remind_type" property="remindType"/>
+    <result column="template_id" property="templateId"/>
+    <result column="send_type" property="sendType"/>
+    <result column="message" property="message"/>
+    <result column="status" property="status"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `log_id`,`create_time`,`update_time`,`nick_name`,`user_mobile`,`remind_id`,`shop_id`,`shop_name`,`remind_type`,`template_id`,`send_type`,`message`,`status`
+  </sql>
+
+  <select id="listBySendTypeAndRemindType" resultType="com.mall4j.cloud.biz.vo.NotifyLogVO">
+    select  <include refid="Vo_Column_List"/> from notify_log
+    where
+    remind_id = #{userId} and send_type <![CDATA[<]]> 100 and remind_type = 3
+    <if test="status != null">
+        and status = #{status}
+    </if>
+    ORDER BY create_time desc
+  </select>
+
+  <insert id="saveBatch">
+    insert into notify_log (`nick_name`, `user_mobile`, `remind_id`, `shop_id`,`remind_type`, `template_id`, `send_type`,`message`, `status`) values
+    <foreach collection="notifyLogs" item="notifyLog" separator=",">
+      (#{notifyLog.nickName}, #{notifyLog.userMobile}, #{notifyLog.remindId}, #{notifyLog.shopId},#{notifyLog.remindType},
+       #{notifyLog.templateId}, #{notifyLog.sendType}, #{notifyLog.message},#{notifyLog.status})
+    </foreach>
+  </insert>
+
+  <update id="updateBatchById">
+    <foreach collection="notifyLogList" item="notifyLog" >
+      update notify_log
+      <set>
+        <if test="notifyLog.nickName != null">
+          `nick_name` = #{notifyLog.nickName},
+        </if>
+        <if test="notifyLog.userMobile != null">
+          `user_mobile` = #{notifyLog.userMobile},
+        </if>
+        <if test="notifyLog.remindId != null">
+          `remind_id` = #{notifyLog.remindId},
+        </if>
+        <if test="notifyLog.shopId != null">
+          `shop_id` = #{notifyLog.shopId},
+        </if>
+        <if test="notifyLog.remindType != null">
+          `remind_type` = #{notifyLog.remindType},
+        </if>
+        <if test="notifyLog.templateId != null">
+          `template_id` = #{notifyLog.templateId},
+        </if>
+        <if test="notifyLog.sendType != null">
+          `send_type` = #{notifyLog.sendType},
+        </if>
+        <if test="notifyLog.message != null">
+          `message` = #{notifyLog.message},
+        </if>
+        <if test="notifyLog.status != null">
+          `status` = #{notifyLog.status},
+        </if>
+      </set>
+      where log_id = #{notifyLog.logId};
+    </foreach>
+  </update>
+
+  <select id="list" resultType="com.mall4j.cloud.biz.vo.NotifyLogVO">
+    select <include refid="Vo_Column_List"/> from notify_log
+    <where>
+      <if test="notifyLog.startTime != null">
+        `create_time` <![CDATA[>]]>  #{notifyLog.startTime}
+      </if>
+      <if test="notifyLog.endTime != null">
+        and `create_time` <![CDATA[<]]> #{notifyLog.endTime}
+      </if>
+    </where>
+    order by `create_time` desc
+  </select>
+
+  <select id="countNotifyByConditions" resultType="int">
+    SELECT ifnull(count(*),0) FROM `notify_log`
+    WHERE send_type = #{sendType}
+    <if test="orderId != null">
+      AND biz_id = #{orderId}
+    </if>
+    <if test="userId != null">
+      AND remind_id = #{userId}
+    </if>
+    <if test="level != null">
+      AND biz_id = #{level}
+    </if>
+  </select>
+
+</mapper>

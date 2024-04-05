@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.user.mapper.scoreConvert.ScoreConvertMapper">
+    <!-- 积分换物列表的返回参数-->
+    <resultMap id="result_Score_Barter_List_Map" type="com.mall4j.cloud.user.vo.scoreConvert.ScoreBarterListVO">
+        <id column="convert_id" property="id" />
+        <result column="convert_title" property="convertTitle" />
+        <result column="convert_status" property="convertStatus" />
+        <result column="is_all_shop" property="isAllShop" />
+        <result column="commodity_name" property="commodityName" />
+        <result column="convert_score" property="convertScore" />
+        <result column="max_amount" property="maxAmount" />
+        <result column="stocks" property="surplusAmount"/>
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="createUserName" property="createUserName" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <select id="scoreBarterList" parameterType="com.mall4j.cloud.user.dto.scoreConvert.ScoreConvertListDTO" resultMap="result_Score_Barter_List_Map">
+        select sc.convert_id as convert_id,
+        sc.convert_title as convert_title,
+        sc.convert_status as convert_status,
+        sc.is_all_shop as is_all_shop,
+        sc.commodity_name as commodity_name,
+        sc.delivery_type as deliveryType,
+        sc.convert_score as convert_score,
+        sc.max_amount as max_amount,
+        sc.stocks as stocks,
+        sc.start_time as start_time,
+        sc.end_time as end_time,
+        sc.create_name as createUserName,
+        sc.create_time as create_time,
+        sc.is_show as isShow
+        from score_convert sc
+        left join user u on sc.create_id = u.user_id
+        <if test="shops != null ">
+            left join score_convert_shop scs on sc.convert_id = scs.convert_id
+        </if>
+        <where>
+            sc.del = 0 and sc.convert_type = 0
+            <if test="convertTitle != null">
+                and sc.convert_title like concat('%',#{convertTitle},'%')
+            </if>
+            <if test="convertStatus == 0 or convertStatus == 1">
+                and sc.convert_status = #{convertStatus}
+            </if>
+            <if test="convertStatus == 2">
+                and (sc.start_time &gt; now()) and convert_status = 0
+            </if>
+            <if test="convertStatus == 3">
+                and (sc.start_time &lt;= now() and sc.end_time &gt;= now()) and convert_status = 0
+            </if>
+            <if test="convertStatus == 4">
+                and (sc.end_time &lt; now()) and convert_status = 0
+            </if>
+            <if test="shops != null">
+                and scs.shop_id in
+                <foreach collection="shops" item="item"  index="index" open="("  separator="," close=")">
+                    #{item}
+                </foreach>
+                or sc.is_all_shop = 1
+            </if>
+        </where>
+        group by sc.convert_id
+        order by sc.sort asc
+    </select>
+
+
+    <select id="scoreCouponList" resultType="com.mall4j.cloud.user.vo.scoreConvert.ScoreCouponListVO">
+        select sc.convert_id as id,
+        sc.convert_title as convertTitle,
+        sc.convert_status as convertStatus,
+        sc.is_all_shop as isAllShop,
+        sc.type as type,
+        sc.coupon_id as couponId,
+        sc.convert_score as convertScore,
+        sc.max_amount as maxAmount,
+        sc.stocks as surplusAmount,
+        sc.start_time as startTime,
+        sc.end_time as endTime,
+        sc.create_name as createUserName,
+        sc.create_time as createTime,
+        sc.sort as sort,
+        sc.order_switch as orderSwitch,
+        sc.order_start_time as orderStartTime,
+        sc.order_end_time as orderEndTime,
+        sc.order_num as orderNum,
+        sc.order_type as orderType,
+        sc.order_tips as orderTips,
+        sc.fan_levels as fanLevels,
+        sc.fan_tips as fanTips,
+        sc.commodity_name as commodityName,
+        sc.is_show as isShow
+        from score_convert sc
+        <if test="shops != null ">
+            left join score_convert_shop scs on sc.convert_id = scs.convert_id
+        </if>
+        <where>
+            sc.del = 0 and sc.convert_type = 1
+            <if test="convertTitle != null">
+                and sc.convert_title like concat('%',#{convertTitle},'%')
+            </if>
+            <if test="convertStatus == 0 or convertStatus == 1">
+                and sc.convert_status = #{convertStatus}
+            </if>
+            <if test="convertStatus == 2">
+                and (sc.start_time &gt; now()) and convert_status = 0
+            </if>
+            <if test="convertStatus == 3">
+                and (sc.start_time &lt;= now() and sc.end_time &gt;= now()) and convert_status = 0
+            </if>
+            <if test="convertStatus == 4">
+                and (sc.end_time &lt; now()) and convert_status = 0
+            </if>
+            <if test="type == 1">
+                and sc.type = 1
+            </if>
+            <if test="type == 3">
+                and sc.type in (0,2)
+            </if>
+            <if test="type == 0">
+                and sc.type = 0
+            </if>
+            <if test="type == 2">
+                and sc.type = 2
+            </if>
+            <if test="convertId != null">
+                and sc.convert_id = #{convertId}
+            </if>
+            <if test="shops != null">
+                and scs.shop_id in
+                <foreach collection="shops" item="item"  index="index" open="("  separator="," close=")">
+                    #{item}
+                </foreach>
+                or sc.is_all_shop = 1
+            </if>
+        </where>
+        group by sc.convert_id
+        order by sc.create_time desc
+    </select>
+
+    <select id="listForApp" resultType="com.mall4j.cloud.user.vo.scoreConvert.ScoreCouponAppVO">
+        SELECT
+            sc.convert_id as id,
+            sc.convert_title as convertTitle,
+            sc.convert_score as convertScore,
+            sc.convert_url as convertUrl,
+            sc.type as type,
+            0 as num,
+            sc.is_show as isShow
+        FROM
+            score_convert sc
+                LEFT JOIN score_convert_shop scs ON sc.convert_id = scs.convert_id
+        WHERE
+            NOW() BETWEEN sc.start_time AND sc.end_time
+          AND sc.del = 0
+          AND sc.convert_status = 0
+          AND sc.convert_type = 1
+          AND (
+                    sc.is_all_shop = 1
+                OR ( sc.is_all_shop = 0 AND scs.shop_id = #{shopId} AND scs.type = 0 ))
+        GROUP BY
+            sc.convert_id
+        order by sc.sort asc , 	sc.create_time desc
+    </select>
+
+    <select id="selectNewActivity" resultType="com.mall4j.cloud.user.model.scoreConvert.ScoreConvert">
+        SELECT *
+        FROM score_convert
+        WHERE del = 0
+        AND convert_status = 0
+        AND convert_type = 1
+        AND new_notice  = 1
+        and date_format(now(), '%Y%m%d%H') = date_format(new_remind_time, '%Y%m%d%H')
+        ORDER BY create_time DESC
+        <!--        LIMIT 1-->
+    </select>
+
+    <select id="selectUserScoreGeScoreConvertList" resultType="com.mall4j.cloud.user.vo.scoreConvert.ScoreConvertListVO">
+        SELECT
+            sc.convert_id AS convertId,
+            sc.convert_title AS convertTitle,
+            sc.convert_score AS convertScore,
+            sc.convert_url AS convertUrl,
+            sc.max_amount AS maxAmount,
+            sc.person_max_amount AS personMaxAmount,
+            sc.convert_type AS convertType,
+            sc.convert_status AS convertStatus,
+            sc.sort,
+            sc.coupon_id AS couponId,
+            sc.is_all_shop AS isAllShop,
+            sc.is_all_coupon_shop AS isAllCouponShop,
+            sc.is_all_convert_shop AS isAllConvertShop,
+            sc.description,
+            sc.commodity_name AS commodityName,
+            sc.commodity_img_url AS commodityImgUrl,
+            sc.delivery_type AS deliveryType,
+            sc.start_time AS startTime,
+            sc.end_time AS endTime,
+            sc.create_id AS createId,
+            sc.create_name AS createName,
+            sc.update_id AS updateId,
+            sc.update_name AS updateName,
+            sc.stocks,
+            sc.version,
+            sc.order_switch AS orderSwitch,
+            sc.order_start_time AS orderStartTime,
+            sc.order_end_time AS orderEndTime,
+            sc.order_num AS orderNum,
+            sc.order_type AS orderType,
+            sc.order_tips AS orderTips,
+            sc.fan_levels AS fanLevels,
+            sc.fan_tips AS fanTips,
+            sc.commodity_des AS commodityDes
+        FROM score_convert sc
+        LEFT JOIN score_convert_shop scs ON sc.convert_id = scs.convert_id
+        WHERE sc.del = 0 and sc.convert_type = 1
+            AND sc.start_time &lt;= NOW()
+            AND sc.end_time &gt;= NOW()
+            AND sc.convert_status = 0
+            <if test = "type == 0">
+                AND sc.type IN (0,2)
+            </if>
+            <if test = "type == 1">
+                AND sc.type = 1
+            </if>
+            AND sc.convert_score &lt;= #{userScore}
+            AND (sc.is_all_shop = 1 OR ( sc.is_all_shop = 0 AND scs.shop_id = #{shopId} AND scs.type = 0 ))
+        GROUP BY sc.convert_id
+        ORDER BY sc.convert_score ASC;
+    </select>
+
+    <select id="selectUserScoreLtScoreConvertList" resultType="com.mall4j.cloud.user.vo.scoreConvert.ScoreConvertListVO">
+        SELECT
+            sc.convert_id AS convertId,
+            sc.convert_title AS convertTitle,
+            sc.convert_score AS convertScore,
+            sc.convert_url AS convertUrl,
+            sc.max_amount AS maxAmount,
+            sc.person_max_amount AS personMaxAmount,
+            sc.convert_type AS convertType,
+            sc.convert_status AS convertStatus,
+            sc.sort,
+            sc.coupon_id AS couponId,
+            sc.is_all_shop AS isAllShop,
+            sc.is_all_coupon_shop AS isAllCouponShop,
+            sc.is_all_convert_shop AS isAllConvertShop,
+            sc.description,
+            sc.commodity_name AS commodityName,
+            sc.commodity_img_url AS commodityImgUrl,
+            sc.delivery_type AS deliveryType,
+            sc.start_time AS startTime,
+            sc.end_time AS endTime,
+            sc.create_id AS createId,
+            sc.create_name AS createName,
+            sc.update_id AS updateId,
+            sc.update_name AS updateName,
+            sc.stocks,
+            sc.version,
+            sc.order_switch AS orderSwitch,
+            sc.order_start_time AS orderStartTime,
+            sc.order_end_time AS orderEndTime,
+            sc.order_num AS orderNum,
+            sc.order_type AS orderType,
+            sc.order_tips AS orderTips,
+            sc.fan_levels AS fanLevels,
+            sc.fan_tips AS fanTips,
+            sc.commodity_des AS commodityDes,
+            sc.convert_score-#{userScore} AS userScoreDifference
+        FROM score_convert sc
+        LEFT JOIN score_convert_shop scs ON sc.convert_id = scs.convert_id
+        WHERE sc.del = 0 and sc.convert_type = 1
+            AND sc.start_time &lt;= NOW()
+            AND sc.end_time &gt;= NOW()
+            AND sc.convert_status = 0
+            <if test = "type == 0">
+                AND sc.type IN (0,2)
+            </if>
+            <if test = "type == 1">
+                AND sc.type = 1
+            </if>
+            AND sc.convert_score &gt; #{userScore}
+            AND (sc.is_all_shop = 1 OR ( sc.is_all_shop = 0 AND scs.shop_id = #{shopId} AND scs.type = 0 ))
+        GROUP BY sc.convert_id
+        ORDER BY sc.convert_score ASC;
+    </select>
+
+    <update id="updateStocks">
+        update score_convert set `version` = `version` + 1, `stocks` = `stocks` - 1
+        where convert_id = #{convertId} and version = #{version} and `stocks` > 0
+    </update>
+</mapper>

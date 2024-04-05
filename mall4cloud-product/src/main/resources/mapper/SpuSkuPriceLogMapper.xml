@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.product.mapper.SpuSkuPriceLogMapper">
+  <resultMap id="spuSkuPriceLogMap" type="com.mall4j.cloud.product.model.SpuSkuPriceLog">
+    <id column="id" property="id" />
+    <result column="spu_code" property="spuCode"/>
+    <result column="price_code" property="priceCode"/>
+    <result column="store_sku_id" property="storeSkuId"/>
+    <result column="sku_store_stock" property="skuStoreStock"/>
+    <result column="price_fee" property="priceFee"/>
+    <result column="price_fee_new" property="priceFeeNew"/>
+    <result column="price_type" property="priceType"/>
+    <result column="to_store_id" property="toStoreId"/>
+    <result column="from_store_id" property="fromStoreId"/>
+    <result column="channel_name" property="channelName"/>
+    <result column="discount" property="discount"/>
+    <result column="market_price_fee" property="marketPriceFee"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="remarks" property="remarks"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`spu_code`,`price_code`,`store_sku_id`,`sku_store_stock`,`price_fee`,`price_fee_new`,`price_type`,`to_store_id`,`from_store_id`,`channel_name`,`discount`,`market_price_fee`,`update_time`,`remarks`
+  </sql>
+  <select id="list" resultMap="spuSkuPriceLogMap">
+    select <include refid="Vo_Column_List"/> from spu_sku_price_log order by id desc
+  </select>
+  <select id="getById" resultMap="spuSkuPriceLogMap">
+    select <include refid="Vo_Column_List"/> from spu_sku_price_log where id = #{id}
+  </select>
+  <insert id="save">
+    insert into spu_sku_price_log (`id`,`spu_code`,`price_code`,`store_sku_id`,`sku_store_stock`,`price_fee`,`price_fee_new`,`price_type`,`to_store_id`,`from_store_id`,`channel_name`,`discount`,`market_price_fee`,`remarks`)
+    values (#{spuSkuPriceLog.id},#{spuSkuPriceLog.spuCode},#{spuSkuPriceLog.priceCode},#{spuSkuPriceLog.storeSkuId},#{spuSkuPriceLog.skuStoreStock},#{spuSkuPriceLog.priceFee},#{spuSkuPriceLog.priceFeeNew},#{spuSkuPriceLog.priceType},#{spuSkuPriceLog.toStoreId},#{spuSkuPriceLog.fromStoreId},#{spuSkuPriceLog.channelName},#{spuSkuPriceLog.discount},#{spuSkuPriceLog.marketPriceFee},#{spuSkuPriceLog.remarks});
+  </insert>
+  <update id="update">
+    update spu_sku_price_log
+    <set>
+      <if test="spuSkuPriceLog.spuCode != null">
+        `spu_code` = #{spuSkuPriceLog.spuCode},
+      </if>
+      <if test="spuSkuPriceLog.priceCode != null">
+        `price_code` = #{spuSkuPriceLog.priceCode},
+      </if>
+      <if test="spuSkuPriceLog.storeSkuId != null">
+        `store_sku_id` = #{spuSkuPriceLog.storeSkuId},
+      </if>
+      <if test="spuSkuPriceLog.skuStoreStock != null">
+        `sku_store_stock` = #{spuSkuPriceLog.skuStoreStock},
+      </if>
+      <if test="spuSkuPriceLog.priceFee != null">
+        `price_fee` = #{spuSkuPriceLog.priceFee},
+      </if>
+      <if test="spuSkuPriceLog.priceFeeNew != null">
+        `price_fee_new` = #{spuSkuPriceLog.priceFeeNew},
+      </if>
+      <if test="spuSkuPriceLog.priceType != null">
+        `price_type` = #{spuSkuPriceLog.priceType},
+      </if>
+      <if test="spuSkuPriceLog.toStoreId != null">
+        `to_store_id` = #{spuSkuPriceLog.toStoreId},
+      </if>
+      <if test="spuSkuPriceLog.fromStoreId != null">
+        `from_store_id` = #{spuSkuPriceLog.fromStoreId},
+      </if>
+      <if test="spuSkuPriceLog.channelName != null">
+        `channel_name` = #{spuSkuPriceLog.channelName},
+      </if>
+      <if test="spuSkuPriceLog.discount != null">
+        `discount` = #{spuSkuPriceLog.discount},
+      </if>
+      <if test="spuSkuPriceLog.marketPriceFee != null">
+        `market_price_fee` = #{spuSkuPriceLog.marketPriceFee},
+      </if>
+      <if test="spuSkuPriceLog.updateTime != null">
+        `update_time` = #{spuSkuPriceLog.updateTime},
+      </if>
+      <if test="spuSkuPriceLog.remarks != null">
+        `remarks` = #{spuSkuPriceLog.remarks},
+      </if>
+    </set>
+    where id = #{spuSkuPriceLog.id}
+  </update>
+  <delete id="deleteById">
+    delete from spu_sku_price_log where id = #{id}
+  </delete>
+
+</mapper>

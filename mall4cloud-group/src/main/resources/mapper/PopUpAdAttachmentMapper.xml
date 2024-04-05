@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall4j.cloud.group.mapper.PopUpAdAttachmentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall4j.cloud.group.model.PopUpAdAttachment">
+        <id column="pop_up_ad_media_id" property="popUpAdMediaId" />
+        <result column="pop_up_ad_id" property="popUpAdId" />
+        <result column="media_url" property="mediaUrl" />
+        <result column="link" property="link" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_user" property="createUser" />
+        <result column="update_user" property="updateUser" />
+        <result column="business_id" property="businessId" />
+        <result column="link_type" property="linkType" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        open_screen_ad_media_id, open_screen_ad_id, media_url, link, create_time, update_time, create_user, business_id
+    </sql>
+
+<!--    <insert id="insertBatch">-->
+<!--        insert into t_pop_up_ad_rule-->
+<!--        (pop_up_ad_id, pop_up_ad_push_rule, rule_time_tag, start_time, end_time, create_user)-->
+<!--        values-->
+<!--        <foreach collection ="ruleList" item="item" index= "index" separator =",">-->
+<!--            (#{popUpAdRuleId},#{popUpAdPushRule},#{ruleTimeTag},#{item.startTime},#{item.endTime},#{createUser})-->
+<!--        </foreach >-->
+<!--    </insert>-->
+
+
+</mapper>

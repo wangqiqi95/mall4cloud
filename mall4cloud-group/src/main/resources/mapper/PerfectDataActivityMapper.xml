@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.group.mapper.PerfectDataActivityMapper">
+
+    <select id="perfectDataActivityList" resultType="com.mall4j.cloud.group.vo.PerfectDataActivityListVO">
+        select
+        DISTINCT
+        pda.id as id,
+        pda.activity_name as activityName,
+        pda.activity_begin_time as activityBeginTime,
+        pda.activity_end_time as activityEndTime,
+        pda.is_all_shop as isAllShop,
+        (select count(1) from perfect_data_activity_shop d where d.activity_id = pda.id) as applyShopNum,
+        (select count(1) from user_reward_record c where c.activity_id = pda.id and c.activity_type =2) as awardNum,
+        pda.activity_point_switch as activityPointSwitch,
+        pda.activity_point_number as activityPointNumber,
+        pda.activity_coupon_switch as activityCouponSwitch,
+        pda.activity_coupon_ids as activityCouponIds,
+        pda.weight as weight,
+        pda.status as status,
+        pda.create_time as createTime,
+        pda.create_user_name as createUserName
+        from perfect_data_activity pda left join perfect_data_activity_shop pdas on pda.id = pdas.activity_id
+        where pda.deleted = 0
+        <if test="shopIds != null">
+            and (pdas.shop_id in (#{shopIds}) or pda.is_all_shop = 1)
+        </if>
+        <if test="activityStatus == 0">
+            and pda.status = 0
+        </if>
+        <if test="activityStatus == 2">
+            and pda.activity_begin_time &lt;= now() and pda.activity_end_time &gt; now() and pda.status = 1
+        </if>
+        <if test="activityStatus == 3">
+            and pda.activity_begin_time &gt; now() and pda.status = 1
+        </if>
+        <if test="activityStatus == 4">
+            and pda.activity_end_time &lt; now() and pda.status = 1
+        </if>
+        <if test="activityName != null">
+            and pda.activity_name like concat('%',#{activityName},'%')
+        </if>
+        order by pda.create_time desc
+    </select>
+    <select id="selectFirstActivity" resultType="com.mall4j.cloud.group.model.PerfectDataActivity">
+        select
+        pda.id as id,
+        pda.activity_name as activityName,
+        pda.activity_begin_time as activityBeginTime,
+        pda.activity_end_time as activityEndTime,
+        pda.is_all_shop as isAllShop,
+        pda.activity_point_switch as activityPointSwitch,
+        pda.activity_point_number as activityPointNumber,
+        pda.activity_coupon_switch as activityCouponSwitch,
+        pda.activity_coupon_ids as activityCouponIds,
+        pda.weight as weight,
+        pda.status as status,
+        pda.create_time as createTime,
+        pda.create_user_name as createUserName
+        from perfect_data_activity pda left join perfect_data_activity_shop pdas on pda.id = pdas.activity_id
+        where pda.deleted = 0
+            and (pdas.shop_id = #{shopId} or pda.is_all_shop = 1)
+            and pda.activity_begin_time &lt;= now() and pda.activity_end_time &gt; now() and pda.status = 1
+        order by pda.weight asc,pda.create_time desc limit 1
+    </select>
+</mapper>

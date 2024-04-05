@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.biz.mapper.WeixinStoreSubscribeMapper">
+  <resultMap id="weixinStoreSubscribeMap" type="com.mall4j.cloud.biz.model.WeixinStoreSubscribe">
+    <id column="id" property="id" />
+    <result column="subscribe_id" property="subscribeId"/>
+    <result column="store_id" property="storeId"/>
+    <result column="store_name" property="storeName"/>
+    <result column="app_id" property="appId"/>
+    <result column="msg_type" property="msgType"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_by" property="updateBy"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`subscribe_id`,`store_id`,`store_name`,`app_id`,`msg_type`,`create_by`,`create_time`,`update_by`,`update_time`,`del_flag`
+  </sql>
+  <select id="list" resultMap="weixinStoreSubscribeMap">
+    select <include refid="Vo_Column_List"/>
+    from weixin_store_subscribe
+    where del_flag=0
+    and app_id=#{appId}
+    and subscribe_id=#{subscribeId}
+    order by id desc
+  </select>
+  <select id="getById" resultMap="weixinStoreSubscribeMap">
+    select <include refid="Vo_Column_List"/> from weixin_store_subscribe where id = #{id}
+  </select>
+  <insert id="save">
+    insert into weixin_store_subscribe (`id`,`subscribe_id`,`store_id`,`store_name`,`app_id`,`msg_type`,`create_by`,`create_time`,`del_flag`)
+    values (#{weixinStoreSubscribe.id},#{weixinStoreSubscribe.subscribeId},#{weixinStoreSubscribe.storeId},#{weixinStoreSubscribe.storeName},#{weixinStoreSubscribe.appId},#{weixinStoreSubscribe.msgType},#{weixinStoreSubscribe.createBy},#{weixinStoreSubscribe.createTime},#{weixinStoreSubscribe.delFlag});
+  </insert>
+  <update id="update">
+    update weixin_store_subscribe
+    <set>
+      <if test="weixinStoreSubscribe.subscribeId != null">
+        `subscribe_id` = #{weixinStoreSubscribe.subscribeId},
+      </if>
+      <if test="weixinStoreSubscribe.storeId != null">
+        `store_id` = #{weixinStoreSubscribe.storeId},
+      </if>
+      <if test="weixinStoreSubscribe.storeName != null">
+        `store_name` = #{weixinStoreSubscribe.storeName},
+      </if>
+      <if test="weixinStoreSubscribe.appId != null">
+        `app_id` = #{weixinStoreSubscribe.appId},
+      </if>
+      <if test="weixinStoreSubscribe.msgType != null">
+        `msg_type` = #{weixinStoreSubscribe.msgType},
+      </if>
+      <if test="weixinStoreSubscribe.updateBy != null">
+        `update_by` = #{weixinStoreSubscribe.updateBy},
+      </if>
+      <if test="weixinStoreSubscribe.updateTime != null">
+        `update_time` = #{weixinStoreSubscribe.updateTime},
+      </if>
+      <if test="weixinStoreSubscribe.delFlag != null">
+        `del_flag` = #{weixinStoreSubscribe.delFlag},
+      </if>
+    </set>
+    where id = #{weixinStoreSubscribe.id}
+  </update>
+  <delete id="deleteById">
+    update weixin_store_subscribe set update_time=now(),update_by=#{updateBy},del_flag=1 where id = #{id}
+  </delete>
+
+  <select id="getList" resultType="com.mall4j.cloud.biz.vo.WeixinStoreSubscribeVO">
+    select store.*
+    from weixin_store_subscribe store
+    where store.del_flag=0
+    and store.app_id=#{appId}
+    <if test="storeName!=null and storeName!=''">
+      and store.store_name LIKE CONCAT('%',#{storeName},'%')
+    </if>
+    <if test="msgType!=null and msgType!=''">
+      and store.msg_type LIKE CONCAT('%',#{msgType},'%')
+    </if>
+    order by store.create_time desc
+  </select>
+
+  <select id="getStoreSubscribeByparam" resultType="com.mall4j.cloud.biz.vo.WeixinStoreSubscribeVO">
+    select store.*
+    from weixin_store_subscribe store
+    where store.del_flag=0
+    and store.app_id=#{appId}
+    <if test="storeId!=null and storeId!=''">
+      and store.store_id=#{storeId}
+    </if>
+    order by store.create_time desc
+    limit 1
+  </select>
+
+</mapper>

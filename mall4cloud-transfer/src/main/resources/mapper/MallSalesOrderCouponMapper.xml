@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.transfer.mapper.MallSalesOrderCouponMapper">
+    <resultMap id="mallSalesOrderCouponMap" type="com.mall4j.cloud.transfer.model.MallSalesOrderCoupon">
+        <id column="Id" property="id"/>
+        <result column="CopId" property="copid"/>
+        <result column="BrandId" property="brandid"/>
+        <result column="CouponId" property="couponid"/>
+        <result column="CouponNo" property="couponno"/>
+        <result column="CouponName" property="couponname"/>
+        <result column="CouponType" property="coupontype"/>
+        <result column="CouponValue" property="couponvalue"/>
+        <result column="ThirdCouponPriceLimit" property="thirdcouponpricelimit"/>
+        <result column="OrderId" property="orderid"/>
+        <result column="VipId" property="vipid"/>
+        <result column="IsPro" property="ispro"/>
+        <result column="Status" property="status"/>
+        <result column="CreateDate" property="createdate"/>
+        <result column="LastModifiedDate" property="lastmodifieddate"/>
+        <result column="CouponOriginId" property="couponoriginid"/>
+    </resultMap>
+    <sql id="Vo_Column_List">
+        `Id`
+        ,
+        `CopId`,
+        `BrandId`,
+        `CouponId`,
+        `CouponNo`,
+        `CouponName`,
+        `CouponType`,
+        `CouponValue`,
+        `ThirdCouponPriceLimit`,
+        `OrderId`,
+        `VipId`,
+        `IsPro`,
+        `Status`,
+        `CreateDate`,
+        `LastModifiedDate`,
+        `CouponOriginId`
+    </sql>
+    <select id="list" resultMap="mallSalesOrderCouponMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall_sales_order_coupon order by Id desc
+    </select>
+    <select id="getById" resultMap="mallSalesOrderCouponMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall_sales_order_coupon where Id = #{id}
+    </select>
+    <select id="getByCouponId" resultMap="mallSalesOrderCouponMap">
+        select
+        <include refid="Vo_Column_List"/>
+        from mall_sales_order_coupon
+        where CouponNo = #{couponNo} and vipId = #{userId} limit 1
+    </select>
+    <insert id="save">
+        insert into mall_sales_order_coupon (`CopId`, `BrandId`, `CouponId`, `CouponNo`, `CouponName`, `CouponType`,
+                                             `CouponValue`, `ThirdCouponPriceLimit`, `OrderId`, `VipId`, `IsPro`,
+                                             `Status`, `CreateDate`, `LastModifiedDate`, `CouponOriginId`)
+        values (#{mallSalesOrderCoupon.copid}, #{mallSalesOrderCoupon.brandid}, #{mallSalesOrderCoupon.couponid},
+                #{mallSalesOrderCoupon.couponno}, #{mallSalesOrderCoupon.couponname},
+                #{mallSalesOrderCoupon.coupontype}, #{mallSalesOrderCoupon.couponvalue},
+                #{mallSalesOrderCoupon.thirdcouponpricelimit}, #{mallSalesOrderCoupon.orderid},
+                #{mallSalesOrderCoupon.vipid}, #{mallSalesOrderCoupon.ispro}, #{mallSalesOrderCoupon.status},
+                #{mallSalesOrderCoupon.createdate}, #{mallSalesOrderCoupon.lastmodifieddate},
+                #{mallSalesOrderCoupon.couponoriginid});
+    </insert>
+    <update id="update">
+        update mall_sales_order_coupon
+        <set>
+            <if test="mallSalesOrderCoupon.copid != null">
+                `CopId` = #{mallSalesOrderCoupon.copid},
+            </if>
+            <if test="mallSalesOrderCoupon.brandid != null">
+                `BrandId` = #{mallSalesOrderCoupon.brandid},
+            </if>
+            <if test="mallSalesOrderCoupon.couponid != null">
+                `CouponId` = #{mallSalesOrderCoupon.couponid},
+            </if>
+            <if test="mallSalesOrderCoupon.couponno != null">
+                `CouponNo` = #{mallSalesOrderCoupon.couponno},
+            </if>
+            <if test="mallSalesOrderCoupon.couponname != null">
+                `CouponName` = #{mallSalesOrderCoupon.couponname},
+            </if>
+            <if test="mallSalesOrderCoupon.coupontype != null">
+                `CouponType` = #{mallSalesOrderCoupon.coupontype},
+            </if>
+            <if test="mallSalesOrderCoupon.couponvalue != null">
+                `CouponValue` = #{mallSalesOrderCoupon.couponvalue},
+            </if>
+            <if test="mallSalesOrderCoupon.thirdcouponpricelimit != null">
+                `ThirdCouponPriceLimit` = #{mallSalesOrderCoupon.thirdcouponpricelimit},
+            </if>
+            <if test="mallSalesOrderCoupon.orderid != null">
+                `OrderId` = #{mallSalesOrderCoupon.orderid},
+            </if>
+            <if test="mallSalesOrderCoupon.vipid != null">
+                `VipId` = #{mallSalesOrderCoupon.vipid},
+            </if>
+            <if test="mallSalesOrderCoupon.ispro != null">
+                `IsPro` = #{mallSalesOrderCoupon.ispro},
+            </if>
+            <if test="mallSalesOrderCoupon.status != null">
+                `Status` = #{mallSalesOrderCoupon.status},
+            </if>
+            <if test="mallSalesOrderCoupon.createdate != null">
+                `CreateDate` = #{mallSalesOrderCoupon.createdate},
+            </if>
+            <if test="mallSalesOrderCoupon.lastmodifieddate != null">
+                `LastModifiedDate` = #{mallSalesOrderCoupon.lastmodifieddate},
+            </if>
+            <if test="mallSalesOrderCoupon.couponoriginid != null">
+                `CouponOriginId` = #{mallSalesOrderCoupon.couponoriginid},
+            </if>
+        </set>
+        where Id = #{mallSalesOrderCoupon.id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from mall_sales_order_coupon
+        where Id = #{id}
+    </delete>
+
+</mapper>

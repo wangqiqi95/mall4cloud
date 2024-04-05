@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mall4j.cloud.order.mapper.OrderSelfStationMapper">
+  <resultMap id="orderSelfStationMap" type="com.mall4j.cloud.order.model.OrderSelfStation">
+    <id column="id" property="id" />
+    <result column="update_time" property="updateTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="shop_id" property="shopId"/>
+    <result column="order_id" property="orderId"/>
+    <result column="station_id" property="stationId"/>
+    <result column="station_user_mobile" property="stationUserMobile"/>
+    <result column="station_user_name" property="stationUserName"/>
+    <result column="station_time" property="stationTime"/>
+    <result column="station_code" property="stationCode"/>
+    <result column="station_address" property="stationAddress"/>
+    <result column="station_phone" property="stationPhone"/>
+  </resultMap>
+  <sql id="Vo_Column_List">
+    `id`,`update_time`,`create_time`,`shop_id`,`order_id`,`station_id`,`station_user_mobile`,`station_user_name`,`station_time`,`station_code`,`station_address`,`station_phone`
+  </sql>
+  <select id="list" resultType="com.mall4j.cloud.order.vo.OrderSelfStationVO">
+    select <include refid="Vo_Column_List"/> from order_self_station order by id desc
+  </select>
+  <select id="getById" resultType="com.mall4j.cloud.order.vo.OrderSelfStationVO">
+    select <include refid="Vo_Column_List"/> from order_self_station where id = #{id}
+  </select>
+  <insert id="save">
+    insert into order_self_station (`shop_id`,`order_id`,`station_id`,`station_user_mobile`,`station_user_name`,`station_time`,`station_code`,`station_address`,`station_phone`)
+    values (#{orderSelfStation.shopId},#{orderSelfStation.orderId},#{orderSelfStation.stationId},#{orderSelfStation.stationUserMobile},#{orderSelfStation.stationUserName},#{orderSelfStation.stationTime},#{orderSelfStation.stationCode},#{orderSelfStation.stationAddress},#{orderSelfStation.stationPhone});
+  </insert>
+  <update id="update">
+    update order_self_station
+    <set>
+      <if test="orderSelfStation.shopId != null">
+        `shop_id` = #{orderSelfStation.shopId},
+      </if>
+      <if test="orderSelfStation.orderId != null">
+        `order_id` = #{orderSelfStation.orderId},
+      </if>
+      <if test="orderSelfStation.stationId != null">
+        `station_id` = #{orderSelfStation.stationId},
+      </if>
+      <if test="orderSelfStation.stationUserMobile != null">
+        `station_user_mobile` = #{orderSelfStation.stationUserMobile},
+      </if>
+      <if test="orderSelfStation.stationUserName != null">
+        `station_user_name` = #{orderSelfStation.stationUserName},
+      </if>
+      <if test="orderSelfStation.stationTime != null">
+        `station_time` = #{orderSelfStation.stationTime},
+      </if>
+      <if test="orderSelfStation.stationCode != null">
+        `station_code` = #{orderSelfStation.stationCode},
+      </if>
+      <if test="orderSelfStation.stationAddress != null">
+        `station_address` = #{orderSelfStation.stationAddress},
+      </if>
+      <if test="orderSelfStation.stationPhone != null">
+        `station_phone` = #{orderSelfStation.stationPhone},
+      </if>
+    </set>
+    where id = #{orderSelfStation.id}
+  </update>
+  <delete id="deleteById">
+    delete from order_self_station where id = #{id}
+  </delete>
+
+</mapper>
