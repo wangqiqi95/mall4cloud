@@ -4,6 +4,7 @@ package com.mall4j.cloud.biz.dto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,8 +42,16 @@ public class TaskInfoDTO {
     private Integer taskFrequency;
     @ApiModelProperty("回访结果提交 1是 0否")
     private Integer visitResultsType;
+    @ApiModelProperty("任务开始时间")
+    private Date taskStartTime;
+    @ApiModelProperty("任务结束时间")
+    private Date taskEndTime;
+    @ApiModelProperty("任务提醒配置。以选择的场景为主，选择3个场景就传入3条数据")
+    private List<TaskRemindInfoDTO> taskRemindInfos;
 
-    @ApiModelProperty("任务客户")
+    @ApiModelProperty("任务客户标签。执行标签客户时必传")
+    private List<String> clientTagIds;
+    @ApiModelProperty("任务客户。导入客户时必传")
     private List<TaskClientInfoDTO> taskClientInfos;
     @ApiModelProperty("任务客户群。全部客户群时无需传值，指定客户群时必传")
     private List<String> taskClientGroupIds;
@@ -50,6 +59,7 @@ public class TaskInfoDTO {
     private List<String> taskStoreIds;
     @ApiModelProperty("任务导购。全部导购时无需传值，指定导购时必传")
     private List<String> shoppingGuideIds;
+
     @ApiModelProperty(value = "任务id", hidden = true)
     private Long taskId;
 }

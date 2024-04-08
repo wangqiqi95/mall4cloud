@@ -8,11 +8,16 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mall4j.cloud.biz.constant.task.*;
 import com.mall4j.cloud.biz.dto.TaskInfoDTO;
+import com.mall4j.cloud.biz.dto.TaskInfoSearchParamDTO;
 import com.mall4j.cloud.biz.mapper.TaskInfoMapper;
-import com.mall4j.cloud.biz.model.TaskInfo;
-import com.mall4j.cloud.biz.service.TaskClientGroupInfoService;
-import com.mall4j.cloud.biz.service.TaskInfoService;
+import com.mall4j.cloud.biz.model.*;
+import com.mall4j.cloud.biz.service.*;
+import com.mall4j.cloud.biz.vo.cp.CustGroupVO;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoPageVO;
 import com.mall4j.cloud.common.constant.DeleteEnum;
+import com.mall4j.cloud.common.database.dto.PageDTO;
+import com.mall4j.cloud.common.database.util.PageUtil;
+import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.common.exception.Assert;
 import com.mall4j.cloud.common.security.AuthUserContext;
 import org.springframework.stereotype.Service;
@@ -29,6 +34,14 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
     private TaskInfoMapper taskInfoMapper;
     @Resource
     private TaskClientGroupInfoService taskClientGroupInfoService;
+    @Resource
+    private TaskClientInfoService taskClientInfoService;
+    @Resource
+    private TaskStoreInfoService taskStoreInfoService;
+    @Resource
+    private TaskShoppingGuideInfoService taskShoppingGuideInfoService;
+    @Resource
+    private TaskFrequencyInfoService taskFrequencyInfoService;
 
     public static final Integer ZERO = 0;
     // 拥有话术的任务类型
@@ -50,19 +63,22 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
         taskInfoModel.setUpdateBy(AuthUserContext.get().getUsername());
         taskInfoModel.setUpdateTime(new Date());
         taskInfoModel.setDelFlag(DeleteEnum.NORMAL.value());
+        taskInfoModel.setTaskStatus(TaskStatusEnum.NOT_START.getValue());
         save(taskInfoModel);
+        taskInfo.setTaskId(taskInfoModel.getId());
 
+
+        // 保存频率信息
+        taskFrequencyInfoService.saveTaskFrequencyInfo(taskInfo);
         // 保存客户信息
-
-
+        taskClientInfoService.saveTaskClientInfo(taskInfo);
         // 保存客户群信息
-        // todo 全部客户群时需接口
-
+        taskClientGroupInfoService.saveTaskClientGroupInfo(taskInfo);
         // 保存门店信息
-        // todo 全部门店时需接口
-
+        taskStoreInfoService.saveTaskStoreInfo(taskInfo);
         // 保存导购信息
-        // todo 全部导购时需接口
+        taskShoppingGuideInfoService.saveShoppingGuideInfo(taskInfo);
+        // 保存任务提醒信息
 
     }
 
@@ -89,9 +105,11 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
         // 除加企微好友外都需要话术
         Assert.isTrue(CollUtil.contains(SPEECH_SKILLS_TASK_TYPE_LIST, taskInfoDTO.getTaskType())
                 && StrUtil.isBlank(taskInfoDTO.getSpeechSkills()), "执行方式不能为空！");
-        // 客户类型为不为全部时，前端传来所有客户信息
-        Assert.isTrue(ObjectUtil.notEqual(taskInfoDTO.getTaskClientType(), TaskClientTypeEnum.ALL.getValue())
-                && CollUtil.isEmpty(taskInfoDTO.getTaskClientInfos()), "除客户为全部客户时，需传入客户信息！");
+        // 导入客户时，前端传来所有客户信息
+        Assert.isTrue(ObjectUtil.equals(taskInfoDTO.getTaskClientType(), TaskClientTypeEnum.IMPORT_CUSTOMER.getValue())
+                && CollUtil.isEmpty(taskInfoDTO.getTaskClientInfos()), "导入客户时，需传入客户信息！");
+        Assert.isTrue(ObjectUtil.equals(taskInfoDTO.getTaskClientType(), TaskClientTypeEnum.SPECIFY_LABEL.getValue())
+                && CollUtil.isEmpty(taskInfoDTO.getClientTagIds()), "执行标签时，需传入标签信息");
         // 指定客户群时必须传入客户群信息
         Assert.isTrue(ObjectUtil.equals(taskInfoDTO.getTaskClientGroupType(), TaskClientGroupTypeEnum.SPECIFY.getValue())
                 && CollUtil.isEmpty(taskInfoDTO.getTaskClientGroupIds()), "指定客户群时必须传入客户群信息！");
@@ -103,6 +121,21 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
                 && CollUtil.isEmpty(taskInfoDTO.getShoppingGuideIds()), "指定导购时必须传入导购信息！");
 
 
+    }
+
+    @Override
+    public void updateTaskStatus(Long id, Integer status) {
+        lambdaUpdate()
+                .set(TaskInfo::getUpdateBy, AuthUserContext.get().getUsername())
+                .set(TaskInfo::getUpdateTime, new Date())
+                .set(TaskInfo::getTaskStatus, status)
+                .eq(TaskInfo::getId, id)
+                .update();
+    }
+
+    @Override
+    public PageVO<TaskInfoPageVO> page(PageDTO pageDTO, TaskInfoSearchParamDTO taskInfoSearchParamDTO) {
+        return PageUtil.doPage(pageDTO, () -> taskInfoMapper.list(taskInfoSearchParamDTO));
     }
 }
 

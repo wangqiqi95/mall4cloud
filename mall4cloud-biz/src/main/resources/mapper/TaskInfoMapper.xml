@@ -2,5 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mall4j.cloud.biz.mapper.TaskInfoMapper">
 
+    <select id="list" resultType="com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoPageVO">
+        select t1.id,t1.task_name,t1.company_id,t1.task_store_type,count(t2.id) as store_num,
+        t1.task_shopping_guide_type,count(t3.id) as shopping_guide_num,t1.task_status,
+        t4.start_time,t4.end_time
+        from cp_task_info t1
+        join cp_task_store_info t2 on t1.id=t2.task_id and t2.del_flag=0
+        join cp_task_shopping_guide_info t3 on t1.id=t3.id and t3.del_flag=0
+        join cp_task_frequency_info t4 on t1.id=t4.task_id and t4.del_flag=0
+        where t1.del_flag=0
+        <if test="et.taskName != null and et.taskName !='' ">AND t1.task_name like CONCAT('%', #{et.taskName},'%')</if>
+        <if test="et.taskType != null">AND t1.task_type=#{et.taskType}</if>
+        <if test="et.companyId != null">AND t1.company_id=#{et.companyId}</if>
+        <if test="et.taskStatus != null">AND t1.task_status=#{et.taskStatus}</if>
+
+        order by t1.update_time desc
+    </select>
 </mapper>
 
