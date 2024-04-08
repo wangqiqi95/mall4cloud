@@ -9,5 +9,7 @@ import com.mall4j.cloud.biz.model.TaskStoreInfo;
  */
 public interface TaskStoreInfoService extends IService<TaskStoreInfo> {
     void saveTaskStoreInfo(TaskInfoDTO taskInfoDTO);
+
+    void deleteByTaskId(Long taskId);
 }
 

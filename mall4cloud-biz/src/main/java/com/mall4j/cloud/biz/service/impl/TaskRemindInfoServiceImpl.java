@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mall4j.cloud.biz.dto.TaskInfoDTO;
 import com.mall4j.cloud.biz.dto.TaskRemindInfoDTO;
 import com.mall4j.cloud.biz.mapper.TaskRemindInfoMapper;
 import com.mall4j.cloud.biz.model.TaskRemindInfo;
+import com.mall4j.cloud.biz.model.TaskShoppingGuideInfo;
 import com.mall4j.cloud.biz.service.TaskRemindInfoService;
 import com.mall4j.cloud.common.constant.DeleteEnum;
 import com.mall4j.cloud.common.security.AuthUserContext;
@@ -20,6 +23,10 @@ public class TaskRemindInfoServiceImpl extends ServiceImpl<TaskRemindInfoMapper,
 
     @Override
     public void saveTaskRemindInfo(TaskInfoDTO taskInfoDTO) {
+        if (ObjectUtil.isNotEmpty(taskInfoDTO.getId())) {
+            deleteByTaskId(taskInfoDTO.getId());
+        }
+
         List<TaskRemindInfo> taskRemindInfos = taskInfoDTO.getTaskRemindInfos().stream().map(taskRemindInfoDTO -> {
             TaskRemindInfo taskRemindInfo = new TaskRemindInfo();
             taskRemindInfo.setCreateTime(new Date());
@@ -36,6 +43,11 @@ public class TaskRemindInfoServiceImpl extends ServiceImpl<TaskRemindInfoMapper,
             return taskRemindInfo;
         }).collect(Collectors.toList());
         saveBatch(taskRemindInfos);
+    }
+
+    @Override
+    public void deleteByTaskId(Long taskId) {
+        remove(Wrappers.<TaskRemindInfo>lambdaQuery().eq(TaskRemindInfo::getTaskId, taskId).eq(TaskRemindInfo::getDelFlag, DeleteEnum.NORMAL.value()));
     }
 }
 

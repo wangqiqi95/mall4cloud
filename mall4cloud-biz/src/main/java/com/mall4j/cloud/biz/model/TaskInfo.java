@@ -1,6 +1,7 @@
 package com.mall4j.cloud.biz.model;
 
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.util.Date;
@@ -13,6 +14,7 @@ public class TaskInfo {
     /**
      * 主键
      */
+    @TableId
     private Long id;
     /**
      * 创建时间
@@ -98,5 +100,15 @@ public class TaskInfo {
      * 任务状态 0未开始 1进行中 2已结束
      */
     private Integer taskStatus;
+
+    /**
+     * 门店数量，冗余字段
+     */
+    private Integer storeNum;
+
+    /**
+     * 导购数量，冗余字段
+     */
+    private Integer shoppingGuideNum;
 }
 

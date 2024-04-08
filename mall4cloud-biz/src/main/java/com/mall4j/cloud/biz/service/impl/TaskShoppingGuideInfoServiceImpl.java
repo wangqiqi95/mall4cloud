@@ -2,10 +2,15 @@ package com.mall4j.cloud.biz.service.impl;
 
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mall4j.cloud.biz.constant.task.TaskRemindTypeEnum;
+import com.mall4j.cloud.biz.constant.task.TaskShoppingGuideInfoTypeEnum;
 import com.mall4j.cloud.biz.constant.task.TaskShoppingGuideTypeEnum;
 import com.mall4j.cloud.biz.dto.TaskInfoDTO;
+import com.mall4j.cloud.biz.dto.TaskRemindInfoDTO;
 import com.mall4j.cloud.biz.mapper.TaskShoppingGuideInfoMapper;
+import com.mall4j.cloud.biz.model.TaskFrequencyInfo;
 import com.mall4j.cloud.biz.model.TaskShoppingGuideInfo;
 import com.mall4j.cloud.biz.service.TaskShoppingGuideInfoService;
 import com.mall4j.cloud.common.constant.DeleteEnum;
@@ -21,22 +26,54 @@ import java.util.stream.Collectors;
 public class TaskShoppingGuideInfoServiceImpl extends ServiceImpl<TaskShoppingGuideInfoMapper, TaskShoppingGuideInfo> implements TaskShoppingGuideInfoService {
     @Override
     public void saveShoppingGuideInfo(TaskInfoDTO taskInfoDTO) {
+        if (ObjectUtil.isNotEmpty(taskInfoDTO.getId())) {
+            deleteByTaskId(taskInfoDTO.getId());
+        }
         List<TaskShoppingGuideInfo> taskShoppingGuideInfos = new ArrayList<>();
+
+        // 处理任务导购
         if (ObjectUtil.equals(taskInfoDTO.getTaskShoppingGuideType(), TaskShoppingGuideTypeEnum.SPECIFY.getValue())) {
             taskShoppingGuideInfos = taskInfoDTO.getShoppingGuideIds().stream().map(taskShoppingGuideId -> {
-                TaskShoppingGuideInfo taskShoppingGuideInfo = new TaskShoppingGuideInfo();
-                taskShoppingGuideInfo.setCreateTime(new Date());
-                taskShoppingGuideInfo.setUpdateTime(new Date());
-                taskShoppingGuideInfo.setCreateBy(AuthUserContext.get().getUsername());
-                taskShoppingGuideInfo.setUpdateBy(AuthUserContext.get().getUsername());
-                taskShoppingGuideInfo.setDelFlag(DeleteEnum.NORMAL.value());
+                TaskShoppingGuideInfo taskShoppingGuideInfo = initTaskShoppingGuideInfo();
                 taskShoppingGuideInfo.setTaskId(taskInfoDTO.getTaskId());
                 taskShoppingGuideInfo.setShopGuideId(taskShoppingGuideId);
+                taskShoppingGuideInfo.setShopGuideType(TaskShoppingGuideInfoTypeEnum.TASK_SHOPPING_GUIDE.getValue());
 
                 return taskShoppingGuideInfo;
             }).collect(Collectors.toList());
         }
+
+        // 处理任务提醒中指定的导购
+        if (taskInfoDTO.getTaskRemindInfos().stream()
+                .map(TaskRemindInfoDTO::getRemindType).distinct()
+                .anyMatch(remindType -> ObjectUtil.equals(remindType, TaskRemindTypeEnum.ALL.getValue())
+                        || ObjectUtil.equals(remindType, TaskRemindTypeEnum.SPECIFY_SHOPPING_GUIDE.getValue()))) {
+            List<TaskShoppingGuideInfo> temp = taskInfoDTO.getRemindShoppingGuideIds().stream().map(remindShoppingGuideId -> {
+                TaskShoppingGuideInfo taskShoppingGuideInfo = initTaskShoppingGuideInfo();
+                taskShoppingGuideInfo.setTaskId(taskInfoDTO.getTaskId());
+                taskShoppingGuideInfo.setShopGuideId(remindShoppingGuideId);
+                taskShoppingGuideInfo.setShopGuideType(TaskShoppingGuideInfoTypeEnum.SPECIFY_SHOPPING_GUIDE.getValue());
+                return taskShoppingGuideInfo;
+            }).collect(Collectors.toList());
+            taskShoppingGuideInfos.addAll(temp);
+        }
+
         saveBatch(taskShoppingGuideInfos);
+    }
+
+    @Override
+    public void deleteByTaskId(Long taskId) {
+        remove(Wrappers.<TaskShoppingGuideInfo>lambdaQuery().eq(TaskShoppingGuideInfo::getTaskId, taskId).eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value()));
+    }
+
+    private TaskShoppingGuideInfo initTaskShoppingGuideInfo() {
+        TaskShoppingGuideInfo taskShoppingGuideInfo = new TaskShoppingGuideInfo();
+        taskShoppingGuideInfo.setCreateTime(new Date());
+        taskShoppingGuideInfo.setUpdateTime(new Date());
+        taskShoppingGuideInfo.setCreateBy(AuthUserContext.get().getUsername());
+        taskShoppingGuideInfo.setUpdateBy(AuthUserContext.get().getUsername());
+        taskShoppingGuideInfo.setDelFlag(DeleteEnum.NORMAL.value());
+        return taskShoppingGuideInfo;
     }
 }
 

@@ -28,6 +28,10 @@ public class TaskClientInfoServiceImpl extends ServiceImpl<TaskClientInfoMapper,
 
     @Override
     public void saveTaskClientInfo(TaskInfoDTO taskInfoDTO) {
+        if (ObjectUtil.isNotEmpty(taskInfoDTO.getId())) {
+            deleteByTaskId(taskInfoDTO.getId());
+        }
+
         // 判断类型 全部客户和指定标签时可不存入，生成任务时动态查询
         if (ObjectUtil.equals(taskInfoDTO.getTaskClientType(), TaskClientTypeEnum.IMPORT_CUSTOMER.getValue())) {
             List<TaskClientInfo> taskClientInfos = taskInfoDTO.getTaskClientInfos().stream().map(clientDto -> {

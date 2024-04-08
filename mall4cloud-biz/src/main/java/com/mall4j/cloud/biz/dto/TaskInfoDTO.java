@@ -12,6 +12,8 @@ import java.util.List;
  */
 @Data
 public class TaskInfoDTO {
+    @ApiModelProperty("任务id,修改时必传")
+    private Long id;
     @ApiModelProperty("任务名称")
     private String taskName;
     @ApiModelProperty("任务类型 1加企微好友 2好友转会员 3分享素材 4回访客户")
@@ -59,6 +61,8 @@ public class TaskInfoDTO {
     private List<String> taskStoreIds;
     @ApiModelProperty("任务导购。全部导购时无需传值，指定导购时必传")
     private List<String> shoppingGuideIds;
+    @ApiModelProperty("提醒员工时选择了指定员工，该值必传")
+    private List<String> remindShoppingGuideIds;
 
     @ApiModelProperty(value = "任务id", hidden = true)
     private Long taskId;

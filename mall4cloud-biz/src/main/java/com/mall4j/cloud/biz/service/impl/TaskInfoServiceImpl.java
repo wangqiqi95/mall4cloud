@@ -9,9 +9,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mall4j.cloud.biz.constant.task.*;
 import com.mall4j.cloud.biz.dto.TaskInfoDTO;
 import com.mall4j.cloud.biz.dto.TaskInfoSearchParamDTO;
+import com.mall4j.cloud.biz.dto.TaskRemindInfoDTO;
 import com.mall4j.cloud.biz.mapper.TaskInfoMapper;
 import com.mall4j.cloud.biz.model.*;
 import com.mall4j.cloud.biz.service.*;
+import com.mall4j.cloud.biz.util.ExpressUtil;
 import com.mall4j.cloud.biz.vo.cp.CustGroupVO;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoPageVO;
 import com.mall4j.cloud.common.constant.DeleteEnum;
@@ -27,6 +29,7 @@ import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> implements TaskInfoService {
@@ -42,6 +45,8 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
     private TaskShoppingGuideInfoService taskShoppingGuideInfoService;
     @Resource
     private TaskFrequencyInfoService taskFrequencyInfoService;
+    @Resource
+    private TaskRemindInfoService taskRemindInfoService;
 
     public static final Integer ZERO = 0;
     // 拥有话术的任务类型
@@ -54,17 +59,32 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
         // 因字段之间有联动作用，所以此次采用自定义校验
         validate(taskInfo);
         // 保存主表信息
-        TaskInfo taskInfoModel = new TaskInfo();
+        TaskInfo taskInfoModel;
+        if (ObjectUtil.isEmpty(taskInfo.getId())) {
+            taskInfoModel = new TaskInfo();
+            taskInfoModel.setCreateBy(AuthUserContext.get().getUsername());
+            taskInfoModel.setCreateTime(new Date());
+            taskInfoModel.setDelFlag(DeleteEnum.NORMAL.value());
+        } else {
+            taskInfoModel = taskInfoMapper.selectById(taskInfo.getId());
+        }
+
         BeanUtil.copyProperties(taskInfo, taskInfoModel);
 
         // 设置非业务字段
-        taskInfoModel.setCreateBy(AuthUserContext.get().getUsername());
-        taskInfoModel.setCreateTime(new Date());
         taskInfoModel.setUpdateBy(AuthUserContext.get().getUsername());
         taskInfoModel.setUpdateTime(new Date());
-        taskInfoModel.setDelFlag(DeleteEnum.NORMAL.value());
         taskInfoModel.setTaskStatus(TaskStatusEnum.NOT_START.getValue());
-        save(taskInfoModel);
+
+        // 设置门店数量
+        ExpressUtil.isTrue(ObjectUtil.equals(taskInfo.getTaskStoreType(), TaskStoreTypeEnum.SPECIFY.getValue()), () -> {
+            taskInfoModel.setStoreNum(taskInfo.getTaskStoreIds().size());
+        });
+        // 设置导购数量
+        ExpressUtil.isTrue(ObjectUtil.equals(taskInfo.getTaskShoppingGuideType(), TaskShoppingGuideTypeEnum.SPECIFY.getValue()), () -> {
+            taskInfoModel.setShoppingGuideNum(taskInfo.getShoppingGuideIds().size());
+        });
+        saveOrUpdate(taskInfoModel);
         taskInfo.setTaskId(taskInfoModel.getId());
 
 
@@ -120,6 +140,12 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
         Assert.isTrue(ObjectUtil.equals(taskInfoDTO.getTaskShoppingGuideType(), TaskShoppingGuideTypeEnum.SPECIFY.getValue())
                 && CollUtil.isEmpty(taskInfoDTO.getShoppingGuideIds()), "指定导购时必须传入导购信息！");
 
+        Assert.isTrue(taskInfoDTO.getTaskRemindInfos().stream()
+                .map(TaskRemindInfoDTO::getRemindType).distinct()
+                .anyMatch(remindType -> ObjectUtil.equals(remindType, TaskRemindTypeEnum.ALL.getValue())
+                        || ObjectUtil.equals(remindType, TaskRemindTypeEnum.SPECIFY_SHOPPING_GUIDE.getValue()))
+                && CollUtil.isEmpty(taskInfoDTO.getTaskRemindInfos()), "任务提醒勾选了指定员工时必须传入指定导购信息");
+
 
     }
 
@@ -137,5 +163,6 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
     public PageVO<TaskInfoPageVO> page(PageDTO pageDTO, TaskInfoSearchParamDTO taskInfoSearchParamDTO) {
         return PageUtil.doPage(pageDTO, () -> taskInfoMapper.list(taskInfoSearchParamDTO));
     }
+
 }
 

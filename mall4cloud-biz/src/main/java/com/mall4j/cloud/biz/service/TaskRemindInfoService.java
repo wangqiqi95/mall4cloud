@@ -9,6 +9,8 @@ import com.mall4j.cloud.biz.model.TaskRemindInfo;
  * 任务提醒表
  */
 public interface TaskRemindInfoService extends IService<TaskRemindInfo> {
-    void  saveTaskRemindInfo(TaskInfoDTO taskInfoDTO);
+    void saveTaskRemindInfo(TaskInfoDTO taskInfoDTO);
+
+    void deleteByTaskId(Long taskId);
 }
 

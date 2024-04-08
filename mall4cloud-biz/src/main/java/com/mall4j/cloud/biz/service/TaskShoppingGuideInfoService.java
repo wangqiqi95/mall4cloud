@@ -9,5 +9,7 @@ import com.mall4j.cloud.biz.model.TaskShoppingGuideInfo;
  */
 public interface TaskShoppingGuideInfoService extends IService<TaskShoppingGuideInfo> {
     void saveShoppingGuideInfo(TaskInfoDTO taskInfoDTO);
+
+    void deleteByTaskId(Long taskId);
 }
 

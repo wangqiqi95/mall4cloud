@@ -10,5 +10,6 @@ import com.mall4j.cloud.biz.model.TaskFrequencyInfo;
 public interface TaskFrequencyInfoService extends IService<TaskFrequencyInfo> {
     void saveTaskFrequencyInfo(TaskInfoDTO taskInfoDTO);
 
+    void deleteByTaskId(Long taskId);
 }
 

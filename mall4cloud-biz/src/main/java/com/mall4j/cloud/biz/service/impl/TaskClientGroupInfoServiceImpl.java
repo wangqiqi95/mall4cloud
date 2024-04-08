@@ -3,6 +3,7 @@ package com.mall4j.cloud.biz.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mall4j.cloud.biz.constant.task.TaskClientGroupTypeEnum;
 import com.mall4j.cloud.biz.dto.TaskInfoDTO;
@@ -10,6 +11,7 @@ import com.mall4j.cloud.biz.mapper.MicroPageBurialPointRecordMapper;
 import com.mall4j.cloud.biz.mapper.TaskClientGroupInfoMapper;
 import com.mall4j.cloud.biz.model.MicroPageBurialPointRecord;
 import com.mall4j.cloud.biz.model.TaskClientGroupInfo;
+import com.mall4j.cloud.biz.model.TaskFrequencyInfo;
 import com.mall4j.cloud.biz.service.TaskClientGroupInfoService;
 import com.mall4j.cloud.common.constant.DeleteEnum;
 import com.mall4j.cloud.common.security.AuthUserContext;
@@ -27,6 +29,9 @@ public class TaskClientGroupInfoServiceImpl extends ServiceImpl<TaskClientGroupI
 
     @Override
     public void saveTaskClientGroupInfo(TaskInfoDTO taskInfoDTO) {
+        if (ObjectUtil.isNotEmpty(taskInfoDTO.getId())) {
+            deleteByTaskId(taskInfoDTO.getId());
+        }
         // 保存客户群信息
         List<TaskClientGroupInfo> taskClientGroupInfos = new ArrayList<>();
         if (ObjectUtil.equals(taskInfoDTO.getTaskClientGroupType(), TaskClientGroupTypeEnum.SPECIFY.getValue())) {
@@ -43,6 +48,11 @@ public class TaskClientGroupInfoServiceImpl extends ServiceImpl<TaskClientGroupI
             }).collect(Collectors.toList());
         }
         saveBatch(taskClientGroupInfos);
+    }
+
+    @Override
+    public void deleteByTaskId(Long taskId) {
+        remove(Wrappers.<TaskClientGroupInfo>lambdaQuery().eq(TaskClientGroupInfo::getTaskId, taskId).eq(TaskClientGroupInfo::getDelFlag, DeleteEnum.NORMAL.value()));
     }
 }
 

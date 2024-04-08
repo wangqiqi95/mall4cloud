@@ -2,12 +2,14 @@ package com.mall4j.cloud.biz.service.impl;
 
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mall4j.cloud.biz.constant.task.TaskStoreTypeEnum;
 import com.mall4j.cloud.biz.dto.TaskInfoDTO;
 import com.mall4j.cloud.biz.mapper.MicroPageBurialPointRecordMapper;
 import com.mall4j.cloud.biz.mapper.TaskStoreInfoMapper;
 import com.mall4j.cloud.biz.model.MicroPageBurialPointRecord;
+import com.mall4j.cloud.biz.model.TaskFrequencyInfo;
 import com.mall4j.cloud.biz.model.TaskStoreInfo;
 import com.mall4j.cloud.biz.service.TaskStoreInfoService;
 import com.mall4j.cloud.common.constant.DeleteEnum;
@@ -23,6 +25,9 @@ import java.util.stream.Collectors;
 public class TaskStoreInfoServiceImpl extends ServiceImpl<TaskStoreInfoMapper, TaskStoreInfo> implements TaskStoreInfoService {
     @Override
     public void saveTaskStoreInfo(TaskInfoDTO taskInfoDTO) {
+        if (ObjectUtil.isNotEmpty(taskInfoDTO.getId())) {
+            deleteByTaskId(taskInfoDTO.getId());
+        }
         List<TaskStoreInfo> taskStoreInfos = new ArrayList<>();
         if (ObjectUtil.equals(taskInfoDTO.getTaskStoreType(), TaskStoreTypeEnum.SPECIFY.getValue())) {
             taskStoreInfos = taskInfoDTO.getTaskStoreIds().stream().map(taskStoreId -> {
@@ -40,6 +45,11 @@ public class TaskStoreInfoServiceImpl extends ServiceImpl<TaskStoreInfoMapper, T
             }).collect(Collectors.toList());
         }
         saveBatch(taskStoreInfos);
+    }
+
+    @Override
+    public void deleteByTaskId(Long taskId) {
+        remove(Wrappers.<TaskStoreInfo>lambdaQuery().eq(TaskStoreInfo::getTaskId, taskId).eq(TaskStoreInfo::getDelFlag, DeleteEnum.NORMAL.value()));
     }
 }
 

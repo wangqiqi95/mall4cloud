@@ -42,5 +42,9 @@ public class TaskShoppingGuideInfo {
      * 导购id
      */
     private String shopGuideId;
+    /**
+     * 导购类型 1任务导购 2指定的员工导购
+     */
+    private Integer shopGuideType;
 }
 

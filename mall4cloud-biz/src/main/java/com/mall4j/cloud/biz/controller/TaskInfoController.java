@@ -20,7 +20,7 @@ import javax.validation.Valid;
  * 任务信息表
  */
 @RestController
-@RequestMapping("taskInfo")
+@RequestMapping("/p/taskInfo")
 @AllArgsConstructor
 @Api(tags = "任务信息表")
 public class TaskInfoController {

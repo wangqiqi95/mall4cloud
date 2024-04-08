@@ -11,5 +11,7 @@ import java.util.List;
  */
 public interface TaskClientGroupInfoService extends IService<TaskClientGroupInfo> {
    void saveTaskClientGroupInfo(TaskInfoDTO taskInfoDTO);
+
+   void deleteByTaskId(Long taskId);
 }
 
