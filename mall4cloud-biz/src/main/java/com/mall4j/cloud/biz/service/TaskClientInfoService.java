@@ -11,5 +11,7 @@ public interface TaskClientInfoService extends IService<TaskClientInfo> {
     void saveTaskClientInfo(TaskInfoDTO taskInfoDTO);
 
     void deleteByTaskId(Long taskId);
+
+    void copyTaskClientInfo(Long taskId);
 }
 

@@ -1,6 +1,7 @@
 package com.mall4j.cloud.biz.service.impl;
 
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,11 +14,13 @@ import com.mall4j.cloud.biz.model.TaskFrequencyInfo;
 import com.mall4j.cloud.biz.service.TaskFrequencyInfoService;
 import com.mall4j.cloud.common.constant.DeleteEnum;
 import com.mall4j.cloud.common.security.AuthUserContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 @Service
+@Slf4j
 public class TaskFrequencyInfoServiceImpl extends ServiceImpl<TaskFrequencyInfoMapper, TaskFrequencyInfo> implements TaskFrequencyInfoService {
 
     @Override
@@ -41,6 +44,25 @@ public class TaskFrequencyInfoServiceImpl extends ServiceImpl<TaskFrequencyInfoM
     @Override
     public void deleteByTaskId(Long taskId) {
         remove(Wrappers.<TaskFrequencyInfo>lambdaQuery().eq(TaskFrequencyInfo::getTaskId, taskId).eq(TaskFrequencyInfo::getDelFlag, DeleteEnum.NORMAL.value()));
+    }
+
+    @Override
+    public void copyTaskFrequencyInfo(Long taskId) {
+        TaskFrequencyInfo taskFrequencyInfo = getById(taskId);
+        if (ObjectUtil.isEmpty(taskFrequencyInfo)) {
+            log.error("copyTaskFrequencyInfo时未获取到任务id为：{}的数据", taskId);
+            return;
+        }
+        TaskFrequencyInfo copyTaskFrequencyInfo = new TaskFrequencyInfo();
+        copyTaskFrequencyInfo.setCreateTime(new Date());
+        copyTaskFrequencyInfo.setUpdateTime(new Date());
+        copyTaskFrequencyInfo.setCreateBy(AuthUserContext.get().getUsername());
+        copyTaskFrequencyInfo.setUpdateBy(AuthUserContext.get().getUsername());
+        copyTaskFrequencyInfo.setDelFlag(DeleteEnum.NORMAL.value());
+        copyTaskFrequencyInfo.setTaskId(taskId);
+        copyTaskFrequencyInfo.setStartTime(taskFrequencyInfo.getStartTime());
+        copyTaskFrequencyInfo.setEndTime(taskFrequencyInfo.getEndTime());
+        save(taskFrequencyInfo);
     }
 }
 

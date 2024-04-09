@@ -1,6 +1,7 @@
 package com.mall4j.cloud.biz.service.impl;
 
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,9 +13,11 @@ import com.mall4j.cloud.biz.dto.TaskRemindInfoDTO;
 import com.mall4j.cloud.biz.mapper.TaskShoppingGuideInfoMapper;
 import com.mall4j.cloud.biz.model.TaskFrequencyInfo;
 import com.mall4j.cloud.biz.model.TaskShoppingGuideInfo;
+import com.mall4j.cloud.biz.model.TaskStoreInfo;
 import com.mall4j.cloud.biz.service.TaskShoppingGuideInfoService;
 import com.mall4j.cloud.common.constant.DeleteEnum;
 import com.mall4j.cloud.common.security.AuthUserContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class TaskShoppingGuideInfoServiceImpl extends ServiceImpl<TaskShoppingGuideInfoMapper, TaskShoppingGuideInfo> implements TaskShoppingGuideInfoService {
     @Override
     public void saveShoppingGuideInfo(TaskInfoDTO taskInfoDTO) {
@@ -74,6 +78,23 @@ public class TaskShoppingGuideInfoServiceImpl extends ServiceImpl<TaskShoppingGu
         taskShoppingGuideInfo.setUpdateBy(AuthUserContext.get().getUsername());
         taskShoppingGuideInfo.setDelFlag(DeleteEnum.NORMAL.value());
         return taskShoppingGuideInfo;
+    }
+
+    @Override
+    public void copyShoppingGuideInfo(Long taskId) {
+        List<TaskShoppingGuideInfo> taskShoppingGuideInfos = list(Wrappers.<TaskShoppingGuideInfo>lambdaQuery().eq(TaskShoppingGuideInfo::getTaskId, taskId).eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value()));
+        if (CollUtil.isEmpty(taskShoppingGuideInfos)) {
+            log.error("copyShoppingGuideInfo时未获取到任务id为：{}的数据", taskId);
+            return;
+        }
+
+        List<TaskShoppingGuideInfo> taskShoppingGuideInfoList = taskShoppingGuideInfos.stream().map(temp -> {
+            TaskShoppingGuideInfo taskShoppingGuideInfo = initTaskShoppingGuideInfo();
+            taskShoppingGuideInfo.setTaskId(taskId);
+            taskShoppingGuideInfo.setShopGuideId(temp.getShopGuideId());
+            return taskShoppingGuideInfo;
+        }).collect(Collectors.toList());
+        saveBatch(taskShoppingGuideInfoList);
     }
 }
 

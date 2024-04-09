@@ -1,19 +1,20 @@
 package com.mall4j.cloud.biz.service.impl;
 
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mall4j.cloud.biz.constant.task.TaskClientTypeEnum;
 import com.mall4j.cloud.biz.dto.TaskInfoDTO;
-import com.mall4j.cloud.biz.mapper.MicroPageBurialPointRecordMapper;
 import com.mall4j.cloud.biz.mapper.TaskClientInfoMapper;
-import com.mall4j.cloud.biz.model.MicroPageBurialPointRecord;
 import com.mall4j.cloud.biz.model.TaskClientInfo;
 import com.mall4j.cloud.biz.service.TaskClientInfoService;
 import com.mall4j.cloud.biz.service.TaskClientTagInfoService;
 import com.mall4j.cloud.common.constant.DeleteEnum;
 import com.mall4j.cloud.common.security.AuthUserContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class TaskClientInfoServiceImpl extends ServiceImpl<TaskClientInfoMapper, TaskClientInfo> implements TaskClientInfoService {
     @Resource
     private TaskClientTagInfoService taskClientTagInfoService;
@@ -62,5 +64,25 @@ public class TaskClientInfoServiceImpl extends ServiceImpl<TaskClientInfoMapper,
         remove(Wrappers.<TaskClientInfo>lambdaQuery().eq(TaskClientInfo::getTaskId, taskId).eq(TaskClientInfo::getDelFlag, DeleteEnum.NORMAL.value()));
     }
 
+    @Override
+    public void copyTaskClientInfo(Long taskId) {
+        List<TaskClientInfo> taskClientInfos = list(Wrappers.<TaskClientInfo>lambdaQuery().eq(TaskClientInfo::getTaskId, taskId).eq(TaskClientInfo::getDelFlag, DeleteEnum.NORMAL.value()));
+        if (CollUtil.isEmpty(taskClientInfos)) {
+            log.error("copyTaskClientInfo时未获取到任务id为：{}的数据", taskId);
+            return;
+        }
+        List<TaskClientInfo> taskClientInfoList = taskClientInfos.stream().map(temp -> {
+            TaskClientInfo taskClientInfo = new TaskClientInfo();
+            BeanUtil.copyProperties(temp,taskClientInfo);
+            taskClientInfo.setCreateTime(new Date());
+            taskClientInfo.setUpdateTime(new Date());
+            taskClientInfo.setCreateBy(AuthUserContext.get().getUsername());
+            taskClientInfo.setUpdateBy(AuthUserContext.get().getUsername());
+            taskClientInfo.setTaskId(taskId);
+            return taskClientInfo;
+        }).collect(Collectors.toList());
+        saveBatch(taskClientInfoList);
+
+    }
 }
 

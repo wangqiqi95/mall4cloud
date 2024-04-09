@@ -5,6 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mall4j.cloud.biz.constant.task.*;
 import com.mall4j.cloud.biz.dto.TaskInfoDTO;
@@ -15,7 +16,10 @@ import com.mall4j.cloud.biz.model.*;
 import com.mall4j.cloud.biz.service.*;
 import com.mall4j.cloud.biz.util.ExpressUtil;
 import com.mall4j.cloud.biz.vo.cp.CustGroupVO;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskClientInfoVO;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoPageVO;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoVO;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskRemindInfoVO;
 import com.mall4j.cloud.common.constant.DeleteEnum;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.util.PageUtil;
@@ -26,10 +30,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> implements TaskInfoService {
@@ -47,6 +49,8 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
     private TaskFrequencyInfoService taskFrequencyInfoService;
     @Resource
     private TaskRemindInfoService taskRemindInfoService;
+    @Resource
+    private TaskClientTagInfoService taskClientTagInfoService;
 
     public static final Integer ZERO = 0;
     // 拥有话术的任务类型
@@ -99,6 +103,7 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
         // 保存导购信息
         taskShoppingGuideInfoService.saveShoppingGuideInfo(taskInfo);
         // 保存任务提醒信息
+        taskRemindInfoService.saveTaskRemindInfo(taskInfo);
 
     }
 
@@ -129,7 +134,7 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
         Assert.isTrue(ObjectUtil.equals(taskInfoDTO.getTaskClientType(), TaskClientTypeEnum.IMPORT_CUSTOMER.getValue())
                 && CollUtil.isEmpty(taskInfoDTO.getTaskClientInfos()), "导入客户时，需传入客户信息！");
         Assert.isTrue(ObjectUtil.equals(taskInfoDTO.getTaskClientType(), TaskClientTypeEnum.SPECIFY_LABEL.getValue())
-                && CollUtil.isEmpty(taskInfoDTO.getClientTagIds()), "执行标签时，需传入标签信息");
+                && CollUtil.isEmpty(taskInfoDTO.getClientTagIds()), "指定标签时，需传入标签信息");
         // 指定客户群时必须传入客户群信息
         Assert.isTrue(ObjectUtil.equals(taskInfoDTO.getTaskClientGroupType(), TaskClientGroupTypeEnum.SPECIFY.getValue())
                 && CollUtil.isEmpty(taskInfoDTO.getTaskClientGroupIds()), "指定客户群时必须传入客户群信息！");
@@ -164,5 +169,125 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
         return PageUtil.doPage(pageDTO, () -> taskInfoMapper.list(taskInfoSearchParamDTO));
     }
 
+    @Override
+    public void endTask(Long id) {
+        TaskInfo taskInfo = getById(id);
+        Assert.isTrue(ObjectUtil.isEmpty(taskInfo), "未获取到对应的任务");
+        Assert.isTrue(ObjectUtil.notEqual(taskInfo.getTaskStatus(), TaskStatusEnum.PROGRESS.getValue()), "当前任务状态不可结束");
+
+        // 设置任务状态为结束
+        taskInfo.setTaskStatus(TaskStatusEnum.END.getValue());
+        updateById(taskInfo);
+    }
+
+    @Override
+    public void copyTask(Long id) {
+        TaskInfo originTaskInfo = getById(id);
+        Assert.isTrue(ObjectUtil.isEmpty(originTaskInfo), "未获取到对应的任务");
+
+        // 复制主表
+        TaskInfo taskInfo = new TaskInfo();
+        BeanUtil.copyProperties(originTaskInfo, taskInfo);
+
+        // 设置新表属性
+        taskInfo.setId(null);
+        taskInfo.setCreateTime(new Date());
+        taskInfo.setUpdateTime(new Date());
+        taskInfo.setCreateBy(AuthUserContext.get().getUsername());
+        taskInfo.setUpdateBy(AuthUserContext.get().getUsername());
+        taskInfo.setDelFlag(DeleteEnum.NORMAL.value());
+        taskInfo.setTaskStatus(TaskStatusEnum.NOT_START.getValue());
+        save(taskInfo);
+
+        // 复制频率信息
+        taskFrequencyInfoService.copyTaskFrequencyInfo(taskInfo.getId());
+        // 复制标签信息
+        taskClientTagInfoService.copyClientTagInfo(taskInfo.getId());
+        // 复制客户信息
+        taskClientInfoService.copyTaskClientInfo(taskInfo.getId());
+        // 复制客户群信息
+        taskClientGroupInfoService.copyTaskClientGroupInfo(taskInfo.getId());
+        // 复制门店信息
+        taskStoreInfoService.copyTaskStoreInfo(taskInfo.getId());
+        // 复制导购信息
+        taskShoppingGuideInfoService.copyShoppingGuideInfo(taskInfo.getId());
+        // 复制任务提醒信息
+        taskRemindInfoService.copyTaskRemindInfo(taskInfo.getId());
+    }
+
+    @Override
+    public TaskInfoVO getTaskInfo(Long id) {
+        TaskInfo taskInfo = getById(id);
+        Assert.isTrue(ObjectUtil.isEmpty(taskInfo), "未获取到对应的任务");
+
+        TaskInfoVO taskInfoVO = new TaskInfoVO();
+        BeanUtil.copyProperties(taskInfo, taskInfoVO);
+
+        // 处理任务时间
+        TaskFrequencyInfo taskFrequencyInfo = Optional.ofNullable(taskFrequencyInfoService.getOne(Wrappers.<TaskFrequencyInfo>lambdaQuery()
+                .eq(TaskFrequencyInfo::getTaskId, id)
+                .eq(TaskFrequencyInfo::getDelFlag, DeleteEnum.NORMAL.value()))).orElse(new TaskFrequencyInfo());
+        taskInfoVO.setTaskStartTime(taskFrequencyInfo.getStartTime());
+        taskInfoVO.setTaskEndTime(taskFrequencyInfo.getEndTime());
+
+        // 设置任务提醒配置
+        List<TaskRemindInfoVO> taskRemindInfoVOList = taskRemindInfoService.list(Wrappers.<TaskRemindInfo>lambdaQuery()
+                .eq(TaskRemindInfo::getTaskId, id)
+                .eq(TaskRemindInfo::getDelFlag, DeleteEnum.NORMAL.value())).stream().map(item -> {
+            TaskRemindInfoVO taskRemindInfoVO = new TaskRemindInfoVO();
+            BeanUtil.copyProperties(item, taskRemindInfoVO);
+            return taskRemindInfoVO;
+        }).collect(Collectors.toList());
+        taskInfoVO.setTaskRemindInfos(taskRemindInfoVOList);
+
+        // 设置任务客户标签
+        List<String> clientTagIds = taskClientTagInfoService.list(Wrappers.<TaskClientTagInfo>lambdaQuery()
+                .eq(TaskClientTagInfo::getTaskId, id)
+                .eq(TaskClientTagInfo::getDelFlag, DeleteEnum.NORMAL.value())).stream().map(TaskClientTagInfo::getTagId).collect(Collectors.toList());
+        taskInfoVO.setClientTagIds(clientTagIds);
+
+
+        // 设置任务客户
+        List<TaskClientInfoVO> taskClientInfoVOList = taskClientInfoService.list(Wrappers.<TaskClientInfo>lambdaQuery()
+                .eq(TaskClientInfo::getTaskId, id)
+                .eq(TaskClientInfo::getDelFlag, DeleteEnum.NORMAL.value())).stream().map(clientInfo -> {
+            TaskClientInfoVO taskClientInfoVO = new TaskClientInfoVO();
+            BeanUtil.copyProperties(clientInfo, taskClientInfoVO);
+            return taskClientInfoVO;
+        }).collect(Collectors.toList());
+        taskInfoVO.setTaskClientInfos(taskClientInfoVOList);
+
+
+        // 设置任务客户群
+        List<String> taskClientGroupIds = taskClientGroupInfoService.list(Wrappers.<TaskClientGroupInfo>lambdaQuery()
+                .eq(TaskClientGroupInfo::getTaskId, id)
+                .eq(TaskClientGroupInfo::getDelFlag, DeleteEnum.NORMAL.value())).stream().map(TaskClientGroupInfo::getClientGroupId).collect(Collectors.toList());
+        taskInfoVO.setTaskClientGroupIds(taskClientGroupIds);
+
+
+        // 设置任务门店
+        List<String> taskStoreIds = taskStoreInfoService.list(Wrappers.<TaskStoreInfo>lambdaQuery()
+                .eq(TaskStoreInfo::getTaskId, id)
+                .eq(TaskStoreInfo::getDelFlag, DeleteEnum.NORMAL.value())).stream().map(TaskStoreInfo::getStoreId).collect(Collectors.toList());
+        taskInfoVO.setTaskStoreIds(taskStoreIds);
+
+
+        List<TaskShoppingGuideInfo> taskShoppingGuideInfos = taskShoppingGuideInfoService.list(Wrappers.<TaskShoppingGuideInfo>lambdaQuery()
+                .eq(TaskShoppingGuideInfo::getTaskId, id)
+                .eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value())).stream().collect(Collectors.toList());
+
+        // 设置任务导购
+        taskInfoVO.setShoppingGuideIds(taskShoppingGuideInfos.stream()
+                .filter(item -> ObjectUtil.equals(item.getShopGuideType(), TaskShoppingGuideInfoTypeEnum.TASK_SHOPPING_GUIDE.getValue()))
+                .map(TaskShoppingGuideInfo::getShopGuideId).collect(Collectors.toList()));
+
+        // 设置提醒导购
+        taskInfoVO.setRemindShoppingGuideIds(taskShoppingGuideInfos.stream()
+                .filter(item -> ObjectUtil.equals(item.getShopGuideType(), TaskShoppingGuideInfoTypeEnum.SPECIFY_SHOPPING_GUIDE.getValue()))
+                .map(TaskShoppingGuideInfo::getShopGuideId).collect(Collectors.toList()));
+
+
+        return taskInfoVO;
+    }
 }
 

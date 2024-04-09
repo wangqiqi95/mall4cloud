@@ -11,5 +11,7 @@ public interface TaskFrequencyInfoService extends IService<TaskFrequencyInfo> {
     void saveTaskFrequencyInfo(TaskInfoDTO taskInfoDTO);
 
     void deleteByTaskId(Long taskId);
+
+    void copyTaskFrequencyInfo(Long taskId);
 }
 

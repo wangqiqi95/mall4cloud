@@ -10,5 +10,7 @@ import com.mall4j.cloud.biz.model.TaskInfo;
  */
 public interface TaskClientTagInfoService extends IService<TaskClientTagInfo> {
     void saveClientTagInfo(TaskInfoDTO taskInfoDTO);
+
+    void copyClientTagInfo(Long taskId);
 }
 

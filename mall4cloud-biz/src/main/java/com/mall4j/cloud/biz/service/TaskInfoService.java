@@ -6,6 +6,7 @@ import com.mall4j.cloud.biz.dto.TaskInfoSearchParamDTO;
 import com.mall4j.cloud.biz.model.TaskInfo;
 import com.mall4j.cloud.biz.vo.cp.CustGroupVO;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoPageVO;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoVO;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.vo.PageVO;
 
@@ -31,9 +32,25 @@ public interface TaskInfoService extends IService<TaskInfo> {
      * 分页查询任务信息
      * @param pageDTO 分页对象
      * @param taskInfoSearchParamDTO 查询条件
-     * @return
      */
     PageVO<TaskInfoPageVO> page(PageDTO pageDTO, TaskInfoSearchParamDTO taskInfoSearchParamDTO);
 
+    /**
+     * 结束任务
+     * @param id 任务id
+     */
+    void endTask(Long id);
+
+    /**
+     * 复制任务
+     * @param id 任务id
+     */
+    void copyTask(Long id);
+
+    /**
+     * 获取任务信息
+     * @param id 任务id
+     */
+    TaskInfoVO getTaskInfo(Long id);
 }
 

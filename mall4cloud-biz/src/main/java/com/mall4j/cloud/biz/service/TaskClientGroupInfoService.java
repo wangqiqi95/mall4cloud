@@ -10,8 +10,10 @@ import java.util.List;
  * 任务客户群表
  */
 public interface TaskClientGroupInfoService extends IService<TaskClientGroupInfo> {
-   void saveTaskClientGroupInfo(TaskInfoDTO taskInfoDTO);
+    void saveTaskClientGroupInfo(TaskInfoDTO taskInfoDTO);
 
-   void deleteByTaskId(Long taskId);
+    void deleteByTaskId(Long taskId);
+
+    void copyTaskClientGroupInfo(Long taskId);
 }
 

@@ -12,5 +12,7 @@ public interface TaskRemindInfoService extends IService<TaskRemindInfo> {
     void saveTaskRemindInfo(TaskInfoDTO taskInfoDTO);
 
     void deleteByTaskId(Long taskId);
+
+    void copyTaskRemindInfo(Long taskId);
 }
 

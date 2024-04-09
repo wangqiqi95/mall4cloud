@@ -1,5 +1,4 @@
-package com.mall4j.cloud.biz.dto;
-
+package com.mall4j.cloud.biz.vo.cp.taskInfo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,11 +7,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 任务信息表
+ * 任务对象详情
  */
 @Data
-public class TaskInfoDTO {
-    @ApiModelProperty("任务id,修改时必传")
+public class TaskInfoVO {
+    @ApiModelProperty("任务id")
     private Long id;
     @ApiModelProperty("任务名称")
     private String taskName;
@@ -44,27 +43,24 @@ public class TaskInfoDTO {
     private Integer taskFrequency;
     @ApiModelProperty("回访结果提交 1是 0否")
     private Integer visitResultsType;
+
     @ApiModelProperty("任务开始时间")
     private Date taskStartTime;
     @ApiModelProperty("任务结束时间")
     private Date taskEndTime;
-    @ApiModelProperty("任务提醒配置。以选择的场景为主，选择3个场景就传入3条数据")
-    private List<TaskRemindInfoDTO> taskRemindInfos;
+    @ApiModelProperty("任务提醒配置。以选择的场景为主，选择3个场景就有3条数据")
+    private List<TaskRemindInfoVO> taskRemindInfos;
 
-    @ApiModelProperty("任务客户标签。指定标签客户时必传")
+    @ApiModelProperty("任务客户标签。指定标签客户时存在")
     private List<String> clientTagIds;
-    @ApiModelProperty("任务客户。导入客户时必传")
-    private List<TaskClientInfoDTO> taskClientInfos;
-    @ApiModelProperty("任务客户群。全部客户群时无需传值，指定客户群时必传")
+    @ApiModelProperty("任务客户。导入客户时存在")
+    private List<TaskClientInfoVO> taskClientInfos;
+    @ApiModelProperty("任务客户群。全部客户群时无值，指定客户群时存在")
     private List<String> taskClientGroupIds;
-    @ApiModelProperty("任务门店。全部门店时无需传值，指定门店时必传")
+    @ApiModelProperty("任务门店。全部门店时无值，指定门店时存在")
     private List<String> taskStoreIds;
-    @ApiModelProperty("任务导购。全部导购时无需传值，指定导购时必传")
+    @ApiModelProperty("任务导购。全部导购时无值，指定导购时存在")
     private List<String> shoppingGuideIds;
-    @ApiModelProperty("提醒员工时选择了指定员工，该值必传")
+    @ApiModelProperty("提醒员工时选择了指定员工，该值存在")
     private List<String> remindShoppingGuideIds;
-
-    @ApiModelProperty(value = "任务id", hidden = true)
-    private Long taskId;
 }
-

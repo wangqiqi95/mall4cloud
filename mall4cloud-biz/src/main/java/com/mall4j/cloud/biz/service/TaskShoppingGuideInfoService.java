@@ -11,5 +11,7 @@ public interface TaskShoppingGuideInfoService extends IService<TaskShoppingGuide
     void saveShoppingGuideInfo(TaskInfoDTO taskInfoDTO);
 
     void deleteByTaskId(Long taskId);
+
+    void copyShoppingGuideInfo(Long taskId);
 }
 
