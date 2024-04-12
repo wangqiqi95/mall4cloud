@@ -1,6 +1,7 @@
 package com.mall4j.cloud.biz.model;
 
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.Date;
 /**
  * 任务提醒表
  */
+@TableName("cp_task_remind_info")
 @Data
 public class TaskRemindInfo {
     /**

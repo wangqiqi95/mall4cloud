@@ -39,6 +39,8 @@ public class SensitiveWordConfig {
     private static final String P_SOLD_STORE = "/p/store/sold_excel";
     private static final String SIGN_EXCEL = "/mp/sign_activity/normal_detail/export";
     private static final String LOTTERY_DRAW_EXCEL = "/mp/lottery_draw/award/record/export";
+    private static final String P_TASK_CLIENT_IMPORT_TEMPLATE = "/p/taskInfo/downloadClientImportTemplate";
+    private static final String P_TASK_CLIENT_IMPORT_ERROR = "/p/taskInfo/importClients";
     private static final String DISTRIBUTION_ORDER_EXCEL = "/p/distribution_order/exportDistributionOrder";
     private static final String WITHDRAW_RECORD_EXCEL = "/p/distribution_withdraw_record/withdrawRecordExcel";
     //test
@@ -196,6 +198,8 @@ public class SensitiveWordConfig {
         SENSITIVE_WHITE_SET.add(P_SOLD_STORE);
         SENSITIVE_WHITE_SET.add(SIGN_EXCEL);
         SENSITIVE_WHITE_SET.add(LOTTERY_DRAW_EXCEL);
+        SENSITIVE_WHITE_SET.add(P_TASK_CLIENT_IMPORT_TEMPLATE);
+        SENSITIVE_WHITE_SET.add(P_TASK_CLIENT_IMPORT_ERROR);
         SENSITIVE_WHITE_SET.add(DISTRIBUTION_ORDER_EXCEL);
         SENSITIVE_WHITE_SET.add(P_PRODUCT_DOWNLOAD_SPUCOMM_EXCEL);
         SENSITIVE_WHITE_SET.add(WITHDRAW_RECORD_EXCEL);

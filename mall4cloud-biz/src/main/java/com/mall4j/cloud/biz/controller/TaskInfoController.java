@@ -1,6 +1,15 @@
 package com.mall4j.cloud.biz.controller;
 
 
+import cn.hutool.core.collection.CollUtil;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.util.ListUtils;
+import com.alibaba.excel.write.builder.ExcelWriterBuilder;
+import com.alibaba.excel.write.metadata.WriteSheet;
+import com.mall4j.cloud.biz.dto.TaskClientImportExcelDTO;
 import com.mall4j.cloud.biz.dto.TaskInfoDTO;
 import com.mall4j.cloud.biz.dto.TaskInfoSearchParamDTO;
 import com.mall4j.cloud.biz.service.TaskInfoService;
@@ -10,13 +19,24 @@ import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoVO;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
+import com.mall4j.cloud.common.util.ExcelUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.web.bind.annotation.*;
 import lombok.AllArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.*;
 
 /**
  * 任务信息表
@@ -63,6 +83,21 @@ public class TaskInfoController {
     public ServerResponseEntity<Void> copyTask(@RequestParam("id") Long id) {
         taskInfoService.copyTask(id);
         return ServerResponseEntity.success();
+    }
+
+    @GetMapping("/downloadClientImportTemplate")
+    @ApiOperation(value = "下载导入客户模板", notes = "下载导入客户模板，加企微好友时使用")
+    public void downloadClientImportTemplate(HttpServletResponse response) throws IOException {
+        taskInfoService.downloadClientImportTemplate(response);
+    }
+
+    @PostMapping("/importClients")
+    @ApiOperation(value = "导入客户信息", notes = "请先下载模板后填写，再去导入客户信息")
+    @ApiImplicitParams({@ApiImplicitParam(name = "file", value = "客户信息excel", required = true),
+            @ApiImplicitParam(name = "uuid", value = "临时id，新增任务时初始化。一个任务上传多次excel时需保证uuid相同", required = true)}
+    )
+    public void importClients(@RequestParam MultipartFile file, @RequestParam("uuid") String uuid, HttpServletResponse response) {
+        taskInfoService.importClients(file, uuid, response);
     }
 }
 

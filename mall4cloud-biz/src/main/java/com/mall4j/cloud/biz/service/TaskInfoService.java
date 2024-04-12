@@ -9,6 +9,9 @@ import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoPageVO;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoVO;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.vo.PageVO;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 任务信息表
@@ -52,5 +55,19 @@ public interface TaskInfoService extends IService<TaskInfo> {
      * @param id 任务id
      */
     TaskInfoVO getTaskInfo(Long id);
+
+    /**
+     * 导入客户信息
+     * @param file 客户信息excel
+     * @param uuid 任务临时id
+     * @param response 响应对象
+     */
+    void importClients(MultipartFile file, String uuid, HttpServletResponse response);
+
+    /**
+     * 下载导入客户模板
+     * @param response 响应对象
+     */
+    void downloadClientImportTemplate(HttpServletResponse response);
 }
 

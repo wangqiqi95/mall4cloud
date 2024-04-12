@@ -1,6 +1,7 @@
 package com.mall4j.cloud.biz.model;
 
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.Date;
  * 任务客户群表
  */
 @Data
+@TableName("cp_task_client_group_info")
 public class TaskClientGroupInfo {
     /**
      * 主键

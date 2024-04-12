@@ -1,6 +1,7 @@
 package com.mall4j.cloud.biz.model;
 
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.Date;
  * 任务频率信息
  */
 @Data
+@TableName("cp_task_frequency_info")
 public class TaskFrequencyInfo {
     /**
      * 主键

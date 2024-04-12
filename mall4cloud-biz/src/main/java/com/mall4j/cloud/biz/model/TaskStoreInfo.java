@@ -1,6 +1,7 @@
 package com.mall4j.cloud.biz.model;
 
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.Date;
  * 任务门店表
  */
 @Data
+@TableName("cp_task_store_info")
 public class TaskStoreInfo {
     /**
      * 主键

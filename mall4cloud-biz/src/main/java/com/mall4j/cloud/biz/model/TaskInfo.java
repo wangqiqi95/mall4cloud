@@ -2,6 +2,7 @@ package com.mall4j.cloud.biz.model;
 
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Date;
  * 任务信息表
  */
 @Data
+@TableName("cp_task_info")
 public class TaskInfo {
     /**
      * 主键

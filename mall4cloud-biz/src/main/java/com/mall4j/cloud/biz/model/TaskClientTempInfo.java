@@ -7,11 +7,11 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 任务导购表
+ * 任务客户临时表
  */
 @Data
-@TableName("cp_task_shopping_guide_info")
-public class TaskShoppingGuideInfo {
+@TableName("cp_task_client_temp_info")
+public class TaskClientTempInfo {
     /**
      * 主键
      */
@@ -37,16 +37,16 @@ public class TaskShoppingGuideInfo {
      */
     private Integer delFlag;
     /**
-     * 任务id
+     * 临时id，用于新增时匹配
      */
-    private Long taskId;
+    private String tempUuid;
     /**
-     * 导购id
+     * 客户昵称
      */
-    private String shopGuideId;
+    private String clientNickname;
     /**
-     * 导购类型 1任务导购 2指定的员工导购
+     * 客户电话
      */
-    private Integer shopGuideType;
+    private String clientPhone;
 }
 

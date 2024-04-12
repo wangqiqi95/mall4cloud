@@ -3,19 +3,28 @@ package com.mall4j.cloud.biz.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.Validator;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.metadata.data.ReadCellData;
+import com.alibaba.excel.read.listener.ReadListener;
+import com.alibaba.excel.util.ConverterUtils;
+import com.alibaba.excel.util.ListUtils;
+import com.alibaba.excel.write.builder.ExcelWriterBuilder;
+import com.alibaba.excel.write.metadata.WriteSheet;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mall4j.cloud.biz.constant.task.*;
-import com.mall4j.cloud.biz.dto.TaskInfoDTO;
-import com.mall4j.cloud.biz.dto.TaskInfoSearchParamDTO;
-import com.mall4j.cloud.biz.dto.TaskRemindInfoDTO;
+import com.mall4j.cloud.biz.dto.*;
 import com.mall4j.cloud.biz.mapper.TaskInfoMapper;
 import com.mall4j.cloud.biz.model.*;
 import com.mall4j.cloud.biz.service.*;
+import com.mall4j.cloud.biz.util.AnnotationUtil;
 import com.mall4j.cloud.biz.util.ExpressUtil;
-import com.mall4j.cloud.biz.vo.cp.CustGroupVO;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskClientInfoVO;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoPageVO;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoVO;
@@ -26,10 +35,16 @@ import com.mall4j.cloud.common.database.util.PageUtil;
 import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.common.exception.Assert;
 import com.mall4j.cloud.common.security.AuthUserContext;
+import com.mall4j.cloud.common.util.ExcelUtil;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,6 +66,8 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
     private TaskRemindInfoService taskRemindInfoService;
     @Resource
     private TaskClientTagInfoService taskClientTagInfoService;
+    @Resource
+    private TaskClientTempInfoService taskClientTempInfoService;
 
     public static final Integer ZERO = 0;
     // 拥有话术的任务类型
@@ -288,6 +305,154 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
 
 
         return taskInfoVO;
+    }
+
+    @Override
+    public void importClients(MultipartFile file, String uuid, HttpServletResponse response) {
+        // 文件名校验
+        com.mall4j.cloud.biz.util.ExcelUtil.checkFileName(file);
+        try {
+
+
+            EasyExcel.read(file.getInputStream(), TaskClientImportExcelDTO.class, new ReadListener<TaskClientImportExcelDTO>() {
+                        // 校验是否处理过数据
+                        private boolean handledData = false;
+
+                        /**
+                         * 单次缓存的数据量
+                         */
+                        public static final int BATCH_COUNT = 10;
+                        /**
+                         *临时存储
+                         */
+
+                        private List<TaskClientInfoDTO> cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+                        private List<TaskClientImportErrorExcelDTO> errorExcels = new ArrayList<>();
+
+                        /**
+                         * 校验数据。注意这是每一条数据
+                         * @param data
+                         * @param context
+                         */
+                        @Override
+                        public void invoke(TaskClientImportExcelDTO data, AnalysisContext context) {
+                            checkImportData(data, cachedDataList, errorExcels);
+                            handledData = true;
+                            // 每隔指定条数保存
+                            if (cachedDataList.size() >= BATCH_COUNT) {
+                                taskClientTempInfoService.batchInsert(cachedDataList, uuid);
+                                // 存储完成清理 list
+                                cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+                            }
+                        }
+
+                        @Override
+                        public void doAfterAllAnalysed(AnalysisContext context) {
+                            Assert.isTrue(!handledData || CollUtil.isEmpty(cachedDataList), "导入的excel中不存在数据，请添加后重试！");
+                            org.springframework.util.Assert.isTrue(CollUtil.isNotEmpty(cachedDataList) || handledData, "");
+                            if (CollUtil.isNotEmpty(cachedDataList)) {
+                                taskClientTempInfoService.batchInsert(cachedDataList, uuid);
+                            }
+                            // 不为空说明存在错误数据。导出错误数据
+                            if (CollUtil.isNotEmpty(errorExcels)) {
+                                ExcelWriter excelWriter = null;
+                                try {
+                                    // 先执行合并策略
+                                    ExcelWriterBuilder excelWriterMerge = com.mall4j.cloud.common.util.ExcelUtil.getExcelWriterMerge(response, "导入客户名单错误数据", 1, new int[]{});
+                                    // useDefaultStyle false 不需要默认的头部加粗/自动换行样式
+                                    excelWriter = ExcelUtil.getExcelModel(excelWriterMerge, new HashMap<>(), 1).useDefaultStyle(false).build();
+                                    // 业务代码
+                                    if (CollUtil.isNotEmpty(errorExcels)) {
+                                        // 进行写入操作
+                                        WriteSheet sheetWriter = EasyExcel.writerSheet("导入客户名单错误数据").head(TaskClientImportErrorExcelDTO.class).build();
+                                        excelWriter.write(errorExcels, sheetWriter);
+                                    }
+                                } catch (Exception e) {
+                                } finally {
+                                    // 千万别忘记finish 会帮忙关闭流
+                                    if (excelWriter != null) {
+                                        excelWriter.finish();
+                                    }
+                                }
+                            }
+                        }
+
+                        /**
+                         * 校验表头
+                         * @param headMap
+                         * @param context
+                         */
+                        @Autowired
+                        public void invokeHead(Map<Integer, ReadCellData<?>> headMap, AnalysisContext context) {
+                            // 获取表头数据
+                            Map<Integer, String> headInfos = ConverterUtils.convertToStringMap(headMap, context);
+                            // 导入类的表头
+                            Map<Integer, String> fieldAnnotationValue = AnnotationUtil.getFieldAnnotationValue(TaskClientImportExcelDTO.class);
+                            org.springframework.util.Assert.isTrue(headInfos.equals(fieldAnnotationValue), "导入的excel表头与模板不一致，请重新下载模板填写后重试！");
+                        }
+                    }).
+
+                    sheet().
+
+                    doRead();
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+
+    }
+
+    @Override
+    public void downloadClientImportTemplate(HttpServletResponse response) {
+        List<TaskClientImportExcelDTO> list = new ArrayList<>();
+        list.add(new TaskClientImportExcelDTO());
+
+        ExcelWriter excelWriter = null;
+        try {
+            // 先执行合并策略
+            ExcelWriterBuilder excelWriterMerge = com.mall4j.cloud.common.util.ExcelUtil.getExcelWriterMerge(response, "导入客户名单模板", 1, new int[]{});
+            // useDefaultStyle false 不需要默认的头部加粗/自动换行样式
+            excelWriter = ExcelUtil.getExcelModel(excelWriterMerge, new HashMap<>(), 1).useDefaultStyle(false).build();
+            // 业务代码
+            if (CollUtil.isNotEmpty(list)) {
+                // 进行写入操作
+                WriteSheet sheetWriter = EasyExcel.writerSheet("导入客户名单模板").head(TaskClientImportExcelDTO.class).build();
+                excelWriter.write(list, sheetWriter);
+            }
+        } catch (Exception e) {
+        } finally {
+            // 千万别忘记finish 会帮忙关闭流
+            if (excelWriter != null) {
+                excelWriter.finish();
+            }
+        }
+    }
+
+    private void checkImportData(TaskClientImportExcelDTO
+                                         data, List<TaskClientInfoDTO> successData, List<TaskClientImportErrorExcelDTO> errorData) {
+        org.springframework.util.Assert.isTrue(ObjectUtil.isNotEmpty(data), "excel中不存在数据，请填写后再次导入");
+
+        // 错误提示
+        StringBuffer errorMsg = new StringBuffer();
+        if (StrUtil.isBlank(data.getPhone())) {
+            errorMsg.append("手机号不能为空！");
+        }
+        if (!Validator.isMobile(data.getPhone())) {
+            errorMsg.append("手机号格式错误！");
+        }
+
+
+        // 如果报错信息不为空时
+        if (StrUtil.isNotBlank(errorMsg.toString())) {
+            TaskClientImportErrorExcelDTO taskClientImportErrorExcelDTO = new TaskClientImportErrorExcelDTO();
+            BeanUtils.copyProperties(data, taskClientImportErrorExcelDTO);
+            taskClientImportErrorExcelDTO.setErrorMsg(errorMsg.toString());
+            errorData.add(taskClientImportErrorExcelDTO);
+        } else {
+            TaskClientInfoDTO taskClientInfoDTO = new TaskClientInfoDTO();
+            taskClientInfoDTO.setClientNickname(data.getName());
+            taskClientInfoDTO.setClientPhone(data.getPhone());
+            successData.add(taskClientInfoDTO);
+        }
     }
 }
 
