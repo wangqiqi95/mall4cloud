@@ -2,5 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mall4j.cloud.biz.mapper.TaskExecuteInfoMapper">
 
+    <select id="list" resultType="com.mall4j.cloud.biz.vo.cp.taskInfo.TaskExecuteInfoVO">
+        select t1.id,t1.task_id,t2.task_name,t1.task_type,
+        t1.shopping_guide_id,t1.status,t1.task_time,t1.client_sum,t1.success_client_sum
+        from cp_task_execute_info t1
+        join cp_task_info t2 on t1.task_id=t2.id and t2.del_flag=0
+        where t1.del_flag=0
+        <if test="et.taskName != null and et.taskName !='' ">AND t2.task_name like CONCAT('%', #{et.taskName},'%')</if>
+        <if test="et.taskType != null">AND t1.task_type=#{et.taskType}</if>
+        <if test="et.status != null">AND t1.status=#{et.status}</if>
+        <if test="et.shoppingGuideId != null">AND t1.shopping_guide_id=#{et.shoppingGuideId}</if>
+    </select>
 </mapper>
 

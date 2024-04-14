@@ -12,12 +12,14 @@ import com.mall4j.cloud.biz.mapper.TaskClientInfoMapper;
 import com.mall4j.cloud.biz.model.TaskClientInfo;
 import com.mall4j.cloud.biz.service.TaskClientInfoService;
 import com.mall4j.cloud.biz.service.TaskClientTagInfoService;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.ShoppingGuideTaskClientVO;
 import com.mall4j.cloud.common.constant.DeleteEnum;
 import com.mall4j.cloud.common.security.AuthUserContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -73,7 +75,7 @@ public class TaskClientInfoServiceImpl extends ServiceImpl<TaskClientInfoMapper,
         }
         List<TaskClientInfo> taskClientInfoList = taskClientInfos.stream().map(temp -> {
             TaskClientInfo taskClientInfo = new TaskClientInfo();
-            BeanUtil.copyProperties(temp,taskClientInfo);
+            BeanUtil.copyProperties(temp, taskClientInfo);
             taskClientInfo.setCreateTime(new Date());
             taskClientInfo.setUpdateTime(new Date());
             taskClientInfo.setCreateBy(AuthUserContext.get().getUsername());
@@ -83,6 +85,15 @@ public class TaskClientInfoServiceImpl extends ServiceImpl<TaskClientInfoMapper,
         }).collect(Collectors.toList());
         saveBatch(taskClientInfoList);
 
+    }
+
+    @Override
+    public List<ShoppingGuideTaskClientVO> buildShoppingGuideTaskClient(Long taskId) {
+        return list(Wrappers.<TaskClientInfo>lambdaQuery().eq(TaskClientInfo::getTaskId, taskId).eq(TaskClientInfo::getDelFlag, DeleteEnum.NORMAL.value())).stream().map(item -> {
+            ShoppingGuideTaskClientVO shoppingGuideTaskClientVO = new ShoppingGuideTaskClientVO();
+            BeanUtil.copyProperties(item, shoppingGuideTaskClientVO);
+            return shoppingGuideTaskClientVO;
+        }).collect(Collectors.toList());
     }
 }
 

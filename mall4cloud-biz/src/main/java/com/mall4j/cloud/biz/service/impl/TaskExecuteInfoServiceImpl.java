@@ -10,20 +10,26 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mall4j.cloud.biz.bo.TaskAllocateBO;
-import com.mall4j.cloud.biz.constant.task.TaskClientTypeEnum;
-import com.mall4j.cloud.biz.constant.task.TaskExecuteStatusEnum;
-import com.mall4j.cloud.biz.constant.task.TaskStatusEnum;
-import com.mall4j.cloud.biz.constant.task.TaskTypeEnum;
+import com.mall4j.cloud.biz.constant.task.*;
+import com.mall4j.cloud.biz.dto.TaskClientGroupInfoDTO;
+import com.mall4j.cloud.biz.dto.TaskClientInfoDTO;
+import com.mall4j.cloud.biz.dto.TaskExecuteDetailInfoSearchParamDTO;
+import com.mall4j.cloud.biz.dto.TaskExecuteInfoSearchParamDTO;
 import com.mall4j.cloud.biz.mapper.TaskExecuteInfoMapper;
 import com.mall4j.cloud.biz.model.*;
 import com.mall4j.cloud.biz.service.*;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.*;
 import com.mall4j.cloud.common.constant.DeleteEnum;
+import com.mall4j.cloud.common.database.dto.PageDTO;
+import com.mall4j.cloud.common.database.util.PageUtil;
+import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.common.exception.Assert;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,6 +47,10 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
     private TaskShoppingGuideInfoService taskShoppingGuideInfoService;
     @Resource
     private TaskExecuteDetailInfoService taskExecuteDetailInfoService;
+    @Resource
+    private TaskExecuteInfoMapper taskExecuteInfoMapper;
+    @Resource
+    private TaskClientGroupInfoService taskClientGroupInfoService;
 
 
     @Override
@@ -81,8 +91,19 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
                     generateNotStartWorkWechatAddFriendTask(taskInfo);
                     break;
                 case SHARE_MATERIAL:
-                    generateNotStartWorkWechatAddFriendTask(taskInfo);
-                    break;
+                    TaskShareTypeEnum taskShareTypeEnum = TaskShareTypeEnum.getEnum(taskInfo.getShareType());
+                    if (taskShareTypeEnum == null) {
+                        break;
+                    }
+                    switch (taskShareTypeEnum) {
+                        // 除分享客户群外的任务生成规则一致
+                        case WORK_WECHAT_CUSTOMER_BASE:
+                            generateNotStartClientGroupTask(taskInfo);
+                            break;
+                        default:
+                            generateNotStartClientTask(taskInfo);
+                            break;
+                    }
                 case VISIT_CUSTOMER:
                     generateNotStartWorkWechatAddFriendTask(taskInfo);
                     break;
@@ -96,10 +117,8 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
 
     @Override
     public void generateProcessTaskExecuteInfo() {
-        // 获取前后十五分钟的未启动的任务信息
+        // 获取今天的任务
         Date current = new Date();
-
-
         List<Long> taskIds = taskFrequencyInfoService.list(Wrappers.<TaskFrequencyInfo>lambdaQuery()
                         .eq(TaskFrequencyInfo::getDelFlag, DeleteEnum.NORMAL.value())
                         .ge(TaskFrequencyInfo::getStartTime, current)
@@ -126,7 +145,24 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
             }
             switch (taskTypeEnum) {
                 case WORK_WECHAT_ADD_FRIEND:
-                    generateNotStartWorkWechatAddFriendTask(taskInfo);
+                    generateProcessWorkWechatAddFriendTask(taskInfo);
+                    break;
+                case SHARE_MATERIAL:
+                    TaskShareTypeEnum taskShareTypeEnum = TaskShareTypeEnum.getEnum(taskInfo.getShareType());
+                    if (taskShareTypeEnum == null) {
+                        break;
+                    }
+                    switch (taskShareTypeEnum) {
+                        // 除分享客户群外的任务生成规则一致
+                        case WORK_WECHAT_CUSTOMER_BASE:
+                            generateProcessClientGroupTask(taskInfo);
+                            break;
+                        default:
+                            generateProcessClientTask(taskInfo);
+                            break;
+                    }
+                case VISIT_CUSTOMER:
+                    generateProcessClientTask(taskInfo);
                     break;
             }
 
@@ -145,6 +181,7 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
         Integer allocatedQuantity = taskInfo.getAllocatedQuantity();
 
         List<TaskClientInfo> clientInfos = new ArrayList<>();
+        List<TaskShoppingGuideInfo> taskShoppingGuideInfos;
 
         // todo 根据标签获取客户
         if (ObjectUtil.equals(taskInfo.getTaskClientType(), TaskClientTypeEnum.SPECIFY_LABEL.getValue())) {
@@ -158,9 +195,97 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
         }
 
         // 获取导购信息
-        List<TaskShoppingGuideInfo> taskShoppingGuideInfos = taskShoppingGuideInfoService.list(Wrappers.<TaskShoppingGuideInfo>lambdaQuery().eq(TaskShoppingGuideInfo::getTaskId, taskInfo.getId()).eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value()));
+        if (ObjectUtil.equals(taskInfo.getTaskShoppingGuideType(), TaskShoppingGuideTypeEnum.ALL.getValue())) {
+            // todo 此处需要判断是否获取所有导购
+            taskShoppingGuideInfos = taskShoppingGuideInfoService.list();
+        } else {
+            taskShoppingGuideInfos = taskShoppingGuideInfoService.list(Wrappers.<TaskShoppingGuideInfo>lambdaQuery().eq(TaskShoppingGuideInfo::getTaskId, taskInfo.getId()).eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value()));
+        }
+
 
         List<TaskAllocateBO> taskAllocateBOList = allocateSales(clientInfos, taskShoppingGuideInfos, allocatedQuantity).stream().filter(bo -> CollUtil.isNotEmpty(bo.getTaskClientInfoList())).collect(Collectors.toList());
+
+        for (TaskAllocateBO taskAllocateBO : taskAllocateBOList) {
+            // 保存任务调度主表
+            TaskExecuteInfo taskExecuteInfo = initTaskExecuteInfo(taskAllocateBO);
+            save(taskExecuteInfo);
+
+            taskAllocateBO.setExecuteId(taskExecuteInfo.getId());
+
+            // 保存调度详情
+            taskExecuteDetailInfoService.saveBatch(taskExecuteDetailInfoService.buildTaskExecuteDetailInfoList(taskAllocateBO));
+
+        }
+    }
+
+    /**
+     * 生成未启动的客户任务
+     * @param taskInfo 任务信息
+     */
+    private void generateNotStartClientTask(TaskInfo taskInfo) {
+
+        List<TaskClientInfo> clientInfos;
+        List<TaskShoppingGuideInfo> taskShoppingGuideInfos;
+
+        // todo 根据标签获取客户
+        if (ObjectUtil.equals(taskInfo.getTaskClientType(), TaskClientTypeEnum.SPECIFY_LABEL.getValue())) {
+            clientInfos = Collections.emptyList();
+        } else if (ObjectUtil.equals(taskInfo.getTaskClientType(), TaskClientTypeEnum.ALL.getValue())) {
+            // todo 获取全部用户
+            clientInfos = Collections.emptyList();
+        }
+
+        // 获取导购信息
+        if (ObjectUtil.equals(taskInfo.getTaskShoppingGuideType(), TaskShoppingGuideTypeEnum.ALL.getValue())) {
+            // todo 此处需要判断是否获取所有导购
+            taskShoppingGuideInfos = taskShoppingGuideInfoService.list();
+        } else {
+            taskShoppingGuideInfos = taskShoppingGuideInfoService.list(Wrappers.<TaskShoppingGuideInfo>lambdaQuery().eq(TaskShoppingGuideInfo::getTaskId, taskInfo.getId()).eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value()));
+        }
+
+        // todo 需要接口判断与客户最近联系的导购
+        List<TaskAllocateBO> taskAllocateBOList = Collections.emptyList();
+
+        for (TaskAllocateBO taskAllocateBO : taskAllocateBOList) {
+            // 保存任务调度主表
+            TaskExecuteInfo taskExecuteInfo = initTaskExecuteInfo(taskAllocateBO);
+            save(taskExecuteInfo);
+
+            taskAllocateBO.setExecuteId(taskExecuteInfo.getId());
+
+            // 保存调度详情
+            taskExecuteDetailInfoService.saveBatch(taskExecuteDetailInfoService.buildTaskExecuteDetailInfoList(taskAllocateBO));
+
+        }
+    }
+
+    /**
+     * 生成未启动的分享客户群任务
+     * @param taskInfo 任务信息
+     */
+    private void generateNotStartClientGroupTask(TaskInfo taskInfo) {
+
+        List<TaskClientGroupInfo> taskClientGroupInfos;
+        List<TaskShoppingGuideInfo> taskShoppingGuideInfos;
+
+        // todo 根据标签获取客户群
+        if (ObjectUtil.equals(taskInfo.getTaskClientGroupType(), TaskClientGroupTypeEnum.SPECIFY.getValue())) {
+            taskClientGroupInfos = Collections.emptyList();
+        } else if (ObjectUtil.equals(taskInfo.getTaskClientGroupType(), TaskClientGroupTypeEnum.ALL.getValue())) {
+            // todo 获取全部用户群
+            taskClientGroupInfos = Collections.emptyList();
+        }
+
+        // 获取导购信息
+        if (ObjectUtil.equals(taskInfo.getTaskShoppingGuideType(), TaskShoppingGuideTypeEnum.ALL.getValue())) {
+            // todo 此处需要判断是否获取所有导购
+            taskShoppingGuideInfos = taskShoppingGuideInfoService.list();
+        } else {
+            taskShoppingGuideInfos = taskShoppingGuideInfoService.list(Wrappers.<TaskShoppingGuideInfo>lambdaQuery().eq(TaskShoppingGuideInfo::getTaskId, taskInfo.getId()).eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value()));
+        }
+
+        //todo 客户群分配规则
+        List<TaskAllocateBO> taskAllocateBOList = Collections.emptyList();
 
         for (TaskAllocateBO taskAllocateBO : taskAllocateBOList) {
             // 保存任务调度主表
@@ -185,6 +310,7 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
         Integer allocatedQuantity = taskInfo.getAllocatedQuantity();
 
         List<TaskClientInfo> clientInfos = new ArrayList<>();
+        List<TaskShoppingGuideInfo> taskShoppingGuideInfos;
 
         // todo 根据标签获取客户
         if (ObjectUtil.equals(taskInfo.getTaskClientType(), TaskClientTypeEnum.SPECIFY_LABEL.getValue())) {
@@ -204,7 +330,13 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
                 .stream().map(TaskExecuteDetailInfo::getClientId).distinct().collect(Collectors.toList());
 
         // 获取导购信息
-        List<TaskShoppingGuideInfo> taskShoppingGuideInfos = taskShoppingGuideInfoService.list(Wrappers.<TaskShoppingGuideInfo>lambdaQuery().eq(TaskShoppingGuideInfo::getTaskId, taskInfo.getId()).eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value()));
+        // 获取导购信息
+        if (ObjectUtil.equals(taskInfo.getTaskShoppingGuideType(), TaskShoppingGuideTypeEnum.ALL.getValue())) {
+            // todo 此处需要判断是否获取所有导购
+            taskShoppingGuideInfos = taskShoppingGuideInfoService.list();
+        } else {
+            taskShoppingGuideInfos = taskShoppingGuideInfoService.list(Wrappers.<TaskShoppingGuideInfo>lambdaQuery().eq(TaskShoppingGuideInfo::getTaskId, taskInfo.getId()).eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value()));
+        }
 
         List<TaskAllocateBO> taskAllocateBOList = allocateSales(clientInfos.stream().filter(clientInfo -> !CollUtil.contains(genClients, clientInfo.getClientId())).collect(Collectors.toList()),
                 taskShoppingGuideInfos, allocatedQuantity).stream().filter(bo -> CollUtil.isNotEmpty(bo.getTaskClientInfoList())).collect(Collectors.toList());
@@ -215,6 +347,99 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
             save(taskExecuteInfo);
 
             taskAllocateBO.setExecuteId(taskExecuteInfo.getId());
+            // 保存调度详情
+            taskExecuteDetailInfoService.saveBatch(taskExecuteDetailInfoService.buildTaskExecuteDetailInfoList(taskAllocateBO));
+        }
+    }
+
+    /**
+     * 生成进行中的客户任务
+     * 区分于未启动的任务，进行中的任务在生成时需要过滤已使用的客户，且不更新任务配置表的状态
+     * @param taskInfo 任务信息
+     */
+    private void generateProcessClientTask(TaskInfo taskInfo) {
+
+        List<TaskClientInfo> clientInfos = new ArrayList<>();
+        List<TaskShoppingGuideInfo> taskShoppingGuideInfos;
+
+        // todo 根据标签获取客户
+        if (ObjectUtil.equals(taskInfo.getTaskClientType(), TaskClientTypeEnum.SPECIFY_LABEL.getValue())) {
+            // 需组装成TaskClientInfo类型
+
+        } else if (ObjectUtil.equals(taskInfo.getTaskClientType(), TaskClientTypeEnum.ALL.getValue())) {
+            clientInfos = Collections.emptyList();
+        }
+
+        // 获取已生成的客户信息
+        List<String> genClients = taskExecuteDetailInfoService.list(Wrappers.<TaskExecuteDetailInfo>lambdaQuery()
+                        .eq(TaskExecuteDetailInfo::getTaskId, taskInfo.getId())
+                        .eq(TaskExecuteDetailInfo::getDelFlag, DeleteEnum.NORMAL.value()))
+                .stream().map(TaskExecuteDetailInfo::getClientId).distinct().collect(Collectors.toList());
+
+        // 获取导购信息
+        if (ObjectUtil.equals(taskInfo.getTaskShoppingGuideType(), TaskShoppingGuideTypeEnum.ALL.getValue())) {
+            // todo 此处需要判断是否获取所有导购
+            taskShoppingGuideInfos = taskShoppingGuideInfoService.list();
+        } else {
+            taskShoppingGuideInfos = taskShoppingGuideInfoService.list(Wrappers.<TaskShoppingGuideInfo>lambdaQuery().eq(TaskShoppingGuideInfo::getTaskId, taskInfo.getId()).eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value()));
+        }
+
+        // todo 需要接口判断与客户最近联系的导购
+        List<TaskAllocateBO> taskAllocateBOList = Collections.emptyList();
+
+        for (TaskAllocateBO taskAllocateBO : taskAllocateBOList) {
+            // 保存任务调度主表
+            TaskExecuteInfo taskExecuteInfo = initTaskExecuteInfo(taskAllocateBO);
+            save(taskExecuteInfo);
+
+            taskAllocateBO.setExecuteId(taskExecuteInfo.getId());
+            // 保存调度详情
+            taskExecuteDetailInfoService.saveBatch(taskExecuteDetailInfoService.buildTaskExecuteDetailInfoList(taskAllocateBO));
+        }
+    }
+
+    /**
+     * 生成进行中的客户群任务
+     * @param taskInfo 任务信息
+     */
+    private void generateProcessClientGroupTask(TaskInfo taskInfo) {
+
+        List<TaskClientGroupInfo> clientGroupInfos = new ArrayList<>();
+        List<TaskShoppingGuideInfo> taskShoppingGuideInfos;
+
+        // todo 根据标签获取客户群
+        if (ObjectUtil.equals(taskInfo.getTaskClientGroupType(), TaskClientGroupTypeEnum.SPECIFY.getValue())) {
+
+        } else if (ObjectUtil.equals(taskInfo.getTaskClientGroupType(), TaskClientGroupTypeEnum.ALL.getValue())) {
+            // todo获取所有客户群
+            clientGroupInfos = Collections.emptyList();
+        }
+
+        // 获取已生成的客户信息
+        List<String> genClients = taskExecuteDetailInfoService.list(Wrappers.<TaskExecuteDetailInfo>lambdaQuery()
+                        .eq(TaskExecuteDetailInfo::getTaskId, taskInfo.getId())
+                        .eq(TaskExecuteDetailInfo::getDelFlag, DeleteEnum.NORMAL.value()))
+                .stream().map(TaskExecuteDetailInfo::getClientId).distinct().collect(Collectors.toList());
+
+        // 获取导购信息
+        if (ObjectUtil.equals(taskInfo.getTaskShoppingGuideType(), TaskShoppingGuideTypeEnum.ALL.getValue())) {
+            // todo 此处需要判断是否获取所有导购
+            taskShoppingGuideInfos = taskShoppingGuideInfoService.list();
+        } else {
+            taskShoppingGuideInfos = taskShoppingGuideInfoService.list(Wrappers.<TaskShoppingGuideInfo>lambdaQuery().eq(TaskShoppingGuideInfo::getTaskId, taskInfo.getId()).eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value()));
+        }
+
+        // todo 需要接口判断与客户最近联系的导购
+        List<TaskAllocateBO> taskAllocateBOList = Collections.emptyList();
+
+        for (TaskAllocateBO taskAllocateBO : taskAllocateBOList) {
+            // 保存任务调度主表
+            TaskExecuteInfo taskExecuteInfo = initTaskExecuteInfo(taskAllocateBO);
+            save(taskExecuteInfo);
+
+            taskAllocateBO.setExecuteId(taskExecuteInfo.getId());
+            // 保存调度详情
+            taskExecuteDetailInfoService.saveBatch(taskExecuteDetailInfoService.buildTaskExecuteDetailInfoList(taskAllocateBO));
         }
     }
 
@@ -274,5 +499,24 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
         return taskAllocateBOList;
     }
 
+
+    @Override
+    public PageVO<TaskExecuteInfoVO> page(PageDTO pageDTO, TaskExecuteInfoSearchParamDTO taskExecuteInfoSearchParamDTO) {
+        return PageUtil.doPage(pageDTO, () -> taskExecuteInfoMapper.list(taskExecuteInfoSearchParamDTO));
+    }
+
+    @Override
+    public TaskExecuteDetailInfoVO getTaskExecuteDetailInfo(Long executeId) {
+        Assert.isTrue(ObjectUtil.isEmpty(executeId), "参数异常");
+
+        TaskExecuteInfo taskExecuteInfo = getById(executeId);
+        Assert.isTrue(ObjectUtil.isEmpty(taskExecuteInfo), "任务获取异常");
+
+        // 组装任务信息
+        ShoppingGuideTaskDetailVO shoppingGuideTaskDetail = taskInfoService.buildShoppingGuideTaskDetailVO(taskExecuteInfo.getTaskId());
+        return TaskExecuteDetailInfoVO.builder()
+                .shoppingGuideTaskDetail(shoppingGuideTaskDetail)
+                .build();
+    }
 }
 

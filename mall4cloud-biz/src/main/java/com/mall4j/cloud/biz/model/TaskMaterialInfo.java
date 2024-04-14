@@ -7,11 +7,11 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 任务回访信息信息
+ * 任务素材信息表
  */
 @Data
-@TableName("cp_task_visit_result_info")
-public class TaskVisitResultInfo {
+@TableName("cp_task_material_info")
+public class TaskMaterialInfo {
     /**
      * 主键
      */
@@ -40,17 +40,12 @@ public class TaskVisitResultInfo {
      * 任务id
      */
     private Long taskId;
-
     /**
-     * 调度详情id
+     * 素材类型 图片（image）、语音(voice）、视频(video），普通文件(file〕"
      */
-    private Long executeDetailId;
+    private String materialType;
     /**
-     * 回访信息
-     */
-    private String resultInfo;
-    /**
-     * 附件信息
+     * 素材保存信息
      */
     private String fileInfo;
 }

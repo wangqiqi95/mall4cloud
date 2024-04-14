@@ -1,32 +1,20 @@
 package com.mall4j.cloud.biz.controller;
 
 
-import cn.hutool.core.collection.CollUtil;
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.annotation.ExcelIgnore;
-import com.alibaba.excel.annotation.ExcelProperty;
-import com.alibaba.excel.util.ListUtils;
-import com.alibaba.excel.write.builder.ExcelWriterBuilder;
-import com.alibaba.excel.write.metadata.WriteSheet;
-import com.mall4j.cloud.biz.dto.TaskClientImportExcelDTO;
 import com.mall4j.cloud.biz.dto.TaskInfoDTO;
 import com.mall4j.cloud.biz.dto.TaskInfoSearchParamDTO;
+import com.mall4j.cloud.biz.dto.TaskVisitResultInfoDTO;
 import com.mall4j.cloud.biz.service.TaskInfoService;
-import com.mall4j.cloud.biz.vo.cp.CustGroupVO;
+import com.mall4j.cloud.biz.service.TaskVisitResultInfoService;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoPageVO;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoVO;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.common.response.ServerResponseEntity;
-import com.mall4j.cloud.common.util.ExcelUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.web.bind.annotation.*;
 import lombok.AllArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,9 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.*;
 
 /**
  * 任务信息表

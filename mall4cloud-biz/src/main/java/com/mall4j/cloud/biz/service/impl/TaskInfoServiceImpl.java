@@ -4,7 +4,6 @@ package com.mall4j.cloud.biz.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.EasyExcel;
@@ -25,10 +24,7 @@ import com.mall4j.cloud.biz.model.*;
 import com.mall4j.cloud.biz.service.*;
 import com.mall4j.cloud.biz.util.AnnotationUtil;
 import com.mall4j.cloud.biz.util.ExpressUtil;
-import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskClientInfoVO;
-import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoPageVO;
-import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoVO;
-import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskRemindInfoVO;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.*;
 import com.mall4j.cloud.common.constant.DeleteEnum;
 import com.mall4j.cloud.common.database.dto.PageDTO;
 import com.mall4j.cloud.common.database.util.PageUtil;
@@ -68,6 +64,8 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
     private TaskClientTagInfoService taskClientTagInfoService;
     @Resource
     private TaskClientTempInfoService taskClientTempInfoService;
+    @Resource
+    private TaskMaterialInfoService taskMaterialInfoService;
 
     public static final Integer ZERO = 0;
     // 拥有话术的任务类型
@@ -121,6 +119,8 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
         taskShoppingGuideInfoService.saveShoppingGuideInfo(taskInfo);
         // 保存任务提醒信息
         taskRemindInfoService.saveTaskRemindInfo(taskInfo);
+        // 保存素材
+        taskMaterialInfoService.saveTaskMaterialInfo(taskInfo);
 
     }
 
@@ -154,7 +154,7 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
                 && CollUtil.isEmpty(taskInfoDTO.getClientTagIds()), "指定标签时，需传入标签信息");
         // 指定客户群时必须传入客户群信息
         Assert.isTrue(ObjectUtil.equals(taskInfoDTO.getTaskClientGroupType(), TaskClientGroupTypeEnum.SPECIFY.getValue())
-                && CollUtil.isEmpty(taskInfoDTO.getTaskClientGroupIds()), "指定客户群时必须传入客户群信息！");
+                && CollUtil.isEmpty(taskInfoDTO.getTaskClientGroups()), "指定客户群时必须传入客户群信息！");
         // 指定门店时必须传入门店信息
         Assert.isTrue(ObjectUtil.equals(taskInfoDTO.getTaskStoreType(), TaskStoreTypeEnum.SPECIFY.getValue())
                 && CollUtil.isEmpty(taskInfoDTO.getTaskStoreIds()), "指定门店时必须传入门店信息！");
@@ -162,13 +162,15 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
         Assert.isTrue(ObjectUtil.equals(taskInfoDTO.getTaskShoppingGuideType(), TaskShoppingGuideTypeEnum.SPECIFY.getValue())
                 && CollUtil.isEmpty(taskInfoDTO.getShoppingGuideIds()), "指定导购时必须传入导购信息！");
 
+        // 分享素材任务必须上传素材信息
+        Assert.isTrue(ObjectUtil.equals(taskInfoDTO.getTaskType(), TaskTypeEnum.SHARE_MATERIAL.getValue())
+                && CollUtil.isEmpty(taskInfoDTO.getTaskMaterialInfos()), "分享素材任务必须上传素材信息！");
+
         Assert.isTrue(taskInfoDTO.getTaskRemindInfos().stream()
                 .map(TaskRemindInfoDTO::getRemindType).distinct()
                 .anyMatch(remindType -> ObjectUtil.equals(remindType, TaskRemindTypeEnum.ALL.getValue())
                         || ObjectUtil.equals(remindType, TaskRemindTypeEnum.SPECIFY_SHOPPING_GUIDE.getValue()))
                 && CollUtil.isEmpty(taskInfoDTO.getTaskRemindInfos()), "任务提醒勾选了指定员工时必须传入指定导购信息");
-
-
     }
 
     @Override
@@ -230,6 +232,8 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
         taskShoppingGuideInfoService.copyShoppingGuideInfo(taskInfo.getId());
         // 复制任务提醒信息
         taskRemindInfoService.copyTaskRemindInfo(taskInfo.getId());
+        // 复制素材
+        taskMaterialInfoService.copyTaskMaterialInfo(taskInfo.getId());
     }
 
     @Override
@@ -302,6 +306,16 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
         taskInfoVO.setRemindShoppingGuideIds(taskShoppingGuideInfos.stream()
                 .filter(item -> ObjectUtil.equals(item.getShopGuideType(), TaskShoppingGuideInfoTypeEnum.SPECIFY_SHOPPING_GUIDE.getValue()))
                 .map(TaskShoppingGuideInfo::getShopGuideId).collect(Collectors.toList()));
+        // 设置提醒导购
+        taskInfoVO.setTaskMaterialInfo(taskMaterialInfoService.list(Wrappers.<TaskMaterialInfo>lambdaQuery()
+                        .eq(TaskMaterialInfo::getTaskId, id)
+                        .eq(TaskMaterialInfo::getDelFlag, DeleteEnum.NORMAL.value())
+                ).stream()
+                .map(i -> {
+                    TaskMaterialInfoVO taskMaterialInfoVO = new TaskMaterialInfoVO();
+                    BeanUtil.copyProperties(i, taskMaterialInfoVO);
+                    return taskMaterialInfoVO;
+                }).collect(Collectors.toList()));
 
 
         return taskInfoVO;
@@ -453,6 +467,33 @@ public class TaskInfoServiceImpl extends ServiceImpl<TaskInfoMapper, TaskInfo> i
             taskClientInfoDTO.setClientPhone(data.getPhone());
             successData.add(taskClientInfoDTO);
         }
+    }
+
+    @Override
+    public ShoppingGuideTaskDetailVO buildShoppingGuideTaskDetailVO(Long taskId) {
+        TaskInfo taskInfo = Optional.ofNullable(getById(taskId)).orElse(new TaskInfo());
+        TaskFrequencyInfo taskFrequencyInfo = Optional.ofNullable(taskFrequencyInfoService.getOne(Wrappers.<TaskFrequencyInfo>lambdaQuery().eq(TaskFrequencyInfo::getTaskId, taskId).eq(TaskFrequencyInfo::getDelFlag, DeleteEnum.NORMAL.value()))).orElse(new TaskFrequencyInfo());
+
+        return ShoppingGuideTaskDetailVO.builder()
+                .taskId(taskId)
+                .taskName(taskInfo.getTaskName())
+                .taskType(taskInfo.getTaskType())
+                .taskStartTime(taskFrequencyInfo.getStartTime())
+                .taskEndTime(taskFrequencyInfo.getEndTime())
+                .taskTarget(taskInfo.getTaskTarget())
+                .taskTargetScale(taskInfo.getTaskTargetScale())
+                .speechSkills(taskInfo.getSpeechSkills())
+                .taskMaterialInfo(taskMaterialInfoService.list(Wrappers.<TaskMaterialInfo>lambdaQuery()
+                                .eq(TaskMaterialInfo::getTaskId, taskId)
+                                .eq(TaskMaterialInfo::getDelFlag, DeleteEnum.NORMAL.value())
+                        ).stream()
+                        .map(i -> {
+                            TaskMaterialInfoVO taskMaterialInfoVO = new TaskMaterialInfoVO();
+                            BeanUtil.copyProperties(i, taskMaterialInfoVO);
+                            return taskMaterialInfoVO;
+                        }).collect(Collectors.toList()))
+                .build();
+
     }
 }
 

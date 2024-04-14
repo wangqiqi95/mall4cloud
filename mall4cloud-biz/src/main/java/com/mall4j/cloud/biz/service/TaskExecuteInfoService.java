@@ -1,8 +1,14 @@
 package com.mall4j.cloud.biz.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.mall4j.cloud.biz.dto.*;
 import com.mall4j.cloud.biz.model.TaskExecuteInfo;
 import com.mall4j.cloud.biz.model.TaskInfo;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.*;
+import com.mall4j.cloud.common.database.dto.PageDTO;
+import com.mall4j.cloud.common.database.vo.PageVO;
+
+import java.util.List;
 
 /**
  * 任务调度信息
@@ -19,5 +25,20 @@ public interface TaskExecuteInfoService extends IService<TaskExecuteInfo> {
      * 注意：请确保每天执行一次
      */
     void generateProcessTaskExecuteInfo();
+
+    /**
+     * 获取导购对应的任务信息
+     * @param pageDTO 分页对象
+     * @param taskExecuteInfoSearchParamDTO 查询条件
+     */
+    PageVO<TaskExecuteInfoVO> page(PageDTO pageDTO, TaskExecuteInfoSearchParamDTO taskExecuteInfoSearchParamDTO);
+
+    /**
+     * 获取任务详情
+     * @param executeId 任务调度id
+     */
+    TaskExecuteDetailInfoVO getTaskExecuteDetailInfo(Long executeId);
+
+
 }
 

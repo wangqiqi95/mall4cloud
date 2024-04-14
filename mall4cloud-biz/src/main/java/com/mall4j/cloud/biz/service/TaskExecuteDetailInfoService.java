@@ -2,8 +2,11 @@ package com.mall4j.cloud.biz.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mall4j.cloud.biz.bo.TaskAllocateBO;
+import com.mall4j.cloud.biz.dto.TaskExecuteDetailInfoSearchParamDTO;
 import com.mall4j.cloud.biz.model.TaskClientInfo;
 import com.mall4j.cloud.biz.model.TaskExecuteDetailInfo;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.ShoppingGuideTaskClientGroupVO;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.ShoppingGuideTaskClientVO;
 
 import java.util.List;
 
@@ -25,5 +28,18 @@ public interface TaskExecuteDetailInfoService extends IService<TaskExecuteDetail
      * @param addStatus 添加状态
      */
     void updateTaskExecuteDetailAddStatus(Long id, Integer addStatus);
+
+
+    /**
+     * 获取客户信息
+     * @param taskExecuteDetailInfoSearchParamDTO 查询条件
+     */
+    List<ShoppingGuideTaskClientVO> listTaskClientInfo(TaskExecuteDetailInfoSearchParamDTO taskExecuteDetailInfoSearchParamDTO);
+
+    /**
+     * 获取客户群信息
+     * @param taskExecuteDetailInfoSearchParamDTO 查询条件
+     */
+    List<ShoppingGuideTaskClientGroupVO> listTaskClientGroupInfo(TaskExecuteDetailInfoSearchParamDTO taskExecuteDetailInfoSearchParamDTO);
 }
 

@@ -9,6 +9,8 @@ import lombok.Data;
  */
 @Data
 public class TaskVisitResultInfoDTO {
+    @ApiModelProperty("调度详情")
+    private Long executeDetailId;
     @ApiModelProperty("回访信息")
     private String resultInfo;
     @ApiModelProperty("附件信息")

@@ -1,7 +1,6 @@
 package com.mall4j.cloud.biz.model;
 
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.util.Date;
@@ -10,7 +9,6 @@ import java.util.Date;
  * 任务调度详情信息
  */
 @Data
-@TableName("cp_task_execute_detail_info")
 public class TaskExecuteDetailInfo {
     /**
      * 主键
@@ -48,6 +46,22 @@ public class TaskExecuteDetailInfo {
      * 客户id
      */
     private String clientId;
+    /**
+     * 客户昵称
+     */
+    private String clientNickName;
+    /**
+     * 客户手机号
+     */
+    private String clientPhone;
+    /**
+     * 客户备注
+     */
+    private String clientRemark;
+    /**
+     * 客户群名称
+     */
+    private String clientGroupName;
     /**
      * 任务类型为加企微好友时特有字段。0未添加 1已添加 2添加失败
      */

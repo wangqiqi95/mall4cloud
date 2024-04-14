@@ -48,7 +48,7 @@ public class TaskFrequencyInfoServiceImpl extends ServiceImpl<TaskFrequencyInfoM
 
     @Override
     public void copyTaskFrequencyInfo(Long taskId) {
-        TaskFrequencyInfo taskFrequencyInfo = getById(taskId);
+        TaskFrequencyInfo taskFrequencyInfo = getOne(Wrappers.<TaskFrequencyInfo>lambdaQuery().eq(TaskFrequencyInfo::getTaskId, taskId).eq(TaskFrequencyInfo::getDelFlag, DeleteEnum.NORMAL.value()));
         if (ObjectUtil.isEmpty(taskFrequencyInfo)) {
             log.error("copyTaskFrequencyInfo时未获取到任务id为：{}的数据", taskId);
             return;

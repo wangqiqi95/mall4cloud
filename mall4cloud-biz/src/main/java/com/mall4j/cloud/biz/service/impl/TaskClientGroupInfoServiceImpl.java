@@ -1,6 +1,7 @@
 package com.mall4j.cloud.biz.service.impl;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -10,6 +11,7 @@ import com.mall4j.cloud.biz.dto.TaskInfoDTO;
 import com.mall4j.cloud.biz.mapper.TaskClientGroupInfoMapper;
 import com.mall4j.cloud.biz.model.TaskClientGroupInfo;
 import com.mall4j.cloud.biz.service.TaskClientGroupInfoService;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.ShoppingGuideTaskClientGroupVO;
 import com.mall4j.cloud.common.constant.DeleteEnum;
 import com.mall4j.cloud.common.security.AuthUserContext;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +35,7 @@ public class TaskClientGroupInfoServiceImpl extends ServiceImpl<TaskClientGroupI
         // 保存客户群信息
         List<TaskClientGroupInfo> taskClientGroupInfos = new ArrayList<>();
         if (ObjectUtil.equals(taskInfoDTO.getTaskClientGroupType(), TaskClientGroupTypeEnum.SPECIFY.getValue())) {
-            taskClientGroupInfos = taskInfoDTO.getTaskClientGroupIds().stream().map(taskClientGroupId -> {
+            taskClientGroupInfos = taskInfoDTO.getTaskClientGroups().stream().map(item -> {
                 TaskClientGroupInfo taskClientGroupInfo = new TaskClientGroupInfo();
                 taskClientGroupInfo.setCreateTime(new Date());
                 taskClientGroupInfo.setUpdateTime(new Date());
@@ -41,7 +43,8 @@ public class TaskClientGroupInfoServiceImpl extends ServiceImpl<TaskClientGroupI
                 taskClientGroupInfo.setUpdateBy(AuthUserContext.get().getUsername());
                 taskClientGroupInfo.setDelFlag(DeleteEnum.NORMAL.value());
                 taskClientGroupInfo.setTaskId(taskInfoDTO.getTaskId());
-                taskClientGroupInfo.setClientGroupId(taskClientGroupId);
+                taskClientGroupInfo.setClientGroupId(item.getClientGroupId());
+                taskClientGroupInfo.setClientGroupName(item.getClientGroupName());
                 return taskClientGroupInfo;
             }).collect(Collectors.toList());
         }
@@ -73,6 +76,17 @@ public class TaskClientGroupInfoServiceImpl extends ServiceImpl<TaskClientGroupI
         }).collect(Collectors.toList());
         saveBatch(taskClientGroupInfoList);
 
+    }
+
+    @Override
+    public List<ShoppingGuideTaskClientGroupVO> buildShoppingGuideTaskClientGroup(Long taskId) {
+        return list(Wrappers.<TaskClientGroupInfo>lambdaQuery().eq(TaskClientGroupInfo::getTaskId, taskId).eq(TaskClientGroupInfo::getDelFlag, DeleteEnum.NORMAL.value())).stream().map(
+                item -> {
+                    ShoppingGuideTaskClientGroupVO shoppingGuideTaskClientGroupVO = new ShoppingGuideTaskClientGroupVO();
+                    BeanUtil.copyProperties(item, shoppingGuideTaskClientGroupVO);
+                    return shoppingGuideTaskClientGroupVO;
+                }
+        ).collect(Collectors.toList());
     }
 }
 

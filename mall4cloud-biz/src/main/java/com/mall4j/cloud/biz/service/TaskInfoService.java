@@ -5,6 +5,7 @@ import com.mall4j.cloud.biz.dto.TaskInfoDTO;
 import com.mall4j.cloud.biz.dto.TaskInfoSearchParamDTO;
 import com.mall4j.cloud.biz.model.TaskInfo;
 import com.mall4j.cloud.biz.vo.cp.CustGroupVO;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.ShoppingGuideTaskDetailVO;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoPageVO;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoVO;
 import com.mall4j.cloud.common.database.dto.PageDTO;
@@ -69,5 +70,7 @@ public interface TaskInfoService extends IService<TaskInfo> {
      * @param response 响应对象
      */
     void downloadClientImportTemplate(HttpServletResponse response);
+
+    ShoppingGuideTaskDetailVO buildShoppingGuideTaskDetailVO(Long taskId);
 }
 

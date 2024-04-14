@@ -56,13 +56,15 @@ public class TaskInfoDTO {
     @ApiModelProperty("任务客户。导入客户时必传")
     private List<TaskClientInfoDTO> taskClientInfos;
     @ApiModelProperty("任务客户群。全部客户群时无需传值，指定客户群时必传")
-    private List<String> taskClientGroupIds;
+    private List<TaskClientGroupInfoDTO> taskClientGroups;
     @ApiModelProperty("任务门店。全部门店时无需传值，指定门店时必传")
     private List<String> taskStoreIds;
     @ApiModelProperty("任务导购。全部导购时无需传值，指定导购时必传")
     private List<String> shoppingGuideIds;
     @ApiModelProperty("提醒员工时选择了指定员工，该值必传")
     private List<String> remindShoppingGuideIds;
+    @ApiModelProperty("任务素材信息。分享任务时该值必传")
+    private List<TaskMaterialInfoDTO> taskMaterialInfos;
 
     @ApiModelProperty(value = "任务id", hidden = true)
     private Long taskId;

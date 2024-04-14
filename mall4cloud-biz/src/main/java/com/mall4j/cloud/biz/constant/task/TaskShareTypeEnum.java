@@ -3,6 +3,8 @@ package com.mall4j.cloud.biz.constant.task;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 /**
  * 任务分享方式枚举
  */
@@ -16,4 +18,8 @@ public enum TaskShareTypeEnum {
     ;
     private final Integer value;
     private final String desc;
+
+    public static TaskShareTypeEnum getEnum(Integer value) {
+        return Arrays.stream(TaskShareTypeEnum.values()).filter(item->item.getValue().equals(value)).findFirst().orElse(null);
+    }
 }

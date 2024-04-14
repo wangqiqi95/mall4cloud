@@ -63,4 +63,6 @@ public class TaskInfoVO {
     private List<String> shoppingGuideIds;
     @ApiModelProperty("提醒员工时选择了指定员工，该值存在")
     private List<String> remindShoppingGuideIds;
+    @ApiModelProperty("素材信息")
+    private List<TaskMaterialInfoVO> taskMaterialInfo;
 }

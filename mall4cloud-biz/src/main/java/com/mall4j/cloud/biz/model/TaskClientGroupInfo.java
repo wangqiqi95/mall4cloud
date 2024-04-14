@@ -44,5 +44,10 @@ public class TaskClientGroupInfo {
      * 客户群id
      */
     private String clientGroupId;
+
+    /**
+     * 客户群名称
+     */
+    private String clientGroupName;
 }
 
