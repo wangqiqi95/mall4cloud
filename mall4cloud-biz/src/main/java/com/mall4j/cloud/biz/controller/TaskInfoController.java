@@ -1,11 +1,13 @@
 package com.mall4j.cloud.biz.controller;
 
 
-import com.mall4j.cloud.biz.dto.TaskInfoDTO;
-import com.mall4j.cloud.biz.dto.TaskInfoSearchParamDTO;
-import com.mall4j.cloud.biz.dto.TaskVisitResultInfoDTO;
-import com.mall4j.cloud.biz.service.TaskInfoService;
-import com.mall4j.cloud.biz.service.TaskVisitResultInfoService;
+import com.mall4j.cloud.biz.dto.*;
+import com.mall4j.cloud.biz.model.TaskBatchInfo;
+import com.mall4j.cloud.biz.model.TaskExecuteDetailInfo;
+import com.mall4j.cloud.biz.model.TaskExecuteInfo;
+import com.mall4j.cloud.biz.service.*;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskExecuteInfoVO;
+import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskExecutePageInfoVO;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoPageVO;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.TaskInfoVO;
 import com.mall4j.cloud.common.database.dto.PageDTO;
@@ -32,6 +34,9 @@ import java.io.IOException;
 @Api(tags = "任务信息表")
 public class TaskInfoController {
     private TaskInfoService taskInfoService;
+    private TaskExecuteInfoService taskExecuteInfoService;
+    private TaskBatchInfoService taskBatchInfoService;
+    private TaskExecuteDetailInfoService taskExecuteDetailInfoService;
 
     @GetMapping("/page")
     @ApiOperation(value = "任务列表接口", notes = "任务接口")
@@ -84,5 +89,31 @@ public class TaskInfoController {
     public void importClients(@RequestParam MultipartFile file, @RequestParam("uuid") String uuid, HttpServletResponse response) {
         taskInfoService.importClients(file, uuid, response);
     }
+
+    @GetMapping("/taskBatchPage")
+    @ApiOperation(value = "获取任务批次信息", notes = "获取任务批次信息")
+    public ServerResponseEntity<PageVO<TaskBatchInfo>> taskBatchPage(@Valid PageDTO pageDTO, TaskExecuteInfoSearchParamDTO request) {
+        return ServerResponseEntity.success(taskBatchInfoService.taskBatchPage(pageDTO, request));
+    }
+
+    @GetMapping("/taskExecutePage")
+    @ApiOperation(value = "获取调度信息", notes = "获取调度信息")
+    public ServerResponseEntity<PageVO<TaskExecutePageInfoVO>> taskExecutePage(@Valid PageDTO pageDTO, TaskExecuteInfoSearchParamDTO request) {
+        return ServerResponseEntity.success(taskExecuteInfoService.taskExecutePage(pageDTO, request));
+    }
+
+    @GetMapping("/pageTaskExecuteDetailInfo")
+    @ApiOperation(value = "获取任务调度客户信息", notes = "获取任务调度客户信息")
+    public ServerResponseEntity<PageVO<TaskExecuteDetailInfo>> pageTaskExecuteDetailInfo(@Valid PageDTO pageDTO, TaskExecuteDetailInfoSearchParamDTO request) {
+        return ServerResponseEntity.success(taskExecuteDetailInfoService.pageTaskExecuteDetailInfo(pageDTO, request));
+    }
+
+    @GetMapping("getTaskExecuteInfo")
+    @ApiOperation(value = "获取任务调度完成情况", notes = "获取任务调度完成情况")
+    @ApiImplicitParam(name = "executeId", value = "任务调度id", required = true, dataType = "Long")
+    public ServerResponseEntity<TaskExecuteInfo> getTaskExecuteInfo(@RequestParam("executeId") Long executeId) {
+        return ServerResponseEntity.success(taskExecuteInfoService.getTaskExecuteInfo(executeId));
+    }
+
 }
 

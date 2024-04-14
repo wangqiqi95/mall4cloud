@@ -13,5 +13,14 @@
         <if test="et.status != null">AND t1.status=#{et.status}</if>
         <if test="et.shoppingGuideId != null">AND t1.shopping_guide_id=#{et.shoppingGuideId}</if>
     </select>
+
+    <select id="listTaskExecute" resultType="com.mall4j.cloud.biz.vo.cp.taskInfo.TaskExecutePageInfoVO">
+        select
+        t1.id,t1.status,t1.client_sum,t1.success_client_sum
+        from cp_task_execute_info t1
+        <if test="et.taskBatchId != null">AND t1.batch_id=#{et.taskBatchId}</if>
+        group t
+        order by t1.create_time desc
+    </select>
 </mapper>
 

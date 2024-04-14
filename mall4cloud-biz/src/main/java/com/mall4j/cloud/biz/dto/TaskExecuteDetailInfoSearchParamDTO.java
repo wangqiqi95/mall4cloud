@@ -11,4 +11,6 @@ public class TaskExecuteDetailInfoSearchParamDTO {
     private String nickName;
     @ApiModelProperty("状态 1完成 0未完成")
     private Integer status;
+    @ApiModelProperty("任务类型为加企微好友时特有字段。0未添加 1已添加 2添加失败")
+    private Integer addStatus;
 }

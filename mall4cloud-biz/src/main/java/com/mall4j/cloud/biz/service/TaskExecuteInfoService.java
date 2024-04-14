@@ -39,6 +39,19 @@ public interface TaskExecuteInfoService extends IService<TaskExecuteInfo> {
      */
     TaskExecuteDetailInfoVO getTaskExecuteDetailInfo(Long executeId);
 
+    /**
+     * 获取任务对应的调度信息
+     * @param pageDTO 分页对象
+     * @param taskExecuteInfoSearchParamDTO 查询条件
+     */
+    PageVO<TaskExecutePageInfoVO> taskExecutePage(PageDTO pageDTO, TaskExecuteInfoSearchParamDTO taskExecuteInfoSearchParamDTO);
+
+
+    /**
+     * 获取任务调度信息
+     * @param executeId 调度id
+     */
+    TaskExecuteInfo getTaskExecuteInfo(Long executeId);
 
 }
 

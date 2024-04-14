@@ -7,11 +7,11 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 任务调度信息
+ * 任务批次信息
  */
 @Data
-@TableName("cp_task_execute_info")
-public class TaskExecuteInfo {
+@TableName("cp_task_batch_info")
+public class TaskBatchInfo {
     /**
      * 主键
      */
@@ -41,32 +41,28 @@ public class TaskExecuteInfo {
      */
     private Long taskId;
     /**
-     * 任务类型 1加企微好友 2好友转会员 3分享素材 4回访客户
+     * 批次号
      */
-    private Integer taskType;
+    private Integer batchNum;
     /**
-     * 导购id
+     * 任务开始时间
      */
-    private String shoppingGuideId;
+    private Date startTime;
     /**
-     * 状态 1完成 0未完成
+     * 任务结束时间
+     */
+    private Date endTime;
+    /**
+     * 当前批次任务状态 0进行中 1已结束
      */
     private Integer status;
     /**
-     * 任务时间
+     * -1代表全部门店，否则为指定门店
      */
-    private Date taskTime;
+    private Integer taskStoreNum;
     /**
-     * 需完成数量
+     * -1代表全部导购，否则为指定导购
      */
-    private Integer clientSum;
-    /**
-     * 已完成数量
-     */
-    private Integer successClientSum;
-    /**
-     * 批次id(一个任务对应多个批次，一个批次对应多个导购任务调度，一个导购任务调度对应对个客户)
-     */
-    private Long batchId;
+    private Integer taskShoppingGuideNum;
 }
 

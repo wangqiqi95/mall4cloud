@@ -19,6 +19,9 @@ import com.mall4j.cloud.biz.service.TaskExecuteDetailInfoService;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.ShoppingGuideTaskClientGroupVO;
 import com.mall4j.cloud.biz.vo.cp.taskInfo.ShoppingGuideTaskClientVO;
 import com.mall4j.cloud.common.constant.DeleteEnum;
+import com.mall4j.cloud.common.database.dto.PageDTO;
+import com.mall4j.cloud.common.database.util.PageUtil;
+import com.mall4j.cloud.common.database.vo.PageVO;
 import com.mall4j.cloud.common.exception.Assert;
 import com.mall4j.cloud.common.security.AuthUserContext;
 import org.springframework.stereotype.Service;
@@ -114,6 +117,16 @@ public class TaskExecuteDetailInfoServiceImpl extends ServiceImpl<TaskExecuteDet
             return guideTaskClientVO;
 
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public PageVO<TaskExecuteDetailInfo> pageTaskExecuteDetailInfo(PageDTO pageDTO, TaskExecuteDetailInfoSearchParamDTO request) {
+        return PageUtil.doPage(pageDTO, () -> list(Wrappers.<TaskExecuteDetailInfo>lambdaQuery()
+                .eq(TaskExecuteDetailInfo::getExecuteId, request.getExecuteId())
+                .like(StrUtil.isNotBlank(request.getNickName()), TaskExecuteDetailInfo::getClientNickName, request.getNickName())
+                .eq(ObjectUtil.isNotEmpty(request.getStatus()), TaskExecuteDetailInfo::getStatus, request.getStatus())
+                .eq(ObjectUtil.isNotEmpty(request.getAddStatus()), TaskExecuteDetailInfo::getAddStatus, request.getAddStatus())
+        ));
     }
 }
 

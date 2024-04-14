@@ -8,6 +8,11 @@ import lombok.Data;
  */
 @Data
 public class TaskExecuteInfoSearchParamDTO {
+
+    @ApiModelProperty("任务id")
+    private Long taskId;
+    @ApiModelProperty("任务批次id")
+    private Long taskBatchId;
     @ApiModelProperty("任务名称")
     private String taskName;
     @ApiModelProperty("任务类型 1加企微好友 2好友转会员 3分享素材 4回访客户")

@@ -51,6 +51,8 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
     private TaskExecuteInfoMapper taskExecuteInfoMapper;
     @Resource
     private TaskClientGroupInfoService taskClientGroupInfoService;
+    @Resource
+    private TaskBatchInfoService taskBatchInfoService;
 
 
     @Override
@@ -202,12 +204,15 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
             taskShoppingGuideInfos = taskShoppingGuideInfoService.list(Wrappers.<TaskShoppingGuideInfo>lambdaQuery().eq(TaskShoppingGuideInfo::getTaskId, taskInfo.getId()).eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value()));
         }
 
+        // 保存批次信息
+        TaskBatchInfo taskBatchInfo = taskBatchInfoService.saveTaskBatchInfo(taskInfo);
 
         List<TaskAllocateBO> taskAllocateBOList = allocateSales(clientInfos, taskShoppingGuideInfos, allocatedQuantity).stream().filter(bo -> CollUtil.isNotEmpty(bo.getTaskClientInfoList())).collect(Collectors.toList());
 
         for (TaskAllocateBO taskAllocateBO : taskAllocateBOList) {
             // 保存任务调度主表
             TaskExecuteInfo taskExecuteInfo = initTaskExecuteInfo(taskAllocateBO);
+            taskExecuteInfo.setBatchId(taskBatchInfo.getId());
             save(taskExecuteInfo);
 
             taskAllocateBO.setExecuteId(taskExecuteInfo.getId());
@@ -242,6 +247,8 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
         } else {
             taskShoppingGuideInfos = taskShoppingGuideInfoService.list(Wrappers.<TaskShoppingGuideInfo>lambdaQuery().eq(TaskShoppingGuideInfo::getTaskId, taskInfo.getId()).eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value()));
         }
+        TaskBatchInfo taskBatchInfo = taskBatchInfoService.saveTaskBatchInfo(taskInfo);
+
 
         // todo 需要接口判断与客户最近联系的导购
         List<TaskAllocateBO> taskAllocateBOList = Collections.emptyList();
@@ -249,6 +256,7 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
         for (TaskAllocateBO taskAllocateBO : taskAllocateBOList) {
             // 保存任务调度主表
             TaskExecuteInfo taskExecuteInfo = initTaskExecuteInfo(taskAllocateBO);
+            taskExecuteInfo.setBatchId(taskBatchInfo.getId());
             save(taskExecuteInfo);
 
             taskAllocateBO.setExecuteId(taskExecuteInfo.getId());
@@ -284,12 +292,16 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
             taskShoppingGuideInfos = taskShoppingGuideInfoService.list(Wrappers.<TaskShoppingGuideInfo>lambdaQuery().eq(TaskShoppingGuideInfo::getTaskId, taskInfo.getId()).eq(TaskShoppingGuideInfo::getDelFlag, DeleteEnum.NORMAL.value()));
         }
 
+        TaskBatchInfo taskBatchInfo = taskBatchInfoService.saveTaskBatchInfo(taskInfo);
+
+
         //todo 客户群分配规则
         List<TaskAllocateBO> taskAllocateBOList = Collections.emptyList();
 
         for (TaskAllocateBO taskAllocateBO : taskAllocateBOList) {
             // 保存任务调度主表
             TaskExecuteInfo taskExecuteInfo = initTaskExecuteInfo(taskAllocateBO);
+            taskExecuteInfo.setBatchId(taskBatchInfo.getId());
             save(taskExecuteInfo);
 
             taskAllocateBO.setExecuteId(taskExecuteInfo.getId());
@@ -341,9 +353,12 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
         List<TaskAllocateBO> taskAllocateBOList = allocateSales(clientInfos.stream().filter(clientInfo -> !CollUtil.contains(genClients, clientInfo.getClientId())).collect(Collectors.toList()),
                 taskShoppingGuideInfos, allocatedQuantity).stream().filter(bo -> CollUtil.isNotEmpty(bo.getTaskClientInfoList())).collect(Collectors.toList());
 
+        TaskBatchInfo taskBatchInfo = taskBatchInfoService.saveTaskBatchInfo(taskInfo);
+
         for (TaskAllocateBO taskAllocateBO : taskAllocateBOList) {
             // 保存任务调度主表
             TaskExecuteInfo taskExecuteInfo = initTaskExecuteInfo(taskAllocateBO);
+            taskExecuteInfo.setBatchId(taskBatchInfo.getId());
             save(taskExecuteInfo);
 
             taskAllocateBO.setExecuteId(taskExecuteInfo.getId());
@@ -386,10 +401,13 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
 
         // todo 需要接口判断与客户最近联系的导购
         List<TaskAllocateBO> taskAllocateBOList = Collections.emptyList();
+        TaskBatchInfo taskBatchInfo = taskBatchInfoService.saveTaskBatchInfo(taskInfo);
+
 
         for (TaskAllocateBO taskAllocateBO : taskAllocateBOList) {
             // 保存任务调度主表
             TaskExecuteInfo taskExecuteInfo = initTaskExecuteInfo(taskAllocateBO);
+            taskExecuteInfo.setBatchId(taskBatchInfo.getId());
             save(taskExecuteInfo);
 
             taskAllocateBO.setExecuteId(taskExecuteInfo.getId());
@@ -431,10 +449,13 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
 
         // todo 需要接口判断与客户最近联系的导购
         List<TaskAllocateBO> taskAllocateBOList = Collections.emptyList();
+        TaskBatchInfo taskBatchInfo = taskBatchInfoService.saveTaskBatchInfo(taskInfo);
+
 
         for (TaskAllocateBO taskAllocateBO : taskAllocateBOList) {
             // 保存任务调度主表
             TaskExecuteInfo taskExecuteInfo = initTaskExecuteInfo(taskAllocateBO);
+            taskExecuteInfo.setBatchId(taskBatchInfo.getId());
             save(taskExecuteInfo);
 
             taskAllocateBO.setExecuteId(taskExecuteInfo.getId());
@@ -517,6 +538,16 @@ public class TaskExecuteInfoServiceImpl extends ServiceImpl<TaskExecuteInfoMappe
         return TaskExecuteDetailInfoVO.builder()
                 .shoppingGuideTaskDetail(shoppingGuideTaskDetail)
                 .build();
+    }
+
+    @Override
+    public PageVO<TaskExecutePageInfoVO> taskExecutePage(PageDTO pageDTO, TaskExecuteInfoSearchParamDTO taskExecuteInfoSearchParamDTO) {
+        return PageUtil.doPage(pageDTO, () -> taskExecuteInfoMapper.listTaskExecute(taskExecuteInfoSearchParamDTO));
+    }
+
+    @Override
+    public TaskExecuteInfo getTaskExecuteInfo(Long executeId) {
+        return getById(executeId);
     }
 }
 
